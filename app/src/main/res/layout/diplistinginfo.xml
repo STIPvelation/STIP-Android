@@ -1,0 +1,1186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <android.widget.ScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"/>
+
+    <ImageView
+        android:id="@+id/button_back_dip"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/ic_arrow_return"
+        android:contentDescription="@null"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/text_primary" />
+
+    <TextView
+        android:id="@+id/text_dip_full_title"
+        style="@style/DefaultTextStyle_16"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:background="@drawable/frame_bottom_line_unselected"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="@string/dip_listing_info"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scroll_dip_list"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintTop_toBottomOf="@id/text_dip_full_title"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/layout_dip_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_header">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/logo"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    app:civ_border_width="0dp"
+                    android:contentDescription="@null"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+
+
+                <!-- 📌 DIP 이름 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_text_jwb"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_jwb"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📅 날짜 표시 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_2"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker">
+
+                <!-- 🔵 원형 로고 이미지 -->
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📌 DIP 이름 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_AXNO"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📅 날짜 표시 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_3"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_2">
+
+                <!-- 🔵 원형 로고 이미지 -->
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_3"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📌 DIP 이름 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_3"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_WETALK"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_3"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_3"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📅 날짜 표시 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_3"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_4"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_3">
+
+                <!-- 🔵 원형 로고 이미지 -->
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_4"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📌 DIP 이름 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_4"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_MDM"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_4"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_4"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📅 날짜 표시 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_4"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_5"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_4">
+
+                <!-- 🔵 원형 로고 이미지 -->
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_5"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📌 DIP 이름 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_5"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_CDM"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_5"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_5"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <!-- 📅 날짜 표시 -->
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_5"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_6"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_5">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_6"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_6"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_katv"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_6"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_6"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_6"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_7"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_6">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_7"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_7"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_iject"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_7"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_7"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_7"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_8"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_7">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_8"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_8"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_msk"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_8"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_8"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_8"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_9"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_8">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_9"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_9"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_etip1"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_9"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_9"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_9"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_10"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_9">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_10"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:contentDescription="@null"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_mdm_10"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_etipai"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_10"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_report_date_text_10"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_report_date_text_10"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_11"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_10">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_11"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_11"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_music"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_11"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_11"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_11"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_12"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_11">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_12"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_12"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_movie"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_12"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_12"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_12"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_13"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_12">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_13"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_13"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_franchise"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_13"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_13"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_13"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_14"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_13">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_14"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_14"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_art"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_14"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_14"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_14"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_15"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_14">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_15"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_15"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_character"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_15"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_15"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_15"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_16"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_15">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_16"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_16"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_cartoon"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_16"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_16"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_16"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_17"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_16">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_17"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_17"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_art"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_17"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_17"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_17"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_18"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_17">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_18"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_18"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_dance"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_18"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_18"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_18"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_19"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_18">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_19"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_19"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/dip_listing_info_etipre"
+                    android:gravity="center_vertical"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_19"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_19"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_19"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_20"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_19">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_20"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_20"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/dip_listing_info_patent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_20"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_20"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_20"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_21"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_20">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_21"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_21"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/dip_listing_info_etipmusic"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_21"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_21"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_21"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_22"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_21">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_22"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_22"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/dip_listing_info_etipfranchise"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_22"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_22"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_22"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_23"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_22">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_23"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_23"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/dip_listing_info_etipdance"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_23"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_23"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_23"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_24"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_23">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_24"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_24"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/dip_listing_info_etipcharacter"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_24"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_24"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_24"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/dip_listing_info_ticker_25"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:background="@drawable/frame_bottom_line_unselected"
+                android:padding="12dp"
+                app:layout_constraintTop_toBottomOf="@id/dip_listing_info_ticker_24">
+
+                <ImageView
+                    android:id="@+id/dip_listing_info_logo_25"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:scaleType="centerCrop"
+                    android:contentDescription="@null"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_text_25"
+                    style="@style/DefaultTextStyle_14"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical"
+                    android:text="@string/dip_listing_info_etipetc"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/dip_listing_info_date_25"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@id/dip_listing_info_logo_25"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+
+                <TextView
+                    android:id="@+id/dip_listing_info_date_25"
+                    style="@style/standard_time_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="@string/report_time"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

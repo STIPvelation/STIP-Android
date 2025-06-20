@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/summary_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_summary_center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/holdingUsdLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/holding_usd"
+            app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/holdingUsdText"
+            style="@style/DefaultTextStyle_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/holding_usd_number"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/holdingUsdLabel" />
+
+        <TextView
+            android:id="@+id/totalBuyLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/total_buy"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/holdingUsdText" />
+
+        <TextView
+            android:id="@+id/totalBuyText"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:text="@string/total_buy_number"
+            app:layout_constraintBaseline_toBaselineOf="@id/totalBuyLabel"
+            app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
+            app:layout_constraintStart_toEndOf="@id/totalBuyLabel" />
+
+        <TextView
+            android:id="@+id/totalValuationLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/total_valuation"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/totalBuyLabel" />
+
+        <TextView
+            android:id="@+id/totalValuationText"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:text="@string/total_valuation_number"
+            app:layout_constraintBaseline_toBaselineOf="@id/totalValuationLabel"
+            app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
+            app:layout_constraintStart_toEndOf="@id/totalValuationLabel" />
+
+        <TextView
+            android:id="@+id/availableOrderLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/available_order"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/totalValuationLabel" />
+
+        <TextView
+            android:id="@+id/availableOrderText"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="end"
+            android:text="@string/available_order_number"
+            app:layout_constraintBaseline_toBaselineOf="@id/availableOrderLabel"
+            app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
+            app:layout_constraintStart_toEndOf="@id/availableOrderLabel" />
+
+        <TextView
+            android:id="@+id/totalAssetLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/total_asset"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/totalAssetText"
+            style="@style/DefaultTextStyle_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="4dp"
+            android:text="@string/total_asset_number"
+            app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
+            app:layout_constraintTop_toBottomOf="@id/totalAssetLabel" />
+
+        <TextView
+            android:id="@+id/valuationProfitLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/valuation_profit"
+            app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
+            app:layout_constraintTop_toTopOf="@id/totalBuyLabel" />
+
+        <TextView
+            android:id="@+id/valuationProfitText"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:gravity="end"
+            android:text="@string/valuation_profit_number"
+            app:layout_constraintBaseline_toBaselineOf="@id/valuationProfitLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/valuationProfitLabel" />
+
+        <TextView
+            android:id="@+id/profitRateLabel"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:text="@string/profit_rate"
+            app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
+            app:layout_constraintTop_toTopOf="@id/totalValuationLabel" />
+
+        <TextView
+            android:id="@+id/profitRateText"
+            style="@style/DefaultTextStyle_12"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:gravity="end"
+            android:text="@string/profit_rate_percentage"
+            app:layout_constraintBaseline_toBaselineOf="@id/profitRateLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/profitRateLabel" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tvPortfolioTitle"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/dip_portfolio"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/summary_section" />
+
+    <ImageView
+        android:id="@+id/ivExpandIcon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="12dp"
+        android:src="@drawable/ic_arrow_up"
+        android:contentDescription="Expand/Collapse"
+        app:layout_constraintBottom_toBottomOf="@+id/tvPortfolioTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvPortfolioTitle" />
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/portfolioPieChart"
+        android:layout_width="0dp"
+        android:layout_height="180dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPortfolioTitle" />
+    <TextView
+        android:id="@+id/item_list_header"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="0dp"
+        android:layout_height="34dp"
+        android:background="@color/profit_loss"
+        android:gravity="center"
+        android:text="@string/myiptext"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/portfolioPieChart" /> <androidx.recyclerview.widget.RecyclerView
+    android:id="@+id/holdings_recycler_view"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginTop="0dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@id/item_list_header" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/noipcurrently"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="#FFFFFF"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/item_list_header">
+
+        <TextView
+            android:id="@+id/noip_message_text"
+            style="@style/noipcolor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/noip"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

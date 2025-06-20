@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tv_dnd_mode_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:text="@string/header_customer_center_for_you"
+        android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+    <RelativeLayout
+        android:id="@+id/item_user_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_user_guide"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_user_guide_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_user_guide"
+            android:text="@string/user_guide_title" />
+
+        <TextView
+            android:id="@+id/tv_user_guide_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_user_guide_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_user_guide"
+            android:text="@string/user_guide_desc" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_phone_consult"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_phone_consult"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_phone_consult_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_phone_consult"
+            android:text="@string/phone_consult_title" />
+
+        <TextView
+            android:id="@+id/tv_phone_consult_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_phone_consult_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_phone_consult"
+            android:text="@string/common_customer_center_phone" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_kakao_inquiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="14dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="14dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_kakao_inquiry"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_kakao_inquiry_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_kakao_inquiry"
+            android:text="@string/kakao_inquiry_title" />
+
+        <TextView
+            android:id="@+id/tv_kakao_inquiry_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_kakao_inquiry_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_kakao_inquiry"
+            android:text="@string/common_customer_center_24h" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_one_on_one_inquiry"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_one_on_one_inquiry"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_one_on_one_inquiry_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_one_on_one_inquiry"
+            android:text="@string/one_on_one_inquiry_title" />
+
+        <TextView
+            android:id="@+id/tv_one_on_one_inquiry_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_one_on_one_inquiry_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_one_on_one_inquiry"
+            android:text="@string/common_customer_center_24h" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_inquiry_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_inquiry_history"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_inquiry_history_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_inquiry_history"
+            android:text="@string/inquiry_history_title" />
+
+        <TextView
+            android:id="@+id/tv_inquiry_history_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_inquiry_history_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_inquiry_history"
+            android:text="@string/common_customer_center_24h" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_impersonation_report"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_impersonation_report"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_impersonation_report_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_impersonation_report"
+            android:text="@string/impersonation_report_title" />
+
+        <TextView
+            android:id="@+id/tv_impersonation_report_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_impersonation_report_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_impersonation_report"
+            android:text="@string/impersonation_report_desc" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_unfair_trade"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_unfair_trade"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_unfair_trade_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_unfair_trade"
+            android:text="@string/unfair_trade_title" />
+
+        <TextView
+            android:id="@+id/tv_unfair_trade_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_unfair_trade_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_unfair_trade"
+            android:text="@string/unfair_trade_desc" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/item_transaction_statement"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background_f4f7fc"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <ImageView
+            android:id="@+id/iv_arrow_transaction_statement"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:contentDescription="@string/more_info"
+            android:src="@drawable/ic_arrow_next" />
+
+        <TextView
+            android:id="@+id/tv_transaction_statement_title"
+            style="@style/DefaultTextStyle_medium_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_transaction_statement"
+            android:text="@string/transaction_statement_title" />
+
+        <TextView
+            android:id="@+id/tv_transaction_statement_desc"
+            style="@style/DefaultTextStyle_gery_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_transaction_statement_title"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="8dp"
+            android:layout_toStartOf="@id/iv_arrow_transaction_statement"
+            android:text="@string/transaction_statement_desc" />
+    </RelativeLayout>
+
+</LinearLayout>

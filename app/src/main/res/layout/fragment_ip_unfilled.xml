@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/white">
+
+    <!-- 🔹 상단 박스: 모든주문 + 주문취소 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- 🔸 왼쪽: 모든주문 + 화살표 -->
+        <LinearLayout
+            android:id="@+id/filter_container_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/all_orders_text"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@string/all_orders" />
+
+            <ImageView
+                android:id="@+id/filter_icon"
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_marginStart="6dp"
+                android:src="@drawable/ic_arrow_down_filled"
+                android:contentDescription="@string/filter_icon_desc" />
+        </LinearLayout>
+
+        <!-- 🔸 오른쪽: 주문취소 -->
+        <TextView
+            android:id="@+id/cancel_order_button"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/ipsearch"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:text="@string/order_cancel"
+            android:textColor="@color/white"
+            style="@style/DefaultTextStyle_14" />
+    </RelativeLayout>
+
+    <!-- 🔸 데이터 없을 때 텍스트 -->
+    <TextView
+        android:id="@+id/nodatatext"
+        style="@style/TextSmallRegular"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/no_unfilled_orders"
+        android:textColor="@color/text_gray"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:paddingTop="32dp"
+        android:paddingBottom="32dp"
+        android:visibility="gone" />
+
+    <!-- 🔸 데이터 있을 때 목록 (리사이클러뷰 아이템은 연한 선 스타일 사용) -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewUnfilled"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:nestedScrollingEnabled="false" />
+
+</LinearLayout>

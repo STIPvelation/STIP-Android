@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_quote_background_with_divider"
+    android:orientation="horizontal"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:weightSum="4">
+
+    <TextView
+        android:id="@+id/itemDateTextView"
+        style="@style/DefaultTextStyle_12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:fontFeatureSettings="'tnum'"
+        tools:text="@string/time_sample"/>
+
+    <TextView
+        android:id="@+id/itemClosePriceTextView"
+        style="@style/DefaultTextStyle_12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:fontFeatureSettings="'tnum'"
+        tools:text="@string/common_number"/>
+
+    <TextView
+        android:id="@+id/itemChangeTextView"
+        style="@style/DefaultTextStyle_12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:fontFeatureSettings="'tnum'"
+        tools:text="@string/common_number" />
+
+    <TextView
+        android:id="@+id/itemVolumeTextView"
+        style="@style/DefaultTextStyle_12"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:fontFeatureSettings="'tnum'"
+        tools:text="@string/common_number" />
+</LinearLayout>

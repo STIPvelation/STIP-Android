@@ -1,0 +1,602 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true"
+    tools:context=".YourFragmentOrActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tv_dnd_mode_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/dnd_mode_category_title"
+            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_dnd_rest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_dnd_rest_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/dnd_mode_rest_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_dnd_rest_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_dnd_rest_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_dnd_rest_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/dnd_mode_rest_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_dnd_rest"
+                app:layout_constraintEnd_toStartOf="@+id/switch_dnd_rest_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_dnd_rest_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_dnd_rest_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_dnd_rest"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_dnd_rest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_dnd_rest"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_owned_ip_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/owned_ip_category_title"
+            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_owned_ip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_owned_ip_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/owned_ip_alert_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_owned_ip_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_owned_ip_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_owned_ip_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/owned_ip_alert_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_owned_ip"
+                app:layout_constraintEnd_toStartOf="@+id/switch_owned_ip_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_owned_ip_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_owned_ip_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_owned_ip"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_owned_ip"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_owned_ip"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/tv_comprehensive_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/comprehensive_alert_category_title"
+            android:textAppearance="?attr/textAppearanceTitleSmall" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_comp_designated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_comp_designated_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/comprehensive_alert_designated_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_comp_designated_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_designated_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_comp_designated_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/comprehensive_alert_designated_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_designated"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_designated_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_comp_designated_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_comp_designated_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_designated"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_comp_designated"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_comp_designated"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_comp_rise_fall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_comp_rise_fall_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/comprehensive_alert_rise_fall_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_comp_rise_fall_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_rise_fall_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_comp_rise_fall_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/comprehensive_alert_rise_fall_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_rise_fall"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_rise_fall_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_comp_rise_fall_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_comp_rise_fall_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_rise_fall"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_comp_rise_fall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_comp_rise_fall"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_comp_report_low"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_comp_report_low_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/comprehensive_alert_report_low_price_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_comp_report_low_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_report_low_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_comp_report_low_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/comprehensive_alert_report_low_price_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_report_low"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_report_low_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_comp_report_low_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_comp_report_low_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_report_low"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_comp_report_low"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_comp_report_low"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_comp_ip_cross"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_comp_ip_cross_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/comprehensive_alert_ip_cross_compare_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_comp_ip_cross_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_ip_cross_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_comp_ip_cross_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/comprehensive_alert_ip_cross_compare_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_ip_cross"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_ip_cross_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_comp_ip_cross_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_comp_ip_cross_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_ip_cross"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_comp_ip_cross"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_comp_ip_cross"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_comp_new_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_comp_new_user_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/comprehensive_alert_new_rights_user_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_comp_new_user_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_new_user_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_comp_new_user_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/comprehensive_alert_new_rights_user_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_new_user"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_new_user_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_comp_new_user_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_comp_new_user_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_new_user"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_comp_new_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_comp_new_user"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/item_comp_revoke_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:background="#F4F7FC"
+            android:paddingTop="12dp">
+
+            <TextView
+                android:id="@+id/tv_comp_revoke_user_title"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="8dp"
+                android:text="@string/comprehensive_alert_rights_revoker_title"
+                app:layout_constraintBottom_toTopOf="@+id/tv_comp_revoke_user_desc"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_revoke_user_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" />
+
+            <TextView
+                android:id="@+id/tv_comp_revoke_user_desc"
+                style="@style/DefaultTextStyle_gery_12"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="12dp"
+                android:text="@string/comprehensive_alert_rights_revoker_description"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_revoke_user"
+                app:layout_constraintEnd_toStartOf="@+id/switch_comp_revoke_user_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_comp_revoke_user_title" />
+
+            <FrameLayout
+                android:id="@+id/switch_comp_revoke_user_container"
+                android:layout_width="51dp"
+                android:layout_height="31dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="12dp"
+                app:layout_constraintBottom_toTopOf="@id/divider_comp_revoke_user"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:id="@+id/switch_comp_revoke_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:thumbTint="#FFFFFF"
+                    app:trackTint="@color/switch_track_selector" />
+            </FrameLayout>
+
+            <View
+                android:id="@+id/divider_comp_revoke_user"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="8dp" />
+
+    </LinearLayout>
+</ScrollView>

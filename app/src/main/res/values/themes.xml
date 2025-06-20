@@ -1,0 +1,54 @@
+<resources>
+
+    <!-- ✅ 앱 공통 기본 테마 -->
+    <style name="Base.Theme.Stipandroid" parent="Theme.Material3.Light.NoActionBar" />
+
+    <!-- ✅ STIP 앱 전체 테마 -->
+    <style name="Theme.Stipandroid" parent="Base.Theme.Stipandroid">
+        <item name="android:fontFamily">@font/pretendard_regular_font_family</item>
+        <item name="android:textColor">@color/text_black_14181B_100</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/white</item>
+    </style>
+
+    <!-- ✅ 시스템 스플래시 제거용: IntroActivity 전용 -->
+    <style name="Theme.NoSplash" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowSplashScreenAnimatedIcon">@null</item>
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowBackground">@android:color/white</item>
+    </style>
+
+
+    <!-- ✅ DatePicker 전용 테마 -->
+    <style name="CustomDateRangePickerTheme" parent="ThemeOverlay.Material3.MaterialCalendar">
+        <item name="materialCalendarStyle">@style/CustomCalendarStyle</item>
+    </style>
+
+    <!-- ✅ 달력 배경 하얗게 -->
+    <style name="CustomCalendarStyle" parent="Widget.Material3.MaterialCalendar">
+        <item name="android:background">@color/white</item>
+        <item name="dayTodayStyle">@style/CalendarDayStyle</item>
+    </style>
+
+    <!-- ✅ 오늘 날짜 흰 배경 유지 -->
+    <style name="CalendarDayStyle" parent="Widget.Material3.MaterialCalendar.Day.Today">
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <!-- ✅ 공통 카드뷰 스타일 -->
+    <style name="StipCardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/sky_30C6E8_100</item>
+        <item name="strokeColor">@color/transparent</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+
+    <!-- ✅ 타이틀 텍스트 스타일 -->
+    <style name="TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_black_14181B_100</item>
+        <item name="fontFamily">@font/pretendard_medium_font_family</item>
+    </style>
+
+</resources>

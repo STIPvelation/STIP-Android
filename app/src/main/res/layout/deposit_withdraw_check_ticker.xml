@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/desc_back"
+        android:focusable="true"
+        android:padding="16dp"
+        android:src="@drawable/ic_arrow_return"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title_placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/tv_title_placeholder"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="?attr/actionBarSize" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        style="@style/DefaultTextStyle_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/title_withdrawal_detail"
+        app:layout_constraintBottom_toBottomOf="@id/iv_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/iv_back" />
+
+    <TextView
+        android:id="@+id/tv_status"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/status_withdrawal_complete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title_placeholder" />
+
+    <TextView
+        android:id="@+id/tv_amount"
+        style="@style/DefaultTextStyle_20"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/common_number"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/tv_status"
+        app:layout_constraintTop_toBottomOf="@id/tv_status"
+        tools:text="10,000 POL" />
+
+    <TextView
+        android:id="@+id/tv_amount_usd"
+        style="@style/DefaultTextStyle_gery_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="@string/usd_equivalent_placeholder"
+        app:layout_constraintStart_toStartOf="@id/tv_amount"
+        app:layout_constraintTop_toBottomOf="@id/tv_amount"
+        tools:text="3,500.00 USD" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
+        android:background="#EAEAEA"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_amount_usd" />
+
+    <TextView
+        android:id="@+id/label_completion_time"
+        style="@style/DefaultTextStyle_gery_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/label_completion_datetime"
+        app:layout_constraintStart_toStartOf="@id/tv_status"
+        app:layout_constraintTop_toBottomOf="@id/divider" />
+
+    <TextView
+        android:id="@+id/value_completion_time"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:text="@string/time"
+        app:layout_constraintBaseline_toBaselineOf="@id/label_completion_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/label_completion_time"
+        tools:text="2025-05-04 22:30:00" />
+
+    <TextView
+        android:id="@+id/label_type"
+        style="@style/DefaultTextStyle_gery_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_type"
+        app:layout_constraintStart_toStartOf="@id/label_completion_time"
+        app:layout_constraintTop_toBottomOf="@id/label_completion_time" />
+
+    <TextView
+        android:id="@+id/value_type"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:text="@string/value_type_krw_withdrawal"
+        app:layout_constraintBaseline_toBaselineOf="@id/label_type"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/label_type"
+        tools:text="출금" />
+
+    <TextView
+        android:id="@+id/label_network"
+        style="@style/DefaultTextStyle_gery_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_network"
+        app:layout_constraintStart_toStartOf="@id/label_type"
+        app:layout_constraintTop_toBottomOf="@id/label_type" />
+
+    <TextView
+        android:id="@+id/value_network"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:text="@string/network_value"
+        app:layout_constraintBaseline_toBaselineOf="@id/label_network"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/label_network"
+        tools:text="Polygon" />
+
+    <TextView
+        android:id="@+id/label_to"
+        style="@style/DefaultTextStyle_gery_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_to"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/label_network"
+        app:layout_constraintTop_toBottomOf="@id/label_network" />
+
+
+    <TextView
+        android:id="@+id/value_to"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="end"
+        android:text="@string/account_number"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/label_to"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/label_to"
+        tools:text="ox356yrgfkssd45yt" />
+
+    <TextView
+        android:id="@+id/label_txid"
+        style="@style/DefaultTextStyle_gery_14"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/label_txid"
+        app:layout_constraintStart_toStartOf="@id/label_to"
+        app:layout_constraintTop_toBottomOf="@id/label_to" />
+
+    <TextView
+        android:id="@+id/value_txid"
+        style="@style/DefaultTextStyle_14"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="64dp"
+        android:gravity="end"
+        android:text="@string/transaction_id_value"
+        app:layout_constraintBaseline_toBaselineOf="@id/label_txid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/label_txid"
+        tools:text="0x123abc456def7890" />
+
+    <ImageView
+        android:id="@+id/btn_copy_txid"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/ic_copy"
+        android:layout_marginStart="12dp"
+        app:layout_constraintBottom_toBottomOf="@id/value_txid"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/value_txid"
+        tools:ignore="ContentDescription" />
+
+    <Button
+        android:id="@+id/confirmButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/button_background_rounded"
+        android:text="@string/button_confirm"
+        android:textSize="16sp"
+        app:backgroundTint="@null"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

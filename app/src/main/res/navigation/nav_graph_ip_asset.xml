@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph_ip_asset"
+    app:startDestination="@id/ipAssetHoldingsFragment">
+
+    <fragment
+        android:id="@+id/ipAssetHoldingsFragment"
+        android:name="com.stip.stip.ipasset.fragment.TransactionFragment"
+        android:label="IpAssetHoldingsFragment">
+
+        <action
+            android:id="@+id/action_ipAssetHoldingsFragment_to_depositFragment"
+            app:destination="@id/depositFragment" />
+
+        <action
+            android:id="@+id/action_ipAssetHoldingsFragment_to_withdrawFragment"
+            app:destination="@id/withdrawalInputFragment" />
+
+        <action
+            android:id="@+id/action_ipAssetHoldingsFragment_to_withdrawalDetailFragment"
+            app:destination="@id/withdrawalDetailFragment" />
+
+        <action
+            android:id="@+id/action_ipAssetHoldingsFragment_to_tickerTransferDetailFragment"
+            app:destination="@id/tickerTransferDetailFragment" />
+
+        <argument
+            android:name="ipAsset"
+            app:argType="com.stip.stip.ipasset.model.IpAsset" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/depositFragment"
+        android:name="com.stip.stip.ipasset.fragment.DepositFragment"
+        android:label="DepositFragment">
+        <argument
+            android:name="ipAsset"
+            app:argType="com.stip.stip.ipasset.model.IpAsset" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/withdrawalInputFragment"
+        android:name="com.stip.stip.ipasset.fragment.WithdrawalInputFragment"
+        android:label="WithdrawalInputFragment">
+
+        <action
+            android:id="@+id/action_withdrawInputFragment_to_withdrawalConfirmFragment"
+            app:destination="@id/withdrawalConfirmFragment" />
+
+        <argument
+            android:name="withdrawalStatus"
+            app:argType="com.stip.stip.ipasset.model.WithdrawalStatus" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/withdrawalConfirmFragment"
+        android:name="com.stip.stip.ipasset.fragment.WithdrawalConfirmationFragment"
+        android:label="WithdrawalConfirmFragment">
+
+        <argument
+            android:name="withdrawalStatus"
+            app:argType="com.stip.stip.ipasset.model.WithdrawalStatus" />
+
+        <argument
+            android:name="totalWithdrawal"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/withdrawalDetailFragment"
+        android:name="com.stip.stip.ipasset.fragment.WithdrawalDetailFragment"
+        android:label="fragment_withdrawal_detail"
+        tools:layout="@layout/deposit_withdraw_check">
+
+        <argument
+            android:name="transactionId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/tickerTransferDetailFragment"
+        android:name="com.stip.stip.ipasset.fragment.TickerTransferDetailFragment"
+        android:label="fragment_ticker_transfer_detail"
+        tools:layout="@layout/deposit_withdraw_check_ticker">
+
+        <argument
+            android:name="transactionId"
+            app:argType="long" />
+    </fragment>
+
+</navigation>

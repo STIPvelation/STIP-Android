@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/trend_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="12dp">
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/price_chart_viewpager"
+            android:layout_width="0dp"
+            android:layout_height="180dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/dot_indicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/price_chart_viewpager">
+
+            <ImageView
+                android:id="@+id/dot_1"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:src="@drawable/ic_dot_active" />
+
+            <ImageView
+                android:id="@+id/dot_2"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginStart="9dp"
+                android:src="@drawable/ic_dot_inactive" />
+
+            <ImageView
+                android:id="@+id/dot_3"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginStart="9dp"
+                android:src="@drawable/ic_dot_inactive" />
+
+            <ImageView
+                android:id="@+id/dot_4"
+                android:layout_width="6dp"
+                android:layout_height="6dp"
+                android:layout_marginStart="9dp"
+                android:src="@drawable/ic_dot_inactive" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/section_separator_1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:background="#E5E5E5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/dot_indicator" />
+
+        <ImageView
+            android:id="@+id/stip_main_logo"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:adjustViewBounds="true"
+            android:src="@drawable/main_logo"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/section_separator_1" />
+
+        <View
+            android:id="@+id/section_separator_2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="#E5E5E5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stip_main_logo" />
+
+        <TextView
+            android:id="@+id/ip"
+            style="@style/DefaultTextStyle_16"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/ipriserank_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/section_separator_2" />
+
+        <LinearLayout
+            android:id="@+id/datebox"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ip">
+
+            <TextView
+                android:id="@+id/date_1week"
+                style="@style/DateTextStyle_Selected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_selected"
+                android:gravity="center"
+                android:text="@string/date_1week" />
+
+            <TextView
+                android:id="@+id/date_1month"
+                style="@style/DateTextStyle_Unselected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_unselected"
+                android:gravity="center"
+                android:text="@string/date_1month" />
+
+            <TextView
+                android:id="@+id/date_3months"
+                style="@style/DateTextStyle_Unselected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_unselected"
+                android:gravity="center"
+                android:text="@string/date_3months" />
+
+            <TextView
+                android:id="@+id/date_6months"
+                style="@style/DateTextStyle_Unselected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_unselected"
+                android:gravity="center"
+                android:text="@string/date_6months" />
+
+            <TextView
+                android:id="@+id/date_1year"
+                style="@style/DateTextStyle_Unselected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_unselected"
+                android:gravity="center"
+                android:text="@string/date_1year" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewIpRise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/datebox" />
+
+        <View
+            android:id="@+id/section_separator_after_iprise"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:background="#F4F4F4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewIpRise" />
+
+        <LinearLayout
+            android:id="@+id/stip_index"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/section_separator_after_iprise">
+
+            <TextView
+                android:id="@+id/stip_index_text_1"
+                style="@style/DefaultTextStyle_16"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stip_index_text" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/time_range_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:orientation="horizontal"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/stip_index">
+
+            <TextView
+                android:id="@+id/today_text"
+                style="@style/DateTextStyle_Selected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_selected"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/stip_index_today" />
+
+            <TextView
+                android:id="@+id/month_text"
+                style="@style/DateTextStyle_Unselected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_unselected"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/stip_index_month" />
+
+            <TextView
+                android:id="@+id/three_months_text"
+                style="@style/DateTextStyle_Unselected"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/datebox_unselected"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="@string/stip_index_threemonth" />
+        </LinearLayout>
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewStipIndex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/time_range_buttons" />
+
+        <View
+            android:id="@+id/section_separator_after_iprise1"
+            android:layout_width="0dp"
+            android:layout_height="14dp"
+            android:background="#F4F4F4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recyclerViewStipIndex" />
+
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.core.widget.NestedScrollView>

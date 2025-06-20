@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="list_item_text_size">12sp</dimen>
+    <dimen name="list_item_cell_height">32dp</dimen>
+    <dimen name="list_item_date_width">56dp</dimen>
+    <dimen name="list_item_divider_width">1dp</dimen>
+    <dimen name="original_list_item_text_size">12sp</dimen>
+    <dimen name="list_item_border_width">1dp</dimen>
+
+
+    <dimen name="text_size_large">20sp</dimen>
+    <dimen name="text_size_medium">16sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+
+    <dimen name="text_size_small_min">10sp</dimen>
+    <dimen name="text_size_small_max">12sp</dimen>
+
+    <dimen name="header_cell_height">32dp</dimen>
+
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="common_side_margin_20dp">20dp</dimen>
+
+    <dimen name="margin_6dp">6dp</dimen>
+
+
+        <dimen name="policy_padding_horizontal">16dp</dimen>
+        <dimen name="policy_padding_vertical_item">14dp</dimen> <dimen name="policy_padding_vertical_header">10dp</dimen> <dimen name="policy_text_size_title">18sp</dimen>
+        <dimen name="policy_text_size_list_header">12sp</dimen>
+        <dimen name="policy_text_size_list_item">14sp</dimen> <dimen name="policy_icon_size">24dp</dimen>
+
+        <dimen name="policy_divider_height">1dp</dimen>
+
+</resources>
+
+
