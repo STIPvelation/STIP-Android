@@ -41,36 +41,34 @@ class MoreFragment : Fragment() {
         _binding = FragmentMoreBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(TAG, "onViewCreated called")
         setupClickListeners()
         loadSavedProfileImage()
+        setAppVersionInfo()
         
         // 회원정보 관찰 및 표시
         activityViewModel.memberInfo.observe(viewLifecycleOwner) { info ->
             if (info != null) {
                 // 회원 이름 표시
-                binding.textViewUserName.text = info.name
-
+                binding.textViewName.text = info.name
 
                 // 회원 ID(9자리 공통번호) 표시
-//                if (info.name.isNotBlank()) {
-//                    binding.textViewCommonNumber.text = info.name
-//                    binding.textViewUserID.visibility = View.VISIBLE
-//                    binding.textViewCommonNumber.visibility = View.VISIBLE
-//                    Log.d(TAG, "회원 ID 표시: ${info.id}")
-//                } else {
-//                    // 회원 ID가 없는 경우 UI에서 숨김 처리 (선택사항)
-//                    binding.textViewUserID.visibility = View.GONE
-//                    binding.textViewCommonNumber.visibility = View.GONE
-//                    Log.d(TAG, "회원 ID 없음 - 화면에서 숨김")
-//                }
+                if (info.name.isNotBlank()) {
+                    binding.textViewId.text = info.name
+                    binding.textViewId.visibility = View.VISIBLE
+                    Log.d(TAG, "회원 ID 표시: ${info.id}")
+                } else {
+                    // 회원 ID가 없는 경우 UI에서 숨김 처리
+                    binding.textViewId.visibility = View.GONE
+                    Log.d(TAG, "회원 ID 없음 - 화면에서 숨김")
+                }
             } else {
                 // 비로그인 상태일 때
-                binding.textViewUserName.text = "로그인이 필요합니다"
-//                binding.textViewUserID.visibility = View.GONE
-                binding.textViewCommonNumber.visibility = View.GONE
+                binding.textViewName.text = "로그인이 필요합니다"
+                binding.textViewId.visibility = View.GONE
                 Log.d(TAG, "비로그인 상태 - 회원 ID 숨김")
             }
         }
@@ -96,6 +94,7 @@ class MoreFragment : Fragment() {
         binding.profileSection.setOnClickListener {
             navigateTo(MoreMemberInfoFragment(), "회원 정보")
         }
+        // 빠른 메뉴 버튼 클릭 리스너
         binding.textViewPriceAlert.setOnClickListener {
             navigateTo(MorePriceAlertFragment(), "시세 알림")
         }
@@ -105,31 +104,48 @@ class MoreFragment : Fragment() {
         binding.textViewSecurityAuth.setOnClickListener {
             navigateTo(MoreSecurityFragment(), "보안 / 인증")
         }
-        binding.textViewPolicy.setOnClickListener {
-            navigateTo(MorePolicyFragment(), "정책 및 약관")
+        // IP 엔터테인먼트 카드 클릭 리스너는 나중에 추가 예정
+        // 현재 레이아웃에는 카드뷰에 ID가 설정되어 있지 않음
+        
+        // 정책 및 약관 카드 클릭 리스너
+        binding.cardPolicy.setOnClickListener {
+            // 정책 및 약관 화면으로 이동
+            Toast.makeText(requireContext(), "정책 및 약관 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
         }
+        
+        binding.cardEsgPolicy.setOnClickListener {
+            // ESG 정책 화면으로 이동
+            Toast.makeText(requireContext(), "ESG 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
+        }
+        
+        binding.cardStartupPolicy.setOnClickListener {
+            // 스타트업 지원 정책 화면으로 이동
+            Toast.makeText(requireContext(), "스타트업 지원 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
+        }
+        
+        binding.cardAmlPolicy.setOnClickListener {
+            // AML 정책 화면으로 이동
+            Toast.makeText(requireContext(), "AML 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
+        }
+        
+        binding.cardDipPolicy.setOnClickListener {
+            // DIP 평가 기준 화면으로 이동
+            Toast.makeText(requireContext(), "DIP 평가 기준 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
+        }
+        
+        binding.cardFeePolicy.setOnClickListener {
+            // 수수료 정책 화면으로 이동
+            Toast.makeText(requireContext(), "수수료 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
+        }
+        
+        binding.cardStipvelation.setOnClickListener {
+            // STIPvelation 외부 링크로 이동
+            Toast.makeText(requireContext(), "STIPvelation 사이트로 이동합니다", Toast.LENGTH_SHORT).show()
+        }
+        
+        // 고객센터 버튼 클릭 리스너
         binding.buttonCustomerCenter.setOnClickListener {
             navigateTo(MoreCustomerCenterFragment(), "고객센터")
-        }
-        binding.textViewStipulation.setOnClickListener {
-            val url = "https://stipvelation.com"
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        }
-
-        binding.textViewPrivacy.setOnClickListener {
-            MorePolicyFragment.showPolicyDialog(requireContext(), 11)
-        }
-        binding.textViewYouthPolicy.setOnClickListener {
-            MorePolicyFragment.showPolicyDialog(requireContext(), 12)
-        }
-        binding.textViewTransactionStatus.setOnClickListener {
-            MorePolicyFragment.showPolicyDialog(requireContext(), 13)
-        }
-        binding.titleuserdataprotection.setOnClickListener {
-            MorePolicyFragment.showPolicyDialog(requireContext(), 14)
-        }
-        binding.titleuserdatafees.setOnClickListener {
-            MorePolicyFragment.showPolicyDialog(requireContext(), 15)
         }
     }
 
@@ -174,6 +190,20 @@ class MoreFragment : Fragment() {
         if (activityViewModel.isAuthenticated) {
             Log.d(TAG, "회원정보 API 조회")
             activityViewModel.loadMemberInfo()
+        }
+    }
+
+    /**
+     * 앱 버전 정보를 표시하는 함수
+     */
+    private fun setAppVersionInfo() {
+        try {
+            val packageInfo = requireContext().packageManager.getPackageInfo(requireContext().packageName, 0)
+            val versionName = packageInfo.versionName
+            binding.textViewAppVersion.text = "앱 버전 $versionName"
+        } catch (e: Exception) {
+            Log.e(TAG, "앱 버전 정보를 가져오는데 실패했습니다: ${e.message}")
+            binding.textViewAppVersion.text = "앱 버전 정보 없음"
         }
     }
 

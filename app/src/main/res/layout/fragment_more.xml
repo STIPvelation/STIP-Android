@@ -1,375 +1,853 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    android:orientation="vertical">
-
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/profile_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
-
-        <ImageView
-            android:id="@+id/imageViewProfile"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_person"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textViewUserName"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="@string/more_name"
-            app:layout_constraintBottom_toBottomOf="@id/imageViewProfile"
-            app:layout_constraintStart_toEndOf="@id/imageViewProfile"
-            app:layout_constraintTop_toTopOf="@id/imageViewProfile"
-            app:layout_constraintVertical_bias="0.5" />
-
-        <TextView
-            android:id="@+id/textViewCommonNumber"
-            style="@style/DefaultTextStyle_14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text=""
-            app:layout_constraintBottom_toBottomOf="@+id/imageViewArrow"
-            app:layout_constraintEnd_toStartOf="@+id/imageViewArrow"
-            app:layout_constraintTop_toTopOf="@+id/imageViewArrow" />
-
-        <ImageView
-            android:id="@+id/imageViewArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_next"
-            app:layout_constraintBottom_toBottomOf="@id/imageViewProfile"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/imageViewProfile"
-            app:tint="#AAAAAA" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <RelativeLayout
-        android:id="@+id/custom_divider_1"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@drawable/custom_divider_5dp" />
+    android:background="@color/white"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="12dp">
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profile_card"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="20dp"
+            app:cardBackgroundColor="#F9FCFF"
+            app:cardElevation="1dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/profile_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="20dp">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/imageViewProfile"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_profile"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:shapeAppearanceOverlay="@style/CircleImageView"
+                    android:background="#48C3F0"
+                    app:tint="#FFFFFF" />
+
+                <ImageView
+                    android:id="@+id/imageViewEdit"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/circle_bg"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_edit"
+                    app:layout_constraintBottom_toBottomOf="@+id/imageViewProfile"
+                    app:layout_constraintEnd_toEndOf="@+id/imageViewProfile" />
+
+                <TextView
+                    android:id="@+id/textViewName"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="김지민"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toTopOf="@+id/textViewIdContainer"
+                    app:layout_constraintEnd_toStartOf="@+id/imageViewArrow"
+                    app:layout_constraintStart_toEndOf="@+id/imageViewProfile"
+                    app:layout_constraintTop_toTopOf="@+id/imageViewProfile"
+                    app:layout_constraintVertical_chainStyle="packed" />
+
+                <LinearLayout
+                    android:id="@+id/textViewIdContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    app:layout_constraintStart_toStartOf="@+id/textViewName"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewName"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:id="@+id/textViewId"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ID 123456789"
+                        android:textColor="#888888"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/circle_status_active"
+                        android:layout_marginStart="8dp" />
+
+                    <TextView
+                        android:id="@+id/textViewStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="활동 중"
+                        android:textColor="#4CAF50"
+                        android:textSize="14sp"
+                        android:layout_marginStart="4dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/imageViewArrow"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="#CCCCCC"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginHorizontal="16dp">
+
+            <LinearLayout
+                android:id="@+id/textViewPriceAlert"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="#4CAF50"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_bell"
+                        app:tint="#FFFFFF" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="시세알림"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/textViewModeSettings"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="#2196F3"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_settings"
+                        app:tint="#FFFFFF" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="모드설정"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/textViewSecurityAuth"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="8dp"
+                    app:cardBackgroundColor="#673AB7"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_lock"
+                        app:tint="#FFFFFF" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="보안/인증"
+                    android:textColor="#000000"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/textViewPriceAlert"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/menu_price_alert" />
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="12dp"
+            android:text="IP 엔터테인먼트"
+            android:textColor="@color/black"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardIpToon"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#4285F4">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_ip_toon_modern"
+                                app:tint="#FFFFFF" />
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="IP웹툰"
+                                android:textColor="@color/black"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="웹툰을 즐기세요"
+                                android:textColor="#888888"
+                                android:textSize="14sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#CCCCCC" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardIpAuction"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#34A853">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_ip_auction_modern"
+                                app:tint="#FFFFFF" />
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="IP옥션"
+                                android:textColor="@color/black"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="경매로 IP를 획득하세요"
+                                android:textColor="#888888"
+                                android:textSize="14sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#CCCCCC" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="10dp">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardIpSwap"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="5dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#7B5AF0">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_ip_swap_modern"
+                                app:tint="#FFFFFF" />
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="IP스왑"
+                                android:textColor="@color/black"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="기존 스왑을 시작하세요"
+                                android:textColor="#888888"
+                                android:textSize="14sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#CCCCCC" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardIpDonation"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="#FFFFFF">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:padding="16dp">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="52dp"
+                            android:layout_height="52dp"
+                            app:cardCornerRadius="14dp"
+                            app:cardElevation="0dp"
+                            app:cardBackgroundColor="#FBBC05">
+
+                            <ImageView
+                                android:layout_width="26dp"
+                                android:layout_height="26dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_headset"
+                                app:tint="#FFFFFF" />
+                        </androidx.cardview.widget.CardView>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="16dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="IP기부"
+                                android:textColor="@color/black"
+                                android:textSize="17sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="기부로 IP를 공유하세요"
+                                android:textColor="#888888"
+                                android:textSize="14sp"
+                                android:layout_marginTop="2dp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/ic_chevron_right"
+                            app:tint="#CCCCCC" />
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </LinearLayout>
 
         <View
-            android:id="@+id/rectangle_5_1"
-            android:layout_width="1dp"
-            android:layout_height="12dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/rectangle_5" />
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#F4F7FC" />
 
-        <TextView
-            android:id="@+id/textViewModeSettings"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/menu_mode_settings" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginVertical="16dp"
+            android:src="@drawable/ic_logo_color"
+            android:scaleType="fitCenter" />
 
         <View
-            android:id="@+id/rectangle_5_2"
-            android:layout_width="1dp"
-            android:layout_height="12dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/rectangle_5" />
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#F4F7FC" />
 
-        <TextView
-            android:id="@+id/textViewSecurityAuth"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/menu_security_auth" />
+            android:orientation="vertical"
+            android:background="@color/white"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp">
+
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <LinearLayout
+                        android:id="@+id/cardPolicy"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_document"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="정책 및 약관"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardEsgPolicy"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_leaf"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ESG 정책"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardStartupPolicy"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_building"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="스타트업 지원 정책"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardAmlPolicy"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_lock_shield"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AML 정책"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardDipPolicy"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_chart"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="DIP 평가 기준"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardFeePolicy"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:layout_marginEnd="12dp"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_card"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="수수료 정책"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/cardStipvelation"
+                        android:layout_width="100dp"
+                        android:layout_height="120dp"
+                        android:orientation="vertical"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:background="@drawable/card_policy_background">
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="48dp"
+                            android:layout_height="48dp"
+                            app:cardCornerRadius="24dp"
+                            app:cardBackgroundColor="#F0F8FC"
+                            app:cardElevation="0dp"
+                            android:layout_marginBottom="12dp">
+
+                            <ImageView
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_external_link"
+                                android:tint="#30C6E8" />
+                        </androidx.cardview.widget.CardView>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="STIPvelation"
+                            android:textColor="@color/black"
+                            android:textSize="14sp"
+                            android:gravity="center"
+                            android:maxLines="2" />
+                    </LinearLayout>
+                </LinearLayout>
+            </HorizontalScrollView>
+
+            <TextView
+                android:id="@+id/textViewAppVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="앱 버전 1.00"
+                android:textColor="#6E7491"
+                android:textSize="14sp"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="16dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#F4F7FC" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="20dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/buttonCustomerCenter"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="24dp"
+            android:paddingVertical="16dp"
+            android:text="고객센터"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:background="@drawable/button_gradient"
+            app:backgroundTint="@null"
+            app:cornerRadius="24dp"
+            app:elevation="4dp"
+            app:icon="@drawable/ic_headset"
+            app:iconGravity="textStart"
+            app:iconPadding="12dp"
+            app:iconSize="24dp"
+            app:iconTint="@color/white" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="56dp" />
+
     </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/custom_divider_2"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@drawable/custom_divider_5dp" />
-
-    <LinearLayout
-        android:id="@+id/icon_grid_section"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/icon_webtoon"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_ip_toon" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/icon_ip_webtoon_label"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/icon_auction"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="IP 옥션"
-                android:src="@drawable/ic_ip_auction" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/icon_ip_auction_label"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/icon_swap"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="IP 스왑"
-                android:src="@drawable/ic_ip_swap" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/icon_ip_swap_label"
-                android:textSize="12sp" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/icon_donate"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:contentDescription="IP 기부"
-                android:src="@drawable/ic_charity" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="@string/icon_ip_donate_label"
-                android:textSize="12sp" />
-        </LinearLayout>
-    </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/custom_divider_3"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@drawable/custom_divider_5dp" />
-
-    <ImageView
-        android:id="@+id/imageViewLogo"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="STIP 로고"
-        android:src="@drawable/stip_logo_black" />
-
-    <RelativeLayout
-        android:id="@+id/custom_divider_4"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:background="@drawable/custom_divider_5dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp">
-
-        <TextView
-            android:id="@+id/textViewPolicy"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/more_policy_and_terms" />
-
-        <TextView
-            android:id="@+id/textViewPrivacy"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/more_privacy_policy" />
-
-        <TextView
-            android:id="@+id/textViewYouthPolicy"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/more_youth_policy" />
-
-
-        <TextView
-            android:id="@+id/textViewTransactionStatus"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/more_transaction_status" />
-
-
-        <TextView
-            android:id="@+id/titleuserdataprotection"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/policy_title_dip_valuation" />
-
-        <TextView
-            android:id="@+id/titleuserdatafees"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/policy_title_fee_transparency" />
-
-
-        <TextView
-            android:id="@+id/textViewStipulation"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:autoLink="web"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/more_stipulation" />
-
-        <TextView
-            android:id="@+id/textViewAppVersion"
-            style="@style/DefaultTextStyle_medium_14"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="@string/more_app_version_format" />
-
-    </LinearLayout>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/buttonCustomerCenter"
-        style="@style/DefaultTextStyle_16"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
-        android:backgroundTint="#F4F7FC"
-        android:paddingStart="24dp"
-        android:paddingTop="8dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="8dp"
-        android:text="@string/more_customer_center" />
-
-
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>
