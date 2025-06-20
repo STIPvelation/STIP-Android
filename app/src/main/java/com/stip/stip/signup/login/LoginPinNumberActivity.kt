@@ -2,12 +2,14 @@ package com.stip.stip.signup.login
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import androidx.activity.viewModels
 import com.stip.stip.MainActivity
 import com.stip.stip.R
 import com.stip.stip.databinding.ActivityLoginPinNumberBinding
 import com.stip.stip.signup.Constants
 import com.stip.stip.signup.base.BaseActivity
+import com.stip.stip.signup.biometric.BiometricAuthHelper
 import com.stip.stip.signup.customview.BiometricAuthDialog
 import com.stip.stip.signup.customview.CustomContentDialog
 import com.stip.stip.signup.keypad.KeypadAdapter
@@ -20,7 +22,7 @@ import com.stip.stip.signup.utils.PreferenceUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, LoginViewModel>() {
+class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, LoginViewModel>(), BiometricAuthHelper.AuthCallback {
 
     companion object {
         fun startLoginPinNumberActivity(
@@ -49,6 +51,10 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
     private lateinit var pinAdapter: PinAdapter
     private lateinit var keypadAdapter: KeypadAdapter
     private val pinInput = StringBuilder()
+    
+    // 생체인증 관련
+    private lateinit var biometricAuthHelper: BiometricAuthHelper
+    private val TAG = "LoginPinNumberActivity"
 
     // PIN 번호 시도 횟수
     private var pinAttemptCount = 0
@@ -58,34 +64,11 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
         val pinTestList = MutableList(6) { false }
         pinAdapter = PinAdapter(pinTestList)
         binding.rvPassword.adapter = pinAdapter
-        val di = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
-
-        if (di.isBlank()) {
-            // DI가 없으면 다이얼로그 표시 후 인증 화면으로 이동
-            CustomContentDialog(
-                binding.root.context
-            ) {
-                // 확인 버튼 누르면 인증 화면으로 이동
-                try {
-                    val intent = Intent(
-                        this,
-                        SignUpActivity::class.java
-                    ) // SignUpAuthNiceFragment를 포함하는 Activity
-                    intent.putExtra("SHOW_SIGN_UP_AUTH_NICE", true)
-                    startActivity(intent)
-                    finish()
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }.setText(
-                getString(R.string.dialog_bank_guide_title),
-                "휴대폰 인증이 필요합니다.인증 후 다시 시도해주세요.",
-                "",
-                getString(R.string.common_confirm)
-            )
-
-            return
-        }
+        
+        // 생체인증 헬퍼 초기화
+        biometricAuthHelper = BiometricAuthHelper(this, this)
+        
+        // 휴대폰 인증 검사 생략하고 바로 키패드 표시
         setKeyPad()
     }
 
@@ -142,24 +125,14 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
         }
 
         setOnClick(binding.tvForgetPassword) {
-            SignUpActivity.startSignUpActivityPinNumberChange(this@LoginPinNumberActivity, true)
+            // isPinForgot을 true로 설정하여 휴대폰 인증 후 PIN번호 재설정할 수 있도록 함
+            SignUpActivity.startSignUpActivityPinNumberChange(this@LoginPinNumberActivity, true, true)
         }
 
-        setOnClick(binding.checkboxBasicLogin) {
-            viewModel.setPinNumberBasicSetting(binding.checkboxBasicLogin.isChecked)
-        }
-
-        setOnClick(binding.tvAnotherLoginMethod) {
-            BiometricAuthDialog(
-                this@LoginPinNumberActivity, {
-                    // 생체 인증 클릭
-                    // 생체 인증 화면 이동
-                    LoginBiometricAuthActivity.startLoginBiometricAuthActivityFinish(this)
-                }, {
-                    // PIN 번호 클릭
-                    android.util.Log.e("LoginPinNumber", "PIN 번호 불일치 발생!!!식식")
-                }
-            ).show()
+        // 생체인증으로 로그인 버튼 클릭 리스너 설정 - 현재 화면에서 바로 생체인증 처리
+        setOnClick(binding.btnBiometricLogin) {
+            // 바로 생체인증 다이얼로그 실행
+            biometricAuthHelper.showBiometricPrompt()
         }
     }
 
@@ -186,16 +159,64 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                     }
                 }
 
-                KeypadType.SHUFFLE -> keypadAdapter.shuffleNumbers()
                 KeypadType.DELETE -> {
                     if (pinInput.isNotEmpty()) {
-                        pinInput.deleteCharAt(pinInput.length - 1)
+                        pinInput.deleteAt(pinInput.lastIndex)
                         pinAdapter.updatePinCount(pinInput.length)
                     }
+                }
+                KeypadType.SHUFFLE -> {
+                    pinInput.clear()
+                    pinAdapter.updatePinCount(0)
+                    setKeyPad()
                 }
             }
         }
         binding.rvNumber.adapter = keypadAdapter
+    }
+    
+    // 생체인증 콜백 메서드 구현
+    override fun onAuthSuccess() {
+        // 인증 성공 시 바로 로그인 처리
+        Log.d(TAG, "생체인증 성공, 로그인 시도")
+        
+        // 저장된 PIN과 DI 값으로 로그인 요청
+        viewModel.requestPostAuthLogin(
+            RequestAuthLogin(
+                di = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, ""),
+                pin = PreferenceUtil.getString(Constants.PREF_KEY_PIN_VALUE, "")
+            )
+        )
+    }
+
+    override fun onAuthFailed() {
+        // 인증 일치하지 않음
+        Log.e(TAG, "생체인증 불일치")
+        
+        CustomContentDialog(
+            binding.root.context
+        ) {
+        }.setText(
+            getString(R.string.dialog_bank_guide_title),
+            "생체인증에 실패했습니다. 다시 시도하거나 PIN 번호로 로그인해주세요.",
+            "",
+            getString(R.string.common_confirm)
+        )
+    }
+
+    override fun onAuthError(errorMsg: String) {
+        // 인증 실패 (오류)
+        Log.e(TAG, "생체인증 오류: $errorMsg")
+        
+        CustomContentDialog(
+            binding.root.context
+        ) {
+        }.setText(
+            getString(R.string.dialog_bank_guide_title),
+            "생체인증 과정에서 오류가 발생했습니다. PIN 번호로 로그인해주세요.",
+            "",
+            getString(R.string.common_confirm)
+        )
     }
 
     private fun checkPinAndLoginIfMatch() {
@@ -204,21 +225,7 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
             val enteredPin = pinInput.toString()
             val di = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
 
-            // DI가 비어있는지 확인
-            if (di.isBlank()) {
-                // DI가 없으면 오류 표시
-                CustomContentDialog(
-                    binding.root.context
-                ) {}.setText(
-                    getString(R.string.dialog_bank_guide_title),
-                    "휴대폰 인증이 필요합니다.인증 후 다시 시도해주세요.",
-                    "",
-                    getString(R.string.common_confirm)
-                )
-                pinInput.clear()
-                pinAdapter.updatePinCount(0)
-                return
-            }
+            // DI 값이 비어있어도 로그인 기능 허용 (휴대폰 인증 건너뛰기)
 
             // 최대 시도 횟수 확인
             if (pinAttemptCount >= MAX_PIN_ATTEMPTS) {
