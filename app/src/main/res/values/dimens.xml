@@ -22,6 +22,22 @@
     <dimen name="common_side_margin_20dp">20dp</dimen>
 
     <dimen name="margin_6dp">6dp</dimen>
+    
+    <!-- 반응형 여백 -->    
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_xlarge">32dp</dimen>
+    <dimen name="spacing_xxlarge">40dp</dimen>
+    <dimen name="spacing_xxxlarge">48dp</dimen>
+    
+    <!-- 반응형 텍스트 크기 -->
+    <dimen name="text_small">13sp</dimen>
+    <dimen name="text_normal">14sp</dimen>
+    <dimen name="text_medium">16sp</dimen>
+    <dimen name="text_large">18sp</dimen>
+    <dimen name="text_xlarge">20sp</dimen>
+    <dimen name="text_xxlarge">24sp</dimen>
 
 
         <dimen name="policy_padding_horizontal">16dp</dimen>

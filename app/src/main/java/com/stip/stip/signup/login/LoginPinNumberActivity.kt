@@ -270,11 +270,20 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                     // PIN 번호 불일치 - 시도 횟수 증가
                     pinAttemptCount++
 
-                    val remainingAttempts = MAX_PIN_ATTEMPTS - pinAttemptCount
-                    if (remainingAttempts > 0) {
-                        // 남은 시도 횟수 표시
-                        showToast("PIN 번호가 일치하지 않습니다. 남은 시도: ${remainingAttempts}회")
-                        android.util.Log.e("LoginPinNumber", "PIN 번호 불일치 발생!!!원원")
+                    val attemptCount = pinAttemptCount
+                    if (attemptCount < MAX_PIN_ATTEMPTS) {
+                        // 시도 횟수를 팝업으로 표시 (1/5, 2/5 등)
+                        CustomContentDialog(
+                            binding.root.context
+                        ) {
+                            // PIN 번호 다시 입력할 수 있도록 아무 동작 없음
+                        }.setText(
+                            getString(R.string.dialog_bank_guide_title),
+                            "PIN 번호가 일치하지 않습니다.\n(${attemptCount}/${MAX_PIN_ATTEMPTS})",
+                            "",
+                            getString(R.string.common_confirm)
+                        )
+                        android.util.Log.e("LoginPinNumber", "PIN 번호 불일치 발생 - 시도 횟수: $attemptCount/$MAX_PIN_ATTEMPTS")
                     } else {
                         android.util.Log.e("LoginPinNumber", "PIN 번호 불일치 발생!!!투투")
                         // 마지막 시도 실패

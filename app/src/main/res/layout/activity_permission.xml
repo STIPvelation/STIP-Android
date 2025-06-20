@@ -14,40 +14,47 @@
         
         <ScrollView
             android:id="@+id/scroll_view"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="0dp"
             android:fillViewport="true"
+            android:clipToPadding="false"
+            android:scrollbarStyle="outsideOverlay"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/btn_ok"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="@dimen/spacing_medium">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/spacing_large">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_permission_explain"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="54dp"
-                android:layout_marginEnd="28dp"
+                android:layout_marginStart="@dimen/common_side_margin_20dp"
+                android:layout_marginTop="@dimen/spacing_xxxlarge"
+                android:layout_marginEnd="@dimen/common_side_margin_20dp"
                 android:fontFamily="@font/pretendard_medium_font_family"
                 android:lineSpacingExtra="7sp"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="24sp"
-                android:translationY="-3.68sp"
+                android:textSize="@dimen/text_xxlarge"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintWidth_default="percent"
+                app:layout_constraintWidth_percent="0.9"
                 tools:text="@string/permission_title" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_camera"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="17dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.06"
+                android:layout_marginStart="@dimen/common_side_margin_20dp"
                 android:layout_marginTop="36dp"
                 android:src="@drawable/ic_camera"
                 app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +68,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_camera"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_medium"
                 app:layout_constraintStart_toEndOf="@+id/iv_camera"
                 app:layout_constraintTop_toTopOf="@+id/iv_camera" />
 
@@ -73,7 +80,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_select"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_camera"
                 app:layout_constraintStart_toEndOf="@+id/tv_camera" />
 
@@ -86,17 +93,19 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_camera_comment"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_camera"
                 app:layout_constraintTop_toBottomOf="@+id/tv_camera" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_picture"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="24dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.06"
+                android:layout_marginStart="@dimen/common_side_margin_20dp"
+                android:layout_marginTop="@dimen/spacing_large"
                 android:src="@drawable/ic_picture"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_camera_comment" />
@@ -109,7 +118,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_picture"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_medium"
                 app:layout_constraintStart_toEndOf="@+id/iv_picture"
                 app:layout_constraintTop_toTopOf="@+id/iv_picture" />
 
@@ -121,7 +130,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_select"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_picture"
                 app:layout_constraintStart_toEndOf="@+id/tv_picture" />
 
@@ -134,17 +143,19 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_picture_comment"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_picture"
                 app:layout_constraintTop_toBottomOf="@+id/tv_picture" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_biometric_auth"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="24dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.06"
+                android:layout_marginStart="@dimen/common_side_margin_20dp"
+                android:layout_marginTop="@dimen/spacing_large"
                 android:src="@drawable/ic_biometric_auth_24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_picture_comment" />
@@ -157,7 +168,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_biometric_auth"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_medium"
                 app:layout_constraintStart_toEndOf="@+id/iv_biometric_auth"
                 app:layout_constraintTop_toTopOf="@+id/iv_biometric_auth" />
 
@@ -169,7 +180,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_select"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintBaseline_toBaselineOf="@+id/tv_biometric_auth"
                 app:layout_constraintStart_toEndOf="@+id/tv_biometric_auth" />
 
@@ -182,17 +193,19 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_biometric_auth_comment"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_biometric_auth"
                 app:layout_constraintTop_toBottomOf="@+id/tv_biometric_auth_select" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_notification"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="24dp"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintWidth_percent="0.06"
+                android:layout_marginStart="@dimen/common_side_margin_20dp"
+                android:layout_marginTop="@dimen/spacing_large"
                 android:src="@drawable/ic_notification"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_biometric_auth_comment" />
@@ -205,7 +218,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_notification"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="16sp"
+                android:textSize="@dimen/text_medium"
                 app:layout_constraintStart_toEndOf="@+id/iv_notification"
                 app:layout_constraintTop_toTopOf="@+id/iv_notification" />
 
@@ -217,7 +230,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_select"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_notification"
                 app:layout_constraintStart_toEndOf="@+id/tv_notification" />
 
@@ -230,7 +243,7 @@
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_notification_comment"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="13sp"
+                android:textSize="@dimen/text_small"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/tv_notification"
                 app:layout_constraintTop_toBottomOf="@+id/tv_notification_select" />
@@ -239,12 +252,12 @@
                 android:id="@+id/tv_permission_comment_dot"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="17dp"
-                android:layout_marginTop="45dp"
+                android:layout_marginStart="@dimen/common_side_margin_20dp"
+                android:layout_marginTop="@dimen/spacing_xxxlarge"
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/common_dot"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_notification_comment" />
 
@@ -253,11 +266,11 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="6dp"
-                android:layout_marginEnd="54dp"
+                android:layout_marginEnd="@dimen/common_side_margin_20dp"
                 android:fontFamily="@font/pretendard_regular_font_family"
                 android:text="@string/permission_comment"
                 android:textColor="@color/text_black_14181B_100"
-                android:textSize="14sp"
+                android:textSize="@dimen/text_normal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tv_permission_comment_dot"
                 app:layout_constraintTop_toTopOf="@+id/tv_permission_comment_dot" />
@@ -267,7 +280,7 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/btn_ok"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_side_margin_20dp"
             android:layout_marginEnd="@dimen/common_side_margin_20dp"
@@ -276,12 +289,14 @@
             android:paddingTop="16dp"
             android:paddingBottom="16dp"
             android:text="@string/common_confirm"
-            android:textAlignment="center"
+            android:gravity="center"
             android:textColor="@color/white"
             android:textSize="16sp"
+            android:elevation="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.9" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

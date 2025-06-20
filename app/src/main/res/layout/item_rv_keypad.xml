@@ -9,39 +9,60 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:background="@color/text_sky_30C6E8_100"
+        android:layout_height="wrap_content"
+        android:padding="6dp"
         >
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_keypad_number"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="0"
-            android:textSize="24sp"
-            android:textColor="@color/white"
-            android:fontFamily="@font/pretendard_regular_font_family"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_keypad_number_container"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_keypad_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginStart="50dp"
-            android:layout_marginEnd="50dp"
-            android:visibility="gone"
             tools:visibility="visible"
-            />
+            android:visibility="gone">
+            
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_keypad_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                tools:text="0"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/pretendard_medium_font_family"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+                
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/iv_keypad_del"
-            android:layout_width="31dp"
-            android:layout_height="31dp"
-            android:src="@drawable/ic_del_white_31dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_keypad_del_container"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/bg_keypad_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:visibility="gone"
-            />
+            android:visibility="gone">
+            
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_keypad_del"
+                android:layout_width="31dp"
+                android:layout_height="31dp"
+                android:src="@drawable/ic_del_white_31dp"
+                app:tint="@color/black"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+                
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -1146,7 +1146,7 @@
     <string name="permission_notification">알림</string>
     <string name="permission_notification_comment">Push 알림</string>
     <string name="permission_select">(선택)</string>
-    <string name="permission_comment">권한을 허용하지 않으도 STIP 서비스 이용이 가능합니다.</string>
+    <string name="permission_comment">권한을 허용하지 않아도 STIP 이용이 가능합니다.</string>
 
     <string name="login_stip">회원가입</string>
     <string name="login_later">나중에 로그인 하시겠어요?</string>

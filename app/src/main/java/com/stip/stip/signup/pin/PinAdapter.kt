@@ -29,9 +29,9 @@ class PinAdapter(
             val itemData = itemList[position]
 
             if (itemData) {
-                GlideUtils.loadImage(binding.ivPinDot, R.drawable.ic_dot_sky_11dp)
+                binding.ivPinDot.setBackgroundResource(R.drawable.bg_pin_filled_circle)
             } else {
-                GlideUtils.loadImage(binding.ivPinDot, R.drawable.ic_dot_gray_11dp)
+                binding.ivPinDot.setBackgroundResource(R.drawable.bg_pin_empty_circle)
             }
         }
     }

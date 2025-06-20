@@ -10,16 +10,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <View
             android:id="@+id/iv_pin_dot"
-            android:layout_width="11dp"
-            android:layout_height="11dp"
-            android:src="@drawable/ic_dot_sky_11dp"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:background="@drawable/bg_pin_empty_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="16dp"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

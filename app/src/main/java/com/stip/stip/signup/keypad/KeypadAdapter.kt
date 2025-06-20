@@ -30,17 +30,23 @@ class KeypadAdapter(
             val itemData = itemList[position]
 
             if (itemData.iconRes == null) {
-                binding.ivKeypadDel.visibility = View.GONE
-                binding.tvKeypadNumber.visibility = View.VISIBLE
+                binding.clKeypadDelContainer.visibility = View.GONE
+                binding.clKeypadNumberContainer.visibility = View.VISIBLE
 
                 when(itemData.type) {
-                    KeypadType.NUMBER -> binding.tvKeypadNumber.text = itemData.value
-                    KeypadType.SHUFFLE -> binding.tvKeypadNumber.text = binding.root.context.getString(R.string.common_re_order)
+                    KeypadType.NUMBER -> {
+                        binding.tvKeypadNumber.text = itemData.value
+                        binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(android.R.color.black))
+                    }
+                    KeypadType.SHUFFLE -> {
+                        binding.tvKeypadNumber.text = itemData.value // "↻" 아이콘 사용
+                        binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(android.R.color.black))
+                    }
                     else -> {}
                 }
             } else {
-                binding.ivKeypadDel.visibility = View.VISIBLE
-                binding.tvKeypadNumber.visibility = View.GONE
+                binding.clKeypadDelContainer.visibility = View.VISIBLE
+                binding.clKeypadNumberContainer.visibility = View.GONE
             }
 
             binding.root.setOnClickListener {
@@ -52,7 +58,7 @@ class KeypadAdapter(
     fun shuffleNumbers() {
         val numberItems = itemList.filter { it.type == KeypadType.NUMBER }.shuffled() // 0~9 숫자 모두 섞기
         val fixedItems = listOf(
-            KeypadItem("재배열", KeypadType.SHUFFLE),
+            KeypadItem("↻", KeypadType.SHUFFLE), // 아이콘 사용
             numberItems.first(), // 섞인 숫자 중 첫 번째 값을 "0" 자리에 고정
             KeypadItem("", KeypadType.DELETE, R.drawable.ic_del_white_31dp)
         )
