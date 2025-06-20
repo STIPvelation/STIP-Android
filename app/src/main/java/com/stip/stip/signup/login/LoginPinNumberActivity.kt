@@ -245,13 +245,33 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
 
             // 테스트용 PIN "123456" 추가 - 모든 PIN 검증 과정 생략하고 바로 로그인
             if (currentPinInput == "123456") {
-                android.util.Log.d("LoginPin", "테스트 PIN 입력 감지 - 직접 로그인 진행")
+                android.util.Log.d("LoginPin", "테스트 PIN 입력 감지 - 전체 액세스 허용 로그인 진행")
                 pinAttemptCount = 0
                 
-                // API 호출 생략하고 직접 로그인 처리
+                // 모든 필요한 인증 관련 정보와 토큰 저장
+                val testToken = "test_token_123456_full_access"
+                val testDi = "test_di_123456"
+                val testName = "Test User"
+                val testPhone = "010-1234-5678"
+                
+                // 핀 번호 저장
                 PreferenceUtil.putString(Constants.PREF_KEY_PIN_VALUE, currentPinInput)
-                PreferenceUtil.putString(Constants.PREF_KEY_AUTH_TOKEN_VALUE, "test_token_123456")
-                android.util.Log.d("LoginPin", "테스트 로그인 성공 - 메인 화면으로 이동")
+                
+                // 인증 토큰 저장
+                PreferenceUtil.putString(Constants.PREF_KEY_AUTH_TOKEN_VALUE, testToken)
+                
+                // DI 값 저장 (중요: 모든 API 호출에 필요)
+                PreferenceUtil.putString(Constants.PREF_KEY_DI_VALUE, testDi)
+                
+                // 그 외 추가 필요한 정보 저장
+                PreferenceUtil.putString("user_name", testName)
+                PreferenceUtil.putString("user_phone", testPhone)
+                
+                // 생체인증 사용 허용 설정
+                val sharedPrefBio = getSharedPreferences("security_pref", android.content.Context.MODE_PRIVATE)
+                sharedPrefBio.edit().putBoolean("biometric_enabled", true).apply()
+                
+                android.util.Log.d("LoginPin", "테스트 로그인 완료 - 모든 기능 액세스 활성화 - 메인 화면으로 이동")
                 
                 // 메인 화면으로 이동
                 com.stip.stip.MainActivity.startMainActivity(this@LoginPinNumberActivity)

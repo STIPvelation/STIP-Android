@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -10,38 +9,16 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:background="@color/white"
+        >
 
-        <!-- Guidelines for responsive positioning -->
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_horizontal_top"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.05" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.06" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline_vertical_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.94" />
-
-        <!-- Header section with responsive spacing -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_header_section"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
-            app:layout_constraintTop_toTopOf="@id/guideline_horizontal_top">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
@@ -73,11 +50,13 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- PIN Guide with responsive spacing and text sizing -->
+
+        <!-- PIN Dots with responsive positioning -->
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_pin_guide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
             android:fontFamily="@font/pretendard_regular_font_family"
             android:text="PIN 번호 6자리를 입력해주세요"
             android:textColor="#8A8A8F"
@@ -87,38 +66,40 @@
             app:autoSizeTextType="uniform"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.497"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_header_section"
-            app:layout_constraintVertical_bias="0.15" />
+            app:layout_constraintVertical_bias="0.04" />
 
-        <!-- PIN Dots with responsive positioning -->
+        <!-- Biometric Login Button - Responsive width and height -->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_password"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
             android:orientation="horizontal"
             android:paddingStart="10dp"
             android:paddingEnd="10dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tv_pin_guide"
-            app:layout_constraintBottom_toTopOf="@+id/cl_biometric_btn_container"
-            app:layout_constraintVertical_bias="0.2" />
+            app:layout_constraintVertical_bias="0.05" />
 
-        <!-- Biometric Login Button - Responsive width and height -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_biometric_btn_container"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:background="@drawable/round_stroke_sky_solid_white_radius_4dp"
+            android:layout_marginTop="20dp"
             app:layout_constraintBottom_toTopOf="@+id/tv_forget_password"
             app:layout_constraintDimensionRatio="H,7:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.65"
+            app:layout_constraintTop_toBottomOf="@+id/rv_password"
+            app:layout_constraintVertical_bias="0.9"
             app:layout_constraintWidth_percent="0.75">
 
             <!-- Icon and text container for center alignment -->
@@ -170,6 +151,9 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- PIN Forgot Password Link with responsive spacing -->
+
+        <!-- Hidden switch for data binding -->
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_forget_password"
             android:layout_width="wrap_content"
@@ -183,10 +167,10 @@
             app:autoSizeMinTextSize="12sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cl_biometric_btn_container" />
 
-        <!-- Hidden switch for data binding -->
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switch_basic_login"
             android:layout_width="0dp"
@@ -198,14 +182,14 @@
         <!-- Keypad with responsive sizing and positioning -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_number"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="44dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/guideline_vertical_end"
-            app:layout_constraintHeight_percent="0.35"
-            app:layout_constraintStart_toStartOf="@id/guideline_vertical_start"
-            app:layout_constraintVertical_bias="0.95"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:spanCount="3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

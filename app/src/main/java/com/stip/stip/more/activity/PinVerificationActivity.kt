@@ -155,6 +155,49 @@ class PinVerificationActivity : AppCompatActivity() {
     }
 
     private fun verifyPin() {
+        // 테스트용 PIN "123456" 추가 - 모든 PIN 검증 과정 생략하고 바로 처리
+        if (currentPin == "123456") {
+            android.util.Log.d("PinVerification", "테스트 PIN 입력 감지 - 직접 검증 통과 처리")
+            
+            // 새 PIN 설정인 경우 성공 처리
+            if (isSettingNewPin) {
+                PreferenceUtil.putString(Constants.PREF_KEY_PIN_VALUE, currentPin)
+                android.util.Log.d("PinVerification", "테스트 PIN으로 새 PIN 설정 완료")
+                
+                runOnUiThread {
+                    // 성공 메시지 표시 후 종료 - 커스텀 다이얼로그 사용
+                    CustomContentDialog(this@PinVerificationActivity) {
+                        finish()
+                    }.setText("성공", "PIN 번호가 변경되었습니다.", "", "확인", false)
+                }
+                return
+            } else if (isPinChange) {
+                // PIN 변경 목적일 경우 새 PIN 입력 화면으로 이동
+                android.util.Log.d("PinVerification", "테스트 PIN으로 PIN 변경 화면으로 이동")
+                val intent = Intent(this@PinVerificationActivity, PinVerificationActivity::class.java)
+                intent.putExtra("is_setting_new_pin", true)
+                startActivity(intent)
+                finish()
+                return
+            } else if (isBiometricSetup) {
+                // 생체인증 설정 목적일 경우 즉시 성공 처리
+                android.util.Log.d("PinVerification", "테스트 PIN으로 생체인증 활성화")
+                val sharedPrefBio = getSharedPreferences("security_pref", android.content.Context.MODE_PRIVATE)
+                sharedPrefBio.edit().putBoolean("biometric_enabled", true).apply()
+                Toast.makeText(this@PinVerificationActivity, "생체인증 정보 사용이 활성화되었습니다.", Toast.LENGTH_SHORT).show()
+                finish()
+                return
+            } else {
+                // 일반 접근 목적일 경우 회원 정보 화면으로 즉시 이동
+                android.util.Log.d("PinVerification", "테스트 PIN으로 일반 접근 허용")
+                val resultIntent = Intent()
+                resultIntent.putExtra("pin_verified", true)
+                setResult(RESULT_OK, resultIntent)
+                finish()
+                return
+            }
+        }
+        
         // di 값 가져오기 - 실제로는 로그인한 회원의 di 값을 사용해야 함
         val memberDi = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
         if (memberDi.isBlank()) {
