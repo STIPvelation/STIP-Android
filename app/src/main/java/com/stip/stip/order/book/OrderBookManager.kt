@@ -98,14 +98,12 @@ class OrderBookManager(
     private fun updateOrderBook() {
         try {
             val currentPrice = getCurrentPrice()
-            if (currentPrice <= 0f) {
-                Log.w(TAG, "Current price is invalid ($currentPrice), submitting empty list.")
-                orderBookAdapter.updateData(emptyList(), 0f)
-                return
-            }
-
-            Log.d(TAG, "Updating order book with currentPrice: $currentPrice, aggregation: $currentAggregationLevel")
-            val rawList = generateDummyOrderBook(currentPrice, this.fixedTwoDecimalFormatter, this.numberParseFormat)
+            // 현재가격이 0 이하여도 더미 데이터를 보여줄 수 있게 변경
+            val effectivePrice = if (currentPrice <= 0f) 0f else currentPrice
+            
+            Log.d(TAG, "Updating order book with currentPrice: $effectivePrice, aggregation: $currentAggregationLevel")
+            // 항상 데이터 생성 (빈 리스트 반환 안 함)
+            val rawList = generateDummyOrderBook(0f, fixedTwoDecimalFormatter, numberParseFormat)
             val aggregatedList = if (this.currentAggregationLevel > 0.0) {
                 generateAggregatedOrderBook(rawList, this.currentAggregationLevel)
             } else {
@@ -117,21 +115,32 @@ class OrderBookManager(
 
             val gapItem = OrderBookItem(price = "", quantity = "", isBuy = false, percent = "", isGap = true)
 
-            // 매도/매수 각각 30개로 고정 패딩, isBuy 명확히
+            // 항상 매도/매수 각각 정확히 30개씩 표시
             val FIXED_SELL_SIZE = 30
             val FIXED_BUY_SIZE = 30
 
+            // 패딩 함수 - 빈 아이템으로 채우기
             fun topPad(list: List<OrderBookItem>, total: Int, isBuy: Boolean): List<OrderBookItem> {
-                val padSize = total - list.size
+                val padSize = (total - list.size).coerceAtLeast(0) // 음수 방지
                 return List(padSize) { OrderBookItem(isBuy = isBuy) } + list
             }
             fun bottomPad(list: List<OrderBookItem>, total: Int, isBuy: Boolean): List<OrderBookItem> {
-                val padSize = total - list.size
+                val padSize = (total - list.size).coerceAtLeast(0) // 음수 방지
                 return list + List(padSize) { OrderBookItem(isBuy = isBuy) }
             }
 
-            val paddedSells = topPad(sortedSells, FIXED_SELL_SIZE, false)
-            val paddedBuys = bottomPad(sortedBuys, FIXED_BUY_SIZE, true)
+            // 정확히 30개씩 맞춤 (앞/뒤로 패딩)
+            val paddedSells = if (sortedSells.size > FIXED_SELL_SIZE) {
+                sortedSells.take(FIXED_SELL_SIZE)
+            } else {
+                topPad(sortedSells, FIXED_SELL_SIZE, false)
+            }
+            
+            val paddedBuys = if (sortedBuys.size > FIXED_BUY_SIZE) {
+                sortedBuys.take(FIXED_BUY_SIZE)
+            } else {
+                bottomPad(sortedBuys, FIXED_BUY_SIZE, true)
+            }
 
             val listWithGap = mutableListOf<OrderBookItem>().apply {
                 addAll(paddedSells)
@@ -151,14 +160,16 @@ class OrderBookManager(
             }
             // --- ▲▲▲ 로그 추가 ▲▲▲ ---
 
-            orderBookAdapter.updateData(listWithGap, currentPrice)
+            orderBookAdapter.updateData(listWithGap, 0f)
             // 항상 gap(중앙) 인덱스를 기준으로 중앙 스크롤
             recyclerView.post { scrollToCenter() }
 
         } catch (e: Exception) {
             Log.e(TAG, "Error updating order book data", e)
             try {
-                orderBookAdapter.updateData(emptyList(), getCurrentPrice())
+                val price = getCurrentPrice()
+                val effectivePrice = if (price <= 0f) 100f else price
+                orderBookAdapter.updateData(emptyList(), effectivePrice)
             } catch (adapterError: Exception) {
                 Log.e(TAG, "Error clearing adapter data", adapterError)
             }
@@ -247,45 +258,53 @@ class OrderBookManager(
         fixedTwoDecimalFormatter: DecimalFormat,
         numberParseFormat: DecimalFormat
     ): List<OrderBookItem> {
-        if (currentPrice <= 0f) return emptyList()
         val sellOrders = mutableListOf<OrderBookItem>()
         val buyOrders = mutableListOf<OrderBookItem>()
-        val step = when {
-            currentPrice < 1f -> 0.001f; currentPrice < 10f -> 0.01f
-            currentPrice < 100f -> 0.1f; currentPrice < 1000f -> 0.5f
-            else -> 1.0f
-        }.coerceAtLeast(0.001f)
-        val numOrdersPerSide = 30
-        val random = Random()
+        val numOrdersPerSide = 30  // Always generate exactly 30 orders per side
 
+        // Generate exactly 30 sell orders with empty values
         for (i in numOrdersPerSide downTo 1) {
-            val price = currentPrice + i * step
-            val quantity = random.nextDouble() * 50 + 10
-            val percent = if (currentPrice > 0) ((price - currentPrice) / currentPrice) * 100 else 0.0
             sellOrders.add(
                 OrderBookItem(
-                    price = fixedTwoDecimalFormatter.format(price.toDouble()),
-                    percent = String.format(Locale.US, "+%.2f%%", percent),
-                    quantity = fixedTwoDecimalFormatter.format(quantity),
+                    price = "",   // Empty price
+                    percent = "", // Empty percent
+                    quantity = "", // Empty quantity
                     isBuy = false
                 )
             )
         }
+
+        // Generate exactly 30 buy orders with empty values
         for (i in 1..numOrdersPerSide) {
-            val price = (currentPrice - i * step).coerceAtLeast(step)
-            if (price <= 0) continue
-            val quantity = random.nextDouble() * 40 + 8
-            val percent = if (currentPrice > 0) ((price - currentPrice) / currentPrice) * 100 else 0.0
             buyOrders.add(
                 OrderBookItem(
-                    price = fixedTwoDecimalFormatter.format(price.toDouble()),
-                    percent = String.format(Locale.US, "%.2f%%", percent),
-                    quantity = fixedTwoDecimalFormatter.format(quantity),
+                    price = "",   // Empty price
+                    percent = "", // Empty percent
+                    quantity = "", // Empty quantity
                     isBuy = true
                 )
             )
         }
-        // 정렬은 updateOrderBook 에서 최종적으로 수행하므로 여기서는 제거 가능 (또는 유지)
+        
+        // Ensure we have exactly 30 orders on each side
+        while (sellOrders.size < numOrdersPerSide) {
+            sellOrders.add(OrderBookItem(
+                price = "",   // Empty price
+                percent = "", // Empty percent
+                quantity = "", // Empty quantity
+                isBuy = false
+            ))
+        }
+        
+        while (buyOrders.size < numOrdersPerSide) {
+            buyOrders.add(OrderBookItem(
+                price = "",   // Empty price
+                percent = "", // Empty percent
+                quantity = "", // Empty quantity
+                isBuy = true
+            ))
+        }
+        
         return sellOrders + buyOrders
     }
 
@@ -331,8 +350,12 @@ class OrderBookManager(
     fun initializeAndStart() {
         Log.d(TAG, "Initializing Order Book...")
         setupRecyclerView()
+        // 초기화와 동시에 데이터 즉시 로드
         updateOrderBook() // 초기 데이터 로드 및 어댑터 업데이트
         recyclerView.post { scrollToCenter() } // 데이터 설정 후 스크롤
+        
+        // 자동 업데이트 즉시 시작
+        startAutoUpdate()
     }
 
     private fun parseDouble(value: String?): Double {

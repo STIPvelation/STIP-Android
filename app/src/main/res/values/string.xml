@@ -278,7 +278,7 @@
     <string name="rise_ip_4_code">(WETALK/USD)</string>
 
     <string name="rise_ip_5_name">준원지비아이</string>
-    <string name="rise_ip_5_code">(JWV/USD)</string>
+    <string name="rise_ip_5_code">TICKER/USD</string>
 
 
     <string name="ip_toon_title">IP툰</string>
@@ -672,7 +672,7 @@
     <string name="ticker_iject">IJECT</string>
     <string name="ticker_wetalk">WETALK</string>
     <string name="ticker_mdm">MDM</string>
-    <string name="ticker_jwv">JWV</string>
+    <string name="ticker_jwv"></string>
     <string name="ticker_kcot">KCOT</string>
 
     <string name="ticker_movie_shiri">MOVIE 쉬리</string>

@@ -52,10 +52,9 @@ class SignUpAuthNiceFragment :
 
     private fun resumeWebView() {
         try {
-            if (::binding.isInitialized && binding.webView != null) {
-                binding.webView.resumeTimers()
-                binding.webView.onResume()
-            }
+            // Removed redundant condition check
+            binding.webView.resumeTimers()
+            binding.webView.onResume()
         } catch (e: Exception) {
             Log.e(TAG, "WebView resume failed: ${e.message}")
         }
@@ -69,10 +68,9 @@ class SignUpAuthNiceFragment :
 
     private fun pauseWebView() {
         try {
-            if (::binding.isInitialized && binding.webView != null) {
-                binding.webView.pauseTimers()
-                binding.webView.onPause()
-            }
+            // Removed redundant condition check
+            binding.webView.pauseTimers()
+            binding.webView.onPause()
         } catch (e: Exception) {
             Log.e(TAG, "WebView pause failed: ${e.message}")
         }
@@ -85,13 +83,12 @@ class SignUpAuthNiceFragment :
 
     private fun cleanupWebView() {
         try {
-            if (::binding.isInitialized && binding.webView != null) {
-                binding.webView.stopLoading()
-                binding.webView.clearHistory()
-                binding.webView.clearCache(true)
-                binding.webView.clearFormData()
-                binding.webView.destroy()
-            }
+            // Removed redundant condition check
+            binding.webView.stopLoading()
+            binding.webView.clearHistory()
+            binding.webView.clearCache(true)
+            binding.webView.clearFormData()
+            binding.webView.destroy()
         } catch (e: Exception) {
             Log.e(TAG, "WebView cleanup failed: ${e.message}")
         }

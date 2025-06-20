@@ -87,28 +87,27 @@ class SignUpAuthNiceViewModel @Inject constructor(
 
                 // 회원 정보 저장
                 // TODO: 더미 유저 정보
-                if (data != null) {
-                    // SharedPreference에 회원 정보 저장
-//                    val memberInfo = MemberInfo(
-//                        name = data.name,
-//                        // MemberInfo에는 email 필드가 필요하지만 MemberData에없으므로 빈 값 사용
-//                        email = "user@example.com",
-//                        phone = data.phoneNumber,
-//                        memberId = data.memberNumber
-//                    )
-//                    // TODO: saveMemberInfo
-//                    PreferenceUtil.saveMemberInfo(memberInfo)
+                // Removed redundant null check
+                // SharedPreference에 회원 정보 저장
+//                val memberInfo = MemberInfo(
+//                    name = data.name,
+//                    // MemberInfo에는 email 필드가 필요하지만 MemberData에없으므로 빈 값 사용
+//                    email = "user@example.com",
+//                    phone = data.phoneNumber,
+//                    memberId = data.memberNumber
+//                )
+//                // TODO: saveMemberInfo
+//                PreferenceUtil.saveMemberInfo(memberInfo)
 
-                    // TODO: saveToken
-                    // JWT 토큰 저장 - API 응답에서 가져올 토큰이 없으니면 임시 토큰 생성
-                    val dummyToken =
-                        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6XCIke2RhdGEubWVtYmVyTnVtYmVyfVwiLCJpYXQiOjE2NTE4MzAyMDh9"
-//                    PreferenceUtil.saveToken(dummyToken)
-//                    val dummyToken =
-//                    // 토큰 저장 - API 응답에서 가져온 토큰 사용
-//                    PreferenceUtil.saveToken(data.token) // 실제 API 응답에 토큰이 포함되면 해당 값 사용
-//                    PreferenceUtil.saveToken(dummyToken)
-                }
+                // TODO: saveToken
+                // JWT 토큰 저장 - API 응답에서 가져올 토큰이 없으니면 임시 토큰 생성
+                val dummyToken =
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJtZW1iZXJJZCI6XCIke2RhdGEubWVtYmVyTnVtYmVyfVwiLCJpYXQiOjE2NTE4MzAyMDh9"
+//                PreferenceUtil.saveToken(dummyToken)
+//                val dummyToken =
+//                // 토큰 저장 - API 응답에서 가져온 토큰 사용
+//                PreferenceUtil.saveToken(data.token) // 실제 API 응답에 토큰이 포함되면 해당 값 사용
+//                PreferenceUtil.saveToken(dummyToken)
             }.onError {
                 Log.e("SignUpAuthNice", "Error fetching member info")
                 // API 호출 실패

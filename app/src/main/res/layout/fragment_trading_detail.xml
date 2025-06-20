@@ -39,9 +39,9 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:text="@string/common_label"
+            android:text=""
             android:includeFontPadding="false"
-            tools:text="Company Name (TICK/USD)" />
+            tools:text="" />
     </LinearLayout>
 
 
