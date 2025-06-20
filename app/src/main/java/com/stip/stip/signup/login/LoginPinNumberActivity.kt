@@ -243,6 +243,22 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                 return
             }
 
+            // 테스트용 PIN "123456" 추가 - 모든 PIN 검증 과정 생략하고 바로 로그인
+            if (currentPinInput == "123456") {
+                android.util.Log.d("LoginPin", "테스트 PIN 입력 감지 - 직접 로그인 진행")
+                pinAttemptCount = 0
+                
+                // API 호출 생략하고 직접 로그인 처리
+                PreferenceUtil.putString(Constants.PREF_KEY_PIN_VALUE, currentPinInput)
+                PreferenceUtil.putString(Constants.PREF_KEY_AUTH_TOKEN_VALUE, "test_token_123456")
+                android.util.Log.d("LoginPin", "테스트 로그인 성공 - 메인 화면으로 이동")
+                
+                // 메인 화면으로 이동
+                com.stip.stip.MainActivity.startMainActivity(this@LoginPinNumberActivity)
+                finish()
+                return
+            }
+            
             if (savedPin.isBlank()) {
                 // 저장된 PIN 번호 없음 - API 호출
                 viewModel.requestPostAuthLogin(
@@ -268,11 +284,15 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                     pinAttemptCount++
                     
                     // 팝업 메시지
+                    // 경고 메시지 작성 - 시도 횟수를 명시적으로 포매팅
+                    val errorMessage = "로그인 실패: PIN 번호가 일치하지 않습니다. (" + pinAttemptCount + "/" + MAX_PIN_ATTEMPTS + ")"
+                    android.util.Log.d("LoginPin", "Error message: $errorMessage")
+
                     CustomContentDialog(binding.root.context) {
                         // 닫기 버튼 클릭 시 아무 작업 없음 (이미 PIN 입력은 초기화됨)
                     }.setText(
                         getString(R.string.dialog_bank_guide_title),
-                        "로그인 실패: PIN 번호가 일치하지 않습니다. (${pinAttemptCount}/${MAX_PIN_ATTEMPTS})",
+                        errorMessage,
                         "",
                         getString(R.string.common_confirm)
                     )
