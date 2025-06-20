@@ -16,6 +16,7 @@ import com.stip.stip.signup.keypad.KeypadAdapter
 import com.stip.stip.signup.keypad.KeypadItem
 import com.stip.stip.signup.keypad.KeypadType
 import com.stip.stip.signup.model.RequestAuthLogin
+import com.stip.stip.model.MemberInfo
 import com.stip.stip.signup.pin.PinAdapter
 import com.stip.stip.signup.signup.SignUpActivity
 import com.stip.stip.signup.utils.PreferenceUtil
@@ -249,7 +250,7 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                 pinAttemptCount = 0
                 
                 // 모든 필요한 인증 관련 정보와 토큰 저장
-                val testToken = "test_token_123456_full_access"
+                val testToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTYiLCJkaXNwbGF5X25hbWUiOiJUZXN0VXNlciIsImlhdCI6MTY1MDAwMDAwMH0.8PA01KGmpsKtUJMdALBErk8qv2QAjBj2J-dzfK_iUYA" 
                 val testDi = "test_di_123456"
                 val testName = "Test User"
                 val testPhone = "010-1234-5678"
@@ -257,25 +258,55 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                 // 핀 번호 저장
                 PreferenceUtil.putString(Constants.PREF_KEY_PIN_VALUE, currentPinInput)
                 
-                // 인증 토큰 저장
+                // 인증 토큰 저장 (표준 JWT 베어러 토큰 형식으로 저장)
+                // PREF_KEY_AUTH_TOKEN_VALUE에 저장 및 두 가지 하위 호환성을 위해 추가 저장
                 PreferenceUtil.putString(Constants.PREF_KEY_AUTH_TOKEN_VALUE, testToken)
+                
+                // MainActivity에서 사용하는 인증 토큰 키에도 저장 (KEY_JWT_TOKEN)
+                PreferenceUtil.saveToken(testToken)
                 
                 // DI 값 저장 (중요: 모든 API 호출에 필요)
                 PreferenceUtil.putString(Constants.PREF_KEY_DI_VALUE, testDi)
+                PreferenceUtil.saveMemberDi(testDi)
                 
                 // 그 외 추가 필요한 정보 저장
                 PreferenceUtil.putString("user_name", testName)
-                PreferenceUtil.putString("user_phone", testPhone)
+                PreferenceUtil.putString("user_phone", "01012345678")
+                PreferenceUtil.putString("user_email", "test@example.com")
+
+                // MemberInfo 데이터 클래스에 맞게 새로운 미리 정의된 회원 정보 생성
+                val memberInfo = MemberInfo(
+                    name = testName,
+                    englishFirstName = "Test",
+                    englishLastName = "User",
+                    telecomProvider = "SKT",
+                    phoneNumber = "01012345678",
+                    birthdate = "1990-01-01",
+                    email = "test@example.com",
+                    bankCode = "004",
+                    accountNumber = "123456789",
+                    address = "서울특별시 강남구",
+                    addressDetail = "테헤란로 123",
+                    postalCode = "06134",
+                    isDirectAccount = true,
+                    usagePurpose = "INVESTMENT",
+                    sourceOfFunds = "SALARY", 
+                    job = "개발자",
+                    id = "12345"
+                )
                 
-                // 생체인증 사용 허용 설정
-                val sharedPrefBio = getSharedPreferences("security_pref", android.content.Context.MODE_PRIVATE)
-                sharedPrefBio.edit().putBoolean("biometric_enabled", true).apply()
+                // PreferenceUtil의 회원 정보 저장 메소드를 사용하여 저장
+                // 이것은 MainActivity와 모든 모듈에서 사용하는 회원 정보 검색 메소드와 일치
+                PreferenceUtil.saveMemberInfo(memberInfo)
                 
                 android.util.Log.d("LoginPin", "테스트 로그인 완료 - 모든 기능 액세스 활성화 - 메인 화면으로 이동")
                 
-                // 메인 화면으로 이동
-                com.stip.stip.MainActivity.startMainActivity(this@LoginPinNumberActivity)
-                finish()
+                // ipasset과 morefragment 기능을 위해 MainActivity에 로그인 완료 플래그 전달
+                // MainActivity에서 이 플래그를 확인하고 UI 상태를 갱신함
+                val mainIntent = Intent(this@LoginPinNumberActivity, com.stip.stip.MainActivity::class.java)
+                mainIntent.putExtra("FROM_LOGIN", true)
+                startActivity(mainIntent)
+                finish() // 로그인 화면 종료
                 return
             }
             

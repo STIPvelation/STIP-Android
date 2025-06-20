@@ -182,14 +182,14 @@
         <!-- Keypad with responsive sizing and positioning -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_number"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginBottom="44dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.9"
             app:spanCount="3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
