@@ -225,15 +225,14 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
             val enteredPin = pinInput.toString()
             val di = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
 
-            // DI 값이 비어있어도 로그인 기능 허용 (휴대폰 인증 건너뛰기)
+            // 핀 검증 전 입력 버퍼 미리 초기화 (중요: 이후 검증 결과에 관계없이 입력은 항상 초기화)
+            val currentPinInput = enteredPin // 임시 저장
+            pinInput.setLength(0) // 입력 버퍼 초기화
+            pinAdapter.updatePinCount(0) // 화면 PIN 점들 초기화
 
             // 최대 시도 횟수 확인
             if (pinAttemptCount >= MAX_PIN_ATTEMPTS) {
-                // 5회 이상 시도했으뭴 오류 표시
-                CustomContentDialog(
-                    binding.root.context
-                ) {
-                    // PIN 번호 잘못입력 한계 도달 시 휴대폰 인증 화면으로 이동
+                CustomContentDialog(binding.root.context) {
                     finish()
                 }.setText(
                     getString(R.string.dialog_bank_guide_title),
@@ -245,62 +244,38 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
             }
 
             if (savedPin.isBlank()) {
-                // 저장된 PIN 번호 없음
-                // API 호출
+                // 저장된 PIN 번호 없음 - API 호출
                 viewModel.requestPostAuthLogin(
                     RequestAuthLogin(
                         di = di,
-                        pin = enteredPin
+                        pin = currentPinInput
                     )
                 )
             } else {
-                if (enteredPin == savedPin) {
+                if (currentPinInput == savedPin) {
                     // PIN 번호 일치 - 성공
-                    // 시도 횟수 초기화
-                    pinAttemptCount = 0
-
+                    pinAttemptCount = 0  // 시도 횟수 초기화
+                    
                     // 로그인 API 호출
                     viewModel.requestPostAuthLogin(
                         RequestAuthLogin(
                             di = di,
-                            pin = enteredPin
+                            pin = currentPinInput
                         )
                     )
                 } else {
-                    // PIN 번호 불일치 - 시도 횟수 증가
+                    // PIN 불일치 - 시도 횟수 증가 및 오류 메시지 표시
                     pinAttemptCount++
-
-                    val attemptCount = pinAttemptCount
-                    if (attemptCount < MAX_PIN_ATTEMPTS) {
-                        // 시도 횟수를 팝업으로 표시 (1/5, 2/5 등)
-                        CustomContentDialog(
-                            binding.root.context
-                        ) {
-                            // PIN 번호 다시 입력할 수 있도록 아무 동작 없음
-                        }.setText(
-                            getString(R.string.dialog_bank_guide_title),
-                            "PIN 번호가 일치하지 않습니다.\n(${attemptCount}/${MAX_PIN_ATTEMPTS})",
-                            "",
-                            getString(R.string.common_confirm)
-                        )
-                        android.util.Log.e("LoginPinNumber", "PIN 번호 불일치 발생 - 시도 횟수: $attemptCount/$MAX_PIN_ATTEMPTS")
-                    } else {
-                        android.util.Log.e("LoginPinNumber", "PIN 번호 불일치 발생!!!투투")
-                        // 마지막 시도 실패
-                        CustomContentDialog(
-                            binding.root.context
-                        ) {
-                            // PIN 번호 잘못입력 한계 도달 시 휴대폰 인증 화면으로 이동
-                            finish()
-                        }.setText(
-                            getString(R.string.dialog_bank_guide_title),
-                            "PIN 번호를 5회 이상 잘못 입력하셨습니다. 휴대폰 인증을 통해 다시 시도해주세요.",
-                            "",
-                            getString(R.string.common_confirm)
-                        )
-                    }
-                    pinInput.clear()
-                    pinAdapter.updatePinCount(0)
+                    
+                    // 팝업 메시지
+                    CustomContentDialog(binding.root.context) {
+                        // 닫기 버튼 클릭 시 아무 작업 없음 (이미 PIN 입력은 초기화됨)
+                    }.setText(
+                        getString(R.string.dialog_bank_guide_title),
+                        "로그인 실패: PIN 번호가 일치하지 않습니다. (${pinAttemptCount}/${MAX_PIN_ATTEMPTS})",
+                        "",
+                        getString(R.string.common_confirm)
+                    )
                 }
             }
         }

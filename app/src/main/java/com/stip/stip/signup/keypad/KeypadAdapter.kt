@@ -40,7 +40,8 @@ class KeypadAdapter(
                     }
                     KeypadType.SHUFFLE -> {
                         binding.tvKeypadNumber.text = itemData.value // "↻" 아이콘 사용
-                        binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(android.R.color.black))
+                        binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(R.color.main_point))
+                        binding.tvKeypadNumber.textSize = 16f // 작은 크기
                     }
                     else -> {}
                 }

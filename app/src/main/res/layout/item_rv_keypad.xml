@@ -56,7 +56,7 @@
                 android:layout_width="31dp"
                 android:layout_height="31dp"
                 android:src="@drawable/ic_del_white_31dp"
-                app:tint="@color/black"
+                app:tint="@color/main_point"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

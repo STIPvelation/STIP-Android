@@ -40,4 +40,10 @@ class PinAdapter(
         itemList = List(itemList.size) { it < count }.toMutableList()
         notifyDataSetChanged()
     }
+    
+    // 모든 PIN 점을 초기화하는 새 메소드
+    fun resetAllPins() {
+        itemList = MutableList(itemList.size) { false }
+        notifyDataSetChanged()
+    }
 }
