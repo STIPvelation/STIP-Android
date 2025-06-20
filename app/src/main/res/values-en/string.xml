@@ -15,7 +15,7 @@
 
     <string name="common_number">00.00</string>
     <string name="common_label">Company Name</string>
-    <string name="common_usd_ticker">(AAA/USD)</string>
+    <string name="common_usd_ticker">AAA/USD</string>
     <string name="common_percent_format">00.00%</string>
 
     <string name="date_month_format">%1$d.%2$02d</string>
@@ -671,19 +671,19 @@
 
     <string name="rise_ip_1_name">FT</string> <!-- ✅ 올바른 표현 -->
 
-    <string name="rise_ip_1_code">(MDM/USD)</string>
+    <string name="rise_ip_1_code">MDM/USD</string>
 
     <string name="rise_ip_2_name">ContentsWever</string>
-    <string name="rise_ip_2_code">(AXNO/USD)</string>
+    <string name="rise_ip_2_code">AXNO/USD</string>
 
     <string name="rise_ip_3_name">Korea Bio Center</string>
-    <string name="rise_ip_3_code">(CDM/USD)</string>
+    <string name="rise_ip_3_code">CDM/USD</string>
 
     <string name="rise_ip_4_name">Dooree Inc.</string>
-    <string name="rise_ip_4_code">(WETALK/USD)</string>
+    <string name="rise_ip_4_code">WETALK/USD</string>
 
     <string name="rise_ip_5_name">Junwon GBI</string>
-    <string name="rise_ip_5_code">(JWV/USD)</string>
+    <string name="rise_ip_5_code">JWV/USD</string>
 
 
 
@@ -860,7 +860,7 @@
     <string name="date_6months">6 Months</string>
     <string name="date_1year">1 Year</string>
     <string name="mdm_label">MDM</string>
-    <string name="mdm_usd_ticker">(MDM/USD)</string>
+    <string name="mdm_usd_ticker">MDM/USD</string>
     <string name="mdm_percent_format">00.00%</string>
     <string name="stip_index_text">STIP Index</string>
     <string name="stip_index_today">Today</string>

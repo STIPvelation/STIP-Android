@@ -127,7 +127,7 @@ class OrderHistoryManager(
         val allDummyUnfilledOrders = listOf(
             UnfilledOrder("dummy_unfilled_1", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "AXNO", "매수", "--", "15.50", "100.00", "50.00", "14:20:05"),
             UnfilledOrder("dummy_unfilled_2", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "MSK", "매도", "30.00", "31.00", "20.00", "10.00", "11:15:30"),
-            UnfilledOrder("dummy_unfilled_3", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "JWV", "매수", "--", "15.40", "200.00", "200.00", "09:05:10"),
+            UnfilledOrder("dummy_unfilled_3", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "", "매수", "--", "15.40", "200.00", "200.00", "09:05:10"),
             UnfilledOrder("dummy_unfilled_4", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "MDM", "매도", "--", "19.30", "80.00", "40.00", "10:45:00"),
             UnfilledOrder("dummy_unfilled_5", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "CDM", "매수", "--", "14.10", "120.00", "60.00", "13:12:15")
         )
@@ -147,7 +147,7 @@ class OrderHistoryManager(
         val dummyFilledOrders = listOf(
             IpInvestmentItem("매수", "AXNO", "12.00", "10.50", "126.00", "0.00", "126.00", "14:21:00", "2025.04.24 14:22"),
             IpInvestmentItem("매도", "CDM", "8.00", "11.00", "88.00", "0.00", "88.00", "13:11:00", "2025.04.24 13:12"),
-            IpInvestmentItem("매수", "JWV", "5.50", "12.75", "70.12", "0.00", "70.12", "11:20:00", "2025.04.24 11:21")
+            IpInvestmentItem("매수", "", "5.50", "12.75", "70.12", "0.00", "70.12", "11:20:00", "2025.04.24 11:21")
         )
         val randomCount = try { Random().nextInt(dummyFilledOrders.size + 1) } catch (e: Exception) { 2 }
         val randomizedList = dummyFilledOrders.shuffled().take(randomCount)

@@ -287,7 +287,7 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
             DipHoldingitem("WETALK", 10, 5.0, 52.5, 50.0, 2.5, 5.0),
             DipHoldingitem("MDM", 20, 2.5, 49.0, 50.0, -1.0, -2.0),
             DipHoldingitem("CDM", 5, 10.0, 55.0, 50.0, 5.0, 10.0),
-            DipHoldingitem("JWV", 5, 10.0, 55.0, 50.0, 5.0, 10.0)
+            DipHoldingitem("", 5, 10.0, 55.0, 50.0, 5.0, 10.0)
 
         )
         val totalBuy = holdings.sumOf { it.totalBuyAmount }

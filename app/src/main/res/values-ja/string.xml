@@ -15,7 +15,7 @@
 
     <string name="common_number">00.00</string>
     <string name="common_label">会社名</string>
-    <string name="common_usd_ticker">(AAA/USD)</string>
+    <string name="common_usd_ticker">AAA/USD</string>
     <string name="common_percent_format">00.00%</string>
 
     <string name="menu_order">注文</string>
@@ -423,19 +423,19 @@
     <string name="rate_eur_usd">EUR/USD</string>
 
     <string name="rise_ip_1_name">アフティ＆シー</string>
-    <string name="rise_ip_1_code">(MDM/USD)</string>
+    <string name="rise_ip_1_code">MDM/USD</string>
 
     <string name="rise_ip_2_name">コンテンツウェバー</string>
-    <string name="rise_ip_2_code">(AXNO/USD)</string>
+    <string name="rise_ip_2_code">AXNO/USD</string>
 
     <string name="rise_ip_3_name">韓国生物研究所</string>
-    <string name="rise_ip_3_code">(CDM/USD)</string>
+    <string name="rise_ip_3_code">CDM/USD</string>
 
     <string name="rise_ip_4_name">(株)ドゥレ</string>
-    <string name="rise_ip_4_code">(WETALK/USD)</string>
+    <string name="rise_ip_4_code">WETALK/USD</string>
 
     <string name="rise_ip_5_name">ジュンウォンGBI</string>
-    <string name="rise_ip_5_code">(JWV/USD)</string>
+    <string name="rise_ip_5_code">JWV/USD</string>
 
     <string name="ip_toon_title">IPマンガ</string>
     <string name="ip_swap_title">IPスワップ</string>
@@ -845,7 +845,7 @@
     <string name="date_6months">6ヶ月</string>
     <string name="date_1year">1年</string>
     <string name="mdm_label">MDM</string>
-    <string name="mdm_usd_ticker">(MDM/USD)</string>
+    <string name="mdm_usd_ticker">MDM/USD</string>
     <string name="mdm_percent_format">00.00%</string>
     <string name="stip_index_text">STIPインデックス</string>
     <string name="stip_index_today">今日</string>

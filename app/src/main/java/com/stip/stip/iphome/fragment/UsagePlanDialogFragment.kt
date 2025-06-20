@@ -162,7 +162,7 @@ class UsagePlanDialogFragment : DialogFragment() {
 
     // --- generateCenterSpannableText 함수 수정: RelativeSizeSpan 주석 처리 확인 ---
     private fun generateCenterSpannableText(): SpannableString {
-        val s = SpannableString("JWV")
+        val s = SpannableString("")
         // 스타일 적용 (Bold 만 적용)
         // s.setSpan(RelativeSizeSpan(1.7f), 0, s.length, 0) // 이 줄은 주석 처리하거나 삭제 (setCenterTextSize 사용)
         s.setSpan(StyleSpan(Typeface.BOLD), 0, s.length, 0)

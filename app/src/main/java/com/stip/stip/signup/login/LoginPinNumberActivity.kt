@@ -79,7 +79,7 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                 }
             }.setText(
                 getString(R.string.dialog_bank_guide_title),
-                "휴대폰 인증이 필요합니다. 휴대폰 인증 후 다시 시도해주세요.",
+                "휴대폰 인증이 필요합니다.인증 후 다시 시도해주세요.",
                 "",
                 getString(R.string.common_confirm)
             )
@@ -211,7 +211,7 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                     binding.root.context
                 ) {}.setText(
                     getString(R.string.dialog_bank_guide_title),
-                    "휴대폰 인증이 필요합니다. 휴대폰 인증 후 다시 시도해주세요.",
+                    "휴대폰 인증이 필요합니다.인증 후 다시 시도해주세요.",
                     "",
                     getString(R.string.common_confirm)
                 )

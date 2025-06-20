@@ -19,7 +19,7 @@
     <!-- 공통 숫자 -->
     <string name="common_number">00.00</string>
     <string name="common_label">회사이름</string>
-    <string name="common_usd_ticker">(AAA/USD)</string>
+    <string name="common_usd_ticker">AAA/USD</string>
     <string name="common_percent_format">00.00%</string>
 
 
@@ -266,16 +266,16 @@
     <string name="rate_eur_usd">EUR/USD</string>
 
     <string name="rise_ip_1_name">애프티앤씨</string>
-    <string name="rise_ip_1_code">(MDM/USD)</string>
+    <string name="rise_ip_1_code">MDM/USD</string>
 
     <string name="rise_ip_2_name">콘텐츠웨워</string>
-    <string name="rise_ip_2_code">(AXNO/USD)</string>
+    <string name="rise_ip_2_code">AXNO/USD</string>
 
     <string name="rise_ip_3_name">한국생직본부</string>
-    <string name="rise_ip_3_code">(CDM/USD)</string>
+    <string name="rise_ip_3_code">CDM/USD</string>
 
     <string name="rise_ip_4_name">(주)두레</string>
-    <string name="rise_ip_4_code">(WETALK/USD)</string>
+    <string name="rise_ip_4_code">WETALK/USD</string>
 
     <string name="rise_ip_5_name">준원지비아이</string>
     <string name="rise_ip_5_code">TICKER/USD</string>
@@ -836,7 +836,7 @@
 
 
     <string name="mdm_label">애프티앤씨</string>
-    <string name="mdm_usd_ticker">(MDM/USD)</string>
+    <string name="mdm_usd_ticker">MDM/USD</string>
     <string name="mdm_percent_format">00.00%</string>
 
 
