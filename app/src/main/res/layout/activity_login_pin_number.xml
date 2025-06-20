@@ -61,7 +61,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cl_header_section"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -73,7 +73,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tv_pin_guide"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="20dp"
             />
 
         <!-- 생체인증 로그인 버튼 -->
@@ -85,7 +85,7 @@
             app:layout_constraintTop_toBottomOf="@+id/rv_password"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="25dp"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp">
             
@@ -171,7 +171,7 @@
             app:spanCount="3"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="24dp"
-            android:layout_marginBottom="56dp"
+            android:layout_marginBottom="40dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

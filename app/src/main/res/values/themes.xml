@@ -13,9 +13,12 @@
 
     <!-- ✅ 시스템 스플래시 제거용: IntroActivity 전용 -->
     <style name="Theme.NoSplash" parent="Theme.Material3.Light.NoActionBar">
-        <item name="android:windowSplashScreenAnimatedIcon">@null</item>
-        <item name="android:windowSplashScreenBackground">@android:color/white</item>
-        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+        <item name="android:windowSplashScreenBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@color/sky_30C6E8_90</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
 
