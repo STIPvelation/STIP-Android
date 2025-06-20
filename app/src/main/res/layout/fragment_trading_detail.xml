@@ -174,6 +174,7 @@
                     style="@style/DefaultTextStyle_12"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="@string/volume_24h_label"
@@ -189,12 +190,13 @@
                     android:fontFeatureSettings="tnum"
                     android:gravity="end"
                     android:includeFontPadding="false"
-                    android:letterSpacing="0"
+                    android:letterSpacing="-0.02"
                     android:text="@string/common_number"
                     android:maxLines="1"
-                    android:minWidth="60dp"
+                    android:minWidth="70dp"
                     android:ellipsize="end"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -210,6 +212,7 @@
                     style="@style/DefaultTextStyle_12"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="@string/high_price_24h_label"
@@ -226,12 +229,13 @@
                     android:fontFeatureSettings="tnum"
                     android:gravity="end"
                     android:includeFontPadding="false"
-                    android:letterSpacing="0"
+                    android:letterSpacing="-0.02"
                     android:text="@string/common_number"
                     android:maxLines="1"
-                    android:minWidth="60dp"
+                    android:minWidth="70dp"
                     android:ellipsize="end"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -247,6 +251,7 @@
                     style="@style/DefaultTextStyle_12"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="24dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1"
                     android:text="@string/low_price_24h_label"
@@ -263,12 +268,13 @@
                     android:fontFeatureSettings="tnum"
                     android:gravity="end"
                     android:includeFontPadding="false"
-                    android:letterSpacing="0"
+                    android:letterSpacing="-0.02"
                     android:text="@string/common_number"
                     android:maxLines="1"
-                    android:minWidth="60dp"
+                    android:minWidth="70dp"
                     android:ellipsize="end"
-                    android:textAlignment="viewEnd" />
+                    android:textAlignment="viewEnd"
+                    android:textSize="11sp" />
             </LinearLayout>
         </LinearLayout>
 

@@ -188,7 +188,7 @@ class TradingFragment : Fragment(), InfoTabListener {
 
 
     private fun setupTopInfoAndPriceData() {
-        binding.textCompanyName.text = "${companyName ?: ""} (${currentTicker ?: ""}/USD)"
+        binding.textCompanyName.text = "${companyName ?: ""} ${currentTicker ?: ""}/USD"
         binding.icArrowIcon.setOnClickListener { activity?.onBackPressedDispatcher?.onBackPressed() }
         // TODO: more_options_icon 리스너
 
@@ -317,7 +317,7 @@ class TradingFragment : Fragment(), InfoTabListener {
         companyName = targetItem.companyName
 
         // ⬆️ 헤더 정보 업데이트
-        binding.textCompanyName.text = "${companyName ?: ""} (${currentTicker ?: ""}/USD)"
+        binding.textCompanyName.text = "${companyName ?: ""} ${currentTicker ?: ""}/USD"
         displayPriceInfo(targetItem)
 
         // ⬇️ 현재 childFragment에 티커 업데이트 전달
