@@ -110,7 +110,7 @@ class MoreFragment : Fragment() {
         // 정책 및 약관 카드 클릭 리스너
         binding.cardPolicy.setOnClickListener {
             // 정책 및 약관 화면으로 이동
-            Toast.makeText(requireContext(), "정책 및 약관 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
+            navigateTo(MorePolicyFragment(), "정책 및 약관")
         }
         
         binding.cardEsgPolicy.setOnClickListener {

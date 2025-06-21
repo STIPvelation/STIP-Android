@@ -16,7 +16,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreLoginHistoryBinding
 import com.stip.stip.more.adapter.LoginHistoryAdapter
-import com.stip.stip.more.model.LoginHistoryItem
+import com.stip.stip.more.api.LoginHistoryItem
 import com.stip.stip.signup.Constants
 import com.stip.stip.signup.login.LoginActivity
 import com.stip.stip.signup.utils.PreferenceUtil
