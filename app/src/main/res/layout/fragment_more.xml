@@ -18,40 +18,71 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardBackgroundColor="#F9FCFF"
-            app:cardElevation="1dp">
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@android:color/transparent"
+            app:cardElevation="0dp">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/gradient_profile_card_stroke" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/profile_section"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingHorizontal="20dp"
-                android:paddingVertical="20dp">
+                android:paddingTop="0dp"
+                android:paddingBottom="2dp">
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/imageViewProfile"
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_profile"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/profile_image_container"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:shapeAppearanceOverlay="@style/CircleImageView"
-                    android:background="#48C3F0"
-                    app:tint="#FFFFFF" />
+                    app:layout_constraintBottom_toBottomOf="parent">
 
-                <ImageView
-                    android:id="@+id/imageViewEdit"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:background="@drawable/circle_bg"
-                    android:padding="5dp"
-                    android:src="@drawable/ic_edit"
-                    app:layout_constraintBottom_toBottomOf="@+id/imageViewProfile"
-                    app:layout_constraintEnd_toEndOf="@+id/imageViewProfile" />
+                    <View
+                        android:id="@+id/profileImageBackground"
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:background="@drawable/gradient_profile_bg"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:id="@+id/imageViewProfile"
+                        android:layout_width="32dp"
+                        android:layout_height="32dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/ic_profile"
+                        app:layout_constraintStart_toStartOf="@+id/profileImageBackground"
+                        app:layout_constraintTop_toTopOf="@+id/profileImageBackground"
+                        app:layout_constraintEnd_toEndOf="@+id/profileImageBackground"
+                        app:layout_constraintBottom_toBottomOf="@+id/profileImageBackground"
+                        app:shapeAppearanceOverlay="@style/CircleImageView"
+                        android:background="@drawable/gradient_profile_image_bg"
+                        app:strokeColor="@color/transparent"
+                        app:strokeWidth="0dp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewEdit"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:background="@drawable/gradient_edit_button"
+                        android:padding="3dp"
+                        android:src="@drawable/ic_edit"
+                        android:elevation="3dp"
+                        app:tint="#FFFFFF"
+                        app:layout_constraintBottom_toBottomOf="@+id/profileImageBackground"
+                        app:layout_constraintEnd_toEndOf="@+id/profileImageBackground"
+                        android:translationX="0dp"
+                        android:translationY="0dp" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <TextView
                     android:id="@+id/textViewName"
@@ -59,70 +90,110 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:text="김지민"
-                    android:textColor="@color/black"
-                    android:textSize="18sp"
+                    android:textColor="#232D3F"
+                    android:textSize="20sp"
                     android:textStyle="bold"
+                    android:fontFamily="@font/pretendard_medium"
                     app:layout_constraintBottom_toTopOf="@+id/textViewIdContainer"
                     app:layout_constraintEnd_toStartOf="@+id/imageViewArrow"
-                    app:layout_constraintStart_toEndOf="@+id/imageViewProfile"
-                    app:layout_constraintTop_toTopOf="@+id/imageViewProfile"
+                    app:layout_constraintStart_toEndOf="@+id/profile_image_container"
+                    app:layout_constraintTop_toTopOf="@+id/profile_image_container"
                     app:layout_constraintVertical_chainStyle="packed" />
 
                 <LinearLayout
                     android:id="@+id/textViewIdContainer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:layout_marginTop="1dp"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     app:layout_constraintStart_toStartOf="@+id/textViewName"
-                    app:layout_constraintTop_toBottomOf="@+id/textViewName"
-                    android:layout_marginTop="4dp">
+                    app:layout_constraintTop_toBottomOf="@+id/textViewName">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ID"
+                        android:textColor="#FFFFFF"
+                        android:textSize="9sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/pretendard_medium"
+                        android:background="@drawable/bg_id_badge"
+                        android:paddingHorizontal="4dp"
+                        android:paddingVertical="1dp" />
 
                     <TextView
                         android:id="@+id/textViewId"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ID 123456789"
-                        android:textColor="#888888"
-                        android:textSize="14sp" />
+                        android:text="123456789"
+                        android:textColor="#6E7491"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/pretendard_regular"
+                        android:layout_marginStart="4dp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/statusContainer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="2dp"
+                    app:layout_constraintStart_toStartOf="@+id/textViewIdContainer"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewIdContainer">
 
                     <View
                         android:layout_width="8dp"
                         android:layout_height="8dp"
-                        android:background="@drawable/circle_status_active"
-                        android:layout_marginStart="8dp" />
+                        android:background="@drawable/circle_status_active" />
 
                     <TextView
                         android:id="@+id/textViewStatus"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginStart="3dp"
                         android:text="활동 중"
-                        android:textColor="#4CAF50"
-                        android:textSize="14sp"
-                        android:layout_marginStart="4dp" />
+                        android:textColor="#6E7491"
+                        android:textSize="12sp"
+                        android:fontFamily="@font/pretendard_regular" />
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/imageViewArrow"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_chevron_right"
-                    app:tint="#CCCCCC"
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardArrowContainer"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="#F5F8FC"
+                    app:cardElevation="0dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent" />
+                    app:layout_constraintBottom_toBottomOf="parent">
+
+                    <ImageView
+                        android:id="@+id/imageViewArrow"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#A0A5BA" />
+                </androidx.cardview.widget.CardView>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:background="#F4F7FC" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:baselineAligned="false"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="16dp"
-            android:layout_marginHorizontal="16dp">
+            android:padding="16dp"
+            android:background="@color/white">
 
             <LinearLayout
                 android:id="@+id/textViewPriceAlert"
@@ -137,25 +208,33 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardBackgroundColor="#4CAF50"
+                    android:layout_marginBottom="12dp"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
+                    app:cardElevation="4dp">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_bell"
-                        app:tint="#FFFFFF" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_green">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="18dp"
+                            android:src="@drawable/ic_bell"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="시세알림"
-                    android:textColor="#000000"
-                    android:textSize="14sp" />
+                    android:textColor="#232D3F"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/pretendard_medium" />
             </LinearLayout>
 
             <LinearLayout
@@ -171,25 +250,33 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardBackgroundColor="#2196F3"
+                    android:layout_marginBottom="12dp"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
+                    app:cardElevation="4dp">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_settings"
-                        app:tint="#FFFFFF" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_blue">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="18dp"
+                            android:src="@drawable/ic_settings"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="모드설정"
-                    android:textColor="#000000"
-                    android:textSize="14sp" />
+                    android:textColor="#232D3F"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/pretendard_medium" />
             </LinearLayout>
 
             <LinearLayout
@@ -205,368 +292,378 @@
                 <androidx.cardview.widget.CardView
                     android:layout_width="64dp"
                     android:layout_height="64dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardBackgroundColor="#673AB7"
+                    android:layout_marginBottom="12dp"
                     app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
+                    app:cardElevation="4dp">
 
-                    <ImageView
-                        android:layout_width="28dp"
-                        android:layout_height="28dp"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_lock"
-                        app:tint="#FFFFFF" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/gradient_purple">
+
+                        <ImageView
+                            android:layout_width="28dp"
+                            android:layout_height="28dp"
+                            android:layout_gravity="center"
+                            android:layout_margin="18dp"
+                            android:src="@drawable/ic_lock"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="보안/인증"
-                    android:textColor="#000000"
-                    android:textSize="14sp" />
+                    android:textColor="#232D3F"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/pretendard_medium" />
             </LinearLayout>
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="#F4F7FC" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:layout_marginBottom="16dp"
+            android:text="IP 엔터테인먼트"
+            android:gravity="center"
+            android:textColor="#232D3F"
+            android:textSize="19sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/pretendard_medium" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:rowCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false"
+            android:useDefaultMargins="false"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="16dp"
+            android:paddingTop="4dp">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardIpToon"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/gradient_card_icon_blue"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@drawable/ic_ip_toon_modern"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IP웹툰"
+                            android:textColor="#232D3F"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/pretendard_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="웹툰 즐기기"
+                            android:textColor="#6E7491"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#A0A5BA" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardIpAuction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/gradient_card_icon_red"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@drawable/ic_ip_auction_modern"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IP옥션"
+                            android:textColor="#232D3F"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/pretendard_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IP 획득"
+                            android:textColor="#6E7491"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#A0A5BA" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardIpSwap"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/gradient_card_icon_purple"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@drawable/ic_ip_swap_modern"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IP스왑"
+                            android:textColor="#232D3F"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/pretendard_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="기술 스왑"
+                            android:textColor="#6E7491"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#A0A5BA" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardIpDonation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_rowWeight="1"
+                android:layout_columnWeight="1"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_margin="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/gradient_card_icon_yellow"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@drawable/ic_ip_donation_modern"
+                            app:tint="#FFFFFF" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="IP기부"
+                            android:textColor="#232D3F"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/pretendard_medium" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="기부 IP공유"
+                            android:textColor="#6E7491"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/pretendard_regular"
+                            android:layout_marginTop="2dp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_chevron_right"
+                        app:tint="#A0A5BA" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+        </GridLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="#F4F7FC" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="8dp"
+            android:background="#F4F7FC" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
+            android:layout_marginStart="18dp"
             android:layout_marginBottom="12dp"
-            android:text="IP 엔터테인먼트"
-            android:textColor="@color/black"
+            android:text="정책 및 약관"
+            android:textColor="#232D3F"
             android:textSize="19sp"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:textStyle="bold" />
 
-        <LinearLayout
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingHorizontal="16dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp">
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardIpToon"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="16dp">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            app:cardCornerRadius="14dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#4285F4">
-
-                            <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_ip_toon_modern"
-                                app:tint="#FFFFFF" />
-                        </androidx.cardview.widget.CardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="IP웹툰"
-                                android:textColor="@color/black"
-                                android:textSize="17sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="웹툰을 즐기세요"
-                                android:textColor="#888888"
-                                android:textSize="14sp"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#CCCCCC" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardIpAuction"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="16dp">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            app:cardCornerRadius="14dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#34A853">
-
-                            <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_ip_auction_modern"
-                                app:tint="#FFFFFF" />
-                        </androidx.cardview.widget.CardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="IP옥션"
-                                android:textColor="@color/black"
-                                android:textSize="17sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="경매로 IP를 획득하세요"
-                                android:textColor="#888888"
-                                android:textSize="14sp"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#CCCCCC" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginBottom="10dp">
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardIpSwap"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="16dp">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            app:cardCornerRadius="14dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#7B5AF0">
-
-                            <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_ip_swap_modern"
-                                app:tint="#FFFFFF" />
-                        </androidx.cardview.widget.CardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="IP스왑"
-                                android:textColor="@color/black"
-                                android:textSize="17sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="기존 스왑을 시작하세요"
-                                android:textColor="#888888"
-                                android:textSize="14sp"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#CCCCCC" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardIpDonation"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="5dp"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="0dp"
-                    app:cardBackgroundColor="#FFFFFF">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical"
-                        android:padding="16dp">
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="52dp"
-                            android:layout_height="52dp"
-                            app:cardCornerRadius="14dp"
-                            app:cardElevation="0dp"
-                            app:cardBackgroundColor="#FBBC05">
-
-                            <ImageView
-                                android:layout_width="26dp"
-                                android:layout_height="26dp"
-                                android:layout_gravity="center"
-                                android:src="@drawable/ic_headset"
-                                app:tint="#FFFFFF" />
-                        </androidx.cardview.widget.CardView>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical"
-                            android:layout_marginStart="16dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="IP기부"
-                                android:textColor="@color/black"
-                                android:textSize="17sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="기부로 IP를 공유하세요"
-                                android:textColor="#888888"
-                                android:textSize="14sp"
-                                android:layout_marginTop="2dp" />
-                        </LinearLayout>
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:src="@drawable/ic_chevron_right"
-                            app:tint="#CCCCCC" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="#F4F7FC" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginVertical="16dp"
-            android:src="@drawable/ic_logo_color"
-            android:scaleType="fitCenter" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="#F4F7FC" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/white"
+            android:clipToPadding="false"
             android:paddingHorizontal="16dp"
-            android:paddingTop="16dp">
+            android:scrollbars="none"
+            android:overScrollMode="never">
 
-            <HorizontalScrollView
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scrollbars="none">
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:paddingVertical="8dp">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardPolicy"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardPolicy"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_blue"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
@@ -574,35 +671,41 @@
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_document"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="정책 및 약관"
-                            android:textColor="@color/black"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardEsgPolicy"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardEsgPolicy"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_green"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
@@ -610,35 +713,41 @@
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_leaf"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="ESG 정책"
-                            android:textColor="@color/black"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStartupPolicy"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardStartupPolicy"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_red"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
@@ -646,35 +755,41 @@
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_building"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="스타트업 지원 정책"
-                            android:textColor="@color/black"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardAmlPolicy"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardAmlPolicy"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_purple"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
@@ -682,35 +797,41 @@
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_lock_shield"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="AML 정책"
-                            android:textColor="@color/black"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardDipPolicy"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardDipPolicy"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_blue"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
@@ -718,35 +839,41 @@
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_chart"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="DIP 평가 기준"
-                            android:textColor="@color/black"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardFeePolicy"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardFeePolicy"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:layout_marginEnd="12dp"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_yellow"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
@@ -754,96 +881,143 @@
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
                                 android:src="@drawable/ic_card"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="수수료 정책"
-                            android:textColor="@color/black"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardStipvelation"
+                    android:layout_width="110dp"
+                    android:layout_height="130dp"
+                    android:layout_marginEnd="12dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="3dp">
 
                     <LinearLayout
-                        android:id="@+id/cardStipvelation"
-                        android:layout_width="100dp"
-                        android:layout_height="120dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:gravity="center"
-                        android:padding="8dp"
-                        android:background="@drawable/card_policy_background">
+                        android:padding="14dp"
+                        android:background="@drawable/gradient_card_blue">
 
-                        <androidx.cardview.widget.CardView
+                        <LinearLayout
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            app:cardCornerRadius="24dp"
-                            app:cardBackgroundColor="#F0F8FC"
-                            app:cardElevation="0dp"
+                            android:background="@drawable/gradient_card_icon_green"
+                            android:gravity="center"
                             android:layout_marginBottom="12dp">
 
                             <ImageView
                                 android:layout_width="22dp"
                                 android:layout_height="22dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_external_link"
-                                android:tint="#30C6E8" />
-                        </androidx.cardview.widget.CardView>
+                                android:src="@drawable/ic_person"
+                                app:tint="#FFFFFF" />
+                        </LinearLayout>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="STIPvelation"
-                            android:textColor="@color/black"
+                            android:text="STIP벨레이션"
+                            android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
                             android:maxLines="2" />
                     </LinearLayout>
-                </LinearLayout>
-            </HorizontalScrollView>
-
-            <TextView
-                android:id="@+id/textViewAppVersion"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="앱 버전 1.00"
-                android:textColor="#6E7491"
-                android:textSize="14sp"
-                android:layout_marginTop="12dp"
-                android:layout_marginBottom="16dp" />
-        </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </HorizontalScrollView>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:background="#F4F7FC" />
+            android:layout_height="8dp"
+            android:background="#F4F7FC"
+            android:layout_marginTop="16dp" />
 
-        <View
+        <TextView
+            android:id="@+id/textViewAppVersion"
             android:layout_width="match_parent"
-            android:layout_height="20dp" />
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textSize="13sp"
+            android:textColor="#6E7491"
+            android:text="버전 1.0.0" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/buttonCustomerCenter"
-            style="@style/Widget.MaterialComponents.Button"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardCustomerCenter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginBottom="24dp"
-            android:paddingVertical="16dp"
-            android:text="고객센터"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:background="@drawable/button_gradient"
-            app:backgroundTint="@null"
-            app:cornerRadius="24dp"
-            app:elevation="4dp"
-            app:icon="@drawable/ic_headset"
-            app:iconGravity="textStart"
-            app:iconPadding="12dp"
-            app:iconSize="24dp"
-            app:iconTint="@color/white" />
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical"
+                android:background="@drawable/gradient_card_blue">
+
+                <LinearLayout
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/gradient_card_icon_blue"
+                    android:gravity="center"
+                    android:layout_marginEnd="16dp">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_headset"
+                        app:tint="#FFFFFF" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1">
+                    <TextView
+                        android:id="@+id/textCustomerCenter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="고객센터"
+                        android:textColor="#232D3F"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="문의사항이 있으시면 연락하세요"
+                        android:textColor="#6E7491"
+                        android:textSize="12sp"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/ic_chevron_right"
+                    app:tint="#A0A5BA" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
 
         <View
             android:layout_width="match_parent"

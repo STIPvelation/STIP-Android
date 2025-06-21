@@ -144,7 +144,7 @@ class MoreFragment : Fragment() {
         }
         
         // 고객센터 버튼 클릭 리스너
-        binding.buttonCustomerCenter.setOnClickListener {
+        binding.cardCustomerCenter.setOnClickListener {
             navigateTo(MoreCustomerCenterFragment(), "고객센터")
         }
     }
