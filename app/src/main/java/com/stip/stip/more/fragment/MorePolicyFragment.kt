@@ -139,9 +139,28 @@ class MorePolicyFragment : Fragment() {
         return if (keywordMatches.isNotEmpty()) {
             keywordMatches.maxByOrNull { it.second }?.first ?: 0
         } else {
+            0 // 매칭이 없으면 기본값 0 반환
+        }
+    }
+    
+    // 두 문자열 간의 키워드 일치도 계산
+    private fun calculateMatchScore(str1: String, str2: String): Int {
+        // 핵심 키워드 추출
+        val keywords1 = str1.split(Regex("\\s+|및|\\("))
+            .filter { it.length > 1 } // 짧은 단어 필터링
+        val keywords2 = str2.split(Regex("\\s+|및|\\("))
+            .filter { it.length > 1 }
         
-        // 최적의 매칭이 있으면 해당 인덱스 반환, 없으면 기본값 0 반환
-        return bestMatch?.first ?: 0
+        var score = 0
+        
+        // 키워드 교차 일치 점수
+        for (keyword in keywords1) {
+            if (keywords2.any { it.contains(keyword, ignoreCase = true) || keyword.contains(it, ignoreCase = true) }) {
+                score += keyword.length // 키워드 길이에 비례한 점수 부여
+            }
+        }
+        
+        return score
     }
     
     // TextView 찾기 헬퍼 함수
