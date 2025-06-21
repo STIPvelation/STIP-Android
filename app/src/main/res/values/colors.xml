@@ -3,7 +3,12 @@
     <color name="color_tab_active">#FFFFFF</color>
     <color name="color_tab_inactive">#14181B</color>
 
-    #9DEDFF
+    <!-- Gray colors -->
+    <color name="gray_700">#616161</color>
+    <color name="gray_600">#757575</color>
+    <color name="gray_500">#9E9E9E</color>
+    <color name="black">#000000</color>
+    
     <color name="color_trading_inactive">#9DEDFF</color>
     <color name="color_main_point">#30C6E8</color>
     <color name="main_point">#30C6E8</color>
@@ -146,7 +151,7 @@
     <color name="color_box_under">#DEDEDE</color>
 
 
-    <color name="black">#DEDEDE</color> <!-- 오늘 날짜 테두리용 (선택) -->
+    <color name="border_gray">#DEDEDE</color> <!-- 오늘 날짜 테두리용 (선택) -->
 
 
     <color name="color_buy_red">#FF5252</color>
