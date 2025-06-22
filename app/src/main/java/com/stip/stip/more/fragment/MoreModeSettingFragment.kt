@@ -50,12 +50,18 @@ class MoreModeSettingFragment : Fragment() {
 
         val sharedPref = requireContext().getSharedPreferences("mode_pref", Context.MODE_PRIVATE)
         val keepScreenOn = sharedPref.getBoolean("keep_screen_on", false)
-
+        
+        // 꺼짐 방지 모드 초기값 설정
         binding.switchScreenOn.isChecked = keepScreenOn
         setKeepScreenOnFlag(keepScreenOn)
+        
+        // 스위치 XML에 MaterialSwitch가 사용되었으며, 테마 색상이 자동으로 적용됩니다
+        // 추가 스타일링은 필요한 경우 res/color 폴더에 ColorStateList XML을 정의하여 사용할 수 있음
+        
         binding.switchScreenOn.setOnCheckedChangeListener { _, isChecked ->
             sharedPref.edit().putBoolean("keep_screen_on", isChecked).apply()
             setKeepScreenOnFlag(isChecked)
+            // 토글 상태 변경만으로 자동 스타일링 적용
         }
 
         binding.switchDisplayNormal.apply {

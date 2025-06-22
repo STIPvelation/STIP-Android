@@ -499,13 +499,13 @@
     <string name="security_auth_screen_title">보안 / 인증</string>
 
     <string name="pin_change_title">PIN 비밀번호 변경</string>
-    <string name="pin_change_desc">PIN 비밀번호 분실 시 STIP 로그인을 처음부터\n다시 진행해야 합니다.</string>
+    <string name="pin_change_desc">PIN번호 분실 시 휴대폰인증 필요.</string>
 
     <string name="biometric_auth_title">생체인증 정보 사용</string>
-    <string name="biometric_auth_desc">생체인증 정보를 사용하여 본인 확인.\n지문인식 사용</string>
+    <string name="biometric_auth_desc">생체인증 정보 본인 확인</string>
 
     <string name="overseas_login_block_title">해외 로그인 차단</string>
-    <string name="overseas_login_block_desc">국내외의 로그인 시도 시 로그인을 제한\n하도록 합니다.</string>
+    <string name="overseas_login_block_desc">국내외 로그인을 제한 합니다.</string>
 
     <string name="login_history_title">로그인 이력</string>
     <string name="login_history_desc">유저의 로그인 이력 확인</string>
@@ -1540,8 +1540,8 @@
 
     <string name="network_value">네트워크 정보 (예: 이더리움)</string>
     <string name="transaction_id_value">0x123abc456def789...</string>
-    <string name="login_history_title_manage">로그인 관리</string>
-    <string name="login_history_description">STIP은 모바일 기기 기준으로 3대에서만 로그인이 허용됩니다.</string>
+    <string name="login_history_title_manage">로그인 이력</string>
+    <string name="login_history_description">계정 보호를 위해 주기적으로 로그인 이력을 확인해주세요.</string>
     <string name="login_history_logout_all">모든 기기에서 로그아웃</string>
     <string name="login_history_no_data">로그인 이력이 없습니다.</string>
     <string name="login_history_loading_error">로그인 이력을 불러오는 중 오류가 발생했습니다.</string>

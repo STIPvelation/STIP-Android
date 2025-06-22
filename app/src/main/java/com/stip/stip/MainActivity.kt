@@ -257,10 +257,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * 로그인 이력 화면으로 네비게이션하는 함수
+     */
     fun navigateToLoginHistory() {
-        supportFragmentManager.commit {
-            replace(R.id.fragment_container, com.stip.stip.more.fragment.LoginHistoryFragment())
-            addToBackStack(null)
+        try {
+            Log.d("MainActivity", "로그인 이력 화면으로 이동합니다")
+            val fragment = com.stip.stip.more.fragment.MoreLoginHistoryFragment()
+            supportFragmentManager.commit {
+                replace(R.id.fragment_container, fragment)
+                addToBackStack(null)
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivity", "로그인 이력 화면 이동 오류: ${e.message}")
+            Toast.makeText(this, "로그인 이력 화면 로드 오류", Toast.LENGTH_SHORT).show()
         }
     }
 
