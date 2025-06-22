@@ -45,11 +45,8 @@ class MoreModeSettingFragment : Fragment() {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         
-        // IP 새로고침 버튼 클릭 이벤트 추가
-        binding.btnIpRefresh.setOnClickListener {
-            refreshIpListing()
-            Toast.makeText(requireContext(), "IP 목록을 새로 갱신했습니다.", Toast.LENGTH_SHORT).show()
-        }
+        // IP 새로고침 버튼 클릭 이벤트는 UI에 버튼이 없으므로 제거
+        // 필요 시 나중에 버튼을 레이아웃에 추가하고 다시 구현
 
         val sharedPref = requireContext().getSharedPreferences("mode_pref", Context.MODE_PRIVATE)
         val keepScreenOn = sharedPref.getBoolean("keep_screen_on", false)
@@ -89,32 +86,65 @@ class MoreModeSettingFragment : Fragment() {
         // 현재 설정된 언어 확인
         val currentLang = AppCompatDelegate.getApplicationLocales()[0]?.language ?: "ko"
 
-        // 초기 상태 반영
+        // 색상 정의
+        val onColor = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#30C6E8")) // 파란색
+        val offColor = android.content.res.ColorStateList.valueOf(android.graphics.Color.parseColor("#CCCCCC")) // 회색
+
+        // 초기 상태 반영 및 색상 설정
         languageMap.forEach { (lang, switch) ->
             switch.setOnCheckedChangeListener(null)
-            switch.isChecked = (lang == currentLang)
+            val isSelected = (lang == currentLang)
+            switch.isChecked = isSelected
+            // ON/OFF 상태에 따라 색상 설정
+            switch.trackTintList = if (isSelected) onColor else offColor
         }
 
         // 리스너 설정
         languageMap.forEach { (lang, switch) ->
             switch.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
+                    // 선택된 토글은 파란색으로 설정
+                    switch.trackTintList = onColor
+                    
+                    // 다른 토글은 모두 회색으로 설정
                     languageMap.forEach { (otherLang, otherSwitch) ->
                         if (otherLang != lang) {
                             otherSwitch.setOnCheckedChangeListener(null)
                             otherSwitch.isChecked = false
+                            otherSwitch.trackTintList = offColor
+                            otherSwitch.setOnCheckedChangeListener { _, newState -> 
+                                if (newState) {
+                                    handleLanguageToggle(languageMap, otherLang, onColor, offColor)
+                                }
+                            }
                         }
                     }
 
                     val newLocale = LocaleListCompat.forLanguageTags(lang)
                     AppCompatDelegate.setApplicationLocales(newLocale)
 
-                    Toast.makeText(requireContext(), getString(R.string.language_changed), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "언어가 변경되었습니다", Toast.LENGTH_SHORT).show()
 
                     requireActivity().recreate() // 🔄 즉시 반영
                 }
             }
         }
+    }
+    
+    // 언어 토글 처리를 위한 헬퍼 메서드
+    private fun handleLanguageToggle(languageMap: Map<String, com.google.android.material.switchmaterial.SwitchMaterial>, selectedLang: String, onColor: android.content.res.ColorStateList, offColor: android.content.res.ColorStateList) {
+        languageMap.forEach { (lang, switch) ->
+            switch.setOnCheckedChangeListener(null)
+            val isSelected = (lang == selectedLang)
+            switch.isChecked = isSelected
+            switch.trackTintList = if (isSelected) onColor else offColor
+        }
+        
+        // 언어 변경 적용
+        val newLocale = LocaleListCompat.forLanguageTags(selectedLang)
+        AppCompatDelegate.setApplicationLocales(newLocale)
+        Toast.makeText(requireContext(), "언어가 변경되었습니다", Toast.LENGTH_SHORT).show()
+        requireActivity().recreate()
     }
 
     private fun setKeepScreenOnFlag(enabled: Boolean) {

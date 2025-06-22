@@ -29,35 +29,27 @@ class StandardAlertFragment : Fragment() {
 
         val sharedPref = requireContext().getSharedPreferences("alert_pref", Context.MODE_PRIVATE)
 
-        val activeSwitches = listOf(
-            Triple(R.id.switch_login_alert, "login_alert_enabled", true),
-            Triple(R.id.switch_transaction_alert, "transaction_alert_enabled", true),
-            Triple(R.id.switch_deposit_withdrawal_alert, "deposit_withdrawal_alert_enabled", true),
-            Triple(R.id.switch_order_alert, "order_alert_enabled", true),
-            Triple(R.id.switch_staking_alert, "staking_alert_enabled", true)
-        )
-
-        val disabledSwitches = listOf(
-            R.id.switch_ip_toon_alert,
-            R.id.switch_auction_alert,
+        // 모든 스위치를 준비 중으로 표시할 ID 목록
+        val allSwitches = listOf(
+            R.id.switch_login_alert,
+            R.id.switch_transaction_alert,
+            R.id.switch_deposit_withdrawal_alert,
+            R.id.switch_order_alert,
+            R.id.switch_staking_alert,
+            R.id.switch_ip_webtoon_alert,
+            R.id.switch_ip_auction_alert,
             R.id.switch_new_listing_alert,
             R.id.switch_ip_swap_alert
         )
 
-        // ✅ 활성 알림 스위치 세팅
-        for ((viewId, prefKey, defaultValue) in activeSwitches) {
-            view.findViewById<SwitchCompat>(viewId)?.let { switch ->
-                setupSwitch(sharedPref, switch, prefKey, defaultValue)
-            }
-        }
-
-        // ❌ 준비중 스위치 - 비활성화 대신 클릭만 막고 토스트 표시
-        for (id in disabledSwitches) {
+        // 모든 스위치에 대해 준비중 메시지 표시
+        for (id in allSwitches) {
             view.findViewById<SwitchCompat>(id)?.apply {
                 isChecked = false
                 isEnabled = true
-                setOnCheckedChangeListener { _, _ ->
-                    isChecked = false
+                setOnCheckedChangeListener { _, isChecked ->
+                    // 토글 후 다시 원래 상태로 되돌림
+                    this.isChecked = !isChecked
                     Toast.makeText(requireContext(), "해당 기능은 준비 중입니다.", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -72,17 +64,6 @@ class StandardAlertFragment : Fragment() {
         }
     }
 
-    private fun setupSwitch(
-        sharedPref: SharedPreferences,
-        switch: SwitchCompat,
-        key: String,
-        defaultValue: Boolean
-    ) {
-        val isEnabled = sharedPref.getBoolean(key, defaultValue)
-        switch.isChecked = isEnabled
-        switch.setOnCheckedChangeListener { _: CompoundButton, isChecked: Boolean ->
-            sharedPref.edit().putBoolean(key, isChecked).apply()
-            // TODO: 서버 연동 필요 시 여기에 추가
-        }
-    }
+    // 모든 기능이 준비중이므로 setupSwitch 함수는 사용하지 않음
+    // private fun setupSwitch() 함수 제거
 }
