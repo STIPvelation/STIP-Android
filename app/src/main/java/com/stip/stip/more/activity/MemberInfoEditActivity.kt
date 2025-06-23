@@ -205,7 +205,7 @@ class MemberInfoEditActivity : AppCompatActivity(),
 
         binding.sectionEmail.setOnClickListener {
             Log.d("MemberInfoEditActivity", "Email section clicked!")
-            Toast.makeText(this, "준비 중인 기능 입니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "준비중", Toast.LENGTH_SHORT).show()
 //            navigateToEmailChangeFragment()
         }
 

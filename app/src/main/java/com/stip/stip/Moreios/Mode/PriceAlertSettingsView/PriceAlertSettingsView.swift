@@ -128,7 +128,7 @@ struct PriceAlertSettingsView: View {
         .alert("준비중", isPresented: $showPreparingAlert) {
             Button("확인", role: .cancel) { }
         } message: {
-            Text("해당 기능은 현재 준비중입니다.")
+            Text("준비중")
         }
     }
 }

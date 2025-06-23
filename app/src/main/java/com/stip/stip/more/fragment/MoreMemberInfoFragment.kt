@@ -188,12 +188,12 @@ class MoreMemberInfoFragment : Fragment() {
                     0 -> {
                         // 카메라 실행 로직
                         // 실제 구현시 카메라 권한 확인 및 Intent 처리 필요
-                        Toast.makeText(context, "카메라 기능 준비 중", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "준비중", Toast.LENGTH_SHORT).show()
                     }
                     1 -> {
                         // 갤러리 실행 로직
                         // 실제 구현시 저장소 권한 확인 및 Intent 처리 필요
-                        Toast.makeText(context, "갤러리 기능 준비 중", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "준비중", Toast.LENGTH_SHORT).show()
                     }
                 }
             }

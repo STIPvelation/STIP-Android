@@ -419,6 +419,15 @@
     <string name="comprehensive_alert_rise_fall_title">상승/하락 알림</string>
     <string name="comprehensive_alert_rise_fall_description">지정IP 단기간 상승 및 하락 발생시 </string>
     <string name="comprehensive_alert_report_low_price_title">신고/저가 알림</string>
+
+    <!-- 고객센터 관련 -->
+    <string name="customer_center">고객센터</string>
+    <string name="header_customer_center">고객센터</string>
+    <string name="common_customer_center_24h">24시간 운영</string>
+    <string name="common_customer_center_phone">02-2238-4345</string>
+    <string name="inquiry_history_title">문의 내역</string>
+    <string name="kakao_inquiry_title">카카오톡 문의</string>
+    <string name="one_on_one_inquiry_title">1:1 이메일 문의</string>
     <string name="comprehensive_alert_report_low_price_description">지절한 날짜의 신고/저가 발생시 </string>
     <string name="comprehensive_alert_ip_cross_compare_title">IP교차 비교 알림</string>
     <string name="comprehensive_alert_ip_cross_compare_description">페어해둔 IP의 가격 움직임 차이 알림</string>
@@ -1474,7 +1483,7 @@
     <string name="deposit_navigation_error">입금 화면 이동 오류</string>
 
     <!-- 모드 세팅 메시지 -->
-    <string name="feature_in_preparation">해당 기능은 준비 중입니다.</string>
+    <string name="feature_in_preparation">준비중</string>
     <string name="korean_only_supported">한국어만 지원됩니다</string>
     <string name="one_language_must_be_selected">하나의 언어는 반드시 선택되어야 합니다</string>
 
@@ -1508,21 +1517,14 @@
 
 
     <string name="header_policy_terms">정책 및 약관</string>
-    <string name="header_customer_center">고객센터</string>
-
     <string name="header_customer_center_for_you">여러분의 소중한 의견을 기다립니다.</string>
     <string name="user_guide_title">유저 가이드</string>
     <string name="phone_consult_title">전화 상담</string>
-    <string name="kakao_inquiry_title">카카오톡 문의</string>
-    <string name="one_on_one_inquiry_title">이메일 문의하기</string>
-    <string name="inquiry_history_title">홈페이지에서 문의</string>
     <string name="impersonation_report_title">사칭 사기 제보</string>
     <string name="unfair_trade_title">불공정 거래</string>
     <string name="transaction_statement_title">거래내역서 발급</string>
 
     <string name="user_guide_desc">STIP 이용 관련 가이드</string>
-    <string name="common_customer_center_phone">고객센터 09:00 ~ 18:00 운영</string>
-    <string name="common_customer_center_24h">고객센터 24시간 운영</string>
     <string name="inquiry_history_desc">문의내역 확인.</string>
     <string name="impersonation_report_desc">상장을 전제로 대가를 요구받은경우 제보</string>
     <string name="unfair_trade_desc">STIP 거래 시 발생한 불공정거래행위 제보</string>

@@ -74,7 +74,7 @@ class MoreModeSettingFragment : Fragment() {
             switch.isEnabled = true
             switch.setOnCheckedChangeListener { button, _ ->
                 button.isChecked = false
-                Toast.makeText(requireContext(), "해당 기능은 준비 중입니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "준비중", Toast.LENGTH_SHORT).show()
             }
         }
 

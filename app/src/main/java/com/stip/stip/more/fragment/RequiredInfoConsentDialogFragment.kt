@@ -60,7 +60,7 @@ class RequiredInfoConsentDialogFragment : DialogFragment() {
         binding.buttonStartConsent.setOnClickListener {
             if (it.isEnabled) {
                 // ▼▼▼ Toast 메시지 표시 추가 ▼▼▼
-                Toast.makeText(requireContext(), "준비중 입니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "준비중", Toast.LENGTH_SHORT).show()
                 // ▲▲▲ 추가 끝 ▲▲▲
 
                 // 리스너 호출 및 다이얼로그 닫기는 그대로 유지

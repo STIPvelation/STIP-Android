@@ -49,7 +49,7 @@ struct CustomerSupportView: View {
                     Text("무엇을 도와드릴까요?")
                         .font(.system(size: 22, weight: .bold))
                     
-                    Text("자주 묻는 질문을 확인하거나 고객센터로 문의해주세요.")
+                    Text("질문을 확인하거나 고객센터로 문의해주세요.")
                         .font(.system(size: 16))
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
@@ -233,7 +233,7 @@ struct ContactSheetView: View {
                     self.presentationMode.wrappedValue.dismiss()
                 }
             } message: {
-                Text("해당 기능은 준비중입니다. 빠른 시일 내에 제공하겠습니다.")
+                Text("준비중")
             }
         }
     }

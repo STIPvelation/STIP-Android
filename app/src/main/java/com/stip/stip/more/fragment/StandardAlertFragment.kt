@@ -50,7 +50,7 @@ class StandardAlertFragment : Fragment() {
                 setOnCheckedChangeListener { _, isChecked ->
                     // 토글 후 다시 원래 상태로 되돌림
                     this.isChecked = !isChecked
-                    Toast.makeText(requireContext(), "해당 기능은 준비 중입니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "준비중", Toast.LENGTH_SHORT).show()
                 }
             }
         }

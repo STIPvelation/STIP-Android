@@ -142,10 +142,18 @@ class MoreFragment : Fragment() {
     private fun navigateTo(fragment: Fragment, logName: String) {
         Log.d(TAG, "$logName 클릭됨! 화면 이동 시작")
         try {
-            parentFragmentManager.commit {
-                replace(R.id.fragment_container, fragment)
-                addToBackStack(null)
+            // 안전성 검사 추가
+            if (!isAdded || requireActivity().isFinishing || requireActivity().isDestroyed) {
+                Log.e(TAG, "$logName 화면 이동 실패: Fragment not attached or activity finishing")
+                return
             }
+            
+            parentFragmentManager.beginTransaction()
+                .setReorderingAllowed(true) // 프래그먼트 트랜잭션 처리 개선
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .commit()
+                
             Log.d(TAG, "$logName replace 완료")
         } catch (e: Exception) {
             Log.e(TAG, "$logName 화면 이동 실패!", e)
