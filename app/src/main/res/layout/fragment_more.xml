@@ -383,17 +383,21 @@
                     android:layout_height="90dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
 
                     <LinearLayout
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/gradient_card_icon_blue"
                         android:gravity="center">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
+                            android:layout_gravity="center"
                             android:src="@drawable/ic_ip_toon_modern"
                             app:tint="#FFFFFF" />
                     </LinearLayout>
@@ -403,23 +407,27 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:layout_marginStart="12dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="IP웹툰"
                             android:textColor="#232D3F"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_medium" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="웹툰 즐기기"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_regular"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
@@ -453,17 +461,21 @@
                     android:layout_height="90dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
 
                     <LinearLayout
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/gradient_card_icon_red"
                         android:gravity="center">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
+                            android:layout_gravity="center"
                             android:src="@drawable/ic_ip_auction_modern"
                             app:tint="#FFFFFF" />
                     </LinearLayout>
@@ -473,23 +485,27 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:layout_marginStart="12dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="IP옥션"
                             android:textColor="#232D3F"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_medium" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="IP 획득"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_regular"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
@@ -523,17 +539,21 @@
                     android:layout_height="90dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
 
                     <LinearLayout
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/gradient_card_icon_purple"
                         android:gravity="center">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
+                            android:layout_gravity="center"
                             android:src="@drawable/ic_ip_swap_modern"
                             app:tint="#FFFFFF" />
                     </LinearLayout>
@@ -543,23 +563,27 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:layout_marginStart="12dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="IP스왑"
                             android:textColor="#232D3F"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_medium" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="기술 스왑"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_regular"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
@@ -593,17 +617,21 @@
                     android:layout_height="90dp"
                     android:orientation="horizontal"
                     android:gravity="center_vertical"
-                    android:padding="16dp">
+                    android:paddingStart="12dp"
+                    android:paddingEnd="8dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
 
                     <LinearLayout
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:background="@drawable/gradient_card_icon_yellow"
                         android:gravity="center">
 
                         <ImageView
                             android:layout_width="26dp"
                             android:layout_height="26dp"
+                            android:layout_gravity="center"
                             android:src="@drawable/ic_ip_donation_modern"
                             app:tint="#FFFFFF" />
                     </LinearLayout>
@@ -613,23 +641,27 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical"
-                        android:layout_marginStart="16dp">
+                        android:layout_marginStart="12dp">
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="IP기부"
                             android:textColor="#232D3F"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_medium" />
 
                         <TextView
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="기부 IP공유"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
+                            android:singleLine="true"
+                            android:ellipsize="end"
                             android:fontFamily="@font/pretendard_regular"
                             android:layout_marginTop="2dp" />
                     </LinearLayout>
@@ -1058,7 +1090,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="문의사항이 있으시면 연락하세요"
+                        android:text="문의사항"
                         android:textColor="#6E7491"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />
