@@ -101,8 +101,8 @@
                         android:checked="false"
                         android:scaleX="0.9"
                         android:scaleY="0.9"
-                        app:thumbTint="#FFFFFF"
-                        app:trackTint="#CCCCCC" />
+                        app:thumbTint="@color/switch_thumb_color"
+                        app:trackTint="@color/switch_track_color" />
                 </FrameLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
