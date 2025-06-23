@@ -14,6 +14,8 @@ import com.stip.stip.signup.customview.CustomContentDialog
 import com.stip.stip.signup.keypad.KeypadAdapter
 import com.stip.stip.signup.keypad.KeypadItem
 import com.stip.stip.signup.keypad.KeypadType
+import com.stip.stip.signup.keypad.GridSpacingItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
 import com.stip.stip.signup.model.RequestAuthLogin
 import com.stip.stip.signup.model.RequestPinNumber
 import com.stip.stip.signup.pin.PinAdapter
@@ -158,6 +160,15 @@ class SignUpPinNumberSettingFragment : BaseFragment<FragmentSignUpPinNumberSetti
                 KeypadType.DELETE -> handleDelete()
             }
         }
+        // Add negative spacing decoration to bring keypad buttons closer horizontally
+        binding.rvSignUpPinNumberKeypad.addItemDecoration(
+            GridSpacingItemDecoration(
+                spanCount = 3,
+                horizontalSpacing = -50, // Negative spacing to bring items closer horizontally
+                verticalSpacing = 0,
+                includeEdge = false
+            )
+        )
         binding.rvSignUpPinNumberKeypad.adapter = keypadAdapter
     }
 

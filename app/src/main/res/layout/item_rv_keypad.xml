@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="6dp"
-        android:paddingHorizontal="2dp"
-        >
+        android:paddingHorizontal="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_keypad_number_container"

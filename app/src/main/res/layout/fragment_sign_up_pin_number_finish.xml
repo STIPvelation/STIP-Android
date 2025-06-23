@@ -34,22 +34,24 @@
                 android:paddingEnd="@dimen/common_side_margin_20dp"
                 android:paddingBottom="12dp"
                 />
+                
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_sign_up_pin_number_finish_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sign_up_pin_number_finish_title"
+                android:textSize="18sp"
+                android:textColor="@color/text_black_14181B_100"
+                android:fontFamily="@font/pretendard_medium_font_family"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/tv_sign_up_pin_number_finish_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/sign_up_pin_number_finish_title"
-            android:textSize="24sp"
-            android:textColor="@color/text_black_14181B_100"
-            android:fontFamily="@font/pretendard_medium_font_family"
-            app:layout_constraintTop_toBottomOf="@id/cl_header_section"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginTop="33dp"
-            />
+        <!-- Title moved to header section -->
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_sign_up_pin_number_password"
@@ -57,7 +59,7 @@
             android:layout_height="wrap_content"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/tv_sign_up_pin_number_finish_title"
+            app:layout_constraintTop_toBottomOf="@+id/cl_header_section"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="36dp"
@@ -119,8 +121,10 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_sign_up_pin_number_keypad"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginBottom="24dp"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:spanCount="3"
             app:layout_constraintStart_toStartOf="parent"

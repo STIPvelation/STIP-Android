@@ -11,6 +11,7 @@ import com.stip.stip.signup.base.BaseFragment
 import com.stip.stip.signup.customview.CustomContentDialog
 import com.stip.stip.signup.keypad.KeypadAdapter
 import com.stip.stip.signup.keypad.KeypadItem
+import com.stip.stip.signup.keypad.KeypadItemDecoration
 import com.stip.stip.signup.keypad.KeypadType
 import com.stip.stip.signup.model.RequestAuthLogin
 import com.stip.stip.signup.pin.PinAdapter
@@ -118,6 +119,7 @@ class SignUpPinNumberFinishFragment : BaseFragment<FragmentSignUpPinNumberFinish
             }
         }
         binding.rvSignUpPinNumberKeypad.adapter = keypadAdapter
+        binding.rvSignUpPinNumberKeypad.addItemDecoration(KeypadItemDecoration())
     }
 
     /** 숫자 입력 처리 */
