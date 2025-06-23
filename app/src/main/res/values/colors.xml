@@ -223,6 +223,8 @@
     <color name="text_red_DD3D43_100">#DD3D43</color>
     <color name="text_blue_0064E6_100">#0064E6</color>
 
+    <!-- Policy highlight color for animation -->
+    <color name="highlight_background">#E6F5FE</color>
 </resources>
 
 

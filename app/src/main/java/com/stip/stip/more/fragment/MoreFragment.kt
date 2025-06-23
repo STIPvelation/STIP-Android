@@ -76,7 +76,8 @@ class MoreFragment : Fragment() {
         // API를 통해 회원정보 로드
         refreshMemberInfo()
 
-        binding.imageViewProfile.setOnClickListener {
+        // 프로필 이미지 클릭 이벤트
+        binding.profileImage.setOnClickListener {
             pickImageLauncher.launch("image/*")
         }
     }
@@ -108,39 +109,28 @@ class MoreFragment : Fragment() {
         // 현재 레이아웃에는 카드뷰에 ID가 설정되어 있지 않음
         
         // 정책 및 약관 카드 클릭 리스너
+        // 메인 정책 카드
         binding.cardPolicy.setOnClickListener {
             // 정책 및 약관 화면으로 이동
             navigateTo(MorePolicyFragment(), "정책 및 약관")
         }
         
-        binding.cardEsgPolicy.setOnClickListener {
-            // ESG 정책 화면으로 이동
-            Toast.makeText(requireContext(), "ESG 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
-        }
-        
-        binding.cardStartupPolicy.setOnClickListener {
-            // 스타트업 지원 정책 화면으로 이동
-            Toast.makeText(requireContext(), "스타트업 지원 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
-        }
-        
-        binding.cardAmlPolicy.setOnClickListener {
-            // AML 정책 화면으로 이동
-            Toast.makeText(requireContext(), "AML 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
-        }
-        
-        binding.cardDipPolicy.setOnClickListener {
-            // DIP 평가 기준 화면으로 이동
-            Toast.makeText(requireContext(), "DIP 평가 기준 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
-        }
-        
-        binding.cardFeePolicy.setOnClickListener {
-            // 수수료 정책 화면으로 이동
-            Toast.makeText(requireContext(), "수수료 정책 페이지로 이동합니다", Toast.LENGTH_SHORT).show()
-        }
+        // 정책 카드에 클릭 리스너 설정
+        setupPolicyCardClickListeners()
         
         binding.cardStipvelation.setOnClickListener {
             // STIPvelation 외부 링크로 이동
             Toast.makeText(requireContext(), "STIPvelation 사이트로 이동합니다", Toast.LENGTH_SHORT).show()
+            
+            try {
+                val stipvelationUrl = "https://stipvelation.com/"
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(stipvelationUrl))
+                startActivity(intent)
+                Log.d(TAG, "STIPvelation 웹사이트로 이동: $stipvelationUrl")
+            } catch (e: Exception) {
+                Log.e(TAG, "STIPvelation 웹사이트 이동 실패", e)
+                Toast.makeText(requireContext(), "웹사이트 이동 중 오류가 발생했습니다: ${e.message}", Toast.LENGTH_LONG).show()
+            }
         }
         
         // 고객센터 버튼 클릭 리스너
@@ -159,6 +149,50 @@ class MoreFragment : Fragment() {
             Log.d(TAG, "$logName replace 완료")
         } catch (e: Exception) {
             Log.e(TAG, "$logName 화면 이동 실패!", e)
+            Toast.makeText(context, "화면 전환 오류: ${e.message}", Toast.LENGTH_LONG).show()
+        }
+    }
+    
+    /**
+     * 특정 정책 제목으로 MorePolicyFragment로 이동하는 함수
+     */
+    /**
+     * 모든 정책 카드에 클릭 리스너 설정하는 함수
+     */
+    private fun setupPolicyCardClickListeners() {
+        // 각 정책 카드에 대한 클릭 리스너 정의
+        val policyCards = mapOf(
+            binding.cardEsgPolicy to "ESG 정책",
+            binding.cardStartupPolicy to "스타트업 및 중소기업 지원 정책",
+            binding.cardAmlPolicy to "자금세탁방지(AML) 및 내부통제 정책",
+            binding.cardDipPolicy to "DIP 가치평가 기준 정책",
+            binding.cardFeePolicy to "수수료 투명성 정책"
+        )
+        
+        // 각 카드에 클릭 리스너 설정
+        policyCards.forEach { (card, policyTitle) ->
+            card.setOnClickListener {
+                Log.d(TAG, "$policyTitle 클릭되었습니다")
+                navigateToMorePolicyWithTitle(policyTitle)
+            }
+        }
+    }
+    
+    private fun navigateToMorePolicyWithTitle(policyTitle: String) {
+        Log.d(TAG, "$policyTitle 정책으로 이동 시도")
+        try {
+            val morePolicyFragment = MorePolicyFragment()
+            morePolicyFragment.arguments = Bundle().apply {
+                putString("selected_policy_title", policyTitle)
+            }
+            
+            parentFragmentManager.commit {
+                replace(R.id.fragment_container, morePolicyFragment)
+                addToBackStack(null)
+            }
+            Log.d(TAG, "$policyTitle 정책 화면으로 이동 완료")
+        } catch (e: Exception) {
+            Log.e(TAG, "$policyTitle 정책 화면 이동 실패!", e)
             Toast.makeText(context, "화면 전환 오류: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
@@ -181,7 +215,7 @@ class MoreFragment : Fragment() {
             .transform(CircleCrop())
             .placeholder(R.drawable.ic_person)
             .error(R.drawable.ic_person)
-            .into(binding.imageViewProfile)
+            .into(binding.profileImage)
     }
     
     //새로고침

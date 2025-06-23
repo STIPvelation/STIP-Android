@@ -6,8 +6,11 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
@@ -74,6 +77,44 @@ class PinVerificationActivity : AppCompatActivity() {
             binding.tvSignUpPinNumberWarning.text = "동일하거나 연속된 숫자는 등록이 제한됩니다."
             binding.tvSignUpPinNumberWarning.setTextColor(ContextCompat.getColor(this, R.color.red_DB3949_100))
             binding.tvSignUpPinNumberWarning.visibility = View.VISIBLE
+            
+            // PIN 입력 타이틀 설정
+            binding.tvSignUpPinNumberFinishTitle.text = "PIN 번호 입력"
+            
+            // 테스트용 버튼 추가 (루트 레이아웃에 추가)
+            val testButton = android.widget.Button(this)
+            testButton.text = "회원정보 화면 테스트"
+            testButton.setBackgroundColor(android.graphics.Color.RED)
+            testButton.setTextColor(android.graphics.Color.WHITE)
+            val params = android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT,
+                android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            testButton.layoutParams = params
+            
+            // 루트 레이아웃에 수동으로 버튼 추가
+            val rootLayout = binding.root as androidx.constraintlayout.widget.ConstraintLayout
+            rootLayout.addView(testButton)
+            
+            // 버튼 위치 설정
+            val buttonLayoutParams = testButton.layoutParams as androidx.constraintlayout.widget.ConstraintLayout.LayoutParams
+            buttonLayoutParams.topToTop = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            buttonLayoutParams.startToStart = androidx.constraintlayout.widget.ConstraintLayout.LayoutParams.PARENT_ID
+            buttonLayoutParams.topMargin = 100
+            buttonLayoutParams.leftMargin = 100
+            testButton.layoutParams = buttonLayoutParams
+            
+            testButton.setOnClickListener {
+                Toast.makeText(this, "테스트 버튼 클릭됨", Toast.LENGTH_SHORT).show()
+                try {
+                    val intent = Intent(this, Class.forName("com.stip.stip.more.activity.MemberInfoEditActivity"))
+                    startActivity(intent)
+                    Toast.makeText(this, "화면 전환 시도 완료", Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    Toast.makeText(this, "오류: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            }
         } else {
             binding.tvSignUpPinNumberFinishTitle.text = "PIN 비밀번호 입력"
             binding.tvSignUpPinNumberWarning.visibility = View.GONE
@@ -188,11 +229,10 @@ class PinVerificationActivity : AppCompatActivity() {
                 finish()
                 return
             } else {
-                // 일반 접근 목적일 경우 회원 정보 화면으로 즉시 이동
+                // 일반 접근 목적일 경우 회원 정보 수정 화면으로 즉시 이동
                 android.util.Log.d("PinVerification", "테스트 PIN으로 일반 접근 허용")
-                val resultIntent = Intent()
-                resultIntent.putExtra("pin_verified", true)
-                setResult(RESULT_OK, resultIntent)
+                val intent = Intent(this@PinVerificationActivity, com.stip.stip.more.activity.MemberInfoEditActivity::class.java)
+                startActivity(intent)
                 finish()
                 return
             }
@@ -270,7 +310,45 @@ class PinVerificationActivity : AppCompatActivity() {
         loadingDialog.setCancelable(false)
         loadingDialog.show()
         
+        // 임시로 123456 PIN을 허용 (UI 개발용)
         lifecycleScope.launch {
+            // 임시로 123456을 입력하면 항상 성공으로 처리 (UI 개발을 위한 임시 코드)
+            if (currentPin == "123456") {
+                // Simulate PIN success
+                Handler(Looper.getMainLooper()).postDelayed({
+                    loadingDialog.dismiss()
+                    if (isPinChange) {
+                        val intent = Intent(this@PinVerificationActivity, PinVerificationActivity::class.java)
+                        intent.putExtra("is_setting_new_pin", true)
+                        startActivity(intent)
+                        finish()
+                    } else if (isBiometricSetup) {
+                        val biometricLoadingDialog = LoadingDialog(this@PinVerificationActivity)
+                        biometricLoadingDialog.setCancelable(false)
+                        biometricLoadingDialog.show()
+                        
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            val sharedPrefBio = getSharedPreferences("security_pref", android.content.Context.MODE_PRIVATE)
+                            sharedPrefBio.edit().putBoolean("biometric_enabled", true).apply()
+                            biometricLoadingDialog.dismiss()
+                            Toast.makeText(this@PinVerificationActivity, "생체인증 정보 사용이 활성화되었습니다.", Toast.LENGTH_SHORT).show()
+                            finish()
+                        }, 2000) 
+                    } else {
+                        // 지연 제거하고 즉시 회원정보 화면으로 이동
+                        Log.d("PinVerification", "테스트 PIN 확인됨. 회원정보 화면으로 즉시 이동")
+                        Toast.makeText(this@PinVerificationActivity, "회원정보 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
+                        
+                        // 가장 기본적인 액티비티 시작 방법 사용 - 전체 경로 지정
+                        val intent = Intent(this@PinVerificationActivity, com.stip.stip.more.activity.MemberInfoEditActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                }, 1000) // 1초 지연
+                return@launch
+            }
+            
+            // 일반적인 API 호출 (123456이 아닌 경우)
             val response = memberRepository.verifyMemberPin(memberDi, requestPinNumber)
             response.suspendOnSuccess {
                 // PIN 유효성 검사 성공 - PIN 일치
@@ -317,8 +395,13 @@ class PinVerificationActivity : AppCompatActivity() {
                             // 로딩 다이얼로그 닫기
                             generalLoadingDialog.dismiss()
                             
-                            // 회원 정보 화면으로 이동
-                            startActivity(Intent(this@PinVerificationActivity, MemberInfoEditActivity::class.java))
+                            // 회원 정보 화면으로 즉시 이동
+                            Log.d("PinVerification", "API 인증 성공. 회원정보 화면으로 즉시 이동")
+                            Toast.makeText(this@PinVerificationActivity, "회원 정보 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
+                            
+                            // 가장 기본적인 액티비티 시작 방식 사용 - 전체 경로 지정
+                            val intent = Intent(this@PinVerificationActivity, com.stip.stip.more.activity.MemberInfoEditActivity::class.java)
+                            startActivity(intent)
                             finish()
                         }, 2000) // 2초 후 실행
                     }

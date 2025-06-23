@@ -55,7 +55,7 @@
                         app:layout_constraintBottom_toBottomOf="parent" />
 
                     <com.google.android.material.imageview.ShapeableImageView
-                        android:id="@+id/imageViewProfile"
+                        android:id="@+id/profile_image"
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:scaleType="centerCrop"
@@ -68,6 +68,17 @@
                         android:background="@drawable/gradient_profile_image_bg"
                         app:strokeColor="@color/transparent"
                         app:strokeWidth="0dp" />
+                        
+                    <View
+                        android:id="@+id/activity_status_indicator"
+                        android:layout_width="12dp"
+                        android:layout_height="12dp"
+                        android:background="@drawable/bg_activity_status_active"
+                        android:elevation="3dp"
+                        app:layout_constraintTop_toTopOf="@+id/profileImageBackground"
+                        app:layout_constraintEnd_toEndOf="@+id/profileImageBackground"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginEnd="2dp" />
 
                     <ImageView
                         android:id="@+id/imageViewEdit"
@@ -970,8 +981,8 @@
                                 android:layout_width="34dp"
                                 android:layout_height="34dp"
                                 android:layout_gravity="center"
-                                android:src="@drawable/ic_person"
-                                app:tint="#2BB16F" />
+                                android:src="@drawable/ic_universe"
+                                app:tint="#4F7FFF" />
                         </LinearLayout>
 
                         <TextView

@@ -3,6 +3,7 @@ package com.stip.stip.more.fragment
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Bundle
+import android.util.Log
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.Spanned
@@ -59,6 +60,11 @@ class MorePolicyFragment : Fragment() {
                 showPolicyDialog(policyIndex)
             }
         }
+        
+        // 인자로 전달된 선택된 정책 제목이 있으면 해당 항목으로 스크롤
+        arguments?.getString("selected_policy_title")?.let { selectedPolicyTitle ->
+            scrollToPolicySection(selectedPolicyTitle)
+        }
     }
     
     // 카드뷰 내의 텍스트 제목 찾기
@@ -77,14 +83,20 @@ class MorePolicyFragment : Fragment() {
         when {
             // 수수료 투명성 정책 매핑
             cardTitle.contains("수수료", ignoreCase = true) && cardTitle.contains("투명성", ignoreCase = true) -> {
-                val idx = policyTitles.indexOfFirst { it.contains("STIP 수수료 투명성 정책", ignoreCase = true) }
-                return if (idx >= 0) idx else 0
+                // policy_terms_title_array에서 "수수료 투명성 정책" 항목 찾기
+                val idx = policyTitles.indexOfFirst { it.contains("수수료 투명성 정책", ignoreCase = true) }
+                if (idx >= 0) {
+                    return idx
+                } else {
+                    // 마지막 항목은 수수료 투명성 정책
+                    return policyTitles.size - 1
+                }
             }
             
             // 통신사 이용약관 매핑
             cardTitle.contains("통신사", ignoreCase = true) && cardTitle.contains("이용약관", ignoreCase = true) -> {
-                val idx = policyTitles.indexOfFirst { it.contains("인증사 서비스 이용약관", ignoreCase = true) }
-                return if (idx >= 0) idx else 0
+                // sign_up_agree_title_array의 첫 번째 아이템은 (필수)통신사 이용약관
+                return -1 // 통신사 이용약관은 특별한 인덱스 -1로 표시
             }
             
             // 이용약관 및 이용안내 매핑
@@ -93,9 +105,9 @@ class MorePolicyFragment : Fragment() {
                 return if (idx >= 0) idx else 0
             }
             
-            cardTitle.contains("거래통화", ignoreCase = true) || cardTitle.contains("환전", ignoreCase = true) -> {
-                val idx = policyTitles.indexOfFirst { it.contains("거래 통화 및 환전방식", ignoreCase = true) }
-                return if (idx >= 0) idx else 0
+            cardTitle.contains("거래통화", ignoreCase = true) || (cardTitle.contains("거래", ignoreCase = true) && cardTitle.contains("환전", ignoreCase = true)) -> {
+                // 거래 통화 및 환전방식은 특별한 인덱스 -2로 표시
+                return -2
             }
                 
             // 개인정보 수집 동의 특별 처리
@@ -196,10 +208,70 @@ class MorePolicyFragment : Fragment() {
         viewModel.updateNavigationClickListener {
             parentFragmentManager.popBackStack()
         }
+        
+        // 화면이 표시될 때마다 선택된 정책 항목을 확인하고 스크롤
+        arguments?.getString("selected_policy_title")?.let { selectedPolicyTitle ->
+            scrollToPolicySection(selectedPolicyTitle)
+        }
     }
     
     private fun showPolicyDialog(index: Int) {
         showPolicyDialog(requireContext(), index)
+    }
+    
+    /**
+     * 정책 제목에 해당하는 섹션으로 스크롤하는 함수
+     */
+    private fun scrollToPolicySection(policyTitle: String) {
+        Log.d("MorePolicyFragment", "Scrolling to policy section: $policyTitle")
+        
+        // 정책 제목에 맞는 카드뷰를 찾음
+        val cardViews = findAllCardViewsInContainer(binding.root)
+        
+        // 정책 제목과 일치하거나 유사한 제목을 가진 카드뷰 검색
+        val targetCardView = cardViews.find { cardView ->
+            val cardTitle = findCardTitle(cardView)
+            
+            // 정확한 일치 또는 키워드 일치 확인
+            cardTitle.contains(policyTitle, ignoreCase = true) ||
+            policyTitle.contains(cardTitle, ignoreCase = true) ||
+            calculateMatchScore(cardTitle, policyTitle) > 5
+        }
+        
+        // 일치하는 카드뷰를 찾았다면 해당 위치로 스크롤
+        targetCardView?.let { cardView ->
+            // 부드러운 스크롤 적용
+            binding.root.post {
+                // NestedScrollView의 smoothScrollTo 메서드 사용
+                val location = IntArray(2)
+                cardView.getLocationInWindow(location)
+                
+                // 카드뷰의 Y 위치로 스크롤, 약간의 오프셋을 적용하여 상단에 위치하도록 함
+                binding.root.smoothScrollTo(0, location[1] - 200)
+                
+                // 해당 카드뷰 강조 표시 (잠시 후 원상복구)
+                highlightCardView(cardView)
+            }
+        }
+    }
+    
+    /**
+     * 카드뷰를 잠시 동안 강조 표시하는 함수
+     */
+    private fun highlightCardView(cardView: CardView) {
+        // 원래 배경색 저장
+        val originalCardElevation = cardView.cardElevation
+        val originalCardBackgroundColor = cardView.cardBackgroundColor
+        
+        // 강조 표시 적용
+        cardView.setCardBackgroundColor(ContextCompat.getColor(requireContext(), R.color.highlight_background))
+        cardView.cardElevation = originalCardElevation + 8f
+        
+        // 일정 시간 후 원래대로 복원
+        cardView.postDelayed({
+            cardView.cardElevation = originalCardElevation
+            cardView.setCardBackgroundColor(originalCardBackgroundColor)
+        }, 1500) // 1.5초 후 복원
     }
     
     override fun onDestroyView() {
@@ -212,7 +284,8 @@ class MorePolicyFragment : Fragment() {
             // 두 개의 다른 정책 타이틀 배열 가져오기
             val policyTitles = context.resources.getStringArray(R.array.policy_terms_title_array)
             val signUpTitles = context.resources.getStringArray(R.array.sign_up_agree_title_array)
-            val contents = context.resources.getStringArray(R.array.policy_terms_content_array)
+            val policyContents = context.resources.getStringArray(R.array.policy_terms_content_array)
+            val signUpContents = context.resources.getStringArray(R.array.sign_up_agree_content_array)
             
             val dialogView = LayoutInflater.from(context)
                 .inflate(R.layout.dialog_policy_confirm, null)
@@ -224,13 +297,32 @@ class MorePolicyFragment : Fragment() {
             // 인덱스 범위 유효성 검사
             val safeIndex = if (index >= 0) index else 0
             
-            // 기본적으로 policy_terms_title_array 사용
-            var titleText = policyTitles.getOrNull(safeIndex) ?: "정책 제목 없음"
-            val contentText = contents.getOrNull(safeIndex) ?: "본문 내용이 없습니다."
+            // 기본 대한 선언
+            var titleText = ""
+            var contentText = ""
             
-            // 정책 타이틀이 없으면 sign_up_agree_title_array에서 시도
-            if (titleText == "정책 제목 없음" && safeIndex < signUpTitles.size) {
-                titleText = signUpTitles[safeIndex]
+            // 특수 인덱스 처리
+            if (safeIndex == -1) { // 통신사 이용약관
+                // 통신사 이용약관의 경우 sign_up_agree_content_array의 항목 0 사용
+                titleText = signUpTitles[0]  // (필수)통신사 이용약관
+                contentText = signUpContents[0]
+                Log.d("PolicyDialog", "Showing telecom terms: $titleText")
+            } else if (safeIndex == -2) { // 거래 통화 및 환전방식
+                // 거래 통화 및 환전방식의 경우 sign_up_agree_content_array의 항목 1 사용
+                titleText = signUpTitles[1]  // (필수)거래 통화 및 환전방식
+                contentText = signUpContents[1]
+                Log.d("PolicyDialog", "Showing currency exchange terms: $titleText")
+            } else {
+                // 기본적으로 policy_terms_title_array 사용
+                titleText = policyTitles.getOrNull(safeIndex) ?: "정책 제목 없음"
+                contentText = policyContents.getOrNull(safeIndex) ?: "본문 내용이 없습니다."
+                
+                // 정책 타이틀이 없으면 sign_up_agree_title_array에서 시도
+                if (titleText == "정책 제목 없음" && safeIndex < signUpTitles.size) {
+                    titleText = signUpTitles[safeIndex]
+                    // sign_up_agree_title_array에서 제목을 가져온 경우 sign_up_agree_content_array에서 내용도 가져옴
+                    contentText = signUpContents.getOrNull(safeIndex) ?: "본문 내용이 없습니다."
+                }
             }
             val spannable = SpannableString(contentText)
 

@@ -21,6 +21,19 @@ import com.stip.stip.more.fragment.EmailChangeFragment
 import com.stip.stip.more.viewmodel.MemberInfoEditViewModel
 import com.stip.stip.signup.utils.Utils.Companion.getJobCodeByName
 import com.google.android.material.button.MaterialButton
+import android.Manifest
+import android.content.pm.PackageManager
+import android.net.Uri
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.IOException
+import android.provider.MediaStore
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MemberInfoEditActivity : AppCompatActivity(),
     RequiredInfoConsentDialogFragment.ConsentListener {
@@ -34,6 +47,13 @@ class MemberInfoEditActivity : AppCompatActivity(),
     private var rawAddress: String = ""
     private var rawAddressDetail: String = ""
     private var rawJob: String = ""
+    
+    // 프로필 이미지 관련 변수
+    private var currentPhotoPath: String = ""
+    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_PICK_IMAGE = 2
+    private val PERMISSION_REQUEST_CAMERA = 100
+    private val PERMISSION_REQUEST_STORAGE = 101
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,6 +66,7 @@ class MemberInfoEditActivity : AppCompatActivity(),
         setupCustomHeaderAndListeners()
         setupObservers()
         setupBackStackListener()
+        setupProfilePhotoButton()
 
         // API에서 회원정보 불러오기
         viewModel.loadMemberInfo()
@@ -89,9 +110,33 @@ class MemberInfoEditActivity : AppCompatActivity(),
         })
     }
 
+    private fun setupProfilePhotoButton() {
+        // 프로필 사진 변경 버튼 클릭 리스너
+        binding.btnChangePhoto.setOnClickListener {
+            showImageSelectionDialog()
+        }
+    }
+    
+    /**
+     * 활동 상태 표시기를 업데이트합니다
+     * @param isActive 활동 중인지 여부
+     */
+    private fun updateActivityStatusIndicator(isActive: Boolean) {
+        val statusDrawable = if (isActive) {
+            R.drawable.bg_activity_status_active
+        } else {
+            R.drawable.bg_activity_status_inactive
+        }
+        binding.activityStatusIndicator.setBackgroundResource(statusDrawable)
+    }
+
     private fun setupMemberInfoUI(memberInfo: MemberInfo) {
         // UI에 회원 정보 표시
         binding.tvEmailValue.text = memberInfo.email
+        
+        // 활동 상태 설정 - 기본값으로 활성 상태 설정
+        val isActive = true // MemberInfo 클래스에 status 필드가 없으므로 기본값으로 설정
+        updateActivityStatusIndicator(isActive)
 
         // 전화번호 포맷팅
         val formattedPhoneNumber =
@@ -165,9 +210,9 @@ class MemberInfoEditActivity : AppCompatActivity(),
         }
 
         // 필수 정보 변경
-        binding.tvChangeText.setOnClickListener {
-            Log.d("MemberInfoEditActivity", "Change Required Info text clicked!")
-            showRequiredInfoConsentDialog()
+        binding.btnChange.setOnClickListener {
+            Log.d("MemberInfoEditActivity", "Change Required Info button clicked!")
+            Toast.makeText(this, "준비중", Toast.LENGTH_SHORT).show()
         }
 
         binding.tvJobValue.setOnClickListener {
@@ -386,6 +431,182 @@ class MemberInfoEditActivity : AppCompatActivity(),
         } catch (e: Exception) {
             Log.e("MemberInfoEditActivity", "주소 검색 시작 오류: ${e.message}")
             Toast.makeText(this, "주소 검색 시작 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+        }
+    }
+    
+    // 이미지 선택 다이얼로그 표시
+    private fun showImageSelectionDialog() {
+        val options = arrayOf("카메라로 사진 촬영", "갤러리에서 선택")
+        
+        androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("프로필 사진 변경")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        // 카메라 권한 확인 후 실행
+                        if (checkCameraPermission()) {
+                            dispatchTakePictureIntent()
+                        } else {
+                            requestCameraPermission()
+                        }
+                    }
+                    1 -> {
+                        // 저장소 권한 확인 후 실행
+                        if (checkStoragePermission()) {
+                            openGallery()
+                        } else {
+                            requestStoragePermission()
+                        }
+                    }
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+    
+    // 카메라 권한 확인
+    private fun checkCameraPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.CAMERA
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+    
+    // 저장소 권한 확인
+    private fun checkStoragePermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+    
+    // 카메라 권한 요청
+    private fun requestCameraPermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.CAMERA),
+            PERMISSION_REQUEST_CAMERA
+        )
+    }
+    
+    // 저장소 권한 요청
+    private fun requestStoragePermission() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            PERMISSION_REQUEST_STORAGE
+        )
+    }
+    
+    // 권한 요청 결과 처리
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            PERMISSION_REQUEST_CAMERA -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    dispatchTakePictureIntent()
+                } else {
+                    Toast.makeText(this, "카메라 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            PERMISSION_REQUEST_STORAGE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    openGallery()
+                } else {
+                    Toast.makeText(this, "저장소 접근 권한이 필요합니다.", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    
+    // 카메라 앱 실행
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // 카메라 앱이 있는지 확인
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                // 임시 파일 생성
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // 오류 발생 시
+                    Toast.makeText(this, "이미지 파일을 생성할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                    null
+                }
+                
+                // 생성된 파일이 있으면 계속 진행
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        this,
+                        "com.stip.stip.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
+            } ?: run {
+                // 카메라 앱이 없는 경우
+                Toast.makeText(this, "카메라 앱을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    // 이미지 파일 생성
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // 파일명 생성
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File = getExternalFilesDir(null) ?: throw IOException("External storage not available")
+        
+        return File.createTempFile(
+            "JPEG_${timeStamp}_",
+            ".jpg",
+            storageDir
+        ).apply {
+            currentPhotoPath = absolutePath
+        }
+    }
+    
+    // 갤러리 열기
+    private fun openGallery() {
+        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(intent, REQUEST_PICK_IMAGE)
+    }
+    
+    // 카메라/갤러리 결과 처리
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_IMAGE_CAPTURE -> {
+                    // 카메라에서 촬영한 이미지 처리
+                    val file = File(currentPhotoPath)
+                    if (file.exists()) {
+                        val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
+                        binding.profileImage.setImageBitmap(bitmap)
+                        // 실제 서버로 이미지 업로드 로직 추가 필요
+                        Toast.makeText(this, "프로필 사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                        
+                        // 다른 페이지와 동일하게 프로필 이미지 및 활동 상태 일관성 유지를 위해
+                        // SharedPreferences나 ViewModel을 통해 상태 저장 필요
+                        // viewModel.uploadProfileImage(file)
+                    }
+                }
+                REQUEST_PICK_IMAGE -> {
+                    // 갤러리에서 선택한 이미지 처리
+                    data?.data?.let { uri ->
+                        binding.profileImage.setImageURI(uri)
+                        // 실제 서버로 이미지 업로드 로직 추가 필요
+                        Toast.makeText(this, "프로필 사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                    } ?: run {
+                        Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
         }
     }
 }
