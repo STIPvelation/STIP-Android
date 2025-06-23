@@ -57,9 +57,9 @@ class AddressBottomSheet(
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        view?.findViewById<AppCompatImageView>(R.id.iv_close)?.setOnClickListener {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        view.findViewById<AppCompatImageView>(R.id.iv_close)?.setOnClickListener {
             dismiss()
         }
     }

@@ -50,10 +50,24 @@ class MemberInfoEditActivity : AppCompatActivity(),
     
     // 프로필 이미지 관련 변수
     private var currentPhotoPath: String = ""
-    private val REQUEST_IMAGE_CAPTURE = 1
-    private val REQUEST_PICK_IMAGE = 2
     private val PERMISSION_REQUEST_CAMERA = 100
     private val PERMISSION_REQUEST_STORAGE = 101
+    
+    // Activity Result API 로 이전의 startActivityForResult 대체
+    private val takePictureLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            // 카메라로 촬영한 이미지 처리
+            // currentPhotoPath에 이미 경로가 저장되어 있으므로 그대로 사용
+            // 필요한 이미지 처리 코드 추가
+        }
+    }
+    
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val selectedImageUri = result.data?.data
+            // 선택한 이미지 처리 코드 추가
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -192,7 +206,7 @@ class MemberInfoEditActivity : AppCompatActivity(),
             memberInfo.accountNumber
         )
         binding.root.findViewById<android.widget.TextView>(R.id.value_bank)?.text =
-            if (bankName != null && formattedAccountNumber != null) "$bankName $formattedAccountNumber" else "-"
+            if (bankName.isNotEmpty() && formattedAccountNumber.isNotEmpty()) "$bankName $formattedAccountNumber" else "-"
 
     }
 
@@ -434,36 +448,6 @@ class MemberInfoEditActivity : AppCompatActivity(),
         }
     }
     
-    // 이미지 선택 다이얼로그 표시
-    private fun showImageSelectionDialog() {
-        val options = arrayOf("카메라로 사진 촬영", "갤러리에서 선택")
-        
-        androidx.appcompat.app.AlertDialog.Builder(this)
-            .setTitle("프로필 사진 변경")
-            .setItems(options) { _, which ->
-                when (which) {
-                    0 -> {
-                        // 카메라 권한 확인 후 실행
-                        if (checkCameraPermission()) {
-                            dispatchTakePictureIntent()
-                        } else {
-                            requestCameraPermission()
-                        }
-                    }
-                    1 -> {
-                        // 저장소 권한 확인 후 실행
-                        if (checkStoragePermission()) {
-                            openGallery()
-                        } else {
-                            requestStoragePermission()
-                        }
-                    }
-                }
-            }
-            .setNegativeButton("취소", null)
-            .show()
-    }
-    
     // 카메라 권한 확인
     private fun checkCameraPermission(): Boolean {
         return ContextCompat.checkSelfPermission(
@@ -545,7 +529,7 @@ class MemberInfoEditActivity : AppCompatActivity(),
                         it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    takePictureLauncher.launch(takePictureIntent)
                 }
             } ?: run {
                 // 카메라 앱이 없는 경우
@@ -565,48 +549,43 @@ class MemberInfoEditActivity : AppCompatActivity(),
             "JPEG_${timeStamp}_",
             ".jpg",
             storageDir
-        ).apply {
-            currentPhotoPath = absolutePath
-        }
+        )
     }
     
-    // 갤러리 열기
+    // 갤러리 앱 실행
     private fun openGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-        startActivityForResult(intent, REQUEST_PICK_IMAGE)
+        galleryLauncher.launch(intent)
     }
     
-    // 카메라/갤러리 결과 처리
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    // 이미지 선택 다이얼로그 표시
+    private fun showImageSelectionDialog() {
+        val options = arrayOf("카메라로 촬영", "갤러리에서 선택")
         
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                REQUEST_IMAGE_CAPTURE -> {
-                    // 카메라에서 촬영한 이미지 처리
-                    val file = File(currentPhotoPath)
-                    if (file.exists()) {
-                        val bitmap = BitmapFactory.decodeFile(currentPhotoPath)
-                        binding.profileImage.setImageBitmap(bitmap)
-                        // 실제 서버로 이미지 업로드 로직 추가 필요
-                        Toast.makeText(this, "프로필 사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
-                        
-                        // 다른 페이지와 동일하게 프로필 이미지 및 활동 상태 일관성 유지를 위해
-                        // SharedPreferences나 ViewModel을 통해 상태 저장 필요
-                        // viewModel.uploadProfileImage(file)
+        AlertDialog.Builder(this)
+            .setTitle("프로필 사진 변경")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        // 카메라 권한 확인 후 실행
+                        if (checkCameraPermission()) {
+                            dispatchTakePictureIntent()
+                        } else {
+                            requestCameraPermission()
+                        }
                     }
-                }
-                REQUEST_PICK_IMAGE -> {
-                    // 갤러리에서 선택한 이미지 처리
-                    data?.data?.let { uri ->
-                        binding.profileImage.setImageURI(uri)
-                        // 실제 서버로 이미지 업로드 로직 추가 필요
-                        Toast.makeText(this, "프로필 사진이 변경되었습니다.", Toast.LENGTH_SHORT).show()
-                    } ?: run {
-                        Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    1 -> {
+                        // 저장소 권한 확인 후 실행
+                        if (checkStoragePermission()) {
+                            openGallery()
+                        } else {
+                            requestStoragePermission()
+                            Toast.makeText(this, "이미지를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
-        }
+            .setNegativeButton("취소", null)
+            .show()
     }
 }

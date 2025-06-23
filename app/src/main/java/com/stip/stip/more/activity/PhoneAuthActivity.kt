@@ -119,7 +119,13 @@ class PhoneAuthActivity : AppCompatActivity() {
     /** 인증번호 입력시 키보드가 화면 가림 문제 해결 */
     override fun onResume() {
         super.onResume()
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            // Android 11 이상에서는 WindowInsets.Type을 사용
+            window.setDecorFitsSystemWindows(false)
+        } else {
+            @Suppress("DEPRECATION")
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
     }
 
     override fun onPause() {

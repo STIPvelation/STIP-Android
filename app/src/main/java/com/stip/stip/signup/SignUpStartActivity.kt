@@ -45,8 +45,15 @@ class SignUpStartActivity : BaseActivity<ActivityLoginStartBinding, SignUpViewMo
 
         // 닫기 버튼
         binding.ivClose.setOnClickListener {
-            onBackPressed()
+            finish()
         }
+        
+        // 뒤로가기 처리
+        onBackPressedDispatcher.addCallback(this, object : androidx.activity.OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        })
     }
 
     private fun showLoadingAndNavigate() {

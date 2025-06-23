@@ -25,11 +25,7 @@ import java.util.Date
 import java.util.Locale
 
 fun Context.getColorEx(resourceId: Int): Int {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        getColor(resourceId)
-    } else {
-        resources.getColor(resourceId)
-    }
+    return androidx.core.content.ContextCompat.getColor(this, resourceId)
 }
 
 fun Date.dateToString(format: String, local : Locale = Locale.getDefault()): String {

@@ -43,7 +43,12 @@ class SignUpBankFragment: BaseFragment<FragmentSignUpBankBinding, SignUpBankView
             viewModel.requestGetNiceAuth(di)
         }
 
-        val selectedBank = arguments?.getSerializable(Constants.BUNDLE_SELECT_BANK_KEY) as? BankData
+        val selectedBank = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getSerializable(Constants.BUNDLE_SELECT_BANK_KEY, BankData::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getSerializable(Constants.BUNDLE_SELECT_BANK_KEY) as? BankData
+        }
         selectedBank?.let {
             // 선택된 은행 정보를 UI에 반영
             binding.tvSignUpBankValue.text = it.name

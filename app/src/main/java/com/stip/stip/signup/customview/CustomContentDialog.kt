@@ -70,7 +70,7 @@ class CustomContentDialog(
 
         if (accent) {
             val result = String.format(comment)
-            binding.tvContent.text = Html.fromHtml(result)
+            binding.tvContent.text = androidx.core.text.HtmlCompat.fromHtml(result, androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY)
         } else {
             binding.tvContent.text = comment
         }
@@ -117,14 +117,24 @@ class CustomContentDialog(
                     WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
         )
 
-        val flag = (View.SYSTEM_UI_FLAG_LOW_PROFILE
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            // Android 11 이상에서는 WindowInsetsController 사용
+            window?.decorView?.windowInsetsController?.let { controller ->
+                controller.hide(android.view.WindowInsets.Type.systemBars())
+                controller.systemBarsBehavior = android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            val flag = (View.SYSTEM_UI_FLAG_LOW_PROFILE
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                )
-        window?.decorView?.systemUiVisibility = flag
+            )
+            @Suppress("DEPRECATION")
+            window?.decorView?.systemUiVisibility = flag
+        }
         super.show()
         window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)
     }
