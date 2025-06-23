@@ -345,25 +345,25 @@
     <string name="notification_header">일반 알림</string>
 
     <string name="notification_settings_title">시세 알림</string>
-    <string name="notification_settings_description">수신 및 배지, 사운드, 배너 등의 알림 설정.</string>
+    <string name="notification_settings_description">수신 및 배지, 사운드, 배너 등의 알림 설정</string>
 
     <string name="login_alert_title">로그인 알림</string>
-    <string name="login_alert_description">새로운 로그인 발생 시 알림.</string>
+    <string name="login_alert_description">새로운 로그인 발생 시 알림</string>
 
     <string name="transaction_alert_title">거래 알림</string>
-    <string name="transaction_alert_description">매수/매도 체결 완료 시 알림.</string>
+    <string name="transaction_alert_description">매수/매도 체결 완료 시 알림</string>
 
     <string name="deposit_withdrawal_alert_title">입출금 알림</string>
-    <string name="deposit_withdrawal_alert_description">입출금 완료 시 알림.</string>
+    <string name="deposit_withdrawal_alert_description">입출금 완료 시 알림</string>
 
     <string name="order_alert_title">예약주문 알림</string>
-    <string name="order_alert_description">설정한 가격에 도달하여 예약 주문이 실행된 경우 알림.</string>
+    <string name="order_alert_description">설정한 가격에 도달하여 예약 주문이 실행된 경우</string>
 
     <string name="staking_alert_title">스테이킹 알림</string>
     <string name="staking_alert_description">스테이킹 및 언스테이킹 완료 시 알림.</string>
 
     <string name="event_alert_title">이벤트 등 안내 수신</string>
-    <string name="event_alert_description">혜택 및 이벤트 등 알림 수신 동의.</string>
+    <string name="event_alert_description">혜택 및 이벤트 등 알림 수신 동의</string>
 
 
     <string name="market_price_settings_title">시세 설정</string>
@@ -373,31 +373,31 @@
 
 
     <string name="setting_title_login_alert">로그인 알림</string>
-    <string name="setting_description_login_alert">새로운 로그인 발생시 알림.</string>
+    <string name="setting_description_login_alert">새로운 로그인 발생시 알림</string>
 
     <string name="setting_title_trade_alert">거래 알림</string>
-    <string name="setting_description_trade_alert">매수/매도 체결 완료 시 알림.</string>
+    <string name="setting_description_trade_alert">매수/매도 체결 완료 시 알림</string>
 
     <string name="setting_title_deposit_withdrawal_alert">입출금 알림</string>
-    <string name="setting_description_deposit_withdrawal_alert">입출금 완료 시 알림.</string>
+    <string name="setting_description_deposit_withdrawal_alert">입출금 완료 시 알림</string>
 
     <string name="setting_title_reserved_order_alert">예약주문 알림</string>
-    <string name="setting_description_reserved_order_alert">설정한 가격에 도달하여 예약 주문이 실행된 경우 알림.</string>
+    <string name="setting_description_reserved_order_alert">설정한 가격에 도달하여 예약 주문이 실행된 경우 알림</string>
 
     <string name="setting_title_event_reception">이벤트 등 안내 수신</string>
-    <string name="setting_description_event_reception">혜택 및 이벤트 등 알림 수신 동의.</string>
+    <string name="setting_description_event_reception">혜택 및 이벤트 등 알림 수신 동의</string>
 
     <string name="setting_title_ip_webtoon_alert">IP웹툰 알림</string>
-    <string name="setting_description_ip_webtoon_alert">새로운 IP웹툰의 알림 설정.</string>
+    <string name="setting_description_ip_webtoon_alert">새로운 IP웹툰의 알림 설정</string>
 
     <string name="setting_title_ip_auction_alert">IP옥션 알림</string>
-    <string name="setting_description_ip_auction_alert">IP옥션이 열리기 1시간전 알림.</string>
+    <string name="setting_description_ip_auction_alert">IP옥션이 열리기 1시간전 알림</string>
 
     <string name="setting_title_new_ip_listing_alert">IP신규 상장</string>
-    <string name="setting_description_new_ip_listing_alert">신규 상장이 되는 지식재산의 알림.</string>
+    <string name="setting_description_new_ip_listing_alert">신규 상장이 되는 지식재산의 알림</string>
 
     <string name="setting_title_ip_swap_alert">IP스왑 </string>
-    <string name="setting_description_ip_swap_alert">IP스왑을 원하는 신청 알림.</string>
+    <string name="setting_description_ip_swap_alert">IP스왑을 원하는 신청 알림</string>
 
 
     <string name="market_alert_screen_title">시세 알림</string>
@@ -411,21 +411,21 @@
 
     <string name="owned_ip_category_title">보유IP</string>
     <string name="owned_ip_alert_title">보유IP 알림</string>
-    <string name="owned_ip_alert_description">설정 기준 10% 구간 상승/하락 발생 시 알림.</string>
+    <string name="owned_ip_alert_description">설정 기준 10% 구간 상승/하락 발생시</string>
 
     <string name="comprehensive_alert_category_title">종합 알림</string>
     <string name="comprehensive_alert_designated_title">지정 알림</string>
-    <string name="comprehensive_alert_designated_description">설정 기준 10% 구간 상승/하락 발생 시 알림</string>
+    <string name="comprehensive_alert_designated_description">설정 기준 10% 구간 상승/하락 발생시</string>
     <string name="comprehensive_alert_rise_fall_title">상승/하락 알림</string>
-    <string name="comprehensive_alert_rise_fall_description">지정IP 단기간 상승 및 하락 발생 시 알림</string>
+    <string name="comprehensive_alert_rise_fall_description">지정IP 단기간 상승 및 하락 발생시 </string>
     <string name="comprehensive_alert_report_low_price_title">신고/저가 알림</string>
-    <string name="comprehensive_alert_report_low_price_description">지절한 날짜의 신고/저가 발생 시 알림</string>
+    <string name="comprehensive_alert_report_low_price_description">지절한 날짜의 신고/저가 발생시 </string>
     <string name="comprehensive_alert_ip_cross_compare_title">IP교차 비교 알림</string>
     <string name="comprehensive_alert_ip_cross_compare_description">페어해둔 IP의 가격 움직임 차이 알림</string>
     <string name="comprehensive_alert_new_rights_user_title">신규 실사권 사용자 알림</string>
-    <string name="comprehensive_alert_new_rights_user_description">지정IP에서 신규 실사권 사용자 발생시 알림</string>
+    <string name="comprehensive_alert_new_rights_user_description">지정IP에서 신규 실사권 사용자 발생시</string>
     <string name="comprehensive_alert_rights_revoker_title">IP실시권 포기자 알림</string>
-    <string name="comprehensive_alert_rights_revoker_description">지정IP에서 실시권 사용 포기하는 유저 알림</string>
+    <string name="comprehensive_alert_rights_revoker_description">IP실시권 사용 포기 유저 알림</string>
     <string name="comprehensive_alert_cancel_rights_user_title">권리 취소자 알림</string>
     <string name="comprehensive_alert_cancel_rights_user_description">권리 취소자 관련 알림 설정</string>
     <string name="title_price_alert">시세 알림</string>
@@ -481,7 +481,7 @@
     <string name="display_mode_normal_title">일반 모드</string>
     <string name="display_mode_normal_desc">STIP에서 제공하는 일반 화면 모드 입니다.</string>
     <string name="display_mode_dark_title">다크 모드</string>
-    <string name="display_mode_dark_desc">STIP에서 제공하는 검정색 바탕의 디자인 모드입니다.</string>
+    <string name="display_mode_dark_desc">STIP에서 제공하는 검정색 디자인 모드입니다.</string>
     <string name="display_mode_design_title">디자인 모드</string>
     <string name="display_mode_design_desc">분기별로 신규 디자인 화면을 제공합니다.</string>
     <string name="display_mode_user_title">유저 모드</string>

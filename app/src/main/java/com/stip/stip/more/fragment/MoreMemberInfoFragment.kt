@@ -42,6 +42,12 @@ class MoreMemberInfoFragment : Fragment() {
         viewModel.enableBackNavigation {
             requireActivity().onBackPressedDispatcher.onBackPressed()
         }
+        
+        // 랜덤 사용자 ID 설정
+        setRandomUserId()
+        
+        // 프로필 사진 변경 버튼 리스너
+        setupProfilePhotoChangeListener()
 
         // API에서 회원정보 로드 (ViewModel에서 업데이트 시작)
         // loadMemberInfo()는 onStart() 또는 onResume()에서 호출할 수도 있음
@@ -50,6 +56,10 @@ class MoreMemberInfoFragment : Fragment() {
             if (info != null) {
                 // 프로필 섹션
                 binding.textViewProfileName.text = info.name
+                // 이미 생성된 랜덤 ID가 없는 경우에만 생성
+                if (binding.textViewUserId.text.isNullOrEmpty()) {
+                    setRandomUserId()
+                }
                 // 기본 회원정보
                 binding.root.findViewById<TextView>(R.id.value_name).text = info.name
                 binding.root.findViewById<TextView>(R.id.value_email).text = info.email
@@ -57,9 +67,11 @@ class MoreMemberInfoFragment : Fragment() {
                 // 핸드폰 번호 포맷팅
                 val formattedPhoneNumber = com.stip.stip.signup.utils.Utils.formatPhoneNumber(info.phoneNumber)
                 binding.root.findViewById<TextView>(R.id.value_phone).text = formattedPhoneNumber
+                
+                // 여권 영문 이름 설정
+                val englishName = (info.englishFirstName + " " + info.englishLastName).takeIf { !it.isNullOrBlank() } ?: info.name.uppercase()
+                binding.root.findViewById<TextView>(R.id.value_english_name).text = englishName
                 // 추가 필드 업데이트
-                binding.root.findViewById<TextView>(R.id.value_passport_name).text =
-                    info.englishFirstName + " " + info.englishLastName ?: "-"
                 // 생년월일 포맷팅
                 val formattedBirthdate = com.stip.stip.signup.utils.Utils.formatBirthdate(info.birthdate)
                 binding.root.findViewById<TextView>(R.id.value_dob).text = formattedBirthdate
@@ -85,9 +97,8 @@ class MoreMemberInfoFragment : Fragment() {
                 // 회원정보가 없는 경우 (로그인 필요)
                 binding.textViewProfileName.text = "로그인이 필요합니다"
 
-                // 모든 필드에 기본값 설정
                 val allValueIds = listOf(
-                    R.id.value_name, R.id.value_passport_name, R.id.value_email,
+                    R.id.value_name, R.id.value_english_name, R.id.value_email,
                     R.id.value_phone, R.id.value_dob, R.id.value_bank,
                     R.id.value_address, R.id.value_job
                 )
@@ -157,6 +168,47 @@ class MoreMemberInfoFragment : Fragment() {
                 performAccountDeletion()
             }.show(parentFragmentManager, "AccountDeletionGuideDialog")
         }
+    }
+    
+    private fun setupProfilePhotoChangeListener() {
+        // 프로필 사진 변경 버튼 클릭 리스너
+        binding.buttonChangeProfilePhoto.setOnClickListener {
+            // 카메라 및 갤러리에서 이미지 선택 다이얼로그 표시
+            showImageSelectionDialog()
+        }
+    }
+    
+    private fun showImageSelectionDialog() {
+        val options = arrayOf("카메라로 사진 촬영", "갤러리에서 선택")
+        
+        androidx.appcompat.app.AlertDialog.Builder(requireContext())
+            .setTitle("프로필 사진 변경")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        // 카메라 실행 로직
+                        // 실제 구현시 카메라 권한 확인 및 Intent 처리 필요
+                        Toast.makeText(context, "카메라 기능 준비 중", Toast.LENGTH_SHORT).show()
+                    }
+                    1 -> {
+                        // 갤러리 실행 로직
+                        // 실제 구현시 저장소 권한 확인 및 Intent 처리 필요
+                        Toast.makeText(context, "갤러리 기능 준비 중", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("취소", null)
+            .show()
+    }
+
+    private fun setRandomUserId() {
+        // 9자리 랜덤 숫자 생성
+        val random = java.util.Random()
+        val randomId = StringBuilder()
+        for (i in 0 until 9) {
+            randomId.append(random.nextInt(10))
+        }
+        binding.textViewUserId.text = "ID: " + randomId.toString()
     }
 
     private fun performLogout() {
