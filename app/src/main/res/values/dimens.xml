@@ -42,7 +42,27 @@
     <dimen name="text_large">18sp</dimen>
     <dimen name="text_xlarge">20sp</dimen>
     <dimen name="text_xxlarge">24sp</dimen>
+    <dimen name="text_size_xlarge">19sp</dimen>
 
+    <!-- 반응형 아이콘 및 카드 크기 -->
+    <dimen name="icon_small">24dp</dimen>
+    <dimen name="icon_medium">48dp</dimen>
+    <dimen name="icon_large">64dp</dimen>
+    <dimen name="card_width_small">100dp</dimen>
+    <dimen name="card_width_medium">120dp</dimen>
+    <dimen name="card_height_small">80dp</dimen>
+    <dimen name="card_height_medium">100dp</dimen>
+    
+    <!-- 반응형 마진/패딩 -->
+    <dimen name="margin_xsmall">4dp</dimen>
+    <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_medium">16dp</dimen>
+    <dimen name="margin_large">24dp</dimen>
+    <dimen name="margin_xlarge">32dp</dimen>
+    <dimen name="padding_xsmall">4dp</dimen>
+    <dimen name="padding_small">8dp</dimen>
+    <dimen name="padding_medium">16dp</dimen>
+    <dimen name="padding_large">24dp</dimen>
 
         <dimen name="policy_padding_horizontal">16dp</dimen>
         <dimen name="policy_padding_vertical_item">14dp</dimen> <dimen name="policy_padding_vertical_header">10dp</dimen> <dimen name="policy_text_size_title">18sp</dimen>
