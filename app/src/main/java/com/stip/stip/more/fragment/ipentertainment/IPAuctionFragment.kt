@@ -110,21 +110,120 @@ class IPAuctionFragment : Fragment() {
         auctionList.clear()
         auctionList.addAll(
             listOf(
-                createAuctionItem("1", "우주를 담은 디지털 아트", "디지털아트", 150000, 2, true),
-                createAuctionItem("2", "연못 속 수련", "그림", 2500000, 1, false),
-                createAuctionItem("3", "일출 풍경 사진", "사진", 350000, 3, false),
-                createAuctionItem("4", "한정판 피규어", "수집품", 890000, 1, true),
-                createAuctionItem("5", "추상화 작품", "그림", 1200000, 2, false),
-                createAuctionItem("6", "도시 야경 사진", "사진", 450000, 4, false),
-                createAuctionItem("7", "AI 생성 디지털 아트", "디지털아트", 780000, 5, true),
-                createAuctionItem("8", "빈티지 슈퍼히어로 만화책", "수집품", 3500000, 1, false),
-                createAuctionItem("9", "자연 풍경화", "그림", 1800000, 2, false),
-                createAuctionItem("10", "한정판 음반 컬렉션", "수집품", 650000, 3, true)
+                createAuctionItem(
+                    "1", 
+                    "우주 탐험 디지털 아트 시리즈", 
+                    "디지털아트", 
+                    150, 
+                    2, 
+                    true,
+                    "디지털 우주 탐험 시리즈 중 첫 번째 작품으로, 독점 NFT 기술로 제작된 우주 탐사선의 미래적 예술 표현입니다. 블록체인 인증 포함.",
+                    "DMCA-2023-10001"
+                ),
+                createAuctionItem(
+                    "2", 
+                    "모네 스타일 연못 속 수련", 
+                    "그림", 
+                    2500, 
+                    1, 
+                    false,
+                    "현대적 기법으로 재해석한 모네 스타일의 수련 그림. 디지털과 아날로그 기법을 혼합한 혁신적 작품으로 한정판 아트 프린트 1/10.",
+                    "C-ARTS-2023-10002"
+                ),
+                createAuctionItem(
+                    "3", 
+                    "히말라야 일출 사진 저작권", 
+                    "사진", 
+                    350, 
+                    3, 
+                    false,
+                    "내셔널 지오그래픽에 게재된 히말라야 일출 사진의 상업적 사용권. 고해상도 마스터 파일과 인쇄권 포함.",
+                    "P-2023-10003"
+                ),
+                createAuctionItem(
+                    "4", 
+                    "전설의 검사 피규어 상표권", 
+                    "수집품", 
+                    890, 
+                    1, 
+                    true,
+                    "인기 게임 '전설의 검사' 캐릭터의 피규어 제작 상표권. 3D 모델링 파일과 북미 지역 5년 제조 라이선스 포함.",
+                    "TM-2023-10004"
+                ),
+                createAuctionItem(
+                    "5", 
+                    "뉴욕 현대미술관 추상화 저작권", 
+                    "그림", 
+                    1200, 
+                    2, 
+                    false,
+                    "뉴욕 현대미술관에 전시된 추상화 작품의 디지털 복제 및 상품화 권한. 전 세계 상품화 권한 2년 라이선스.",
+                    "FA-2023-10005"
+                ),
+                createAuctionItem(
+                    "6", 
+                    "동경 야경 파노라마 특허", 
+                    "사진", 
+                    450, 
+                    4, 
+                    false,
+                    "특허 받은 야경 촬영 기술로 제작된 동경 360도 파노라마 이미지의 독점 사용권. 메타버스 환경 활용 가능.",
+                    "PT-2023-10006"
+                ),
+                createAuctionItem(
+                    "7", 
+                    "AI 아트 생성 알고리즘 특허", 
+                    "디지털아트", 
+                    780, 
+                    5, 
+                    true,
+                    "혁신적인 AI 아트 생성 알고리즘의 사용 라이선스. 상업적 작품 제작에 활용 가능한 전문 인공지능 모델 포함.",
+                    "AI-PT-2023-10007"
+                ),
+                createAuctionItem(
+                    "8", 
+                    "슈퍼히어로 1판 만화책 저작권", 
+                    "수집품", 
+                    3500, 
+                    1, 
+                    false,
+                    "1960년대 출판된 희귀 슈퍼히어로 만화의 캐릭터 활용 저작권. 영화, 게임, 상품 제작권 포함(북미 지역 한정).",
+                    "CC-1960-10008"
+                ),
+                createAuctionItem(
+                    "9", 
+                    "제주 풍경화 NFT 원본", 
+                    "그림", 
+                    1800, 
+                    2, 
+                    false,
+                    "한국 전통 기법과 현대적 디지털 기술을 결합한 제주 풍경화 NFT. 실물 작품 소유권과 디지털 인증서 포함.",
+                    "K-NFT-2023-10009"
+                ),
+                createAuctionItem(
+                    "10", 
+                    "전설적 밴드 미발매곡 저작권", 
+                    "수집품", 
+                    650, 
+                    3, 
+                    true,
+                    "세계적인 록 밴드의 미발매 음원 5곡의 독점 소유권 및 제한적 상업 이용권. 마스터 녹음본 포함.",
+                    "MR-2023-10010"
+                )
             )
         )
     }
     
-    private fun createAuctionItem(id: String, title: String, category: String, price: Long, daysToEnd: Int, featured: Boolean): AuctionModel {
+    private fun createAuctionItem(
+        id: String, 
+        title: String, 
+        category: String, 
+        price: Long, 
+        daysToEnd: Int, 
+        featured: Boolean,
+        description: String = "상세 설명은 실제 API 데이터에서 가져옵니다.",
+        regNumber: String = "C-2023-${10000 + id.toInt()}"
+    ): AuctionModel {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_MONTH, daysToEnd)
         
@@ -132,11 +231,11 @@ class IPAuctionFragment : Fragment() {
         val ipTypes = IpType.values()
         val randomIpType = ipTypes[id.toInt() % ipTypes.size]
         
-        // 기존 아이템에 새 필드 추가
+        // 달러 기반 가격으로 변경 (기존 가격을 그대로 사용 - 이미 달러로 변경됨)
         return AuctionModel(
             id = id,
             title = title,
-            description = "상세 설명은 실제 API 데이터에서 가져옵니다.",
+            description = description,
             imageUrl = "https://picsum.photos/400/400?random=$id",
             startPrice = price * 8 / 10, // 시작가는 현재가의 80%
             currentPrice = price,
@@ -144,7 +243,7 @@ class IPAuctionFragment : Fragment() {
             isFeatured = featured,
             category = category,
             ipType = randomIpType,
-            registrationNumber = "C-2023-${10000 + id.toInt()}",
+            registrationNumber = regNumber,
             bidCount = (5..50).random(),
             viewCount = (20..200).random()
         )

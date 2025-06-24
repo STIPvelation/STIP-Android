@@ -74,7 +74,7 @@ class BidDialogFragment : DialogFragment() {
             
             // 최소 입찰 금액 표시 (현재 가격 + 1)
             val minBidAmount = auction.currentPrice + 1
-            binding.minBidAmountText.text = "최소 ${formatPriceInDollars(minBidAmount)} 이상 입찰해야 합니다."
+            binding.minBidAmountText.text = "Minimum bid: ${formatPriceInDollars(minBidAmount)}"
             
             // IP 권리 안내문 설정
             binding.ipRightsNotice.text = 
@@ -166,10 +166,8 @@ class BidDialogFragment : DialogFragment() {
     }
     
     private fun formatPriceInDollars(price: Long): String {
-        // Convert to dollar-based value by removing three zeros
-        val dollarValue = price / 1000
-        val formatter = DecimalFormat("$#,###")
-        return formatter.format(dollarValue)
+        // Format consistently with other price displays
+        return String.format("$%,d", price)
     }
     
     override fun onDestroyView() {

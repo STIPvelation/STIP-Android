@@ -51,20 +51,18 @@ class AuctionAdapter : ListAdapter<AuctionModel, AuctionAdapter.AuctionViewHolde
             // 제목 설정
             binding.textAuctionTitle.text = auction.title
             
-            // 등록번호 설정
-            binding.textRegistrationNumber.text = "경매 IP: ${auction.registrationNumber}"
+            // 등록번호 설정 - 포맷 통일
+            binding.textRegistrationNumber.text = "IP #${auction.registrationNumber}"
             
-            // 가격 포맷팅
-            val formattedPrice = NumberFormat.getNumberInstance(Locale.KOREA)
-                .format(auction.currentPrice)
-            binding.textAuctionPrice.text = "₩ $formattedPrice"
+            // 가격 포맷팅 (달러 기반)
+            binding.textAuctionPrice.text = String.format("$%,d", auction.currentPrice)
             
             // 남은 시간 계산
             val remainingTime = getRemainingTimeText(auction.endTime)
             binding.textTimeRemaining.text = remainingTime
             
-            // 참여자 수 표시
-            binding.textBidCount.text = "${auction.bidCount}명 참여"
+            // 참여자 수 표시 - 포맷 통일
+            binding.textBidCount.text = "${String.format("%d", auction.bidCount)} bids"
             
             // 이미지 로딩 개선
             try {
@@ -105,10 +103,10 @@ class AuctionAdapter : ListAdapter<AuctionModel, AuctionAdapter.AuctionViewHolde
             val days = TimeUnit.HOURS.toDays(hours)
             
             return when {
-                days > 0 -> "${days}일 남음"
-                hours > 0 -> "${hours}시간 남음"
-                minutes > 0 -> "${minutes}분 남음"
-                else -> "1분 이내 마감"
+                days > 0 -> "${days} days left"
+                hours > 0 -> "${hours} hours left"
+                minutes > 0 -> "${minutes} min left"
+                else -> "<1 min left"
             }
         }
     }

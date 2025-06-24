@@ -4,25 +4,27 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
- * 남은 시간을 "n일 n시간" 형태의 텍스트로 포맷팅
+ * Formats the remaining time in consistent English format: "n days n hours"
  */
 fun formatRemainingTime(endTime: Date): String {
     val currentTime = Date()
     
-    // 이미 종료된 경우
+    // If already ended
     if (endTime.before(currentTime)) {
-        return "종료됨"
+        return "Ended"
     }
     
     val diffInMillis = endTime.time - currentTime.time
     val diffInDays = TimeUnit.MILLISECONDS.toDays(diffInMillis)
     val remainingHoursMillis = diffInMillis - TimeUnit.DAYS.toMillis(diffInDays)
     val diffInHours = TimeUnit.MILLISECONDS.toHours(remainingHoursMillis)
+    val diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis)
     
     return when {
-        diffInDays > 0 && diffInHours > 0 -> "${diffInDays}일 ${diffInHours}시간"
-        diffInDays > 0 -> "${diffInDays}일"
-        diffInHours > 0 -> "${diffInHours}시간"
-        else -> "${TimeUnit.MILLISECONDS.toMinutes(diffInMillis)}분"
+        diffInDays > 0 && diffInHours > 0 -> "${diffInDays} days ${diffInHours} hours"
+        diffInDays > 0 -> "${diffInDays} days"
+        diffInHours > 0 -> "${diffInHours} hours"
+        diffInMinutes > 0 -> "${diffInMinutes} min"
+        else -> "<1 min"
     }
 }

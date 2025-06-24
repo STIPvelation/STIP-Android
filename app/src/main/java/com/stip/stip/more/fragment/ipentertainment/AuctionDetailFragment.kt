@@ -106,10 +106,10 @@ class AuctionDetailFragment : Fragment() {
         
         // 기본 정보 설정
         // Title text removed as requested to avoid duplicate headers
-        binding.registrationNumberText.text = auction.registrationNumber
+        binding.registrationNumberText.text = "IP #${auction.registrationNumber}"
         
-        // 등록일과 만료일 설정
-        val dateFormat = java.text.SimpleDateFormat("yyyy년 M월 d일", Locale.KOREA)
+        // 등록일과 만료일 설정 - 포맷 통일
+        val dateFormat = java.text.SimpleDateFormat("MMM d, yyyy", Locale.US)
         binding.registrationDateText.text = dateFormat.format(auction.registrationDate)
         binding.expiryDateText.text = dateFormat.format(auction.expiryDate)
         
@@ -118,10 +118,10 @@ class AuctionDetailFragment : Fragment() {
         binding.currentPriceText.text = formatPrice(auction.currentPrice)
         binding.bottomCurrentPriceText.text = formatPrice(auction.currentPrice)
         
-        // 남은 시간 및 입찰 참여자
+        // 남은 시간 및 입찰 참여자 - 포맷 통일
         val remainingTimeText = formatRemainingTime(auction.endTime)
-        binding.remainingTimeText.text = "남은 시간: $remainingTimeText"
-        binding.bidCountText.text = "${auction.bidCount}명 참여"
+        binding.remainingTimeText.text = "Time left: $remainingTimeText"
+        binding.bidCountText.text = "${auction.bidCount} bids"
         
         // 상세 정보
         binding.descriptionText.text = auction.description
@@ -165,9 +165,8 @@ class AuctionDetailFragment : Fragment() {
     }
     
     private fun formatPrice(price: Long): String {
-        // Convert to dollar-based value by removing three zeros
-        val dollarValue = price / 1000
-        return String.format("$%,d", dollarValue)
+        // Format consistently with other price displays
+        return String.format("$%,d", price)
     }
     
     override fun onResume() {
