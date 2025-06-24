@@ -1,16 +1,18 @@
 package com.stip.stip.more.fragment.ipentertainment.adapter
 
+import android.content.res.ColorStateList
+import android.graphics.drawable.GradientDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.stip.stip.R
-import com.stip.stip.more.fragment.ipentertainment.model.AuctionModel
+import com.stip.stip.databinding.ItemAuctionBinding
+import com.stip.stip.more.fragment.ipentertainment.data.AuctionModel
+import com.stip.stip.more.fragment.ipentertainment.data.IpType
 import java.text.NumberFormat
 import java.util.Date
 import java.util.Locale
@@ -18,60 +20,75 @@ import java.util.concurrent.TimeUnit
 
 class AuctionAdapter : ListAdapter<AuctionModel, AuctionAdapter.AuctionViewHolder>(AuctionDiffCallback()) {
 
-    private var onItemClickListener: ((AuctionModel) -> Unit)? = null
+    private var onItemClickListener: ((AuctionModel, Int) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (AuctionModel) -> Unit) {
+    fun setOnItemClickListener(listener: (AuctionModel, Int) -> Unit) {
         onItemClickListener = listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AuctionViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_auction, parent, false)
-        return AuctionViewHolder(view)
+        val binding = ItemAuctionBinding.inflate(
+            LayoutInflater.from(parent.context), parent, false
+        )
+        return AuctionViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: AuctionViewHolder, position: Int) {
         val auction = getItem(position)
-        holder.bind(auction)
+        holder.bind(auction, position)
     }
 
-    inner class AuctionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageAuction: ImageView = itemView.findViewById(R.id.imageAuction)
-        private val textAuctionTitle: TextView = itemView.findViewById(R.id.textAuctionTitle)
-        private val textAuctionPrice: TextView = itemView.findViewById(R.id.textAuctionPrice)
-        private val textTimeRemaining: TextView = itemView.findViewById(R.id.textTimeRemaining)
-        private val badgeFeatured: TextView = itemView.findViewById(R.id.badgeFeatured)
+    inner class AuctionViewHolder(private val binding: ItemAuctionBinding) : 
+        RecyclerView.ViewHolder(binding.root) {
 
         init {
-            itemView.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    onItemClickListener?.invoke(getItem(position))
-                }
+            binding.root.setOnClickListener {
+                onItemClickListener?.invoke(getItem(bindingAdapterPosition), bindingAdapterPosition)
             }
         }
 
-        fun bind(auction: AuctionModel) {
-            textAuctionTitle.text = auction.title
+        fun bind(auction: AuctionModel, position: Int) {
+            // 제목 설정
+            binding.textAuctionTitle.text = auction.title
+            
+            // 등록번호 설정
+            binding.textRegistrationNumber.text = "경매 IP: ${auction.registrationNumber}"
             
             // 가격 포맷팅
             val formattedPrice = NumberFormat.getNumberInstance(Locale.KOREA)
                 .format(auction.currentPrice)
-            textAuctionPrice.text = "₩ $formattedPrice"
+            binding.textAuctionPrice.text = "₩ $formattedPrice"
             
             // 남은 시간 계산
             val remainingTime = getRemainingTimeText(auction.endTime)
-            textTimeRemaining.text = "남은 시간: $remainingTime"
+            binding.textTimeRemaining.text = remainingTime
             
-            // 이미지 로딩
-            Glide.with(itemView.context)
-                .load(auction.imageUrl)
-                .placeholder(R.drawable.ic_ipentertainment_auction)
-                .error(R.drawable.ic_ipentertainment_auction)
-                .into(imageAuction)
+            // 참여자 수 표시
+            binding.textBidCount.text = "${auction.bidCount}명 참여"
             
-            // 특별 뱃지 표시
-            badgeFeatured.visibility = if (auction.isFeatured) View.VISIBLE else View.GONE
+            // 이미지 로딩 개선
+            try {
+                Glide.with(itemView.context)
+                    .load(auction.imageUrl)
+                    .placeholder(R.drawable.ic_ipentertainment_auction)
+                    .error(R.drawable.ic_ipentertainment_auction)
+                    .centerCrop() // iOS와 동일한 이미지 처리
+                    .into(binding.imageAuction)
+            } catch (e: Exception) {
+                // 이미지 로딩 실패 시 기본 이미지 직접 설정
+                binding.imageAuction.setImageResource(R.drawable.ic_ipentertainment_auction)
+                e.printStackTrace()
+            }
+            
+            // IP 유형 태그 설정
+            binding.badgeIpType.apply {
+                text = auction.ipType.displayName
+                
+                // 배경색 동적 설정
+                val tagBackground = ContextCompat.getDrawable(context, R.drawable.tag_background) as? GradientDrawable
+                tagBackground?.setColor(auction.ipType.getColor())
+                background = tagBackground
+            }
         }
         
         private fun getRemainingTimeText(endTime: Date): String {
@@ -82,14 +99,16 @@ class AuctionAdapter : ListAdapter<AuctionModel, AuctionAdapter.AuctionViewHolde
                 return "마감됨"
             }
             
-            val days = TimeUnit.MILLISECONDS.toDays(diffInMillis)
-            val hours = TimeUnit.MILLISECONDS.toHours(diffInMillis) % 24
-            val minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis) % 60
+            // iOS와 동일한 시간 형식으로 변경
+            val minutes = TimeUnit.MILLISECONDS.toMinutes(diffInMillis)
+            val hours = TimeUnit.MILLISECONDS.toHours(diffInMillis)
+            val days = TimeUnit.HOURS.toDays(hours)
             
             return when {
-                days > 0 -> "${days}일 ${hours}시간"
-                hours > 0 -> "${hours}시간 ${minutes}분"
-                else -> "${minutes}분"
+                days > 0 -> "${days}일 남음"
+                hours > 0 -> "${hours}시간 남음"
+                minutes > 0 -> "${minutes}분 남음"
+                else -> "1분 이내 마감"
             }
         }
     }
@@ -100,7 +119,13 @@ class AuctionAdapter : ListAdapter<AuctionModel, AuctionAdapter.AuctionViewHolde
         }
 
         override fun areContentsTheSame(oldItem: AuctionModel, newItem: AuctionModel): Boolean {
-            return oldItem == newItem
+            return oldItem.id == newItem.id &&
+                   oldItem.title == newItem.title &&
+                   oldItem.currentPrice == newItem.currentPrice &&
+                   oldItem.endTime == newItem.endTime &&
+                   oldItem.ipType == newItem.ipType &&
+                   oldItem.registrationNumber == newItem.registrationNumber &&
+                   oldItem.bidCount == newItem.bidCount
         }
     }
 }

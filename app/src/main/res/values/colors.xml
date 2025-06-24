@@ -230,6 +230,15 @@
 
     <!-- Policy highlight color for animation -->
     <color name="highlight_background">#E6F5FE</color>
+
+    <!-- IP 유형별 색상 -->
+    <color name="ip_patent">#2574A9</color> <!-- 특허: 파란색 -->
+    <color name="ip_trademark">#28A745</color> <!-- 상표: 초록색 -->
+    <color name="ip_copyright">#7952B3</color> <!-- 저작권/음악/영화: 보라색 -->
+    <color name="ip_design">#E15361</color> <!-- 디자인: 분홍색 -->
+    <color name="ip_character">#F0AD4E</color> <!-- 캐릭터: 주황색 -->
+    <color name="ip_franchise">#5BC0BE</color> <!-- 프랜차이즈: 청록색 -->
+    <color name="ip_other">#6C757D</color> <!-- 기타: 회색 -->
 </resources>
 
 

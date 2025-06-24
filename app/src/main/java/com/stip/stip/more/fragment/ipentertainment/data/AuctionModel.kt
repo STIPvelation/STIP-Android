@@ -1,7 +1,7 @@
-package com.stip.stip.more.fragment.ipentertainment.model
+package com.stip.stip.more.fragment.ipentertainment.data
 
 import android.graphics.Color
-import java.util.Date
+import java.util.*
 
 enum class IpType(val displayName: String) {
     COPYRIGHT("저작권"),
@@ -32,11 +32,15 @@ data class AuctionModel(
     val title: String,
     val description: String,
     val imageUrl: String,
-    val currentPrice: Long,
+    val startPrice: Long = 0,
+    val currentPrice: Long = 0,
     val endTime: Date,
-    val isFeatured: Boolean = false,
-    val category: String = "전체",
+    val bidCount: Int = 0,
     val ipType: IpType = IpType.OTHER,
-    val registrationNumber: String = "N/A",
-    val bidCount: Int = 0
+    val isFeatured: Boolean = false,
+    val registrationNumber: String = "",
+    val viewCount: Int = 0,
+    val category: String = "",
+    val registrationDate: Date = Date(System.currentTimeMillis() - 365L * 24 * 60 * 60 * 1000), // 기본값은 1년 전
+    val expiryDate: Date = Date(System.currentTimeMillis() + 10L * 365 * 24 * 60 * 60 * 1000) // 기본값은 10년 후
 )

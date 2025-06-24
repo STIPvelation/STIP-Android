@@ -8,16 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.recyclerview.widget.GridLayoutManager
-import com.google.android.material.tabs.TabLayout
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+// TabLayout 제거로 import 제거
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpAuctionBinding
+import com.stip.stip.more.fragment.ipentertainment.AuctionDetailFragment
 import com.stip.stip.more.fragment.ipentertainment.adapter.AuctionAdapter
-import com.stip.stip.more.fragment.ipentertainment.model.AuctionModel
+import com.stip.stip.more.fragment.ipentertainment.data.AuctionModel
+import com.stip.stip.more.fragment.ipentertainment.data.IpType
 import java.util.*
 
 class IPAuctionFragment : Fragment() {
@@ -30,8 +32,7 @@ class IPAuctionFragment : Fragment() {
     private var auctionList = mutableListOf<AuctionModel>()
     private var filteredAuctionList = mutableListOf<AuctionModel>()
     
-    private var selectedCategory: String = "전체"
-    private var activeTab: Int = 0
+    private var selectedCategory: String = "전체" // 카테고리 버튼에 사용되며 나중에 연결
     private var searchQuery: String = ""
 
     override fun onCreateView(
@@ -44,21 +45,21 @@ class IPAuctionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
         setupSearchBar()
-        setupCategoryChips()
-        setupTabLayout()
+        // setupTabLayout() - 탭 레이아웃 삭제로 호출 제거
         setupRecyclerView()
         loadDummyData() // 실제 앱에서는 API 호출 등으로 대체
+        
+        // 데이터가 있는지 로그로 확인
+        Log.d(TAG, "Loaded auction items: ${auctionList.size}")
+        for (item in auctionList) {
+            Log.d(TAG, "Item: ${item.title}, Type: ${item.ipType.displayName}")
+        }
+        
         filterAndUpdateAuctions()
     }
     
-    private fun setupToolbar() {
-        (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
-        binding.toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-    }
+
     
     private fun setupSearchBar() {
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
@@ -78,46 +79,28 @@ class IPAuctionFragment : Fragment() {
         }
     }
     
-    private fun setupCategoryChips() {
-        // 카테고리 칩 선택 처리
-        binding.chipAll.isChecked = true
-        
-        binding.categoriesChipGroup.setOnCheckedChangeListener { group, checkedId ->
-            when (checkedId) {
-                R.id.chipAll -> selectedCategory = "전체"
-                R.id.chipArt -> selectedCategory = "특허"
-                R.id.chipCollectible -> selectedCategory = "게임"
-                R.id.chipDigital -> selectedCategory = "캐릭터"
-                R.id.chipRare -> selectedCategory = "프랜차이즈"
-            }
-            filterAndUpdateAuctions()
-        }
-    }
-    
-    private fun setupTabLayout() {
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                activeTab = tab?.position ?: 0
-                filterAndUpdateAuctions()
-            }
-            
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-    }
+    // TabLayout 제거로 setupTabLayout() 함수도 제거됨
     
     private fun setupRecyclerView() {
-        auctionAdapter = AuctionAdapter()
+        // RecyclerView 가시성 보장
         binding.auctionRecyclerView.apply {
-            adapter = auctionAdapter
-            layoutManager = GridLayoutManager(context, 2) // 2열 그리드
+            visibility = View.VISIBLE
+            setHasFixedSize(true)
+            layoutManager = LinearLayoutManager(context)
         }
         
-        auctionAdapter.setOnItemClickListener { auction ->
-            Toast.makeText(context, "${auction.title} 선택됨", Toast.LENGTH_SHORT).show()
-            // TODO: 경매 아이템 상세 화면으로 이동
+        // 어댑터 초기화 및 설정
+        auctionAdapter = AuctionAdapter().apply {
+            setOnItemClickListener { auction, position ->
+                // 클릭 시 상세 페이지로 이동
+                Log.d(TAG, "Clicked auction: ${auction.title} at position $position")
+                navigateToAuctionDetail(auction)
+            }
         }
+        binding.auctionRecyclerView.adapter = auctionAdapter
+        
+        
+        Log.d(TAG, "RecyclerView 설정 완료")
     }
     
     private fun loadDummyData() {
@@ -145,22 +128,30 @@ class IPAuctionFragment : Fragment() {
         val calendar = Calendar.getInstance()
         calendar.add(Calendar.DAY_OF_MONTH, daysToEnd)
         
+        // IP 유형 랜덤 할당
+        val ipTypes = IpType.values()
+        val randomIpType = ipTypes[id.toInt() % ipTypes.size]
+        
+        // 기존 아이템에 새 필드 추가
         return AuctionModel(
             id = id,
             title = title,
             description = "상세 설명은 실제 API 데이터에서 가져옵니다.",
             imageUrl = "https://picsum.photos/400/400?random=$id",
+            startPrice = price * 8 / 10, // 시작가는 현재가의 80%
             currentPrice = price,
             endTime = calendar.time,
             isFeatured = featured,
-            category = category
+            category = category,
+            ipType = randomIpType,
+            registrationNumber = "C-2023-${10000 + id.toInt()}",
+            bidCount = (5..50).random(),
+            viewCount = (20..200).random()
         )
     }
     
     private fun filterAndUpdateAuctions() {
-        filteredAuctionList.clear()
-        
-        // 검색어, 카테고리, 탭에 따라 필터링
+        // 검색어에 따라 필터링 (카테고리 버튼은 나중에 구현)
         val tempList = auctionList.filter { auction ->
             // 검색어 필터링
             val matchesSearch = if (searchQuery.isNotEmpty()) {
@@ -168,34 +159,60 @@ class IPAuctionFragment : Fragment() {
                 auction.description.contains(searchQuery, ignoreCase = true)
             } else true
             
-            // 카테고리 필터링
-            val matchesCategory = if (selectedCategory != "전체") {
-                auction.category == selectedCategory
-            } else true
-            
-            // 탭 필터링 (전체/주목/마감임박)
-            val now = Date()
-            val timeLeftMillis = auction.endTime.time - now.time
-            val hoursLeft = timeLeftMillis / (1000 * 60 * 60)
-            
-            val matchesTab = when (activeTab) {
-                0 -> true  // 전체: 모든 경매
-                1 -> auction.isFeatured  // 주목: 주목 표시된 경매만
-                2 -> hoursLeft < 24  // 마감임박: 24시간 이내 마감
-                else -> true
-            }
-            
-            matchesSearch && matchesCategory && matchesTab
+            // TabLayout 삭제로 탭 필터링 제거
+            matchesSearch
         }
         
+        // 필터링된 리스트 갱신 및 로깅
+        filteredAuctionList.clear()
         filteredAuctionList.addAll(tempList)
+        
+        Log.d(TAG, "Filtered auction items: ${filteredAuctionList.size}")
+        
+        // ArrayList로 새로 생성하여 전달 (변경사항이 제대로 반영되도록)
         auctionAdapter.submitList(filteredAuctionList)
+        
+        // 정상적으로 표시되는지 확인하기 위한 지연 후 다시 한번 갱신
+        binding.auctionRecyclerView.postDelayed({
+            auctionAdapter.notifyDataSetChanged()
+        }, 100)
     }
 
     override fun onResume() {
         super.onResume()
         activityViewModel.updateHeaderTitle("IP옥션")
         activityViewModel.updateNavigationIcon(R.drawable.ic_arrow_back)
+        activityViewModel.updateNavigationClickListener {
+            // Navigate back to MoreFragment using fragment transaction back stack
+            requireActivity().supportFragmentManager.popBackStack()
+        }
+    }
+
+    private fun navigateToAuctionDetail(auction: AuctionModel) {
+        // 디테일 화면으로 넘겨줘야 할 데이터를 Bundle에 담아서 전달
+        val bundle = Bundle().apply {
+            putString("id", auction.id)
+            putString("title", auction.title)
+            putString("description", auction.description)
+            putString("imageUrl", auction.imageUrl)
+            putLong("startPrice", auction.startPrice)
+            putLong("currentPrice", auction.currentPrice)
+            putLong("endTime", auction.endTime.time)
+            putInt("bidCount", auction.bidCount)
+            putString("ipType", auction.ipType.name)
+            putBoolean("isFeatured", auction.isFeatured)
+            putString("registrationNumber", auction.registrationNumber)
+            putInt("viewCount", auction.viewCount)
+        }
+        
+        // 프래그먼트 트랜잭션을 통해 디테일 화면으로 이동
+        val fragmentManager = parentFragmentManager
+        fragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, AuctionDetailFragment().apply { 
+                arguments = bundle 
+            })
+            .addToBackStack(null)
+            .commit()
     }
 
     override fun onDestroyView() {
