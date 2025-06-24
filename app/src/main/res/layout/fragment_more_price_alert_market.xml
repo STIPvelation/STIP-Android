@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:fillViewport="true"
+    android:fitsSystemWindows="true"
     tools:context=".YourFragmentOrActivity">
 
     <LinearLayout
@@ -26,16 +27,18 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
                 android:src="@android:drawable/ic_menu_recent_history"
                 android:tint="#30C6E8"
                 android:contentDescription="@string/dnd_mode_category_title" />
 
             <TextView
                 android:id="@+id/tv_dnd_mode_header"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="@string/dnd_mode_category_title"
                 android:textStyle="bold"
@@ -62,9 +65,11 @@
 
                 <ImageView
                     android:id="@+id/img_dnd_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="0dp"
+                    android:adjustViewBounds="true"
+                    android:maxWidth="24dp"
                     android:src="@android:drawable/ic_lock_idle_alarm"
                     android:tint="#30C6E8"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -104,8 +109,10 @@
 
                 <FrameLayout
                     android:id="@+id/switch_dnd_rest_container"
-                    android:layout_width="51dp"
-                    android:layout_height="31dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="51dp"
+                    android:minHeight="31dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -134,16 +141,19 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxWidth="20dp"
                 android:src="@android:drawable/ic_dialog_info"
                 android:tint="#30C6E8"
                 android:contentDescription="@string/owned_ip_category_title" />
 
             <TextView
                 android:id="@+id/tv_owned_ip_header"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="@string/owned_ip_category_title"
                 android:textStyle="bold"
@@ -170,9 +180,11 @@
 
                 <ImageView
                     android:id="@+id/img_owned_ip_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginStart="0dp"
+                    android:adjustViewBounds="true"
+                    android:maxWidth="24dp"
                     android:src="@android:drawable/ic_menu_myplaces"
                     android:tint="#30C6E8"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -212,8 +224,10 @@
 
                 <FrameLayout
                     android:id="@+id/switch_owned_ip_container"
-                    android:layout_width="51dp"
-                    android:layout_height="31dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="51dp"
+                    android:minHeight="31dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
@@ -242,16 +256,19 @@
             android:gravity="center_vertical">
 
             <ImageView
-                android:layout_width="20dp"
-                android:layout_height="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:maxWidth="20dp"
                 android:src="@android:drawable/ic_popup_reminder"
                 android:tint="#30C6E8"
                 android:contentDescription="@string/comprehensive_alert_category_title" />
 
             <TextView
                 android:id="@+id/tv_comprehensive_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="@string/comprehensive_alert_category_title"
                 android:textStyle="bold"

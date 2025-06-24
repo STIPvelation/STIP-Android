@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#F4F7FC">
+        android:background="#F4F7FC"
+        android:fitsSystemWindows="true">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
@@ -55,14 +56,17 @@
                                 android:orientation="horizontal">
 
                                 <ImageView
-                                    android:layout_width="16dp"
-                                    android:layout_height="16dp"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.1"
+                                    android:adjustViewBounds="true"
                                     android:src="@android:drawable/ic_popup_reminder"
                                     app:tint="#30C6E8" />
 
                                 <TextView
-                                    android:layout_width="wrap_content"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
+                                    android:layout_weight="0.9"
                                     android:layout_marginStart="6dp"
                                     android:text="일반 알림"
                                     android:textColor="#30C6E8"
@@ -84,9 +88,10 @@
                                 android:paddingBottom="8dp">
 
                                 <ImageView
-                                    android:layout_width="16dp"
-                                    android:layout_height="16dp"
+                                    android:layout_width="24dp"
+                                    android:layout_height="wrap_content"
                                     android:layout_gravity="center_vertical"
+                                    android:adjustViewBounds="true"
                                     android:src="@android:drawable/ic_dialog_info"
                                     android:tint="#30C6E8" />
 
@@ -99,7 +104,7 @@
 
                                     <TextView
                                         android:id="@+id/tv_notification_settings_title"
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:text="@string/notification_settings_title"
                                         android:textColor="#333333"
@@ -108,7 +113,7 @@
 
                                     <TextView
                                         android:id="@+id/tv_notification_settings_desc"
-                                        android:layout_width="wrap_content"
+                                        android:layout_width="match_parent"
                                         android:layout_height="wrap_content"
                                         android:layout_marginTop="4dp"
                                         android:text="@string/notification_settings_description"
@@ -157,8 +162,9 @@
                     android:focusable="true">
 
                     <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
                         android:src="@android:drawable/ic_lock_idle_lock"
                         android:tint="#30C6E8"
                         android:layout_gravity="center_vertical" />
@@ -172,7 +178,7 @@
 
                         <TextView
                             android:id="@+id/tv_login_alert_title"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/login_alert_title"
                             android:textSize="15sp"
@@ -181,7 +187,7 @@
 
                         <TextView
                             android:id="@+id/tv_login_alert_desc"
-                            android:layout_width="wrap_content"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/login_alert_description"
                             android:textSize="13sp"
