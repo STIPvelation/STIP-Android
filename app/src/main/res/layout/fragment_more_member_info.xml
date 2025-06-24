@@ -105,20 +105,6 @@
                                 android:textSize="12sp" />
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/textViewEditInfo"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentTop="true"
-                            android:layout_alignParentEnd="true"
-                            android:clickable="true"
-                            android:focusable="true"
-                            android:fontFamily="@font/pretendard_medium"
-                            android:padding="8dp"
-                            android:text="편집"
-                            android:textColor="#30C6E8"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
                     </RelativeLayout>
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

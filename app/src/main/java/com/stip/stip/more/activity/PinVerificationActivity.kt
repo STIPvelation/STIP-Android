@@ -335,13 +335,12 @@ class PinVerificationActivity : AppCompatActivity() {
                             finish()
                         }, 2000) 
                     } else {
-                        // 지연 제거하고 즉시 회원정보 화면으로 이동
-                        Log.d("PinVerification", "테스트 PIN 확인됨. 회원정보 화면으로 즉시 이동")
-                        Toast.makeText(this@PinVerificationActivity, "회원정보 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
+                        // PIN 인증 성공으로 처리하고 원래 화면으로 돌아가기
+                        Log.d("PinVerification", "테스트 PIN 확인됨. 인증 성공")
+                        Toast.makeText(this@PinVerificationActivity, "PIN 인증 완료", Toast.LENGTH_SHORT).show()
                         
-                        // 가장 기본적인 액티비티 시작 방법 사용 - 전체 경로 지정
-                        val intent = Intent(this@PinVerificationActivity, com.stip.stip.more.activity.MemberInfoEditActivity::class.java)
-                        startActivity(intent)
+                        // 인증 성공 결과 전달
+                        setResult(RESULT_OK)
                         finish()
                     }
                 }, 1000) // 1초 지연
@@ -386,24 +385,12 @@ class PinVerificationActivity : AppCompatActivity() {
                         }, 2000) // 2초 후 실행
                     } else {
                         // 일반 접근 목적일 경우 회원 정보 화면으로 이동
-                        val generalLoadingDialog = LoadingDialog(this@PinVerificationActivity)
-                        generalLoadingDialog.setCancelable(false)
-                        generalLoadingDialog.show()
+                        // 로딩 다이얼로그 닫기
+                        loadingDialog.dismiss()
                         
-                        // 2초 후에 회원 정보 화면으로 이동
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            // 로딩 다이얼로그 닫기
-                            generalLoadingDialog.dismiss()
-                            
-                            // 회원 정보 화면으로 즉시 이동
-                            Log.d("PinVerification", "API 인증 성공. 회원정보 화면으로 즉시 이동")
-                            Toast.makeText(this@PinVerificationActivity, "회원 정보 화면으로 이동합니다.", Toast.LENGTH_SHORT).show()
-                            
-                            // 가장 기본적인 액티비티 시작 방식 사용 - 전체 경로 지정
-                            val intent = Intent(this@PinVerificationActivity, com.stip.stip.more.activity.MemberInfoEditActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }, 2000) // 2초 후 실행
+                        // 인증 성공 결과 전달
+                        setResult(RESULT_OK)
+                        finish()
                     }
                 }
             }.suspendOnError { 
@@ -417,7 +404,6 @@ class PinVerificationActivity : AppCompatActivity() {
                     currentPin = ""
                     pinAdapter.updatePinCount(0)
 
-                    
                     // 오류 메시지 표시
                     val warningText = "다시 입력 해주세요.(" + attemptCount + "/" + maxAttempts + ")"
                     binding.tvSignUpPinNumberWarning.text = warningText

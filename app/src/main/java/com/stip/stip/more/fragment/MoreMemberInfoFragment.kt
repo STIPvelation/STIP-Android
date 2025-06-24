@@ -1,5 +1,6 @@
 package com.stip.stip.more.fragment
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,11 +11,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreMemberInfoBinding
 import com.stip.stip.MainViewModel
+import com.stip.stip.more.activity.MemberInfoEditActivity
+import com.stip.stip.more.activity.PinVerificationActivity
 import com.stip.stip.signup.login.LoginActivity
 import com.stip.stip.signup.utils.PreferenceUtil
 import com.stip.stip.ui.dialog.LogoutDialogFragment
@@ -26,6 +32,9 @@ class MoreMemberInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val viewModel: MainViewModel by activityViewModels()
+    
+    // PIN 확인 액티비티 결과를 처리하기 위한 ActivityResultLauncher
+    private lateinit var pinVerificationLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,6 +42,18 @@ class MoreMemberInfoFragment : Fragment() {
     ): View {
         _binding = FragmentMoreMemberInfoBinding.inflate(inflater, container, false)
         return binding.root
+    }
+    
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        
+        // PIN 확인 액티비티 결과 처리 등록
+        pinVerificationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                // PIN 확인 성공 - 수정 확인 다이얼로그 표시
+                showEditConfirmDialog()
+            }
+        }
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -90,7 +111,7 @@ class MoreMemberInfoFragment : Fragment() {
                 binding.root.findViewById<TextView>(R.id.value_job).text = jobName
 
                 // 회원정보가 있는 경우 관련 버튼 활성화
-                binding.textViewEditInfo.isEnabled = true
+                binding.buttonEditInfo.isEnabled = true
                 binding.buttonLogout.isEnabled = true
                 binding.textViewWithdraw.isEnabled = true
             } else {
@@ -110,7 +131,7 @@ class MoreMemberInfoFragment : Fragment() {
                 }
 
                 // 관련 버튼 비활성화
-                binding.textViewEditInfo.isEnabled = false
+                binding.buttonEditInfo.isEnabled = false
                 binding.buttonLogout.isEnabled = false
                 binding.textViewWithdraw.isEnabled = false
 
@@ -130,27 +151,38 @@ class MoreMemberInfoFragment : Fragment() {
     }
 
     private fun setupNavigationListener() {
-        binding.textViewEditInfo.setOnClickListener {
+        // buttonEditInfo(수정 버튼)에 클릭 리스너 설정
+        binding.buttonEditInfo.setOnClickListener {
             // 회원정보가 있는지 확인 (isAuthenticated 대신 회원정보 존재 여부로 체크)
             if (viewModel.memberInfo.value != null) {
-                // PIN 확인 화면으로 이동
-                startActivity(
-                    Intent(
-                        requireContext(),
-                        com.stip.stip.more.activity.PinVerificationActivity::class.java
-                    )
-                )
+                // PIN 확인 화면으로 이동 (ActivityResultLauncher 사용)
+                val intent = Intent(requireContext(), PinVerificationActivity::class.java)
+                pinVerificationLauncher.launch(intent)
             } else {
                 // 로그인 필요 메시지
                 Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
                 startActivity(
                     Intent(
                         requireContext(),
-                        com.stip.stip.signup.login.LoginActivity::class.java
+                        LoginActivity::class.java
                     )
                 )
             }
         }
+    }
+    
+    // PIN 확인 성공 후 수정 여부를 묻는 다이얼로그 표시
+    private fun showEditConfirmDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("회원 정보 수정")
+            .setMessage("회원 정보를 수정하시겠습니까?")
+            .setPositiveButton("수정") { _, _ ->
+                // 회원 정보 수정 화면으로 이동
+                val intent = Intent(requireContext(), MemberInfoEditActivity::class.java)
+                startActivity(intent)
+            }
+            .setNegativeButton("취소", null)
+            .show()
     }
 
 
