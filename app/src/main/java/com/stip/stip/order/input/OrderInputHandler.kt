@@ -334,14 +334,11 @@ class OrderInputHandler(
                     priceToUse = parseDouble(limitPriceText).takeIf { it > 0.0 } ?: getCurrentPrice()
                 }
 
-                if (priceToUse != null && priceToUse > 0) {
-                    val balance = availableUsdBalance()
-                    val fee = getFeeRate()
-                    val baseAmount = balance / (1 + fee)
-                    maxQty = floor((baseAmount / priceToUse) * 100_000_000) / 100_000_000
-                } else {
-                    maxQty = 0.0
-                }
+                // Price is guaranteed to be positive at this point
+                val balance = availableUsdBalance()
+                val fee = getFeeRate()
+                val baseAmount = balance / (1 + fee)
+                maxQty = floor((baseAmount / priceToUse) * 100_000_000) / 100_000_000
             }
         } catch (e: Exception) {
             Log.e("OrderInputHandler", "Error calculating max quantity", e)

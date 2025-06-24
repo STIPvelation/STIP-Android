@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.util.Log
 import android.webkit.JavascriptInterface
@@ -34,7 +35,7 @@ import java.net.URLEncoder
 class SignUpOCRWebViewActivity : AppCompatActivity() {
 
     private var binding: ActivitySignUpOcrWebViewBinding? = null
-    private var handler: Handler = Handler()
+    private var handler: Handler = Handler(Looper.getMainLooper())
     private var webView: WebView? = null
     private var detail = ""
 
@@ -145,8 +146,10 @@ class SignUpOCRWebViewActivity : AppCompatActivity() {
     @JavascriptInterface
     @Throws(JSONException::class)
     fun receive(data: String?) {
-        val decodedData = decodedReceiveData(data)
-        var JsonObject = JSONObject(decodedData)
+        // Handle potential null safely
+        val decodedData = decodedReceiveData(data.orEmpty())
+        // JSONObject constructor requires non-null string
+        var JsonObject = JSONObject(decodedData ?: "{}")
         var resultData = ""
         try {
             JsonObject = ModifyReviewResult(JsonObject)

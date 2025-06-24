@@ -1,3 +1,4 @@
+package com.stip.stip.signup
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.Call

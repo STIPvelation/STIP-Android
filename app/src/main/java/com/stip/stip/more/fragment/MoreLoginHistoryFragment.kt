@@ -96,8 +96,8 @@ class MoreLoginHistoryFragment : Fragment() {
         try {
             Log.d(TAG, "Setting up adapter for login history")
             adapter = ModernLoginHistoryAdapter()
-            if (recyclerView == null) {
-                Log.e(TAG, "RecyclerView is NULL! Attempting to find it again.")
+            if (!::recyclerView.isInitialized) {
+                Log.e(TAG, "RecyclerView is not initialized! Attempting to find it.")
                 recyclerView = view?.findViewById(R.id.recycler_view_login_history) 
                     ?: throw IllegalStateException("RecyclerView not found!")
             }

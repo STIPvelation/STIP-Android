@@ -17,7 +17,12 @@ class SignUpPinNumberStartFragment : BaseFragment<FragmentSignUpPinNumberStartBi
 
     override fun initStartView() {
         val result = String.format(binding.root.context.getString(R.string.sign_up_pin_number_start_title))
-        binding.tvSignUpPinNumberStartTitle.text = Html.fromHtml(result)
+        binding.tvSignUpPinNumberStartTitle.text = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Html.fromHtml(result, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            @Suppress("DEPRECATION")
+            Html.fromHtml(result)
+        }
     }
 
     override fun initDataBinding() {

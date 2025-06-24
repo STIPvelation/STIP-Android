@@ -1,5 +1,6 @@
 package com.stip.stip.signup.signup.bank.deposit
 
+import android.os.Build
 import android.os.Bundle
 import android.text.Html
 import android.view.View
@@ -47,7 +48,12 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
         responseUniqueId = arguments?.getString(Constants.BUNDLE_REQUEST_RESPONSE_UNIQUE_ID_KEY)
 
         val result = String.format(binding.root.context.getString(R.string.sign_up_bank_1_won_title))
-        binding.tvSignUpBank1WonTitle.text = Html.fromHtml(result)
+        binding.tvSignUpBank1WonTitle.text = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            Html.fromHtml(result, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            @Suppress("DEPRECATION")
+            Html.fromHtml(result)
+        }
 
         wonAdapter = WonAdapter() {
             binding.rvNumber.visibility = View.VISIBLE
@@ -140,7 +146,12 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
                         ) {
                         }.setText(
                             getString(R.string.dialog_bank_deposit_fail_title),
-                            Html.fromHtml(result).toString(),
+                            (if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                Html.fromHtml(result, Html.FROM_HTML_MODE_LEGACY)
+                            } else {
+                                @Suppress("DEPRECATION")
+                                Html.fromHtml(result)
+                            }).toString(),
                             "",
                             getString(R.string.common_confirm),
                             false
@@ -207,12 +218,22 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
 
     override fun onResume() {
         super.onResume()
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireActivity().window.setDecorFitsSystemWindows(false)
+        } else {
+            @Suppress("DEPRECATION")
+            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireActivity().window.setDecorFitsSystemWindows(true)
+        } else {
+            @Suppress("DEPRECATION")
+            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        }
     }
 
     override fun onDestroy() {
@@ -231,7 +252,7 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
                 } else {
                     // 키패드가 없으면 원래 백버튼 동작 수행
                     isEnabled = false
-                    requireActivity().onBackPressed()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                     isEnabled = true
                 }
             }

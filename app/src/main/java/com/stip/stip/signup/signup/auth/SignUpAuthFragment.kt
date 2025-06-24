@@ -27,7 +27,12 @@ class SignUpAuthFragment: BaseFragment<FragmentSignUpAuthBinding, SignUpAuthView
 
     override fun initStartView() {
         val result = String.format(binding.root.context.getString(R.string.sign_up_title))
-        binding.tvSignUpTitle.text = Html.fromHtml(result)
+        binding.tvSignUpTitle.text = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Html.fromHtml(result, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            @Suppress("DEPRECATION")
+            Html.fromHtml(result)
+        }
         Log.d("TAG", "initStartView: $result")
 
         // 이용약관 리스트 처리

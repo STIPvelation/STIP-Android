@@ -168,7 +168,7 @@ class SignUpBankFragment: BaseFragment<FragmentSignUpBankBinding, SignUpBankView
                 } else {
                     // 키패드가 없으면 원래 백버튼 동작 수행
                     isEnabled = false
-                    requireActivity().onBackPressed()
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
                     isEnabled = true
                 }
             }

@@ -1,5 +1,6 @@
 package com.stip.stip.signup.customview
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -49,12 +50,24 @@ class AddressBottomSheet(
 
     override fun onStart() {
         super.onStart()
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Use modern WindowInsets API
+            dialog?.window?.setDecorFitsSystemWindows(false)
+        } else {
+            @Suppress("DEPRECATION")
+            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
     }
 
     override fun onStop() {
         super.onStop()
-        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            // Reset to default
+            dialog?.window?.setDecorFitsSystemWindows(true)
+        } else {
+            @Suppress("DEPRECATION")
+            activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

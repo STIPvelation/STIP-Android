@@ -31,7 +31,12 @@ class PermissionActivity: BaseActivity<ActivityPermissionBinding, PermissionView
 
     override fun initStartView() {
         val result = String.format(binding.root.context.getString(R.string.permission_title))
-        binding.tvPermissionExplain.text = Html.fromHtml(result)
+        binding.tvPermissionExplain.text = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Html.fromHtml(result, Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            @Suppress("DEPRECATION")
+            Html.fromHtml(result)
+        }
     }
 
     override fun initDataBinding() {

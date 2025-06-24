@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.WindowManager
@@ -46,7 +47,12 @@ class SignUpAuthNiceFragment :
     /** 인증번호 입력시 키보드가 화면 가림 문제 해결 */
     override fun onResume() {
         super.onResume()
-        requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            requireActivity().window.setDecorFitsSystemWindows(false)
+        } else {
+            @Suppress("DEPRECATION")
+            requireActivity().window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        }
         resumeWebView()
     }
 

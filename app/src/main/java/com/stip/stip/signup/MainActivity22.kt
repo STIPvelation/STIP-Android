@@ -1,8 +1,8 @@
 package com.stip.stip.signup
 
 
-import ApiService
-import DecryptionRequest
+// These classes are now in the same package as MainActivity22
+// No need to import them separately
 import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Intent

@@ -267,11 +267,12 @@ class GlideUtils {
             Glide.with(view.context)
                 .load(resource)
                 .apply(RequestOptions()
-                    .transforms(CenterCrop(), CircleCrop()))
+                    .centerCrop()
+                    .circleCrop())
+                    // .transforms was deprecated
                 .into(view)
         }
     }
-}
 
 fun RequestManager.loadImage(view: ImageView, drawable: Drawable){
     this.load(drawable)
@@ -361,4 +362,5 @@ fun RequestManager.topRoundedLoadImageWithCenterCrop(view: ImageView, url: Strin
     this.load(url)
         .transform(CenterCrop(), RoundedCornersTransformation(round, 0 , RoundedCornersTransformation.CornerType.TOP))
         .into(view)
+}
 }
