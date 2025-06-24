@@ -9,6 +9,16 @@
         <item name="android:textColor">@color/text_black_14181B_100</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:statusBarColor">@color/white</item>
+        <item name="colorPrimary">#30C6E8</item>
+        <item name="colorSecondary">#30C6E8</item>
+        <item name="chipStyle">@style/CustomChipStyle</item>
+    </style>
+
+    <!-- ✅ 카테고리 칩 스타일 -->
+    <style name="CustomChipStyle" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="checkedIconTint">#30C6E8</item>
+        <item name="chipBackgroundColor">@color/chip_background_selector</item>
+        <item name="android:textColor">@color/chip_text_selector</item>
     </style>
 
     <!-- ✅ 시스템 스플래시 제거용: IntroActivity 전용 -->

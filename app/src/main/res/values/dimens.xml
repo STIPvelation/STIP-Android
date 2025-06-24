@@ -18,6 +18,7 @@
     <dimen name="header_cell_height">32dp</dimen>
 
     <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="item_offset">8dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="common_side_margin_20dp">20dp</dimen>
 

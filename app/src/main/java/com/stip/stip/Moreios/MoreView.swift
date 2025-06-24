@@ -168,7 +168,7 @@ struct MoreView: View {
             }
         }
         .background(Color.white)
-        .navigationTitle("더보기")
+        .navigationTitle("IP웹툰")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             // Toolbar items removed as requested

@@ -17,6 +17,10 @@ import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreBinding
 import com.stip.stip.more.*
+import com.stip.stip.more.fragment.ipentertainment.IPAuctionFragment
+import com.stip.stip.more.fragment.ipentertainment.IPDonationFragment
+import com.stip.stip.more.fragment.ipentertainment.IPSwapFragment
+import com.stip.stip.more.fragment.ipentertainment.IPToonFragment
 
 class MoreFragment : Fragment() {
 
@@ -85,7 +89,7 @@ class MoreFragment : Fragment() {
         super.onResume()
         activityViewModel.updateHeaderTitle(getString(R.string.header_more))
         activityViewModel.updateNavigationIcon(0)
-        Log.d(TAG, "onResume: Header title set to '더보기'")
+        Log.d(TAG, "onResume: Header title set to 'IP웹툰'")
         
         // 화면으로 돌아올 때마다 회원정보 새로고침
         refreshMemberInfo()
@@ -105,8 +109,20 @@ class MoreFragment : Fragment() {
         binding.textViewSecurityAuth.setOnClickListener {
             navigateTo(MoreSecurityFragment(), "보안 / 인증")
         }
-        // IP 엔터테인먼트 카드 클릭 리스너는 나중에 추가 예정
-        // 현재 레이아웃에는 카드뷰에 ID가 설정되어 있지 않음
+        
+        // IP 엔터테인먼트 카드 클릭 리스너
+        binding.cardIpToon.setOnClickListener {
+            navigateTo(IPToonFragment(), "IP 툰")
+        }
+        binding.cardIpAuction.setOnClickListener {
+            navigateTo(IPAuctionFragment(), "IP 옥션")
+        }
+        binding.cardIpSwap.setOnClickListener {
+            navigateTo(IPSwapFragment(), "IP 스왑")
+        }
+        binding.cardIpDonation.setOnClickListener {
+            navigateTo(IPDonationFragment(), "IP 기부")
+        }
         
         // 정책 및 약관 카드 클릭 리스너
         // 메인 정책 카드
