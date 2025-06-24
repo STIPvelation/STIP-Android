@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/white"
+        android:fitsSystemWindows="true"
         >
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -22,10 +23,13 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_back"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:padding="12dp"
                 android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
+                android:minWidth="48dp"
+                android:minHeight="48dp"
                 android:src="@drawable/ic_back_black_24dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -33,11 +37,14 @@
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_header_title"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/pretendard_medium_font_family"
                 android:text="@string/login_pin_number_title"
                 android:textColor="@color/text_black_14181B_100"
+                android:gravity="center"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textSize="18sp"
                 app:autoSizeMaxTextSize="18sp"
                 app:autoSizeMinTextSize="16sp"
@@ -55,11 +62,15 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_pin_guide"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
             android:fontFamily="@font/pretendard_regular_font_family"
             android:text="PIN 번호 6자리를 입력해주세요"
             android:textColor="#8A8A8F"
+            android:gravity="center"
+            android:ellipsize="end"
+            android:maxLines="2"
             android:textSize="16sp"
             app:autoSizeMaxTextSize="16sp"
             app:autoSizeMinTextSize="14sp"
@@ -113,8 +124,11 @@
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/iv_biometric_icon"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:maxWidth="24dp"
+                    android:maxHeight="24dp"
                     android:src="@android:drawable/ic_lock_idle_lock"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -129,6 +143,8 @@
                     android:fontFamily="@font/pretendard_medium_font_family"
                     android:text="생체인증 로그인"
                     android:textColor="@color/text_sky_30C6E8_100"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:textSize="16sp"
                     app:autoSizeMaxTextSize="16sp"
                     app:autoSizeMinTextSize="14sp"
@@ -156,11 +172,15 @@
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tv_forget_password"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="24dp"
             android:fontFamily="@font/pretendard_regular_font_family"
             android:text="@string/login_pin_number_forget_password"
+            android:gravity="center"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:textColor="@color/main_point"
             android:textSize="14sp"
             app:autoSizeMaxTextSize="14sp"
@@ -184,12 +204,12 @@
             android:id="@+id/rv_number"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="44dp"
+            android:layout_marginBottom="@dimen/keypad_bottom_margin"
             app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintWidth_percent="0.95"
             app:spanCount="3" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

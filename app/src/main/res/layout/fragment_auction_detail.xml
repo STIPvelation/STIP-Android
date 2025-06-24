@@ -394,7 +394,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="SNS 스티커 1000만 다운로드의 인기 캐릭터 '몽글이' IP 판매입니다."
+                    android:text="SNS 스티커 1000만 다운로드 인기 캐릭터 '몽글이' IP 판매입니다."
                     android:textColor="@android:color/black"
                     android:textSize="15sp" />
             </LinearLayout>

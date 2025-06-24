@@ -64,6 +64,9 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_large">24dp</dimen>
+    
+    <!-- PIN 입력 화면 관련 치수 -->
+    <dimen name="keypad_bottom_margin">44dp</dimen>
 
         <dimen name="policy_padding_horizontal">16dp</dimen>
         <dimen name="policy_padding_vertical_item">14dp</dimen> <dimen name="policy_padding_vertical_header">10dp</dimen> <dimen name="policy_text_size_title">18sp</dimen>
