@@ -48,7 +48,7 @@ class DonationAdapter : ListAdapter<DonationModel, DonationAdapter.DonationViewH
 
         init {
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClickListener?.invoke(getItem(position))
                 }

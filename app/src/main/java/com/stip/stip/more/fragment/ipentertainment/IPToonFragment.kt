@@ -8,8 +8,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -40,7 +43,7 @@ class IPToonFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
+        // Modern replacement for setHasOptionsMenu will be in onViewCreated
     }
     
     // 옵션 메뉴 처리는 시스템에 매기고 직접 네비게이션 리스너로만 처리
@@ -58,6 +61,18 @@ class IPToonFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 액티비티의 기본 액션바를 숨김
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
+        
+        // Modern replacement for setHasOptionsMenu - using menu provider instead
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar_menu, menu)
+            }
+            
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return false // Return true if you handle the item selection
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+        
         setupSearchBar()
         setupCategoryChips()
         setupTabLayout()
@@ -93,6 +108,7 @@ class IPToonFragment : Fragment() {
         selectedCategory = "전체"
         
         // 카테고리 칩 선택 처리
+        @Suppress("DEPRECATION")
         binding.categoriesChipGroup.setOnCheckedChangeListener { group, checkedId ->
             val category = when (checkedId) {
                 R.id.chipAll -> "전체"
@@ -350,8 +366,5 @@ class IPToonFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
     
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
+    // Removed deprecated onCreateOptionsMenu - now using MenuProvider in onViewCreated
 }

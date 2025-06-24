@@ -40,7 +40,7 @@ class SwapAdapter : ListAdapter<SwapModel, SwapAdapter.SwapViewHolder>(SwapDiffC
 
         init {
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClickListener?.invoke(getItem(position))
                 }

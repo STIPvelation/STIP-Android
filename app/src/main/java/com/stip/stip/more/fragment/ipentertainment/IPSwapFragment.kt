@@ -81,6 +81,7 @@ class IPSwapFragment : Fragment() {
         // 카테고리 칩 선택 처리
         binding.chipAll.isChecked = true
         
+        @Suppress("DEPRECATION")
         binding.categoriesChipGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.chipAll -> selectedCategory = "전체"

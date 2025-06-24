@@ -43,7 +43,7 @@ class WebtoonAdapter : ListAdapter<WebtoonModel, WebtoonAdapter.WebtoonViewHolde
 
         init {
             itemView.setOnClickListener {
-                val position = adapterPosition
+                val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     onItemClickListener?.invoke(getItem(position))
                 }

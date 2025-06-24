@@ -1490,7 +1490,6 @@
     <string name="withdraw_navigation_error">출금 화면 이동 오류</string>
     <string name="withdraw_status_null_warning">출금 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.</string>
 
-    <string name="more_customer_center">고객센터</string>
     <string name="phone_number">010-000-0000</string>
 
     <string name="member_info_title">회원정보</string>
@@ -1595,4 +1594,35 @@
     <string name="language_chinese_desc">문화적 영향력과 상징성</string>
 
     <string name="refresh">갱신</string>
+    <!-- 더보기 페이지 -->
+    <string name="more_esg_policy">ESG 정책</string>
+    <string name="more_startup_support">스타트업 지원</string>
+    <string name="more_aml_policy">AML 정책</string>
+    <string name="more_ip_webtoon_evaluation">IP웹툰 평가 기준</string>
+    <string name="more_fee_policy">수수료 정책</string>
+    <string name="more_stipvelation">STIPvelation</string>
+    <string name="more_version">버전 %s</string>
+    <string name="more_customer_center">고객센터</string>
+    <string name="more_inquiries">문의사항</string>
+    <string name="more_mode_settings">모드설정</string>
+    <string name="more_price_alerts">시세알림</string>
+    <string name="more_notification_settings">알림설정</string>
+    <string name="more_language_settings">언어설정</string>
+    <string name="more_account_settings">계정설정</string>
+    <string name="more_menu_title_ip_entertainment">IP 엔터테인먼트</string>
+    <string name="more_menu_title_information">정보</string>
+    <string name="more_menu_title_settings">설정</string>
+    <!-- More Page Missing Resources -->
+    <string name="more_security_auth">보안/인증</string>
+    <string name="more_ip_entertainment">IP 엔터테인먼트</string>
+    <string name="more_screen_too_small">화면이 너무 작습니다</string>
+    <string name="more_ip_webtoon">IP 웹툰</string>
+    <string name="more_ip_webtoon_description">다양한 웹툰 IP를 확인하세요</string>
+    <string name="more_ip_auction">IP 경매</string>
+    <string name="more_ip_auction_description">경매로 IP를 거래하세요</string>
+    <string name="more_ip_swap">IP 스왑</string>
+    <string name="more_ip_swap_description">IP를 교환하세요</string>
+    <string name="more_ip_donation">IP 기부</string>
+    <string name="more_ip_donation_description">IP를 기부하세요</string>
+    <string name="more_policy">정책</string>
 </resources>

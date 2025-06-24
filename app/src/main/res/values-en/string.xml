@@ -1347,4 +1347,34 @@ Furthermore, as part of our suspicious transaction review process, we may reques
     <string name="language_chinese_desc">Cultural influence and symbolism</string>
     <string name="language_changed">Language has been changed</string>
 
+    <!-- More Page -->
+    <string name="more_esg_policy">ESG Policy</string>
+    <string name="more_startup_support">Startup Support</string>
+    <string name="more_aml_policy">AML Policy</string>
+    <string name="more_ip_webtoon_evaluation">IP Webtoon Evaluation Standards</string>
+    <string name="more_fee_policy">Fee Policy</string>
+    <string name="more_stipvelation">STIPvelation</string>
+    <string name="more_version">Version %s</string>
+    <string name="more_inquiries">Inquiries</string>
+    <string name="more_mode_settings">Mode Settings</string>
+    <string name="more_price_alerts">Price Alerts</string>
+    <string name="more_notification_settings">Notification Settings</string>
+    <string name="more_language_settings">Language Settings</string>
+    <string name="more_account_settings">Account Settings</string>
+    <string name="more_menu_title_ip_entertainment">IP Entertainment</string>
+    <string name="more_menu_title_information">Information</string>
+    <string name="more_menu_title_settings">Settings</string>
+    <!-- More Page Missing Resources -->
+    <string name="more_security_auth">Security/Auth</string>
+    <string name="more_ip_entertainment">IP Entertainment</string>
+    <string name="more_screen_too_small">Screen is too small</string>
+    <string name="more_ip_webtoon">IP Webtoon</string>
+    <string name="more_ip_webtoon_description">Check out various webtoon IPs</string>
+    <string name="more_ip_auction">IP Auction</string>
+    <string name="more_ip_auction_description">Trade IPs through auctions</string>
+    <string name="more_ip_swap">IP Swap</string>
+    <string name="more_ip_swap_description">Exchange your IPs</string>
+    <string name="more_ip_donation">IP Donation</string>
+    <string name="more_ip_donation_description">Donate your IPs</string>
+    <string name="more_policy">Policy</string>
 </resources>

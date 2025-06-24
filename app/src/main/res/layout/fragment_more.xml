@@ -285,7 +285,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="모드설정"
+                    android:text="@string/more_mode_settings"
                     android:textColor="#232D3F"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -327,7 +327,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="보안/인증"
+                    android:text="@string/more_security_auth"
                     android:textColor="#232D3F"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -345,7 +345,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/margin_large"
             android:layout_marginBottom="@dimen/margin_medium"
-            android:text="IP 엔터테인먼트"
+            android:text="@string/more_ip_entertainment"
             android:gravity="center"
             android:textColor="#232D3F"
             android:textSize="@dimen/text_size_xlarge"
@@ -377,7 +377,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="화면이 너무 작아 모두 표시할 수 없습니다."
+                    android:text="@string/more_screen_too_small"
                     android:textSize="@dimen/text_small"
                     android:textColor="#6E7491"
                     app:layout_constraintTop_toTopOf="parent"
@@ -437,7 +437,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="IP웹툰"
+                            android:text="@string/more_ip_webtoon"
                             android:textColor="#232D3F"
                             android:textSize="@dimen/text_normal"
                             android:textStyle="bold"
@@ -448,7 +448,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="웹툰 보기"
+                            android:text="@string/more_ip_webtoon_description"
                             android:textColor="#6E7491"
                             android:textSize="@dimen/text_small"
                             android:singleLine="true"
@@ -516,7 +516,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="IP옥션"
+                            android:text="@string/more_ip_auction"
                             android:textColor="#232D3F"
                             android:textSize="15sp"
                             android:textStyle="bold"
@@ -527,7 +527,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="IP 획득"
+                            android:text="@string/more_ip_auction_description"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
                             android:singleLine="true"
@@ -595,7 +595,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="IP스왑"
+                            android:text="@string/more_ip_swap"
                             android:textColor="#232D3F"
                             android:textSize="15sp"
                             android:textStyle="bold"
@@ -606,7 +606,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="기술 스왑"
+                            android:text="@string/more_ip_swap_description"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
                             android:singleLine="true"
@@ -674,7 +674,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="IP기부"
+                            android:text="@string/more_ip_donation"
                             android:textColor="#232D3F"
                             android:textSize="15sp"
                             android:textStyle="bold"
@@ -685,7 +685,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="기부 IP공유"
+                            android:text="@string/more_ip_donation_description"
                             android:textColor="#6E7491"
                             android:textSize="12sp"
                             android:singleLine="true"
@@ -784,7 +784,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="정책 및 약관"
+                            android:text="@string/more_policy"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -828,7 +828,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="ESG 정책"
+                            android:text="@string/more_esg_policy"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -872,7 +872,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="스타트업 지원"
+                            android:text="@string/more_startup_support"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -916,7 +916,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="AML 정책"
+                            android:text="@string/more_aml_policy"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -962,7 +962,7 @@
                             android:layout_height="wrap_content"
                             android:singleLine="true"
                             android:ellipsize="end"
-                            android:text="IP웹툰 평가 기준"
+                            android:text="@string/more_ip_webtoon_evaluation"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -1006,7 +1006,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="수수료 정책"
+                            android:text="@string/more_fee_policy"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -1050,7 +1050,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="STIPvelation"
+                            android:text="@string/more_stipvelation"
                             android:textColor="#232D3F"
                             android:textSize="14sp"
                             android:gravity="center"
@@ -1069,7 +1069,7 @@
             android:layout_marginBottom="@dimen/margin_xlarge"
             android:textSize="13sp"
             android:textColor="#6E7491"
-            android:text="버전 1.0.0" />
+            android:text="@string/more_version" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardCustomerCenter"
@@ -1112,7 +1112,7 @@
                         android:id="@+id/textCustomerCenter"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="고객센터"
+                        android:text="@string/more_customer_center"
                         android:textColor="#232D3F"
                         android:textSize="17sp"
                         android:textStyle="bold" />
@@ -1120,7 +1120,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="문의사항"
+                        android:text="@string/more_inquiries"
                         android:textColor="#6E7491"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp" />

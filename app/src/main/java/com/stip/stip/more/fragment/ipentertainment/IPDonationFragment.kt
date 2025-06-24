@@ -5,6 +5,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.*
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Lifecycle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -37,7 +39,16 @@ class IPDonationFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMoreIpDonationBinding.inflate(inflater, container, false)
-        setHasOptionsMenu(true) // 옵션 메뉴 활성화
+        // Modern replacement for setHasOptionsMenu - using menu provider instead
+        requireActivity().addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.toolbar_menu, menu)
+            }
+            
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return false // Return true if you handle the item selection
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
         return binding.root
     }
 
@@ -81,6 +92,7 @@ class IPDonationFragment : Fragment() {
         // 카테고리 칩 선택 처리
         binding.chipAll.isChecked = true
         
+        @Suppress("DEPRECATION")
         binding.categoriesChipGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.chipAll -> selectedCategory = "전체"
@@ -264,8 +276,5 @@ class IPDonationFragment : Fragment() {
         _binding = null
     }
     
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.toolbar_menu, menu)
-        super.onCreateOptionsMenu(menu, inflater)
-    }
+    // Removed deprecated onCreateOptionsMenu - now using MenuProvider in onCreateView
 }
