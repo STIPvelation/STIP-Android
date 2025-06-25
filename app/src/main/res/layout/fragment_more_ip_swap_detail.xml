@@ -240,7 +240,7 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:fontFamily="sans-serif"
-                            android:text="변리사 회사 이름"
+                            android:text="변리사 회사명"
                             android:textColor="@color/text_primary"
                             android:textSize="14sp" />
                     </LinearLayout>

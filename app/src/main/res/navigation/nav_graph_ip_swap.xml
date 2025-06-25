@@ -20,7 +20,7 @@
         android:id="@+id/ipSwapDetailFragment"
         android:name="com.stip.stip.more.fragment.ipentertainment.IPSwapDetailFragment"
         android:label="IPSwapDetailFragment"
-        tools:layout="@layout/fragment_ip_swap_detail">
+        tools:layout="@layout/fragment_more_ip_swap_detail">
         
         <argument
             android:name="swapItem"
@@ -35,7 +35,7 @@
         android:id="@+id/ipSwapApplicationFragment"
         android:name="com.stip.stip.more.fragment.ipentertainment.IPSwapApplicationFragment"
         android:label="IPSwapApplicationFragment"
-        tools:layout="@layout/fragment_ip_swap_application">
+        tools:layout="@layout/fragment_more_ip_swap_application">
         
         <argument
             android:name="swapItem"

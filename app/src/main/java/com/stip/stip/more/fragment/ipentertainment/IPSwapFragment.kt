@@ -45,18 +45,20 @@ class IPSwapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Toolbar removed from layout
         setupSearchBar()
         setupCategoryChips()
         // TabLayout removed from layout
         setupRecyclerView()
         loadDummyData() // 실제 앱에서는 API 호출 등으로 대체
         filterAndUpdateSwaps()
-        
         // Setup the IP스왑 등록 button
         setupRegisterButton()
+        
+        // 헤더 타이틀 및 뒤로가기 버튼 설정
+        setupHeader()
     }
     
+    // Back navigation is handled by the existing header back button via MainViewModel
     // Toolbar functionality removed
     
     private fun setupSearchBar() {
@@ -126,8 +128,20 @@ class IPSwapFragment : Fragment() {
         // Use the activity's supportFragmentManager for consistent navigation
         activity?.supportFragmentManager?.beginTransaction()
             ?.replace(containerId, detailFragment)
-            ?.addToBackStack(null)
+            ?.addToBackStack("swapDetail")
             ?.commit()
+    }
+    
+    // 헤더 관련 설정
+    private fun setupHeader() {
+        activityViewModel.updateHeaderTitle("IP 스왑")
+        activityViewModel.updateNavigationIcon(R.drawable.ic_arrow_back)
+        
+        // 스왑 화면에서 백버튼 클릭 시
+        activityViewModel.updateNavigationClickListener {
+            // 클릭 시 activity의 supportFragmentManager를 사용하여 백스택 처리
+            activity?.supportFragmentManager?.popBackStack()
+        }
     }
     
     private fun loadDummyData() {
@@ -267,6 +281,12 @@ class IPSwapFragment : Fragment() {
         super.onResume()
         activityViewModel.updateHeaderTitle("IP스왑")
         activityViewModel.updateNavigationIcon(R.drawable.ic_arrow_back)
+        
+        // Set up navigation listener for the header back button 
+        activityViewModel.updateNavigationClickListener {
+            // 일관성을 위해 activity의 supportFragmentManager 사용
+            activity?.supportFragmentManager?.popBackStack() ?: parentFragmentManager.popBackStack()
+        }
     }
 
     override fun onDestroyView() {

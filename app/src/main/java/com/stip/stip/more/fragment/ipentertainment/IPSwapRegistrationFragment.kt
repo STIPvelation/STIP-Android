@@ -8,18 +8,27 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.stip.stip.R
-import com.stip.stip.databinding.FragmentIpSwapRegistrationBinding
+import com.stip.stip.databinding.FragmentMoreIpSwapRegistrationBinding
+import com.stip.stip.more.dialog.SectorFilterDialog
+import com.google.android.material.card.MaterialCardView
 
 class IPSwapRegistrationFragment : Fragment() {
 
-    private var _binding: FragmentIpSwapRegistrationBinding? = null
+    private var _binding: FragmentMoreIpSwapRegistrationBinding? = null
     private val binding get() = _binding!!
     private var selectedImageUri: Uri? = null
+    private var selectedSector: String? = null
+    
+    // List of available sectors
+    private val sectors = listOf(
+        "IT/소프트웨어", "바이오테크", "제약", "식품", "의료기기", 
+        "반도체", "전자기기", "자동차", "화학", "환경", "에너지", 
+        "금융", "교육", "엔터테인먼트", "게임", "인공지능", "로봇"
+    )
 
     private val getContent = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -35,7 +44,7 @@ class IPSwapRegistrationFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentIpSwapRegistrationBinding.inflate(inflater, container, false)
+        _binding = FragmentMoreIpSwapRegistrationBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,27 +56,38 @@ class IPSwapRegistrationFragment : Fragment() {
     }
 
     private fun setupUI() {
-        // Setup spinner with sector options
-        val sectors = arrayOf("기술 섹터를 선택하세요", "IT/소프트웨어", "바이오테크", "제약", "식품", "의료기기", "반도체", "전자기기", "자동차", "화학", "환경", "에너지")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_dropdown_item, sectors)
-        binding.spinnerSector.adapter = adapter
+        // Initialize sector selector with default text
+        binding.tvSelectedSector.hint = "기술 섹터를 선택하세요"
     }
 
     private fun setupListeners() {
-        // Back button click
-        binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-
         // Image upload
         binding.cardImageUpload.setOnClickListener {
             openGallery()
+        }
+        
+        // Sector selection
+        binding.cardSectorSelector.setOnClickListener {
+            showSectorFilterDialog()
         }
 
         // Register button click
         binding.btnRegister.setOnClickListener {
             validateAndSubmit()
         }
+    }
+    
+    private fun showSectorFilterDialog() {
+        val dialog = SectorFilterDialog(
+            requireContext(),
+            sectors,
+            selectedSector
+        ) { sector ->
+            selectedSector = sector
+            binding.tvSelectedSector.text = sector
+            binding.tvSelectedSector.setTextColor(resources.getColor(R.color.black, null))
+        }
+        dialog.show()
     }
 
     private fun openGallery() {
@@ -89,6 +109,14 @@ class IPSwapRegistrationFragment : Fragment() {
         val lawyerName = binding.etLawyerName.text.toString().trim()
         val lawyerCompany = binding.etLawyerCompany.text.toString().trim()
         val lawyerContact = binding.etLawyerContact.text.toString().trim()
+
+        // Check if sector is selected
+        if (selectedSector == null) {
+            Toast.makeText(requireContext(), "섹터를 선택해주세요.", Toast.LENGTH_SHORT).show()
+            // Highlight the sector selector to draw attention
+            (binding.cardSectorSelector as MaterialCardView).strokeColor = resources.getColor(R.color.error_red, null)
+            return
+        }
 
         if (ipNumber.isEmpty() || contact.isEmpty() || lawyerName.isEmpty() 
             || lawyerCompany.isEmpty() || lawyerContact.isEmpty()) {

@@ -45,6 +45,7 @@ class IPAuctionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupBackButton()
         setupSearchBar()
         // setupTabLayout() - 탭 레이아웃 삭제로 호출 제거
         setupRecyclerView()
@@ -57,6 +58,13 @@ class IPAuctionFragment : Fragment() {
         }
         
         filterAndUpdateAuctions()
+    }
+    
+    private fun setupBackButton() {
+        binding.btnBack.setOnClickListener {
+            // Navigate back to the MoreFragment
+            parentFragmentManager.popBackStack()
+        }
     }
     
 

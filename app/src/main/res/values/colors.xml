@@ -246,6 +246,16 @@
     <color name="filter_chip_text_selected">#FFFFFF</color>
     <color name="filter_chip_text_unselected">#14181B</color>
     <color name="filter_chip_stroke">#E0E0E0</color>
+    
+    <!-- 섹터 필터 색상 -->
+    <color name="blue_50">#E3F2FD</color>
+    <color name="blue_100">#BBDEFB</color>
+    <color name="blue_200">#90CAF9</color>
+    <color name="blue_300">#64B5F6</color>
+    <color name="blue_400">#42A5F5</color>
+    <color name="blue_500">#30C6E8</color>
+    <color name="gray_200">#EEEEEE</color>
+    <color name="gray_400">#BDBDBD</color>
 </resources>
 
 
