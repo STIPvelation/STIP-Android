@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
-import com.stip.stip.databinding.FragmentLoginHistoryBinding
-import com.stip.stip.databinding.ItemLoginHistoryBinding
+import com.stip.stip.more.adapter.ModernLoginHistoryAdapter
+import android.widget.TextView
 import com.stip.stip.more.api.LoginHistoryItem
 import com.stip.stip.more.api.LoginHistoryResponse
 import com.stip.stip.more.api.LoginHistoryService
@@ -31,8 +31,7 @@ import java.util.Locale
 
 class LoginHistoryFragment : Fragment() {
 
-    private var _binding: FragmentLoginHistoryBinding? = null
-    private val binding get() = _binding!!
+    // Using direct view references since databinding isn't generating binding classes
     
     private val viewModel: MainViewModel by activityViewModels()
     
@@ -54,8 +53,8 @@ class LoginHistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentLoginHistoryBinding.inflate(inflater, container, false)
-        return binding.root
+        // Using the layout resource ID directly to avoid ambiguity
+        return inflater.inflate(com.stip.stip.R.layout.fragment_login_history, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -71,7 +70,8 @@ class LoginHistoryFragment : Fragment() {
     }
     
     private fun setupRecyclerView() {
-        binding.recyclerLoginHistory.apply {
+        val recyclerView = view?.findViewById<RecyclerView>(com.stip.stip.R.id.recycler_login_history)
+        recyclerView?.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = loginHistoryAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
@@ -79,13 +79,17 @@ class LoginHistoryFragment : Fragment() {
     }
     
     private fun loadLoginHistory() {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.textNoHistory.visibility = View.GONE
+        val progressBar = view?.findViewById<View>(com.stip.stip.R.id.progress_bar)
+        val textNoHistory = view?.findViewById<View>(com.stip.stip.R.id.text_no_history)
+        
+        progressBar?.visibility = View.VISIBLE
+        textNoHistory?.visibility = View.GONE
         
         // 2초 후에도 로딩이 계속되면 프로그레스바 숨기기
         Handler(Looper.getMainLooper()).postDelayed({
-            if (binding.progressBar.visibility == View.VISIBLE) {
-                binding.progressBar.visibility = View.GONE
+            val progressBar = view?.findViewById<View>(com.stip.stip.R.id.progress_bar)
+            if (progressBar?.visibility == View.VISIBLE) {
+                progressBar.visibility = View.GONE
             }
         }, 2000)
         
@@ -103,7 +107,7 @@ class LoginHistoryFragment : Fragment() {
                     call: Call<LoginHistoryResponse>,
                     response: Response<LoginHistoryResponse>
                 ) {
-                    binding.progressBar.visibility = View.GONE
+                    view?.findViewById<View>(R.id.progress_bar)?.visibility = View.GONE
                     
                     if (response.isSuccessful) {
                         val data = response.body()?.data
@@ -141,7 +145,7 @@ class LoginHistoryFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<LoginHistoryResponse>, t: Throwable) {
-                    binding.progressBar.visibility = View.GONE
+                    view?.findViewById<View>(R.id.progress_bar)?.visibility = View.GONE
                     Log.e("LoginHistory", "API 호출 실패", t)
                     showNoHistoryMessage("네트워크 오류가 발생했습니다")
                 }
@@ -149,7 +153,8 @@ class LoginHistoryFragment : Fragment() {
     }
     
     private fun showNoHistoryMessage(message: String) {
-        binding.textNoHistory.apply {
+        val textNoHistory = view?.findViewById<TextView>(com.stip.stip.R.id.text_no_history)
+        textNoHistory?.apply {
             text = message
             visibility = View.VISIBLE
         }
@@ -157,7 +162,6 @@ class LoginHistoryFragment : Fragment() {
     
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
     
     // 로그인 이력 어댑터
@@ -172,10 +176,9 @@ class LoginHistoryFragment : Fragment() {
         }
         
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LoginHistoryViewHolder {
-            val binding = ItemLoginHistoryBinding.inflate(
-                LayoutInflater.from(parent.context), parent, false
-            )
-            return LoginHistoryViewHolder(binding)
+            val view = LayoutInflater.from(parent.context)
+                .inflate(com.stip.stip.R.layout.item_modern_login_history, parent, false)
+            return LoginHistoryViewHolder(view)
         }
         
         override fun onBindViewHolder(holder: LoginHistoryViewHolder, position: Int) {
@@ -184,26 +187,29 @@ class LoginHistoryFragment : Fragment() {
         
         override fun getItemCount(): Int = items.size
         
-        inner class LoginHistoryViewHolder(private val binding: ItemLoginHistoryBinding) : 
-            RecyclerView.ViewHolder(binding.root) {
+        inner class LoginHistoryViewHolder(itemView: View) : 
+            RecyclerView.ViewHolder(itemView) {
             
             private val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+            private val tvDateTime = itemView.findViewById<TextView>(com.stip.stip.R.id.tv_date_time)
+            private val tvDeviceValue = itemView.findViewById<TextView>(com.stip.stip.R.id.tv_device_value)
+            private val tvIpAddressValue = itemView.findViewById<TextView>(com.stip.stip.R.id.tv_ip_address_value)
+            private val tvLocationValue = itemView.findViewById<TextView>(com.stip.stip.R.id.tv_location_value)
             
             fun bind(item: LoginHistoryItem) {
                 // 로그인 시간
-                binding.tvDatetime.text = dateFormat.format(item.loginTime)
+                tvDateTime.text = dateFormat.format(item.loginTime)
                 
                 // 디바이스 정보
-                binding.tvOsVersion.text = item.deviceInfo
-                binding.tvAppName.text = getString(R.string.app_name)
+                tvDeviceValue.text = item.deviceInfo
                 
                 // IP 및 위치 정보
-                binding.tvIpAddress.text = item.ipAddress
-                binding.tvLocation.text = item.location
+                tvIpAddressValue.text = item.ipAddress
+                tvLocationValue.text = item.location
                 
                 // 현재 디바이스 표시
-                binding.root.setBackgroundResource(
-                    if (item.isCurrentDevice) R.color.light_blue_bg else android.R.color.transparent
+                itemView.setBackgroundResource(
+                    if (item.isCurrentDevice) com.stip.stip.R.color.light_blue_bg else android.R.color.transparent
                 )
             }
         }

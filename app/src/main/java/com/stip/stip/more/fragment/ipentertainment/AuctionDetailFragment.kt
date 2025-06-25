@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
-import com.stip.stip.databinding.FragmentAuctionDetailBinding
+import android.widget.Button
+import android.widget.TextView
+import androidx.viewpager2.widget.ViewPager2
 import com.stip.stip.more.fragment.ipentertainment.adapter.AuctionImageAdapter
 import com.stip.stip.more.fragment.ipentertainment.data.AuctionModel
 import com.stip.stip.more.fragment.ipentertainment.data.IpType
@@ -16,8 +18,7 @@ import com.stip.stip.more.fragment.ipentertainment.util.formatRemainingTime
 import java.util.*
 
 class AuctionDetailFragment : Fragment() {
-    private var _binding: FragmentAuctionDetailBinding? = null
-    private val binding get() = _binding!!
+    // Using direct view references instead of view binding
     
     private val viewModel: MainViewModel by activityViewModels()
     
@@ -29,8 +30,7 @@ class AuctionDetailFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAuctionDetailBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_auction_detail, container, false)
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -86,7 +86,7 @@ class AuctionDetailFragment : Fragment() {
         // 이미지 ViewPager 어댑터 설정
         try {
             val imageAdapter = AuctionImageAdapter(auction.imageUrl)
-            binding.imageViewPager.adapter = imageAdapter
+            view?.findViewById<ViewPager2>(R.id.image_view_pager)?.adapter = imageAdapter
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -101,43 +101,45 @@ class AuctionDetailFragment : Fragment() {
             IpType.FRANCHISE -> R.color.ip_franchise
             IpType.MUSIC, IpType.MOVIE, IpType.OTHER -> R.color.ip_other
         }
-        binding.ipTypeTag.setBackgroundColor(resources.getColor(tagBackgroundColor, null))
-        binding.ipTypeTag.text = auction.ipType.displayName
+        view?.findViewById<TextView>(R.id.ip_type_tag)?.apply {
+            setBackgroundColor(resources.getColor(tagBackgroundColor, null))
+            text = auction.ipType.displayName
+        }
         
         // 기본 정보 설정
         // Title text removed as requested to avoid duplicate headers
-        binding.registrationNumberText.text = "IP #${auction.registrationNumber}"
+        view?.findViewById<TextView>(R.id.registration_number_text)?.text = "IP #${auction.registrationNumber}"
         
         // 등록일과 만료일 설정 - 포맷 통일
         val dateFormat = java.text.SimpleDateFormat("MMM d, yyyy", Locale.US)
-        binding.registrationDateText.text = dateFormat.format(auction.registrationDate)
-        binding.expiryDateText.text = dateFormat.format(auction.expiryDate)
+        view?.findViewById<TextView>(R.id.registration_date_text)?.text = dateFormat.format(auction.registrationDate)
+        view?.findViewById<TextView>(R.id.expiry_date_text)?.text = dateFormat.format(auction.expiryDate)
         
         // 가격 정보
-        binding.startingPriceText.text = formatPrice(auction.startPrice)
-        binding.currentPriceText.text = formatPrice(auction.currentPrice)
-        binding.bottomCurrentPriceText.text = formatPrice(auction.currentPrice)
+        view?.findViewById<TextView>(R.id.starting_price_text)?.text = formatPrice(auction.startPrice)
+        view?.findViewById<TextView>(R.id.current_price_text)?.text = formatPrice(auction.currentPrice)
+        view?.findViewById<TextView>(R.id.bottom_current_price_text)?.text = formatPrice(auction.currentPrice)
         
         // 남은 시간 및 입찰 참여자 - 포맷 통일
         val remainingTimeText = formatRemainingTime(auction.endTime)
-        binding.remainingTimeText.text = "Time left: $remainingTimeText"
-        binding.bidCountText.text = "${auction.bidCount} bids"
+        view?.findViewById<TextView>(R.id.remaining_time_text)?.text = "Time left: $remainingTimeText"
+        view?.findViewById<TextView>(R.id.bid_count_text)?.text = "${auction.bidCount} bids"
         
         // 상세 정보
-        binding.descriptionText.text = auction.description
+        view?.findViewById<TextView>(R.id.description_text)?.text = auction.description
         
         // 권리 관련 정보 (실제 데이터는 서버에서 받아와야 함)
         setupRightsIncluded()
         
         // 경매 통계 정보
-        binding.viewCountText.text = "${auction.viewCount}명 조회"
+        view?.findViewById<TextView>(R.id.view_count_text)?.text = "${auction.viewCount}명 조회"
     }
     
     private fun setupListeners() {
         // 툴바 관련 코드 삭제 - 사용하지 않음
         
         // 입찰 버튼
-        binding.bidButton.setOnClickListener {
+        view?.findViewById<Button>(R.id.bid_button)?.setOnClickListener {
             showBidDialog()
         }
     }
@@ -153,9 +155,9 @@ class AuctionDetailFragment : Fragment() {
             )
             
             // UI 업데이트
-            binding.currentPriceText.text = formatPrice(auction.currentPrice)
-            binding.bottomCurrentPriceText.text = formatPrice(auction.currentPrice)
-            binding.bidCountText.text = "${auction.bidCount}명 참여"
+            view?.findViewById<TextView>(R.id.current_price_text)?.text = formatPrice(auction.currentPrice)
+            view?.findViewById<TextView>(R.id.bottom_current_price_text)?.text = formatPrice(auction.currentPrice)
+            view?.findViewById<TextView>(R.id.bid_count_text)?.text = "${auction.bidCount}명 참여"
         }.show(childFragmentManager, "bid_dialog")
     }
     
@@ -182,6 +184,5 @@ class AuctionDetailFragment : Fragment() {
     
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }
