@@ -11,7 +11,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
@@ -43,21 +45,19 @@ class IPSwapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupToolbar()
+        // Toolbar removed from layout
         setupSearchBar()
         setupCategoryChips()
-        setupTabLayout()
+        // TabLayout removed from layout
         setupRecyclerView()
         loadDummyData() // 실제 앱에서는 API 호출 등으로 대체
         filterAndUpdateSwaps()
+        
+        // Setup the IP스왑 등록 button
+        setupRegisterButton()
     }
     
-    private fun setupToolbar() {
-        (activity as? AppCompatActivity)?.setSupportActionBar(binding.toolbar)
-        binding.toolbar.setNavigationOnClickListener {
-            parentFragmentManager.popBackStack()
-        }
-    }
+    // Toolbar functionality removed
     
     private fun setupSearchBar() {
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
@@ -85,41 +85,51 @@ class IPSwapFragment : Fragment() {
         binding.categoriesChipGroup.setOnCheckedChangeListener { group, checkedId ->
             when (checkedId) {
                 R.id.chipAll -> selectedCategory = "전체"
-                R.id.chipDigital -> selectedCategory = "디지털"
-                R.id.chipPhysical -> selectedCategory = "실물"
-                R.id.chipPopular -> selectedCategory = "인기"
-                R.id.chipRecent -> selectedCategory = "최신"
+                R.id.chipPatent -> selectedCategory = "특허권"
+                R.id.chipTrademark -> selectedCategory = "상표권"
+                R.id.chipDesign -> selectedCategory = "디자인권"
             }
             filterAndUpdateSwaps()
         }
     }
     
-    private fun setupTabLayout() {
-        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab?) {
-                activeTab = tab?.position ?: 0
-                filterAndUpdateSwaps()
-            }
-            
-            override fun onTabUnselected(tab: TabLayout.Tab?) {}
-            
-            override fun onTabReselected(tab: TabLayout.Tab?) {}
-        })
-    }
+    // TabLayout functionality removed
     
     private fun setupRecyclerView() {
         swapAdapter = SwapAdapter()
+        // Set a fixed height for testing visibility
         binding.swapRecyclerView.apply {
             adapter = swapAdapter
-            layoutManager = GridLayoutManager(context, 2) // 2열 그리드
+            layoutManager = LinearLayoutManager(context) // 한 줄에 아이템 1개
+            setHasFixedSize(true)
         }
         
         swapAdapter.setOnItemClickListener { swap ->
-            Toast.makeText(context, "${swap.title} 선택됨", Toast.LENGTH_SHORT).show()
-            // TODO: 스왑 아이템 상세 화면으로 이동
+            // Start a separate activity for the detail fragment
+            navigateToDetail(swap)
         }
     }
 
+    /**
+     * Navigate to detail screen safely by using activity's fragmentManager
+     */
+    private fun navigateToDetail(swap: SwapModel) {
+        val detailFragment = IPSwapDetailFragment().apply {
+            arguments = Bundle().apply {
+                putParcelable("swapItem", swap)
+            }
+        }
+        
+        // Get the ID of the container that's hosting the current fragment
+        val containerId = (view?.parent as? ViewGroup)?.id ?: android.R.id.content
+        
+        // Use the activity's supportFragmentManager for consistent navigation
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(containerId, detailFragment)
+            ?.addToBackStack(null)
+            ?.commit()
+    }
+    
     private fun loadDummyData() {
         // 실제 앱에서는 API 호출로 데이터를 로드합니다
         swapList.clear()
@@ -132,7 +142,7 @@ class IPSwapFragment : Fragment() {
                     imageUrl = "https://picsum.photos/400/400?random=21",
                     wantedItems = listOf("프리미엄 태블릿", "그래픽 카드", "게이밍 모니터"),
                     isPopular = true,
-                    category = "실물"
+                    category = "특허권"
                 ),
                 SwapModel(
                     id = "2",
@@ -140,7 +150,7 @@ class IPSwapFragment : Fragment() {
                     description = "제 개인 작품 NFT입니다. 세계적인 NFT 거래소에 등록된 작품입니다.",
                     imageUrl = "https://picsum.photos/400/400?random=22",
                     wantedItems = listOf("다른 NFT 작품", "디지털 아트"),
-                    category = "디지털"
+                    category = "상표권"
                 ),
                 SwapModel(
                     id = "3",
@@ -149,7 +159,7 @@ class IPSwapFragment : Fragment() {
                     imageUrl = "https://picsum.photos/400/400?random=23",
                     wantedItems = listOf("현대 아트 토이", "레고 한정판", "빈티지 게임기"),
                     isPopular = true,
-                    category = "수집품"
+                    category = "디자인권"
                 ),
                 SwapModel(
                     id = "4",
@@ -157,7 +167,7 @@ class IPSwapFragment : Fragment() {
                     description = "프로듀싱한 음원 소스 파일 30개입니다. 상업적 이용 가능.",
                     imageUrl = "https://picsum.photos/400/400?random=24",
                     wantedItems = listOf("믹싱 플러그인", "미디 컨트롤러"),
-                    category = "디지털"
+                    category = "상표권"
                 ),
                 SwapModel(
                     id = "5",
@@ -165,7 +175,7 @@ class IPSwapFragment : Fragment() {
                     description = "직접 디자인하고 조립한 기계식 키보드입니다. 체리 청축 사용.",
                     imageUrl = "https://picsum.photos/400/400?random=25",
                     wantedItems = listOf("프리미엄 마우스", "게이밍 헤드셋", "오디오 인터페이스"),
-                    category = "실물"
+                    category = "특허권"
                 ),
                 SwapModel(
                     id = "6",
@@ -174,7 +184,7 @@ class IPSwapFragment : Fragment() {
                     imageUrl = "https://picsum.photos/400/400?random=26",
                     wantedItems = listOf("디자인 툴 라이센스", "클라우드 서비스 크레딧"),
                     isPopular = false,
-                    category = "디지털"
+                    category = "상표권"
                 ),
                 SwapModel(
                     id = "7",
@@ -183,7 +193,7 @@ class IPSwapFragment : Fragment() {
                     imageUrl = "https://picsum.photos/400/400?random=27",
                     wantedItems = listOf("고급 붓", "수채화 도구 세트", "일러스트 작품"),
                     isPopular = true,
-                    category = "실물"
+                    category = "특허권"
                 ),
                 SwapModel(
                     id = "8",
@@ -191,10 +201,27 @@ class IPSwapFragment : Fragment() {
                     description = "80-90년대 개봉한 영화의 초판 포스터 10종입니다.",
                     imageUrl = "https://picsum.photos/400/400?random=28",
                     wantedItems = listOf("음반 컬렉션", "영화 소품"),
-                    category = "수집품"
+                    category = "디자인권"
                 )
             )
         )
+    }
+    
+    private fun setupRegisterButton() {
+        // IP스왑 등록 button click handler
+        binding.btnRegisterIpSwap.setOnClickListener {
+            // Navigate to the IPSwapRegistrationFragment
+            val registrationFragment = IPSwapRegistrationFragment()
+            
+            // Get the ID of the container that's hosting the current fragment
+            val containerId = (view?.parent as? ViewGroup)?.id ?: android.R.id.content
+            
+            // Use the activity's supportFragmentManager for consistent navigation
+            activity?.supportFragmentManager?.beginTransaction()
+                ?.replace(containerId, registrationFragment)
+                ?.addToBackStack(null)
+                ?.commit()
+        }
     }
     
     private fun filterAndUpdateSwaps() {
@@ -225,7 +252,15 @@ class IPSwapFragment : Fragment() {
         }
         
         filteredSwapList.addAll(tempList)
-        swapAdapter.submitList(filteredSwapList)
+        Log.d(TAG, "Filtered ${filteredSwapList.size} items for display")
+        swapAdapter.submitList(filteredSwapList.toList())
+        
+        // Ensure RecyclerView scrolls to show first item
+        binding.swapRecyclerView.post {
+            if (filteredSwapList.isNotEmpty()) {
+                binding.swapRecyclerView.scrollToPosition(0)
+            }
+        }
     }
 
     override fun onResume() {

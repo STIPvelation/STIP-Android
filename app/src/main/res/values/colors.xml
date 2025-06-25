@@ -239,6 +239,13 @@
     <color name="ip_character">#F0AD4E</color> <!-- 캐릭터: 주황색 -->
     <color name="ip_franchise">#5BC0BE</color> <!-- 프랜차이즈: 청록색 -->
     <color name="ip_other">#6C757D</color> <!-- 기타: 회색 -->
+    
+    <!-- IP스왑 필터칩 색상 -->
+    <color name="filter_chip_background_selected">#30C6E8</color>
+    <color name="filter_chip_background_unselected">#F5F7FA</color>
+    <color name="filter_chip_text_selected">#FFFFFF</color>
+    <color name="filter_chip_text_unselected">#14181B</color>
+    <color name="filter_chip_stroke">#E0E0E0</color>
 </resources>
 
 

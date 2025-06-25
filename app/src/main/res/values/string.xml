@@ -1598,7 +1598,7 @@
     <string name="more_esg_policy">ESG 정책</string>
     <string name="more_startup_support">스타트업 지원</string>
     <string name="more_aml_policy">AML 정책</string>
-    <string name="more_ip_webtoon_evaluation">IP웹툰 평가 기준</string>
+    <string name="more_ip_webtoon_evaluation">DIP평가 기준</string>
     <string name="more_fee_policy">수수료 정책</string>
     <string name="more_stipvelation">STIPvelation</string>
     <string name="more_version">버전 %s</string>
@@ -1616,13 +1616,13 @@
     <string name="more_security_auth">보안/인증</string>
     <string name="more_ip_entertainment">IP 엔터테인먼트</string>
     <string name="more_screen_too_small">화면이 너무 작습니다</string>
-    <string name="more_ip_webtoon">IP 웹툰</string>
-    <string name="more_ip_webtoon_description">다양한 웹툰 IP를 확인하세요</string>
-    <string name="more_ip_auction">IP 경매</string>
-    <string name="more_ip_auction_description">경매로 IP를 거래하세요</string>
-    <string name="more_ip_swap">IP 스왑</string>
-    <string name="more_ip_swap_description">IP를 교환하세요</string>
-    <string name="more_ip_donation">IP 기부</string>
-    <string name="more_ip_donation_description">IP를 기부하세요</string>
-    <string name="more_policy">정책</string>
+    <string name="more_ip_webtoon">IP웹툰</string>
+    <string name="more_ip_webtoon_description">즐거운 웹툰 </string>
+    <string name="more_ip_auction">IP옥션</string>
+    <string name="more_ip_auction_description">옥션 거래</string>
+    <string name="more_ip_swap">IP스왑</string>
+    <string name="more_ip_swap_description">기술 교환</string>
+    <string name="more_ip_donation">IP기부</string>
+    <string name="more_ip_donation_description">기부 활용</string>
+    <string name="more_policy">정책 및 약관</string>
 </resources>

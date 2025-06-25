@@ -22,7 +22,7 @@ class SwapAdapter : ListAdapter<SwapModel, SwapAdapter.SwapViewHolder>(SwapDiffC
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SwapViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_swap, parent, false)
+            .inflate(R.layout.item_ip_swap, parent, false)
         return SwapViewHolder(view)
     }
 
@@ -32,11 +32,12 @@ class SwapAdapter : ListAdapter<SwapModel, SwapAdapter.SwapViewHolder>(SwapDiffC
     }
 
     inner class SwapViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageSwap: ImageView = itemView.findViewById(R.id.imageSwap)
-        private val textSwapTitle: TextView = itemView.findViewById(R.id.textSwapTitle)
-        private val textSwapDescription: TextView = itemView.findViewById(R.id.textSwapDescription)
-        private val textSwapWantsList: TextView = itemView.findViewById(R.id.textSwapWantsList)
-        private val badgePopular: TextView = itemView.findViewById(R.id.badgePopular)
+        private val imageIp: ImageView = itemView.findViewById(R.id.imageIp)
+        private val textIpDescription: TextView = itemView.findViewById(R.id.textIpDescription)
+        private val textIpNumber: TextView = itemView.findViewById(R.id.textIpNumber)
+        private val textRemainingPeriod: TextView = itemView.findViewById(R.id.textRemainingPeriod)
+        private val textSwapTarget: TextView = itemView.findViewById(R.id.textSwapTarget)
+        private val textSwapAvailable: TextView = itemView.findViewById(R.id.textSwapAvailable)
 
         init {
             itemView.setOnClickListener {
@@ -48,19 +49,20 @@ class SwapAdapter : ListAdapter<SwapModel, SwapAdapter.SwapViewHolder>(SwapDiffC
         }
 
         fun bind(swap: SwapModel) {
-            textSwapTitle.text = swap.title
-            textSwapDescription.text = swap.description
-            textSwapWantsList.text = swap.wantedItems.joinToString(", ")
+            textIpDescription.text = swap.title
+            textIpNumber.text = "IP번호: US-${swap.id.padStart(2, '0')}-${(1000000..9999999).random()}"
+            textSwapTarget.text = swap.description
+            textRemainingPeriod.text = "${(3..10).random()}년"
+            
+            // Display "스왑 가능" badge for all items
+            textSwapAvailable.visibility = View.VISIBLE
             
             // 이미지 로딩
             Glide.with(itemView.context)
                 .load(swap.imageUrl)
                 .placeholder(R.drawable.ic_ipentertainment_swap)
                 .error(R.drawable.ic_ipentertainment_swap)
-                .into(imageSwap)
-            
-            // 인기 아이템 뱃지 표시
-            badgePopular.visibility = if (swap.isPopular) View.VISIBLE else View.GONE
+                .into(imageIp)
         }
     }
 
