@@ -45,7 +45,7 @@ class IPAuctionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupBackButton()
+        // setupBackButton() - 삭제: btnBack이 레이아웃에 존재하지 않음
         setupSearchBar()
         // setupTabLayout() - 탭 레이아웃 삭제로 호출 제거
         setupRecyclerView()
@@ -60,12 +60,7 @@ class IPAuctionFragment : Fragment() {
         filterAndUpdateAuctions()
     }
     
-    private fun setupBackButton() {
-        binding.btnBack.setOnClickListener {
-            // Navigate back to the MoreFragment
-            parentFragmentManager.popBackStack()
-        }
-    }
+    // btnBack 버튼이 레이아웃에 존재하지 않아 setupBackButton() 메소드 삭제
     
 
     
