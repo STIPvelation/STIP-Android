@@ -80,7 +80,6 @@
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
                                 android:background="@drawable/bg_circle_bank"
-                                android:padding="10dp"
                                 android:src="@drawable/ic_bank_kb" />
                         </FrameLayout>
 
@@ -217,7 +216,6 @@
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
                                 android:background="@drawable/bg_circle_bank"
-                                android:padding="10dp"
                                 android:src="@drawable/ic_bank_shinhan" />
                         </FrameLayout>
 
@@ -355,7 +353,6 @@
                                 android:layout_width="48dp"
                                 android:layout_height="48dp"
                                 android:background="@drawable/bg_circle_bank"
-                                android:padding="10dp"
                                 android:src="@drawable/ic_bank_woori" />
                         </FrameLayout>
 
