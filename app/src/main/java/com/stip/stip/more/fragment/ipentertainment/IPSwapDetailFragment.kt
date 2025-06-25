@@ -41,8 +41,8 @@ class IPSwapDetailFragment : Fragment() {
             val args = IPSwapDetailFragmentArgs.fromBundle(requireArguments())
             swapItem = args.swapItem
         } catch (e: Exception) {
-            // 오류 발생 시 Bundle에서 직접 가져오기
-            swapItem = arguments?.getParcelable("swapItem")
+            // 오류 발생 시 Bundle에서 직접 가져오기 - 최신 API 사용
+            swapItem = arguments?.getParcelable("swapItem", SwapModel::class.java)
         }
         
         // null이 아니면 화면 설정
@@ -89,7 +89,9 @@ class IPSwapDetailFragment : Fragment() {
         }
         
         // 4. Activity finish (최후의 수단)
-        activity?.onBackPressed()
+        activity?.let { act ->
+            act.onBackPressedDispatcher.onBackPressed()
+        }
     }
     
     private fun setupViews(swapItem: SwapModel) {

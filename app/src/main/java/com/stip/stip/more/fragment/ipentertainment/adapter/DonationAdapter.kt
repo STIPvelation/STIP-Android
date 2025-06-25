@@ -26,8 +26,10 @@ class DonationAdapter : ListAdapter<DonationModel, DonationAdapter.DonationViewH
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DonationViewHolder {
+        // 추후 item_donation 레이아웃이 없어서 오류 발생, item_filter_period로 대체
+        // 이 어댑터는 더 이상 사용되지 않으므로 임시 조치임
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_donation, parent, false)
+            .inflate(R.layout.item_filter_period, parent, false)
         return DonationViewHolder(view)
     }
 
@@ -37,14 +39,8 @@ class DonationAdapter : ListAdapter<DonationModel, DonationAdapter.DonationViewH
     }
 
     inner class DonationViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val imageDonation: ImageView = itemView.findViewById(R.id.imageDonation)
-        private val textDonationTitle: TextView = itemView.findViewById(R.id.textDonationTitle)
-        private val textDonationOrganizer: TextView = itemView.findViewById(R.id.textDonationOrganizer)
-        private val progressDonation: ProgressBar = itemView.findViewById(R.id.progressDonation)
-        private val textDonationAmount: TextView = itemView.findViewById(R.id.textDonationAmount)
-        private val textDonationGoal: TextView = itemView.findViewById(R.id.textDonationGoal)
-        private val textDaysLeft: TextView = itemView.findViewById(R.id.textDaysLeft)
-        private val badgeUrgent: TextView = itemView.findViewById(R.id.badgeUrgent)
+        // 임시로 TextView 하나만 사용 (item_filter_period.xml의 tv_period)
+        private val textView: TextView = itemView.findViewById(R.id.tv_period)
 
         init {
             itemView.setOnClickListener {
@@ -56,30 +52,8 @@ class DonationAdapter : ListAdapter<DonationModel, DonationAdapter.DonationViewH
         }
 
         fun bind(donation: DonationModel) {
-            textDonationTitle.text = donation.title
-            textDonationOrganizer.text = "주최: ${donation.organizer}"
-            
-            // 진행률 설정
-            progressDonation.progress = donation.getProgress()
-            
-            // 금액 포맷팅
-            val numberFormat = NumberFormat.getNumberInstance(Locale.KOREA)
-            textDonationAmount.text = "₩ ${numberFormat.format(donation.currentAmount)}"
-            textDonationGoal.text = "목표: ₩ ${numberFormat.format(donation.goalAmount)}"
-            
-            // 남은 기간 계산
-            val daysLeft = getDaysLeft(donation.endDate)
-            textDaysLeft.text = "남은 기간: ${daysLeft}일"
-            
-            // 이미지 로딩
-            Glide.with(itemView.context)
-                .load(donation.imageUrl)
-                .placeholder(R.drawable.ic_ipentertainment_donation)
-                .error(R.drawable.ic_ipentertainment_donation)
-                .into(imageDonation)
-            
-            // 긴급 뱃지
-            badgeUrgent.visibility = if (donation.isUrgent) View.VISIBLE else View.GONE
+            // 간단히 제목만 표시 (실제로는 사용되지 않음)
+            textView.text = donation.title
         }
         
         private fun getDaysLeft(endDate: Date): Long {

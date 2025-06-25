@@ -34,8 +34,8 @@ class IPSwapApplicationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        // 이전 화면에서 전달받은 SwapModel 데이터 가져오기
-        swapItem = arguments?.getParcelable("swapItem")
+        // 이전 화면에서 전달받은 SwapModel 데이터 가져오기 - 최신 API 사용
+        swapItem = arguments?.getParcelable("swapItem", SwapModel::class.java)
         
         setupViews(swapItem)
         setupListeners()
@@ -82,7 +82,9 @@ class IPSwapApplicationFragment : Fragment() {
         }
         
         // 4. Activity finish (최후의 수단)
-        activity?.onBackPressed()
+        activity?.let { act ->
+            act.onBackPressedDispatcher.onBackPressed()
+        }
     }
     
     private fun setupViews(swapItem: SwapModel?) {

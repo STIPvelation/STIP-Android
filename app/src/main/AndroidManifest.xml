@@ -126,6 +126,21 @@
             android:exported="false"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
+            
+        <activity
+            android:name="com.stip.stip.more.activity.IPDonationPlanActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.stip.more.activity.IPDonorCommunityActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.stip.more.activity.MoreIpDonationAgreementActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <!-- FileProvider for camera functionality -->
         <provider

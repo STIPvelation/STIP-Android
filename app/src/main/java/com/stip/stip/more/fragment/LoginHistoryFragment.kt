@@ -15,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
-import com.stip.stip.more.adapter.ModernLoginHistoryAdapter
 import android.widget.TextView
 import com.stip.stip.more.api.LoginHistoryItem
 import com.stip.stip.more.api.LoginHistoryResponse
@@ -54,7 +53,7 @@ class LoginHistoryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Using the layout resource ID directly to avoid ambiguity
-        return inflater.inflate(com.stip.stip.R.layout.fragment_login_history, container, false)
+        return inflater.inflate(com.stip.stip.R.layout.fragment_more_login_history2, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
