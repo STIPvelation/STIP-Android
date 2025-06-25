@@ -11,7 +11,7 @@ import com.stip.stip.R
 import com.stip.stip.signup.base.BaseActivity
 import com.stip.stip.databinding.ActivityLoginBinding
 import com.stip.stip.MainActivity
-import com.stip.stip.signup.signup.SignUpStartActivity
+
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 

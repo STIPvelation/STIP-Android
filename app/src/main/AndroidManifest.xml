@@ -35,12 +35,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.stip.stip.signup.signup.SignUpStartActivity"
-            android:label="SignUp Start"
-            android:exported="true"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
 
         <activity
             android:name="com.stip.stip.signup.login.LoginActivity"
