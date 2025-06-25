@@ -4,151 +4,205 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="12dp"
     android:background="@android:color/white">
 
-    <LinearLayout
-        android:id="@+id/header"
+    <!-- 자산 표시 카드 (USD) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/asset_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-        android:background="@drawable/bg_frame_rounded"
-        android:gravity="center_horizontal"
-        android:orientation="vertical"
-        android:padding="20dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/DefaultTextStyle_medium_14"
-            android:text="@string/total_asset" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingHorizontal="24dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp">
 
-        <TextView
-            android:id="@+id/total_ip_assets"
-            style="@style/DefaultTextStyle_20"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/common_number"
-            android:layout_marginTop="14dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/pretendard_medium_font_family"
+                android:text="총 보유자산"
+                android:gravity="center"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:textColor="#646478"
+                android:textSize="14sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/button_krw_deposit"  android:layout_width="match_parent"
-            android:layout_height="36dp"
-            android:layout_marginTop="14dp"
-            android:backgroundTint="@color/sky_30C6E8_100"
-            android:fontFamily="@font/pretendard_medium_font_family"
-            android:insetLeft="0dp"
-            android:insetTop="0dp"
-            android:insetRight="0dp"
-            android:insetBottom="0dp"
-            android:padding="0dp"
-            android:text="@string/ip_asset_krw_deposit"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_medium"
-            app:cornerRadius="0dp" />
+            <TextView
+                android:id="@+id/total_ip_assets"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/pretendard_bold_font_family"
+                android:padding="2dp"
+                android:gravity="center"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="$0 USD"
+                android:textColor="#28283C"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-    </LinearLayout>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_krw_deposit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:backgroundTint="@color/sky_30C6E8_100"
+                android:fontFamily="@font/pretendard_medium_font_family"
+                android:paddingVertical="12dp"
+                android:text="KRW 입금"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                app:cornerRadius="12dp"
+                app:elevation="5dp"
+                app:icon="@drawable/ic_plus_circle_white"
+                app:iconGravity="textStart"
+                app:iconSize="24dp"
+                app:iconPadding="8dp"
+                app:iconTint="@android:color/white" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
+    <!-- 검색창 및 필터 -->
     <LinearLayout
-        android:id="@+id/search_bar"
+        android:id="@+id/search_filter_container"
         android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-        android:layout_marginTop="@dimen/common_side_margin_20dp"
-        android:background="@drawable/bg_frame_rounded"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:padding="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header">
+        android:baselineAligned="false"
+        app:layout_constraintEnd_toEndOf="@+id/asset_card"
+        app:layout_constraintStart_toStartOf="@+id/asset_card"
+        app:layout_constraintTop_toBottomOf="@+id/asset_card">
 
-        <ImageView
-            android:layout_width="wrap_content"
+        <!-- 티커명 검색 -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:contentDescription="@null"
-            android:src="@drawable/ic_search_gray_595f63_24dp" />
+            android:layout_weight="1.3"
+            android:layout_marginEnd="8dp"
+            app:cardBackgroundColor="#F5F6FA"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
 
-        <EditText
-            android:id="@+id/search_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginHorizontal="12dp"
-            android:background="@null"
-            android:fontFamily="@font/pretendard_medium_font_family"
-            android:hint="@string/ip_asset_search_ticker_ip"
-            android:importantForAutofill="no"
-            android:inputType="text"
-            android:padding="0dp"
-            android:textColor="@color/text_black_14181B_100"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_search_gray_595f63_24dp"
+                    app:tint="#828296" />
+
+                <EditText
+                    android:id="@+id/search_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:background="@null"
+                    android:fontFamily="@font/pretendard_regular_font_family"
+                    android:hint="티커명 검색"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:padding="0dp"
+                    android:textColor="#28283C"
+                    android:textColorHint="#828296"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:ellipsize="end" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- 전체/보유중 필터 -->
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/filter_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_filter_container"
+                android:orientation="horizontal"
+                android:padding="2dp"
+                android:clipToPadding="false">
+
+                <TextView
+                    android:id="@+id/filter_all"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_filter_active"
+                    android:fontFamily="@font/pretendard_bold_font_family"
+                    android:gravity="center"
+                    android:text="전체"
+                    android:textColor="@color/sky_30C6E8_100"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/filter_held"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_filter_inactive"
+                    android:fontFamily="@font/pretendard_regular_font_family"
+                    android:gravity="center"
+                    android:text="보유중"
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </FrameLayout>
     </LinearLayout>
 
-    <View
-        android:id="@+id/horizontal_divider"
-        android:layout_width="match_parent"
-        android:layout_height="5dp"
-        android:layout_marginTop="20dp"
-        android:background="@color/gray_F4F7FC_100"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_bar" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/filter"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-        android:layout_width="72dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:boxBackgroundColor="@color/sky_30C6E8_100"
-        app:boxCornerRadiusBottomEnd="4dp"
-        app:boxCornerRadiusBottomStart="4dp"
-        app:boxStrokeColor="@android:color/transparent"
-        app:boxStrokeWidth="0dp"
-        app:boxStrokeWidthFocused="0dp"
-        app:endIconMode="none"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/horizontal_divider">
-
-        <AutoCompleteTextView
-            android:id="@+id/dropdown_menu"
-            android:layout_width="match_parent"
-            android:layout_height="28dp"
-            android:dropDownHeight="wrap_content"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:fontFamily="@font/pretendard_medium_font_family"
-            android:inputType="none"
-            android:padding="0dp"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_small"
-            tools:ignore="LabelFor" />
-
-    </com.google.android.material.textfield.TextInputLayout>
-
+    <!-- 거래 내역 목록 -->
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/filter">
+        app:layout_constraintTop_toBottomOf="@+id/search_filter_container">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ip_assets"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:paddingTop="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_ip_asset" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <!-- 사기 주의 안내 팝업을 위한 프레임 -->
+    <FrameLayout
+        android:id="@+id/fraud_warning_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

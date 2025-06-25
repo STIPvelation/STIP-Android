@@ -150,7 +150,7 @@
     <string name="member_edit_save_button">저장</string>
     <string name="info_change">변경</string>
 
-    <string name="usd_deposit_title">USD 입금하기</string>
+    <string name="usd_deposit_title">KRW 입금하기</string>
 
     <string name="order_mode_buy">매수</string>
     <string name="order_mode_sell">매도</string>
