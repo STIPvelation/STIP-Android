@@ -2,21 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/white"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="4dp"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
+        android:contentDescription="@string/back_button_desc"
         android:focusable="true"
-        android:minWidth="48dp"
-        android:minHeight="48dp"
         android:padding="12dp"
         android:src="@drawable/ic_arrow_return"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,9 +24,10 @@
         android:id="@+id/screen_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/usd_deposit_title"
-        style="@style/DefaultTextStyle_20"
-        android:textStyle="bold"
+        android:fontFamily="@font/pretendard_semi_bold_font_family"
+        android:text="KRW 입금하기"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="@id/backButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,255 +37,461 @@
         android:id="@+id/scrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/backButton">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/content_layout"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <FrameLayout
-                android:id="@+id/label_account_1"
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/kb_bank_account"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    android:layout_marginVertical="44dp"
-                    android:background="@color/gray_F4F7FC_100"
-                    android:padding="@dimen/common_side_margin_20dp">
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="20dp">
+
+                        <FrameLayout
+                            android:id="@+id/kb_bank_icon_container"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
+
+                            <ImageView
+                                android:id="@+id/kb_bank_icon"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_circle_bank"
+                                android:padding="10dp"
+                                android:src="@drawable/ic_bank_kb" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/kb_bank_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semi_bold_font_family"
+                                android:text="국민은행"
+                                android:textColor="@color/sky_30C6E8_100"
+                                android:textSize="16sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/pretendard_regular_font_family"
+                                        android:text="예금주"
+                                        android:textColor="@android:color/darker_gray"
+                                        android:textSize="13sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:fontFamily="@font/pretendard_regular_font_family"
+                                        android:text="계좌번호"
+                                        android:textColor="@android:color/darker_gray"
+                                        android:textSize="13sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/pretendard_medium_font_family"
+                                        android:text="주식회사 아이피디어그룹"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="12sp" />
+
+                                    <TextView
+                                        android:id="@+id/kb_account_number"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:fontFamily="@font/pretendard_medium_font_family"
+                                        android:text="102701-04-435574"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <ImageButton
+                            android:id="@+id/kb_copy_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_copy_button"
+                            android:contentDescription="계좌번호 복사하기"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_copy"
+                            app:tint="@android:color/white" />
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/label_account_holder1"
-                        style="@style/DefaultTextStyle_14"
+                        android:id="@+id/kb_copy_success_message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/account_holder_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="10dp"
+                        android:background="#B3000000"
+                        android:fontFamily="@font/pretendard_medium_font_family"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:text="계좌번호가 복사되었습니다"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/account_holder1"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:gravity="end"
-                        android:text="@string/account_holder_name"
-                        app:layout_constraintBaseline_toBaselineOf="@id/label_account_holder1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/label_account_holder1" />
-
-                    <TextView
-                        android:id="@+id/label_account_number1"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/account_number_label"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/label_account_holder1" />
-
-                    <TextView
-                        android:id="@+id/account_number1"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:gravity="end"
-                        android:text="@string/account_number"
-                        app:layout_constraintBaseline_toBaselineOf="@id/label_account_number1"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/label_account_number1" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="bottom"
-                    android:background="@color/color_main_point" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/label_account_2"
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/sh_bank_account"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_account_1">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    android:layout_marginVertical="44dp"
-                    android:background="@color/gray_F4F7FC_100"
-                    android:padding="@dimen/common_side_margin_20dp">
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="20dp">
+
+                        <FrameLayout
+                            android:id="@+id/sh_bank_icon_container"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
+
+                            <ImageView
+                                android:id="@+id/sh_bank_icon"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_circle_bank"
+                                android:padding="10dp"
+                                android:src="@drawable/ic_bank_shinhan" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/sh_bank_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semi_bold_font_family"
+                                android:text="신한은행"
+                                android:textColor="@color/sky_30C6E8_100"
+                                android:textSize="16sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/pretendard_regular_font_family"
+                                        android:text="예금주"
+                                        android:textColor="@android:color/darker_gray"
+                                        android:textSize="13sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:fontFamily="@font/pretendard_regular_font_family"
+                                        android:text="계좌번호"
+                                        android:textColor="@android:color/darker_gray"
+                                        android:textSize="13sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/pretendard_medium_font_family"
+                                        android:text="주식회사 아이피디어그룹"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="12sp" />
+
+                                    <TextView
+                                        android:id="@+id/sh_account_number"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:fontFamily="@font/pretendard_medium_font_family"
+                                        android:text="140-015-070902"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <ImageButton
+                            android:id="@+id/sh_copy_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_copy_button"
+                            android:contentDescription="계좌번호 복사하기"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_copy"
+                            app:tint="@android:color/white" />
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/label_account_holder2"
-                        style="@style/DefaultTextStyle_14"
+                        android:id="@+id/sh_copy_success_message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/account_holder_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="10dp"
+                        android:background="#B3000000"
+                        android:fontFamily="@font/pretendard_medium_font_family"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:text="계좌번호가 복사되었습니다"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/account_holder2"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:gravity="end"
-                        android:text="@string/account_holder_name"
-                        app:layout_constraintBaseline_toBaselineOf="@id/label_account_holder2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/label_account_holder2" />
-
-                    <TextView
-                        android:id="@+id/label_account_number2"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/account_number_label"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/label_account_holder2" />
-
-                    <TextView
-                        android:id="@+id/account_number2"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:gravity="end"
-                        android:text="@string/account_number2"
-                        app:layout_constraintBaseline_toBaselineOf="@id/label_account_number2"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/label_account_number2" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="bottom"
-                    android:background="@color/color_main_point" />
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/label_account_3"
-                android:layout_width="0dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/wr_bank_account"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:background="@color/white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_account_2">
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp">
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="12dp"
-                    android:layout_marginVertical="44dp"
-                    android:background="@color/gray_F4F7FC_100"
-                    android:padding="@dimen/common_side_margin_20dp">
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:padding="20dp">
+
+                        <FrameLayout
+                            android:id="@+id/wr_bank_icon_container"
+                            android:layout_width="48dp"
+                            android:layout_height="48dp">
+
+                            <ImageView
+                                android:id="@+id/wr_bank_icon"
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/bg_circle_bank"
+                                android:padding="10dp"
+                                android:src="@drawable/ic_bank_woori" />
+                        </FrameLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/wr_bank_name"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/pretendard_semi_bold_font_family"
+                                android:text="우리은행"
+                                android:textColor="@color/sky_30C6E8_100"
+                                android:textSize="16sp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="6dp"
+                                android:orientation="horizontal">
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/pretendard_regular_font_family"
+                                        android:text="예금주"
+                                        android:textColor="@android:color/darker_gray"
+                                        android:textSize="13sp" />
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:fontFamily="@font/pretendard_regular_font_family"
+                                        android:text="계좌번호"
+                                        android:textColor="@android:color/darker_gray"
+                                        android:textSize="13sp" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="12dp"
+                                    android:orientation="vertical">
+
+                                    <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/pretendard_medium_font_family"
+                                        android:text="주식회사 아이피디어그룹"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="12sp" />
+
+                                    <TextView
+                                        android:id="@+id/wr_account_number"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_marginTop="8dp"
+                                        android:fontFamily="@font/pretendard_medium_font_family"
+                                        android:text="1005-804-753434"
+                                        android:textColor="@android:color/black"
+                                        android:textSize="12sp" />
+                                </LinearLayout>
+                            </LinearLayout>
+                        </LinearLayout>
+
+                        <ImageButton
+                            android:id="@+id/wr_copy_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_copy_button"
+                            android:contentDescription="계좌번호 복사하기"
+                            android:padding="8dp"
+                            android:src="@drawable/ic_copy"
+                            app:tint="@android:color/white" />
+                    </LinearLayout>
 
                     <TextView
-                        android:id="@+id/label_account_holder3"
-                        style="@style/DefaultTextStyle_14"
+                        android:id="@+id/wr_copy_success_message"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/account_holder_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_gravity="center"
+                        android:layout_marginVertical="10dp"
+                        android:background="#B3000000"
+                        android:fontFamily="@font/pretendard_medium_font_family"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="10dp"
+                        android:text="계좌번호가 복사되었습니다"
+                        android:textColor="@android:color/white"
+                        android:textSize="14sp"
+                        android:visibility="gone"
+                        app:cornerRadius="8dp" />
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-                    <TextView
-                        android:id="@+id/account_holder3"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:gravity="end"
-                        android:text="@string/account_holder_name"
-                        app:layout_constraintBaseline_toBaselineOf="@id/label_account_holder3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/label_account_holder3" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/label_account_number3"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="@string/account_number_label"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/label_account_holder3" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_bold_font_family"
+                    android:text="[입금 안내]"
+                    android:textColor="@color/sky_30C6E8_100"
+                    android:textSize="18sp" />
 
-                    <TextView
-                        android:id="@+id/account_number3"
-                        style="@style/DefaultTextStyle_14"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:gravity="end"
-                        android:text="@string/account_number3"
-                        app:layout_constraintBaseline_toBaselineOf="@id/label_account_number3"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/label_account_number3" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-                <View
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
-                    android:layout_gravity="bottom"
-                    android:background="@color/color_main_point" />
-            </FrameLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="40dp"
+                    android:background="@drawable/bg_notice_section"
+                    android:fontFamily="@font/pretendard_regular_font_family"
+                    android:gravity="center"
+                    android:lineSpacingExtra="4dp"
+                    android:padding="24dp"
+                    android:text="위에 보이는 지정된 계좌로 입금해 주세요.\n입금이 확인된 후, 본인 계좌에 반영됩니다."
+                    android:textColor="@android:color/darker_gray"
+                    android:textSize="15sp" />
+            </LinearLayout>
 
-            <TextView
-                android:id="@+id/textView2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="@font/pretendard_semi_bold_font_family"
-                android:text="@string/deposit_notice_title_usd"
-                android:textColor="@color/sky_30C6E8_100"
-                android:textSize="20sp"
-                app:layout_constraintBottom_toTopOf="@+id/textView3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/label_account_3"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <TextView
-                android:id="@+id/textView3"
-                style="@style/DefaultTextStyle_14"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="44dp"
-                android:text="@string/deposit_notice_message_usd"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

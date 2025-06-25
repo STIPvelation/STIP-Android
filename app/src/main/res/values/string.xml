@@ -398,7 +398,7 @@
 
     <string name="setting_title_ip_swap_alert">IP스왑 </string>
     <string name="setting_description_ip_swap_alert">IP스왑을 원하는 신청 알림</string>
-
+    <string name="back_button_desc">뒤로가기 버튼</string>
 
     <string name="market_alert_screen_title">시세 알림</string>
 
