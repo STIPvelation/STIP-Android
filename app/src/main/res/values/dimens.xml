@@ -25,6 +25,7 @@
     <dimen name="margin_6dp">6dp</dimen>
     
     <!-- 반응형 여백 -->    
+    <dimen name="spacing_xsmall">4dp</dimen>
     <dimen name="spacing_small">8dp</dimen>
     <dimen name="spacing_medium">16dp</dimen>
     <dimen name="spacing_large">24dp</dimen>

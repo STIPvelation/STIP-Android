@@ -28,7 +28,7 @@
         android:gravity="center_horizontal"
         android:lineSpacingExtra="4dp"
         android:text="@string/logout_dialog_message"
-        android:textColor="@android:color/darker_gray"
+        android:textColor="@android:color/black"
         android:textSize="14sp" />
 
     <View

@@ -40,7 +40,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/deletion_guide_intro"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:layout_marginBottom="12dp"/>
 
             <TextView
@@ -49,18 +49,18 @@
                 android:layout_height="wrap_content"
                 android:text="@string/deletion_guide_consequence1"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:layout_marginBottom="12dp"/>
 
             <TextView
                 android:id="@+id/dialog_deletion_consequence2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/deletion_guide_consequence2"
-                android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:layout_marginBottom="12dp"
                 android:lineSpacingExtra="3dp"
-                android:layout_marginBottom="12dp"/>
+                android:text="@string/deletion_guide_consequence2"
+                android:textColor="@android:color/black"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/dialog_deletion_consequence3"
@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/deletion_guide_consequence3"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:lineSpacingExtra="3dp"
                 android:layout_marginBottom="12dp"/>
 
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/deletion_guide_consequence4"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:layout_marginBottom="20dp"/>
 
             <TextView
@@ -97,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/deletion_guide_note1"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
@@ -106,7 +106,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/deletion_guide_note2"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:layout_marginBottom="8dp"/>
 
             <TextView
@@ -116,7 +116,7 @@
                 android:text="@string/deletion_guide_note3"
                 android:textSize="14sp"
                 android:lineSpacingExtra="3dp"
-                android:textColor="@android:color/darker_gray"
+                android:textColor="@android:color/black"
                 android:layout_marginBottom="8dp"/>
 
         </LinearLayout>

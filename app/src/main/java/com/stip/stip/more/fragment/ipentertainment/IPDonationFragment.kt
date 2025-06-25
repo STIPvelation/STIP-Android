@@ -11,6 +11,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpDonationBinding
 import com.stip.stip.more.activity.IPDonationPlanActivity
@@ -96,8 +98,22 @@ class IPDonationFragment : Fragment() {
     
 
 
+    // View model for communicating with the main activity
+    private val activityViewModel: MainViewModel by activityViewModels()
+
     override fun onResume() {
         super.onResume()
+        // Update header title to "IP 기부" and set up back navigation
+        activityViewModel.updateHeaderTitle("IP 기부")
+        
+        // Set up the back button with navigation functionality
+        activityViewModel.enableBackNavigation(
+            iconResId = R.drawable.ic_back_black_24dp,
+            onClick = {
+                // Navigate back to the More fragment
+                requireActivity().supportFragmentManager.popBackStack()
+            }
+        )
     }
 
     override fun onDestroyView() {

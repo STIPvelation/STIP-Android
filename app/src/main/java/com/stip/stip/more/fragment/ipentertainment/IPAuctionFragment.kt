@@ -7,12 +7,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-// TabLayout 제거로 import 제거
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpAuctionBinding
@@ -45,9 +45,9 @@ class IPAuctionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // setupBackButton() - 삭제: btnBack이 레이아웃에 존재하지 않음
         setupSearchBar()
-        // setupTabLayout() - 탭 레이아웃 삭제로 호출 제거
+        setupCategoryCards()
+        setupSortButton()
         setupRecyclerView()
         loadDummyData() // 실제 앱에서는 API 호출 등으로 대체
         
@@ -79,6 +79,136 @@ class IPAuctionFragment : Fragment() {
         
         binding.clearSearchButton.setOnClickListener {
             binding.searchEditText.text.clear()
+        }
+        
+        // 검색 아이콘 클릭시 포커스 및 키보드 표시
+        binding.searchIcon.setOnClickListener {
+            binding.searchEditText.requestFocus()
+            showKeyboard(binding.searchEditText)
+        }
+        
+        // 검색창 엔터 키 처리
+        binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyboard()
+                filterAndUpdateAuctions()
+                true
+            } else false
+        }
+    }
+    
+    private fun showKeyboard(view: View) {
+        val imm = requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        imm.showSoftInput(view, android.view.inputmethod.InputMethodManager.SHOW_IMPLICIT)
+    }
+    
+    private fun hideKeyboard() {
+        val imm = requireActivity().getSystemService(android.content.Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+        val view = requireActivity().currentFocus ?: View(requireActivity())
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+    
+    private fun setupCategoryCards() {
+        val categoryCards = listOf(
+            binding.cardCategoryAll,
+            binding.cardCategoryPatent,
+            binding.cardCategoryGame,
+            binding.cardCategoryCharacter,
+            binding.cardCategoryFranchise,
+            binding.cardCategoryMusic
+        )
+        
+        val categories = listOf("전체", "특허", "게임", "캐릭터", "프랜차이즈", "음악")
+        
+        // 초기 선택 카테고리 설정 (전체)
+        updateSelectedCategory(binding.cardCategoryAll)
+        
+        // 각 카테고리 카드에 클릭 리스너 설정
+        categoryCards.forEachIndexed { index, cardView ->
+            cardView.setOnClickListener {
+                selectedCategory = categories[index]
+                updateSelectedCategory(cardView)
+                filterAndUpdateAuctions()
+            }
+        }
+    }
+    
+    private fun updateSelectedCategory(selectedCard: View) {
+        // 모든 카테고리 카드를 기본 스타일로 재설정
+        val allCards = listOf(
+            binding.cardCategoryAll,
+            binding.cardCategoryPatent,
+            binding.cardCategoryGame,
+            binding.cardCategoryCharacter,
+            binding.cardCategoryFranchise,
+            binding.cardCategoryMusic
+        )
+        
+        // 모든 카드 기본 스타일로 변경
+        allCards.forEach { card ->
+            (card as com.google.android.material.card.MaterialCardView).setCardBackgroundColor(
+                resources.getColor(R.color.white, null)
+            )
+            card.cardElevation = 1f
+        }
+        
+        // 선택된 카드의 스타일을 강조
+        val selectedMaterialCard = selectedCard as com.google.android.material.card.MaterialCardView
+        selectedMaterialCard.setCardBackgroundColor(resources.getColor(R.color.main_point, null))
+        selectedMaterialCard.cardElevation = 4f
+        
+        // 선택된 카드에 들어있는 TextView 찾기 및 색상 변경
+        val textView = selectedMaterialCard.getChildAt(0) as TextView
+        textView.setTextColor(resources.getColor(android.R.color.white, null))
+        
+        // 나머지 카드들의 텍스트 색상 설정
+        allCards.forEach { otherCard ->
+            if (otherCard != selectedMaterialCard) {
+                val otherTextView = (otherCard as com.google.android.material.card.MaterialCardView).getChildAt(0) as TextView
+                otherTextView.setTextColor(resources.getColor(R.color.black, null))
+            }
+        }
+    }
+    
+    private fun setupSortButton() {
+        // 정렬 버튼에 클릭 리스너 설정
+        binding.sortButtonCard.setOnClickListener {
+            // 정렬 옵션 팝업 메뉴 표시
+            val popupMenu = android.widget.PopupMenu(requireContext(), binding.sortButtonCard)
+            popupMenu.menuInflater.inflate(R.menu.menu_auction_sort, popupMenu.menu)
+            
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.sort_by_deadline -> {
+                        binding.sortOptionText.text = "마감임박"
+                        sortAuctionsByDeadline()
+                        true
+                    }
+                    R.id.sort_by_price_high -> {
+                        binding.sortOptionText.text = "높은가격순"
+                        sortAuctionsByPriceDescending()
+                        true
+                    }
+                    R.id.sort_by_price_low -> {
+                        binding.sortOptionText.text = "낮은가격순"
+                        sortAuctionsByPriceAscending()
+                        true
+                    }
+                    R.id.sort_by_popular -> {
+                        binding.sortOptionText.text = "인기순"
+                        sortAuctionsByPopularity()
+                        true
+                    }
+                    R.id.sort_by_newest -> {
+                        binding.sortOptionText.text = "최신순"
+                        sortAuctionsByNewest()
+                        true
+                    }
+                    else -> false
+                }
+            }
+            
+            popupMenu.show()
         }
     }
     
@@ -253,31 +383,88 @@ class IPAuctionFragment : Fragment() {
     }
     
     private fun filterAndUpdateAuctions() {
-        // 검색어에 따라 필터링 (카테고리 버튼은 나중에 구현)
+        // 조회 시작 전 로딩 표시
+        binding.loadingIndicator.visibility = View.VISIBLE
+        
+        // 검색어와 카테고리에 따라 필터링
         val tempList = auctionList.filter { auction ->
             // 검색어 필터링
             val matchesSearch = if (searchQuery.isNotEmpty()) {
                 auction.title.contains(searchQuery, ignoreCase = true) || 
-                auction.description.contains(searchQuery, ignoreCase = true)
+                auction.description.contains(searchQuery, ignoreCase = true) ||
+                auction.registrationNumber.contains(searchQuery, ignoreCase = true)
             } else true
             
-            // TabLayout 삭제로 탭 필터링 제거
-            matchesSearch
+            // 카테고리 필터링
+            val matchesCategory = if (selectedCategory != "전체") {
+                auction.category == selectedCategory
+            } else true
+            
+            matchesSearch && matchesCategory
         }
         
         // 필터링된 리스트 갱신 및 로깅
         filteredAuctionList.clear()
         filteredAuctionList.addAll(tempList)
         
-        Log.d(TAG, "Filtered auction items: ${filteredAuctionList.size}")
+        Log.d(TAG, "Filtered auction items: ${filteredAuctionList.size} (Category: $selectedCategory, Search: $searchQuery)")
         
-        // ArrayList로 새로 생성하여 전달 (변경사항이 제대로 반영되도록)
-        auctionAdapter.submitList(filteredAuctionList)
-        
-        // 정상적으로 표시되는지 확인하기 위한 지연 후 다시 한번 갱신
-        binding.auctionRecyclerView.postDelayed({
-            auctionAdapter.notifyDataSetChanged()
-        }, 100)
+        // UI 업데이트
+        binding.auctionRecyclerView.post {
+            auctionAdapter.submitList(ArrayList(filteredAuctionList))
+            binding.loadingIndicator.visibility = View.GONE
+            
+            // 검색 결과 없음 대체
+            if (filteredAuctionList.isEmpty()) {
+                Toast.makeText(context, "검색 결과가 없습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    // 마감임박 순 정렬 (남은 시간이 적은 순)
+    private fun sortAuctionsByDeadline() {
+        val now = Date()
+        filteredAuctionList.sortBy { auction ->
+            auction.endTime.time - now.time
+        }
+        auctionAdapter.submitList(ArrayList(filteredAuctionList))
+        auctionAdapter.notifyDataSetChanged()
+    }
+    
+    // 가격 높은 순 정렬
+    private fun sortAuctionsByPriceDescending() {
+        filteredAuctionList.sortByDescending { auction ->
+            auction.currentPrice
+        }
+        auctionAdapter.submitList(ArrayList(filteredAuctionList))
+        auctionAdapter.notifyDataSetChanged()
+    }
+    
+    // 가격 낮은 순 정렬
+    private fun sortAuctionsByPriceAscending() {
+        filteredAuctionList.sortBy { auction ->
+            auction.currentPrice
+        }
+        auctionAdapter.submitList(ArrayList(filteredAuctionList))
+        auctionAdapter.notifyDataSetChanged()
+    }
+    
+    // 인기순 정렬 (입찰자 수 기준)
+    private fun sortAuctionsByPopularity() {
+        filteredAuctionList.sortByDescending { auction ->
+            auction.bidCount
+        }
+        auctionAdapter.submitList(ArrayList(filteredAuctionList))
+        auctionAdapter.notifyDataSetChanged()
+    }
+    
+    // 최신순 정렬 (id 기준 - 실제로는 등록일자 기준이지만 여기서는 임시로 id로 처리)
+    private fun sortAuctionsByNewest() {
+        filteredAuctionList.sortByDescending { auction ->
+            auction.id.toIntOrNull() ?: 0
+        }
+        auctionAdapter.submitList(ArrayList(filteredAuctionList))
+        auctionAdapter.notifyDataSetChanged()
     }
 
     override fun onResume() {
