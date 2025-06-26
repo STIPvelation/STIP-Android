@@ -52,14 +52,14 @@ class TransactionViewModel @Inject constructor() : ViewModel() {
         
         _withdrawalStatus.value = WithdrawalStatus(
             pendingAmount = 0.0,
-            availableAmount = 0.0,
-            withdrawalLimit = 0.0,
+            availableAmount = 10000.0, // 출금 가능한 더미 데이터 추가
+            withdrawalLimit = 20000.0, // 출금 한도 증가
             currencyCode = ipAsset.currencyCode,
             fee = 1.0,
             withdrawalDestination = if (ipAsset.isUSD) {
-                WithdrawalDestination.BankAccount("")
+                WithdrawalDestination.BankAccount("신한은행 110-123-**6789")
             } else {
-                WithdrawalDestination.Wallet("")
+                WithdrawalDestination.Wallet("0x1234...5678")
             }
         )
     }

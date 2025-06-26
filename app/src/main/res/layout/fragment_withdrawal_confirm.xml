@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/material_toolbar"
@@ -23,38 +24,28 @@
         android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
-        style="@style/DefaultTextStyle_14"
+        style="@style/DefaultTextStyle_16"
         android:background="@drawable/bg_frame_rounded"
-        android:paddingHorizontal="16dp"
+        android:paddingHorizontal="20dp"
         android:paddingVertical="16dp"
-        android:text="@string/withdrawal_warning_title1"
+        android:text="확인 진행후 출금신청이 완료되면 취소 불가능합니다."
+        android:textColor="@color/text_gray_505060_100"
+        android:backgroundTint="@color/gray_F8FAFF_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/material_toolbar" />
 
     <TextView
-        android:id="@+id/currency_code"
+        android:id="@+id/withdrawal_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:layout_marginEnd="8dp"
+        android:text="USD 출금신청 확인"
         android:textColor="@color/sky_30C6E8_100"
-        style="@style/DefaultTextStyle_20"
-        app:layout_constraintEnd_toStartOf="@id/text5"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/withdrawal_warning_title"
-        tools:text="USD" />
-
-    <TextView
-        android:id="@+id/text5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="@string/withdrawal_request_confirm"
-        style="@style/DefaultTextStyle_20"
+        android:textSize="20sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/currency_code"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/withdrawal_warning_title" />
 
     <com.google.android.material.divider.MaterialDivider
@@ -65,12 +56,19 @@
         app:dividerColor="@color/gray_F4F7FC_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text5" />
+        app:layout_constraintTop_toBottomOf="@id/withdrawal_title" />
 
-    <FrameLayout
-        android:id="@+id/frameLayout"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_withdrawal_details"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
+        android:layout_marginTop="24dp"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="8dp"
+        android:layout_margin="2dp"
+        app:cardPreventCornerOverlap="true"
+        app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/material_divider">
@@ -79,123 +77,142 @@
             android:id="@+id/container_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-            android:layout_marginBottom="24dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_frame_rounded"
-            android:orientation="vertical"
-            android:paddingHorizontal="12dp"
-            android:paddingVertical="16dp">
+            android:orientation="vertical">
 
-            <RelativeLayout
+            <!-- 출금계좌 정보 -->
+            <LinearLayout
                 android:id="@+id/bank_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="16dp">
 
                 <TextView
                     android:id="@+id/withdrawal_destination_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    style="@style/DefaultTextStyle_14"
-                    tools:text="실명계좌" />
+                    android:layout_weight="1"
+                    android:text="출금계좌"
+                    android:textColor="@color/text_gray_505060_100"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/text_bank"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:textSize="14sp"
-                    tools:ignore="RelativeOverlap" />
-            </RelativeLayout>
+                    android:textColor="@color/text_gray_232D3F_100"
+                    android:textSize="16sp"
+                    android:textStyle="normal" 
+                    tools:text="신한은행 110-123-**6789" />
+            </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/withdrawable_container"
+            <!-- 구분선 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_F0F0F5_100" />
+
+            <!-- 출금금액 정보 -->
+            <LinearLayout
+                android:id="@+id/withdrawal_amount_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp">
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="16dp">
 
                 <TextView
                     android:id="@+id/label_withdrawable"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true" />
+                    android:layout_weight="1"
+                    android:text="출금금액"
+                    android:textColor="@color/text_gray_505060_100"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/text_withdrawable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    tools:ignore="RelativeOverlap" />
-            </RelativeLayout>
+                    android:textColor="@color/text_gray_232D3F_100"
+                    android:textSize="16sp"
+                    android:textStyle="normal"
+                    tools:text="10,000 USD" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_warning_info"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
+        android:layout_marginTop="28dp"
+        app:cardCornerRadius="12dp"
+        app:cardBackgroundColor="@color/gray_F8FAFF_100"
+        app:cardElevation="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_withdrawal_details">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/withdrawal_confirm_warning_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="한 번 더 확인해 주세요"
+                android:textColor="@color/text_gray_232D3F_100"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/warning_point1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="본인 명의의 STIP 계정을 타인의 요청이나 지시에 따라 대여할 경우 범죄 처벌 대상이 될 수 있으며, 실명 인증된 계정을 공유하면 개인정보 보호를 침해하게 됩니다."
+                android:textColor="@color/text_gray_505060_100"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/warning_point2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="특정 거래는 정밀한 점검 출금이 지연될 수도 있습니다. 이후의, 당사의 이상 거래 감지 결과에 따라 출금 신청 시 거절 및 일출금자 확인을 위한 서류 제출을 요청할 수 있으며, 이에 따라 출금이 지연될 수 있습니다."
+                android:textColor="@color/text_gray_505060_100"
+                android:textSize="14sp"
+                android:lineSpacingExtra="4dp"/>
         </LinearLayout>
 
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginTop="24dp"
-            app:dividerColor="@color/gray_F4F7FC_100"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text5" />
+    </androidx.cardview.widget.CardView>
 
-    </FrameLayout>
-
-    <TextView
-        android:id="@+id/withdrawal_confirm_warning_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:text="@string/withdrawal_confirm_warning_title"
-        style="@style/DefaultTextStyle_14"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/frameLayout" />
-
-    <ScrollView
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-        android:layout_marginTop="28dp"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/confirm_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/withdrawal_confirm_warning_title"
-        app:layout_constraintVertical_bias="1.0">
-
-        <TextView
-            android:id="@+id/withdrawal_confirm_warning_message"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/withdrawal_confirm_warning_message1"
-            android:textColor="@color/text_gray_595F63_100"
-            android:textSize="@dimen/text_size_small" />
-
-    </ScrollView>
-
-    <androidx.appcompat.widget.AppCompatButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/confirm_button"
         android:layout_width="0dp"
-        android:layout_height="44dp"
+        android:layout_height="56dp"
         android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/selector_gray_b0b8c1_sky_30c6e8_round_4dp"
-        android:fontFamily="@font/pretendard_medium_font_family"
-        android:insetLeft="0dp"
-        android:insetTop="0dp"
-        android:insetRight="0dp"
-        android:insetBottom="0dp"
-        android:padding="0dp"
-        android:text="@string/common_confirm"
+        android:layout_marginBottom="24dp"
+        android:text="확인"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_medium"
-        app:cornerRadius="4dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:cornerRadius="16dp"
+        app:backgroundTint="@color/sky_30C6E8_100"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        app:elevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card_warning_info"
+        app:layout_constraintVertical_bias="1.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
