@@ -83,7 +83,10 @@
             android:screenOrientation="portrait"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
 
-        <activity android:name="com.stip.stip.ipasset.DepositKrwActivity" />
+        <activity
+            android:name="com.stip.ipasset.activity.DepositKrwActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.stip.stip.more.activity.MemberInfoEditActivity"

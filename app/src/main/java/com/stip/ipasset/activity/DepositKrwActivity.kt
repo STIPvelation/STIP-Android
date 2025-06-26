@@ -17,7 +17,7 @@ class DepositKrwActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityDepositKrwBinding
     private var lastCopiedView: View? = null
-    private val hideTimer = Timer()
+    private var hideTimer: Timer? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,12 +86,18 @@ class DepositKrwActivity : AppCompatActivity() {
         lastCopiedView = containerView
         
         // 2초 후 메시지 숨기기
-        hideTimer.cancel()
-        hideTimer.purge()
-        hideTimer.schedule(2000) {
+        hideTimer?.cancel()
+        hideTimer = Timer()
+        hideTimer?.schedule(2000) {
             runOnUiThread {
                 successMessage.visibility = View.GONE
             }
         }
+    }
+    
+    override fun onDestroy() {
+        super.onDestroy()
+        // Clean up timer when activity is destroyed
+        hideTimer?.cancel()
     }
 }

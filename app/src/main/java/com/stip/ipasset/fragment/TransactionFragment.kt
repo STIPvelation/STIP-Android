@@ -2,6 +2,7 @@ package com.stip.stip.ipasset.fragment
 
 import androidx.core.content.ContextCompat
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import com.stip.stip.ipasset.model.Filter
 import com.stip.stip.ipasset.model.IpAsset
 import com.stip.stip.iphome.fragment.InfoDialogFragment
 import com.stip.stip.ipasset.model.WithdrawalStatus
+import com.stip.ipasset.activity.DepositKrwActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -167,11 +169,9 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
 
     private fun setupClickListeners() {
         viewBinding.depositButtonContainer.setOnClickListener {
-            if (ipAsset.currencyCode == "USD") {
-                navigateToDeposit()
-            } else {
-                showDepositConfirmDialog()
-            }
+            // Start DepositKrwActivity directly when deposit button is clicked
+            val intent = Intent(requireContext(), DepositKrwActivity::class.java)
+            startActivity(intent)
         }
 
         viewBinding.withdrawButtonContainer.setOnClickListener {
@@ -192,7 +192,9 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
             titleColorResId = R.color.dialog_title_buy_error_red
         ).apply {
             setConfirmClickListener {
-                navigateToDeposit()
+                // Start DepositKrwActivity on confirmation
+                val intent = Intent(requireContext(), DepositKrwActivity::class.java)
+                startActivity(intent)
             }
         }.show(parentFragmentManager, InfoDialogFragment.TAG)
     }
@@ -211,9 +213,9 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
 
     private fun navigateToDeposit() {
         try {
-            val directions = TransactionFragmentDirections
-                .actionIpAssetHoldingsFragmentToDepositFragment(ipAsset)
-            findNavController().navigate(directions)
+            // Start DepositKrwActivity instead of navigating to a fragment
+            val intent = Intent(requireContext(), DepositKrwActivity::class.java)
+            startActivity(intent)
         } catch (e: Exception) {
             Log.e("TransactionFragment", "Deposit Navigation Error", e)
             Toast.makeText(requireContext(), getString(R.string.deposit_navigation_error), Toast.LENGTH_SHORT).show()
