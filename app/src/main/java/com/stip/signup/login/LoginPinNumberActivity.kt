@@ -138,13 +138,14 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
     }
 
     private fun setKeyPad() {
-        val numberItems = (0..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) }.shuffled()
+        // 1-9, 0 순서로 기본 정렬된 숫자 생성
+        val numberItems = (1..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) } +
+                         listOf(KeypadItem("0", KeypadType.NUMBER))
         val fixedItems = listOf(
-            KeypadItem(getString(R.string.common_re_order), KeypadType.SHUFFLE),
-            numberItems.first(),
+            KeypadItem("완료", KeypadType.DONE),
             KeypadItem("", KeypadType.DELETE, R.drawable.ic_del_white_31dp)
         )
-        val keypadItemList = (numberItems.drop(1) + fixedItems).toMutableList()
+        val keypadItemList = (numberItems + fixedItems).toMutableList()
         keypadAdapter = KeypadAdapter(
             keypadItemList
         ) { item ->
@@ -166,10 +167,12 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
                         pinAdapter.updatePinCount(pinInput.length)
                     }
                 }
+                KeypadType.DONE -> {
+                    // 키패드 숨기기 없음 - 이미 화면에 고정 표시됨
+                    // 필요한 경우 추가 작업 가능
+                }
                 KeypadType.SHUFFLE -> {
-                    pinInput.clear()
-                    pinAdapter.updatePinCount(0)
-                    setKeyPad()
+                    // 사용하지 않는 케이스지만 exhaustive 검사를 위해 유지
                 }
             }
         }

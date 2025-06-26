@@ -122,7 +122,8 @@ class PinVerificationActivity : AppCompatActivity() {
                     }
                 }
 
-                KeypadType.SHUFFLE -> keypadAdapter.shuffleNumbers()
+                KeypadType.SHUFFLE -> keypadAdapter.setupWithDoneButton()
+                KeypadType.DONE -> {} // 완료 버튼 처리 - 필요한 경우 변경
             }
         }
 

@@ -10,13 +10,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="6dp"
+        android:paddingVertical="3dp"
         android:paddingHorizontal="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_keypad_number_container"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/bg_keypad_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -42,8 +42,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_keypad_del_container"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/bg_keypad_circle"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -57,6 +57,33 @@
                 android:layout_height="31dp"
                 android:src="@drawable/ic_del_white_31dp"
                 app:tint="@color/main_point"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+                
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        
+        <!-- 완료 버튼 컨테이너 -->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_keypad_done_container"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_keypad_gradient"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:visibility="gone">
+            
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_keypad_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="완료"
+                android:textSize="16sp"
+                android:textColor="@android:color/white"
+                android:fontFamily="@font/pretendard_medium_font_family"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

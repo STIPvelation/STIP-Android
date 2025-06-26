@@ -29,25 +29,29 @@ class KeypadAdapter(
         override fun bind(position: Int) {
             val itemData = itemList[position]
 
-            if (itemData.iconRes == null) {
-                binding.clKeypadDelContainer.visibility = View.GONE
-                binding.clKeypadNumberContainer.visibility = View.VISIBLE
-
-                when(itemData.type) {
-                    KeypadType.NUMBER -> {
-                        binding.tvKeypadNumber.text = itemData.value
-                        binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(android.R.color.black))
-                    }
-                    KeypadType.SHUFFLE -> {
-                        binding.tvKeypadNumber.text = itemData.value // "↻" 아이콘 사용
-                        binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(R.color.main_point))
-                        binding.tvKeypadNumber.textSize = 16f // 작은 크기
-                    }
-                    else -> {}
+            binding.clKeypadDelContainer.visibility = View.GONE
+            binding.clKeypadNumberContainer.visibility = View.GONE
+            binding.clKeypadDoneContainer.visibility = View.GONE
+            
+            when(itemData.type) {
+                KeypadType.NUMBER -> {
+                    binding.clKeypadNumberContainer.visibility = View.VISIBLE
+                    binding.tvKeypadNumber.text = itemData.value
+                    binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(android.R.color.black))
                 }
-            } else {
-                binding.clKeypadDelContainer.visibility = View.VISIBLE
-                binding.clKeypadNumberContainer.visibility = View.GONE
+                KeypadType.SHUFFLE -> {
+                    // 재배열 버튼은 사용하지 않음
+                    binding.clKeypadDoneContainer.visibility = View.VISIBLE
+                }
+                KeypadType.DELETE -> {
+                    binding.clKeypadDelContainer.visibility = View.VISIBLE
+                }
+                KeypadType.DONE -> {
+                    // 완료 버튼도 숫자 버튼과 동일한 원형 스타일로 표시
+                    binding.clKeypadNumberContainer.visibility = View.VISIBLE
+                    binding.tvKeypadNumber.text = itemData.value
+                    binding.tvKeypadNumber.setTextColor(binding.root.context.getColor(android.R.color.black))
+                }
             }
 
             binding.root.setOnClickListener {
@@ -56,15 +60,19 @@ class KeypadAdapter(
         }
     }
 
-    fun shuffleNumbers() {
-        val numberItems = itemList.filter { it.type == KeypadType.NUMBER }.shuffled() // 0~9 숫자 모두 섞기
-        val fixedItems = listOf(
-            KeypadItem("↻", KeypadType.SHUFFLE), // 아이콘 사용
-            numberItems.first(), // 섞인 숫자 중 첫 번째 값을 "0" 자리에 고정
-            KeypadItem("", KeypadType.DELETE, R.drawable.ic_del_white_31dp)
+    fun setupWithDoneButton() {
+        // 1부터 9까지의 숫자 아이템 생성
+        val numberItems = (1..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) }
+        
+        // DELETE, 0, DONE 순서로 아이템 생성
+        val bottomRowItems = listOf(
+            KeypadItem("", KeypadType.DELETE, R.drawable.ic_del_white_31dp),
+            KeypadItem("0", KeypadType.NUMBER),
+            KeypadItem("완료", KeypadType.DONE)
         )
 
-        itemList = (numberItems.drop(1) + fixedItems).toMutableList() // 첫 번째 숫자를 제외하고 나머지를 추가
+        // 1-9 숫자 + (DELETE, 0, DONE) 순서로 배치
+        itemList = (numberItems + bottomRowItems).toMutableList()
         notifyDataSetChanged()
     }
 }

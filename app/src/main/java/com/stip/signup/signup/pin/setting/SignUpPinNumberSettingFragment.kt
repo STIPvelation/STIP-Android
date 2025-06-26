@@ -145,19 +145,24 @@ class SignUpPinNumberSettingFragment : BaseFragment<FragmentSignUpPinNumberSetti
     }
 
     private fun setKeyPad() {
-        val numberItems = (0..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) }.shuffled()
+        // 1-9, 0 순서로 기본 정렬된 숫자 생성
+        val numberItems = (1..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) } +
+                         listOf(KeypadItem("0", KeypadType.NUMBER))
         val fixedItems = listOf(
-            KeypadItem(getString(R.string.common_re_order), KeypadType.SHUFFLE),
-            numberItems.first(),
+            KeypadItem("완료", KeypadType.DONE),
             KeypadItem("", KeypadType.DELETE, R.drawable.ic_del_white_31dp)
         )
-        val keypadItemList = (numberItems.drop(1) + fixedItems).toMutableList()
+        val keypadItemList = (numberItems + fixedItems).toMutableList()
 
         keypadAdapter = KeypadAdapter(keypadItemList) { item ->
             when (item.type) {
                 KeypadType.NUMBER -> handleNumberInput(item.value)
-                KeypadType.SHUFFLE -> keypadAdapter.shuffleNumbers()
                 KeypadType.DELETE -> handleDelete()
+                KeypadType.DONE -> {
+                    // 완료 버튼 처리 - 필요한 경우 수정
+                    binding.rvSignUpPinNumberKeypad.visibility = View.GONE 
+                }
+                KeypadType.SHUFFLE -> {} // 사용하지 않음
             }
         }
         // Add negative spacing decoration to bring keypad buttons closer horizontally

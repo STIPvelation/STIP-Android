@@ -1,5 +1,5 @@
 package com.stip.stip.signup.keypad
 
 enum class KeypadType {
-    NUMBER, SHUFFLE, DELETE
+    NUMBER, SHUFFLE, DELETE, DONE
 }

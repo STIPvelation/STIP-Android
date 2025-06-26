@@ -260,13 +260,14 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
     }
 
     private fun setKyePad() {
-        val numberItems = (0..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) }.shuffled()
+        // 1-9, 0 순서로 기본 정렬된 숫자 생성
+        val numberItems = (1..9).map { KeypadItem(it.toString(), KeypadType.NUMBER) } +
+                         listOf(KeypadItem("0", KeypadType.NUMBER))
         val fixedItems = listOf(
-            KeypadItem(getString(R.string.common_re_order), KeypadType.SHUFFLE),
-            numberItems.first(),
+            KeypadItem("완료", KeypadType.DONE),
             KeypadItem("", KeypadType.DELETE, R.drawable.ic_del_white_31dp)
         )
-        val keypadItemList = (numberItems.drop(1) + fixedItems).toMutableList()
+        val keypadItemList = (numberItems + fixedItems).toMutableList()
         keypadAdapter = KeypadAdapter(
             keypadItemList
         ) { item ->
@@ -276,12 +277,16 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
                         number += item.value
                     }
                 }
-                KeypadType.SHUFFLE -> keypadAdapter.shuffleNumbers()
+                KeypadType.DONE -> {
+                    // 완료 버튼 처리 - 키패드 숨김 처리
+                    binding.rvNumber.visibility = View.GONE
+                }
                 KeypadType.DELETE -> {
                     if (number.isNotEmpty()) {
                         number = number.dropLast(1)
                     }
                 }
+                KeypadType.SHUFFLE -> {}
             }
             wonAdapter.updateNumber(number)
             viewModel.isBankDepositNumberCheck(number)
