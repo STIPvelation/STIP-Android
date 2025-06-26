@@ -8,6 +8,7 @@ import com.stip.stip.databinding.FragmentTransactionDialogBinding
 
 class TransactionDialogFragment : BaseDialogFragment<FragmentTransactionDialogBinding>() {
     private var onClickListener: OnClickListener? = null
+    private var onDismissListener: (() -> Unit)? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +36,15 @@ class TransactionDialogFragment : BaseDialogFragment<FragmentTransactionDialogBi
         }
 
         return dialog
+    }
+    
+    override fun onDismiss(dialog: android.content.DialogInterface) {
+        super.onDismiss(dialog)
+        onDismissListener?.invoke()
+    }
+    
+    fun setOnDismissListener(listener: () -> Unit) {
+        onDismissListener = listener
     }
 
     interface OnClickListener {

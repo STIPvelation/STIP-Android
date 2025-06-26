@@ -11,6 +11,7 @@ import com.stip.stip.R
 import com.stip.stip.databinding.FragmentWithdrawalConfirmBinding
 import com.stip.stip.ipasset.model.WithdrawalDestination
 import com.stip.stip.ipasset.model.WithdrawalStatus
+import com.stip.stip.ipasset.model.CurrencyFormatter
 
 class WithdrawalConfirmationFragment : BaseFragment<FragmentWithdrawalConfirmBinding>(), TransactionDialogFragment.OnClickListener {
     private val navArgs: WithdrawalConfirmationFragmentArgs by navArgs()
@@ -43,19 +44,33 @@ class WithdrawalConfirmationFragment : BaseFragment<FragmentWithdrawalConfirmBin
         // 출금금액 레이블
         viewBinding.labelWithdrawable.text = "출금금액"
         
-        // 출금금액 텍스트 설정
-        viewBinding.textWithdrawable.text = "$totalWithdrawal ${withdrawalStatus.currencyCode}"
+        // 출금금액 텍스트 설정 - 소수점 2자리 및 3자리마다 쉼표 포맷 적용
+        viewBinding.textWithdrawable.text = CurrencyFormatter.format(totalWithdrawal.toDouble(), withdrawalStatus.currencyCode)
 
         // iOS 스타일의 확인 버튼 및 완료 다이얼로그 처리
         viewBinding.confirmButton.setOnClickListener {
             // 출금 신청 완료 처리 및 실제 API를 호출하는 코드가 여기에 삽입될 수 있음
-            // 임시로 완료 다이얼로그 표시
-            TransactionDialogFragment
-                .newInstance(
-                    "출금신청 완료",
-                    "출금신청이 성공적으로 처리되었습니다."
-                )
-                .show(childFragmentManager, null)
+            // 팝업 다이얼로그 표시
+            val bankInfo = withdrawalDestination.value
+            val bankName = if (bankInfo.contains(" ")) {
+                bankInfo.substring(0, bankInfo.indexOf(" "))
+            } else {
+                ""
+            }
+            val accountNumber = if (bankInfo.contains(" ")) {
+                bankInfo.substring(bankInfo.indexOf(" ") + 1)
+            } else {
+                bankInfo
+            }
+            
+            WithdrawalDetailDialogFragment.show(
+                childFragmentManager,
+                totalWithdrawal,
+                withdrawalStatus.currencyCode,
+                CurrencyFormatter.format(withdrawalStatus.fee, withdrawalStatus.currencyCode),
+                bankName,
+                accountNumber
+            )
         }
     }
 
@@ -73,4 +88,6 @@ class WithdrawalConfirmationFragment : BaseFragment<FragmentWithdrawalConfirmBin
             )
         }
     }
+    
+    private val withdrawalDestination: WithdrawalDestination get() = withdrawalStatus.withdrawalDestination
 }
