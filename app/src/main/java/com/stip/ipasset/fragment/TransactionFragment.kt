@@ -8,21 +8,25 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
+
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentTransactionBinding
 import com.stip.stip.ipasset.TransactionViewModel
-import com.stip.stip.ipasset.adapter.TransactionHistoryListAdapter
+
 import com.stip.stip.ipasset.model.Filter
 import com.stip.stip.ipasset.model.IpAsset
 import com.stip.stip.iphome.fragment.InfoDialogFragment
 import com.stip.stip.ipasset.model.WithdrawalStatus
 import com.stip.ipasset.activity.DepositKrwActivity
+import com.stip.ipasset.activity.UsdDepositDetailActivity
+import com.stip.ipasset.activity.UsdWithdrawalDetailActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -35,19 +39,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     private val ipAsset: IpAsset get() = navArgs.ipAsset
 
     private val viewModel by viewModels<TransactionViewModel>()
-    private val adapter = TransactionHistoryListAdapter { item ->
-        val isFiat = item.currencyCode.uppercase() in listOf("USD", "KRW")
-
-        val action = if (isFiat) {
-            TransactionFragmentDirections
-                .actionIpAssetHoldingsFragmentToWithdrawalDetailFragment(transactionId = item.id)
-        } else {
-            TransactionFragmentDirections
-                .actionIpAssetHoldingsFragmentToTickerTransferDetailFragment(transactionId = item.id)
-        }
-
-        findNavController().navigate(action)
-    }
+    // Adapter removed since RecyclerView is no longer used
 
 
     private var currentFilter = com.stip.stip.ipasset.model.Filter.ALL
@@ -60,9 +52,10 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
-        setupRecyclerView()
         setupFilterTabs()
         setupClickListeners()
+        showSampleTransactionHistory()
+        collectData()
 
         // 거래 내역 불러오기
         lifecycleScope.launch {
@@ -76,8 +69,6 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         lifecycleScope.launch {
             viewModel.fetchWithdrawalStatus(ipAsset, accountNumber)
         }
-
-        collectData()
     }
 
     override fun onStart() {
@@ -88,40 +79,50 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         setNavigationOnClickListener { activity?.finish() }
     }
 
-    private fun setupRecyclerView() = with(viewBinding.recyclerView) {
-        adapter = this@TransactionFragment.adapter
-        layoutManager = LinearLayoutManager(requireContext())
-    }
-
     private fun setupFilterTabs() {
-        // 필터 탭 클릭 리스너 설정
         viewBinding.tabAll.setOnClickListener {
             updateActiveTab(com.stip.stip.ipasset.model.Filter.ALL)
-            viewModel.applyFilter(com.stip.stip.ipasset.model.Filter.ALL)
+            applyNewFilter(com.stip.stip.ipasset.model.Filter.ALL)
         }
         
         viewBinding.tabDeposit.setOnClickListener {
             updateActiveTab(com.stip.stip.ipasset.model.Filter.DEPOSIT)
-            viewModel.applyFilter(com.stip.stip.ipasset.model.Filter.DEPOSIT)
+            applyNewFilter(com.stip.stip.ipasset.model.Filter.DEPOSIT)
         }
         
         viewBinding.tabWithdrawal.setOnClickListener {
             updateActiveTab(com.stip.stip.ipasset.model.Filter.WITHDRAW)
-            viewModel.applyFilter(com.stip.stip.ipasset.model.Filter.WITHDRAW)
+            applyNewFilter(com.stip.stip.ipasset.model.Filter.WITHDRAW)
         }
         
         viewBinding.tabReturn.setOnClickListener {
             updateActiveTab(com.stip.stip.ipasset.model.Filter.REFUND)
-            viewModel.applyFilter(com.stip.stip.ipasset.model.Filter.REFUND)
+            applyNewFilter(com.stip.stip.ipasset.model.Filter.REFUND)
         }
         
         viewBinding.tabInProgress.setOnClickListener {
             updateActiveTab(com.stip.stip.ipasset.model.Filter.PROCESSING)
-            viewModel.applyFilter(com.stip.stip.ipasset.model.Filter.PROCESSING)
+            applyNewFilter(com.stip.stip.ipasset.model.Filter.PROCESSING)
         }
         
         // 초기 탭 상태 설정 (전체 선택)
         updateActiveTab(com.stip.stip.ipasset.model.Filter.ALL)
+        applyNewFilter(com.stip.stip.ipasset.model.Filter.ALL)
+    }
+    
+    /**
+     * 새 필터를 적용하는 메서드
+     * ViewModel에 필터를 적용하고 UI를 업데이트합니다.
+     */
+    private fun applyNewFilter(filter: com.stip.stip.ipasset.model.Filter) {
+        // 현재 필터 업데이트
+        currentFilter = filter
+        
+        // ViewModel에 필터 적용
+        viewModel.applyFilter(filter)
+        
+        // UI 업데이트 (샘플 트랜잭션 아이템 필터링)
+        filterTransactionsBasedOnCurrentFilter()
     }
     
     private fun updateActiveTab(filter: com.stip.stip.ipasset.model.Filter) {
@@ -170,8 +171,82 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     private fun setupClickListeners() {
         viewBinding.depositButtonContainer.setOnClickListener {
             // Start DepositKrwActivity directly when deposit button is clicked
-            val intent = Intent(requireContext(), DepositKrwActivity::class.java)
+            startActivity(Intent(requireContext(), DepositKrwActivity::class.java))
+        }
+        
+        // Set click listeners for sample transaction items
+        viewBinding.sampleItemDeposit.setOnClickListener {
+            val intent = Intent(requireContext(), UsdDepositDetailActivity::class.java)
+            intent.putExtra("usdAmount", 5000.0)
+            intent.putExtra("krwAmount", 6500000.0)
+            intent.putExtra("depositorName", "홍길동")
+            intent.putExtra("txId", "TX_987654321")
+            intent.putExtra("exchangeRate", 1300.0)
+            intent.putExtra("fee", 0.0)
+            intent.putExtra("status", "입금 완료")
+            intent.putExtra("timestamp", System.currentTimeMillis() - 86400000) // Yesterday
             startActivity(intent)
+            
+            // 리스트 아이템 갱신 - 새로운 콤마 포맷 적용
+            try {
+                viewBinding.sampleItemDeposit.findViewById<TextView>(R.id.formatted_amount)?.let {
+                    it.text = String.format("%,.2f USD", 5000.0)
+                }
+                viewBinding.sampleItemDeposit.findViewById<TextView>(R.id.usd_amount)?.let {
+                    it.text = String.format("%,.0f KRW", 6500000.0)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        
+        viewBinding.sampleItemWithdraw.setOnClickListener {
+            val intent = Intent(requireContext(), UsdWithdrawalDetailActivity::class.java)
+            intent.putExtra("amount", 10000.0)
+            intent.putExtra("bankName", "국민은행")
+            intent.putExtra("accountNumber", "123-456-789012")
+            intent.putExtra("txId", "TX_123456789")
+            intent.putExtra("fee", 1.0)
+            intent.putExtra("status", "출금 완료")
+            intent.putExtra("timestamp", System.currentTimeMillis() - 172800000) // 2 days ago
+            startActivity(intent)
+            
+            // 리스트 아이템 갱신 - 새로운 콤마 포맷 적용
+            try {
+                viewBinding.sampleItemWithdraw.findViewById<TextView>(R.id.formatted_amount)?.let {
+                    it.text = String.format("%,.2f USD", 10000.0)
+                }
+                viewBinding.sampleItemWithdraw.findViewById<TextView>(R.id.usd_amount)?.let {
+                    it.text = String.format("%,.0f KRW", 13000000.0) // 출금 예시를 위한 KRW 값
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+        
+        viewBinding.sampleItemDeposit2.setOnClickListener {
+            val intent = Intent(requireContext(), UsdDepositDetailActivity::class.java)
+            intent.putExtra("usdAmount", 2500.0)
+            intent.putExtra("krwAmount", 3250000.0)
+            intent.putExtra("depositorName", "김천수")
+            intent.putExtra("txId", "TX_567890123")
+            intent.putExtra("exchangeRate", 1300.0)
+            intent.putExtra("fee", 0.0)
+            intent.putExtra("status", "입금 완료")
+            intent.putExtra("timestamp", System.currentTimeMillis() - 259200000) // 3 days ago
+            startActivity(intent)
+            
+            // 리스트 아이템 갱신 - 새로운 콤마 포맷 적용
+            try {
+                viewBinding.sampleItemDeposit2.findViewById<TextView>(R.id.formatted_amount)?.let {
+                    it.text = String.format("%,.2f USD", 2500.0)
+                }
+                viewBinding.sampleItemDeposit2.findViewById<TextView>(R.id.usd_amount)?.let {
+                    it.text = String.format("%,.0f KRW", 3250000.0)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         viewBinding.withdrawButtonContainer.setOnClickListener {
@@ -247,6 +322,97 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         }
     }
 
+    // 샘플 트랜잭션 히스토리 보이기
+    private fun showSampleTransactionHistory() {
+        // 현재 필터에 따라 샘플 아이템 필터링
+        filterTransactionsBasedOnCurrentFilter()
+    }
+    
+    private fun filterTransactionsBasedOnCurrentFilter() {
+        // 처음에 모든 아이템을 숨김
+        viewBinding.sampleItemDeposit.visibility = View.GONE
+        viewBinding.sampleItemWithdraw.visibility = View.GONE
+        viewBinding.sampleItemDeposit2.visibility = View.GONE
+        
+        // 현재 선택된 필터에 맞는 아이템만 표시
+        when(currentFilter) {
+            com.stip.stip.ipasset.model.Filter.ALL -> {
+                // 전체: 모든 트랜잭션 표시
+                viewBinding.sampleItemDeposit.visibility = View.VISIBLE
+                viewBinding.sampleItemWithdraw.visibility = View.VISIBLE
+                viewBinding.sampleItemDeposit2.visibility = View.VISIBLE
+            }
+            com.stip.stip.ipasset.model.Filter.DEPOSIT -> {
+                // 입금: 입금 관련 트랜잭션만 표시
+                viewBinding.sampleItemDeposit.visibility = View.VISIBLE
+                viewBinding.sampleItemDeposit2.visibility = View.VISIBLE
+                viewBinding.sampleItemWithdraw.visibility = View.GONE
+            }
+            com.stip.stip.ipasset.model.Filter.WITHDRAW -> {
+                // 출금: 출금 관련 트랜잭션만 표시
+                viewBinding.sampleItemWithdraw.visibility = View.VISIBLE
+                viewBinding.sampleItemDeposit.visibility = View.GONE
+                viewBinding.sampleItemDeposit2.visibility = View.GONE
+            }
+            com.stip.stip.ipasset.model.Filter.REFUND -> {
+                // 반환: 반환 관련 트랜잭션만 표시 (이 예제에서는 없음)
+                viewBinding.sampleItemDeposit.visibility = View.GONE
+                viewBinding.sampleItemWithdraw.visibility = View.GONE
+                viewBinding.sampleItemDeposit2.visibility = View.GONE
+            }
+            else -> {
+                // 기타 필터: 모든 트랜잭션 표시
+                viewBinding.sampleItemDeposit.visibility = View.VISIBLE
+                viewBinding.sampleItemWithdraw.visibility = View.VISIBLE
+                viewBinding.sampleItemDeposit2.visibility = View.VISIBLE
+            }
+        }
+        
+        // 표시되는 모든 트랜잭션 아이템에 콤마 포맷 적용
+        formatTransactionAmount()
+    }
+    
+    /**
+     * 거래내역 목록의 금액에 3자리마다 콤마(,) 포맷 적용
+     * 뷰가 안전하게 초기화되었는지 확인하고 작업 수행
+     */
+    private fun formatTransactionAmount() {
+        try {
+            // 입금 아이템 1 (5,000 USD)
+            viewBinding.sampleItemDeposit?.let { depositItem ->
+                depositItem.findViewById<TextView>(R.id.formatted_amount)?.let {
+                    it.text = String.format("%,.2f USD", 5000.0)
+                }
+                depositItem.findViewById<TextView>(R.id.usd_amount)?.let {
+                    it.text = String.format("%,.0f KRW", 6500000.0)
+                }
+            }
+
+            // 출금 아이템 (10,000 USD)
+            viewBinding.sampleItemWithdraw?.let { withdrawItem ->
+                withdrawItem.findViewById<TextView>(R.id.formatted_amount)?.let {
+                    it.text = String.format("%,.2f USD", 10000.0)
+                }
+                withdrawItem.findViewById<TextView>(R.id.usd_amount)?.let {
+                    it.text = String.format("%,.0f KRW", 13000000.0)
+                }
+            }
+
+            // 입금 아이템 2 (2,500 USD)
+            viewBinding.sampleItemDeposit2?.let { deposit2Item ->
+                deposit2Item.findViewById<TextView>(R.id.formatted_amount)?.let {
+                    it.text = String.format("%,.2f USD", 2500.0)
+                }
+                deposit2Item.findViewById<TextView>(R.id.usd_amount)?.let {
+                    it.text = String.format("%,.0f KRW", 3250000.0)
+                }
+            }
+        } catch (e: Exception) {
+            // 오류가 발생해도 앱이 크래쉬되지 않도록 예외 처리
+            e.printStackTrace()
+        }
+    }
+    
     private fun collectData() {
         lifecycleScope.launch {
             viewBinding.totalHoldings.text = "${String.format("%,.2f", ipAsset.amount.toString().toDoubleOrNull() ?: 0.0)} ${ipAsset.currencyCode}"
@@ -264,11 +430,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                 viewBinding.equivalentAmount.text = "≈ 0 KRW"
             }
 
-            launch {
-                viewModel.transactionHistories.collect { historyList ->
-                    adapter.submitList(historyList)
-                }
-            }
+            // No longer need to update adapter since RecyclerView has been removed
         }
     }
 }

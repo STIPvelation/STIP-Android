@@ -4,20 +4,21 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.stip.stip.R
 import com.stip.stip.databinding.ActivityDepositKrwBinding
-import java.util.Timer
-import kotlin.concurrent.schedule
 
 class DepositKrwActivity : AppCompatActivity() {
     
     private lateinit var binding: ActivityDepositKrwBinding
     private var lastCopiedView: View? = null
-    private var hideTimer: Timer? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var hideMessageRunnable: Runnable? = null
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,19 +86,21 @@ class DepositKrwActivity : AppCompatActivity() {
         successMessage.visibility = View.VISIBLE
         lastCopiedView = containerView
         
+        // 기존에 예약된 메시지 숨기기 작업이 있다면 취소
+        hideMessageRunnable?.let { handler.removeCallbacks(it) }
+        
         // 2초 후 메시지 숨기기
-        hideTimer?.cancel()
-        hideTimer = Timer()
-        hideTimer?.schedule(2000) {
-            runOnUiThread {
-                successMessage.visibility = View.GONE
-            }
+        hideMessageRunnable = Runnable {
+            successMessage.visibility = View.GONE
         }
+        
+        // 2초 후에 실행되도록 예약
+        handler.postDelayed(hideMessageRunnable!!, 2000)
     }
     
     override fun onDestroy() {
         super.onDestroy()
-        // Clean up timer when activity is destroyed
-        hideTimer?.cancel()
+        // 액티비티가 종료될 때 모든 보류 중인 콜백 제거
+        hideMessageRunnable?.let { handler.removeCallbacks(it) }
     }
 }

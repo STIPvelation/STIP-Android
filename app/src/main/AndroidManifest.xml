@@ -87,6 +87,16 @@
             android:name="com.stip.ipasset.activity.DepositKrwActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.ipasset.activity.UsdDepositDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.ipasset.activity.UsdWithdrawalDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.stip.stip.more.activity.MemberInfoEditActivity"
