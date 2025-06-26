@@ -53,14 +53,19 @@ class TransactionHistoryListAdapter(
         private val context = binding.root.context
 
         fun bind(item: TransactionHistory) {
-            binding.quantityText.text = "${String.format("%,.2f", item.quantity)} ${item.currencyCode}"
-            binding.formattedAmount.text = ""
+            binding.formattedAmount.text = "${String.format("%,.2f", item.quantity)} ${item.currencyCode}"
             binding.usdAmount.visibility = GONE
 
-            val (statusResId, colorRes) = when (item.status) {
-                TransactionHistory.Status.DEPOSIT_COMPLETED -> R.string.deposit_completed to R.color.text_red_DD3D43_100
-                TransactionHistory.Status.WITHDRAWAL_COMPLETED -> R.string.withdrawal_completed to R.color.text_blue_0064E6_100
+            // Define separate variables to avoid destructuring ambiguity
+            val statusInfo: Pair<Int, Int> = when (item.status) {
+                TransactionHistory.Status.DEPOSIT_COMPLETED -> Pair(R.string.deposit_completed, R.color.text_red_DD3D43_100)
+                TransactionHistory.Status.WITHDRAWAL_COMPLETED -> Pair(R.string.withdrawal_completed, R.color.text_blue_0064E6_100)
+                TransactionHistory.Status.REFUND_COMPLETED -> Pair(R.string.filter_refund, R.color.text_red_DD3D43_100)
+                TransactionHistory.Status.PROCESSING -> Pair(R.string.filter_processing, R.color.gray_600)
             }
+            
+            val statusResId = statusInfo.first
+            val colorRes = statusInfo.second
 
             binding.status.setText(statusResId)
             binding.status.setTextColor(context.getColor(colorRes))

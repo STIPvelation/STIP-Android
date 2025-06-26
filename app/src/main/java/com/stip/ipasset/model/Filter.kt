@@ -10,7 +10,8 @@ enum class Filter(@StringRes val id: Int) {
     DEPOSIT(R.string.filter_deposit),
     WITHDRAW(R.string.filter_withdraw),
     REFUND(R.string.filter_refund),
-    PENDING(R.string.filter_pending);
+    PENDING(R.string.filter_pending),
+    PROCESSING(R.string.filter_processing);
 
     fun getString(context: Context) = context.getString(id)
 }

@@ -29,6 +29,8 @@ class TransactionViewModel @Inject constructor() : ViewModel() {
             Filter.ALL -> histories
             Filter.DEPOSIT -> histories.filter { it.status == Status.DEPOSIT_COMPLETED }
             Filter.WITHDRAW -> histories.filter { it.status == Status.WITHDRAWAL_COMPLETED }
+            Filter.REFUND -> histories.filter { it.status == Status.REFUND_COMPLETED }
+            Filter.PROCESSING -> histories.filter { it.status == Status.PROCESSING }
             else -> histories
         }
             .groupBy {
@@ -88,6 +90,10 @@ class TransactionViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onFilterChange(filter: Filter) {
+        _filter.value = filter
+    }
+    
+    fun applyFilter(filter: Filter) {
         _filter.value = filter
     }
 }

@@ -100,6 +100,8 @@ class TickerTransferDetailFragment : Fragment(R.layout.deposit_withdraw_check_ti
         val (statusText, colorRes) = when (transaction.status) {
             TransactionHistory.Status.DEPOSIT_COMPLETED -> getString(R.string.status_deposit_completed) to R.color.deposit_red
             TransactionHistory.Status.WITHDRAWAL_COMPLETED -> getString(R.string.status_withdrawal_complete) to R.color.withdrawal_blue
+            TransactionHistory.Status.REFUND_COMPLETED -> getString(R.string.status_refund_completed) to R.color.deposit_red
+            TransactionHistory.Status.PROCESSING -> getString(R.string.status_processing) to R.color.text_gray_808080_100
         }
 
         binding.tvStatus.text = statusText

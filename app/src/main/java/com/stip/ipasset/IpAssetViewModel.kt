@@ -96,6 +96,7 @@ class IpAssetViewModel @Inject constructor(
             Filter.WITHDRAW -> _ipAssets.value.filter { it.amount == 0L }
             Filter.REFUND -> _ipAssets.value.filter { it.amount > 0 }
             Filter.PENDING -> _ipAssets.value
+            Filter.PROCESSING -> _ipAssets.value
         }
 
         val filtered = if (query.isNotEmpty()) {

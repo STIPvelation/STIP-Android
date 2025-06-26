@@ -36,7 +36,9 @@ data class TransactionHistory(
 
     enum class Status {
         DEPOSIT_COMPLETED,
-        WITHDRAWAL_COMPLETED
+        WITHDRAWAL_COMPLETED,
+        REFUND_COMPLETED,
+        PROCESSING
     }
 
     companion object {

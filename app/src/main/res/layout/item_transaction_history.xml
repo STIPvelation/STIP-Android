@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -10,64 +11,90 @@
         android:layout_height="1dp"
         app:dividerColor="@color/gray_F4F7FC_100" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-        android:paddingVertical="10dp">
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="16dp">
 
-        <TextView
-            android:id="@+id/status"
-            style="@style/DefaultTextStyle_16"
+        <!-- Date and Time Section -->
+        <LinearLayout
+            android:id="@+id/date_time_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:text="2025.06.11"
+                android:textColor="@color/text_black_000000_100"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFeatureSettings="tnum"
+                android:text="10:24"
+                android:textColor="@color/text_gray_B0B8C1_100"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <!-- Status with Modern Design -->
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_deposit_status"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="8dp"
             android:text="@string/deposit_completed"
+            android:textColor="#DD3D43"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/time"
-            style="@style/DefaultTextStyle_10"
+        <!-- Amount Section -->
+        <LinearLayout
+            android:id="@+id/amount_container"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFeatureSettings="tnum"
-            android:textColor="@color/text_gray_B0B8C1_100"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
-        <!-- 숫자 텍스트 추가 -->
-        <TextView
-            android:id="@+id/quantity_text"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:textColor="@color/text_black_000000_100"
-            app:layout_constraintBottom_toTopOf="@id/usd_amount"
-            app:layout_constraintEnd_toStartOf="@id/formatted_amount"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/formatted_amount"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_black_000000_100"
-            app:layout_constraintBottom_toTopOf="@id/usd_amount"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="spread_inside" />
-
-        <TextView
-            android:id="@+id/usd_amount"
-            style="@style/DefaultTextStyle_10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFeatureSettings="tnum"
-            android:textColor="@color/text_gray_B0B8C1_100"
+            android:orientation="vertical"
+            android:gravity="end"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/formatted_amount" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/formatted_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFeatureSettings="tnum"
+                android:text="0.37 USD"
+                android:textColor="@color/text_black_000000_100"
+                android:textSize="14sp"
+                android:textFontWeight="500" />
+
+            <TextView
+                android:id="@+id/usd_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFeatureSettings="tnum"
+                android:text="500 KRW"
+                android:textColor="@color/text_gray_B0B8C1_100"
+                android:textSize="13sp" />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>
