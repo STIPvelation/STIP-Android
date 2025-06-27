@@ -15,18 +15,22 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentTransactionBinding
 import com.stip.stip.ipasset.TransactionViewModel
+import com.stip.ipasset.ticker.adapter.TickerTransactionHistoryAdapter
+import com.stip.ipasset.usd.adapter.UsdTransactionHistoryAdapter
 
 import com.stip.stip.ipasset.model.Filter
 import com.stip.stip.ipasset.model.IpAsset
+import com.stip.stip.ipasset.model.TransactionHistory
 import com.stip.stip.iphome.fragment.InfoDialogFragment
 import com.stip.stip.ipasset.model.WithdrawalStatus
-import com.stip.ipasset.activity.DepositKrwActivity
-import com.stip.ipasset.activity.UsdDepositDetailActivity
-import com.stip.ipasset.activity.UsdWithdrawalDetailActivity
+import com.stip.ipasset.usd.activity.DepositKrwActivity
+import com.stip.ipasset.usd.activity.UsdDepositDetailActivity
+import com.stip.ipasset.usd.activity.UsdWithdrawalDetailActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -39,8 +43,20 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     private val ipAsset: IpAsset get() = navArgs.ipAsset
 
     private val viewModel by viewModels<TransactionViewModel>()
-    // Adapter removed since RecyclerView is no longer used
-
+    
+    // USD 전용 어댑터
+    private val usdAdapter by lazy {
+        UsdTransactionHistoryAdapter { transaction ->
+            showTransactionDetail(transaction)
+        }
+    }
+    
+    // 티커 전용 어댑터
+    private val tickerAdapter by lazy {
+        TickerTransactionHistoryAdapter { transaction ->
+            showTransactionDetail(transaction)
+        }
+    }
 
     private var currentFilter = com.stip.stip.ipasset.model.Filter.ALL
 
@@ -54,7 +70,8 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         setupToolbar()
         setupFilterTabs()
         setupClickListeners()
-        showSampleTransactionHistory()
+        setupRecyclerView()
+        showSampleTransactionHistory() // 샘플 데이터도 유지
         collectData()
 
         // 거래 내역 불러오기
@@ -184,20 +201,16 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
             }
         }
         
-        // Set click listeners for sample transaction items
+        // Set click listeners for sample transaction items to display a Toast message
         viewBinding.sampleItemDeposit.setOnClickListener {
-            val intent = Intent(requireContext(), UsdDepositDetailActivity::class.java)
-            intent.putExtra("usdAmount", 5000.0)
-            intent.putExtra("krwAmount", 6500000.0)
-            intent.putExtra("depositorName", "홍길동")
-            intent.putExtra("txId", "TX_987654321")
-            intent.putExtra("exchangeRate", 1300.0)
-            intent.putExtra("fee", 0.0)
-            intent.putExtra("status", "입금 완료")
-            intent.putExtra("timestamp", System.currentTimeMillis() - 86400000) // Yesterday
-            startActivity(intent)
+            // Show a toast with transaction details instead of launching an activity
+            Toast.makeText(
+                requireContext(),
+                "Sample Deposit: 5,000.00 USD (≈ 6,500,000 KRW)",
+                Toast.LENGTH_SHORT
+            ).show()
             
-            // 리스트 아이템 갱신 - 새로운 콤마 포맷 적용
+            // Update list item formatting
             try {
                 viewBinding.sampleItemDeposit.findViewById<TextView>(R.id.formatted_amount)?.let {
                     it.text = String.format("%,.2f USD", 5000.0)
@@ -211,17 +224,14 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         }
         
         viewBinding.sampleItemWithdraw.setOnClickListener {
-            val intent = Intent(requireContext(), UsdWithdrawalDetailActivity::class.java)
-            intent.putExtra("amount", 10000.0)
-            intent.putExtra("bankName", "국민은행")
-            intent.putExtra("accountNumber", "123-456-789012")
-            intent.putExtra("txId", "TX_123456789")
-            intent.putExtra("fee", 1.0)
-            intent.putExtra("status", "출금 완료")
-            intent.putExtra("timestamp", System.currentTimeMillis() - 172800000) // 2 days ago
-            startActivity(intent)
+            // Show a toast with transaction details instead of launching an activity
+            Toast.makeText(
+                requireContext(),
+                "Sample Withdrawal: 10,000.00 USD (≈ 13,000,000 KRW)",
+                Toast.LENGTH_SHORT
+            ).show()
             
-            // 리스트 아이템 갱신 - 새로운 콤마 포맷 적용
+            // Update list item formatting
             try {
                 viewBinding.sampleItemWithdraw.findViewById<TextView>(R.id.formatted_amount)?.let {
                     it.text = String.format("%,.2f USD", 10000.0)
@@ -235,18 +245,14 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         }
         
         viewBinding.sampleItemDeposit2.setOnClickListener {
-            val intent = Intent(requireContext(), UsdDepositDetailActivity::class.java)
-            intent.putExtra("usdAmount", 2500.0)
-            intent.putExtra("krwAmount", 3250000.0)
-            intent.putExtra("depositorName", "김천수")
-            intent.putExtra("txId", "TX_567890123")
-            intent.putExtra("exchangeRate", 1300.0)
-            intent.putExtra("fee", 0.0)
-            intent.putExtra("status", "입금 완료")
-            intent.putExtra("timestamp", System.currentTimeMillis() - 259200000) // 3 days ago
-            startActivity(intent)
+            // Show a toast with transaction details instead of launching an activity
+            Toast.makeText(
+                requireContext(),
+                "Sample Deposit: 2,500.00 USD (≈ 3,250,000 KRW)",
+                Toast.LENGTH_SHORT
+            ).show()
             
-            // 리스트 아이템 갱신 - 새로운 콤마 포맷 적용
+            // Update list item formatting
             try {
                 viewBinding.sampleItemDeposit2.findViewById<TextView>(R.id.formatted_amount)?.let {
                     it.text = String.format("%,.2f USD", 2500.0)
@@ -308,25 +314,35 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     }
 
     private fun navigateToWithdraw() {
-        val currentWithdrawalStatus = viewModel.withdrawalStatus.value
-        if (currentWithdrawalStatus != null) {
-            try {
-                val directions = TransactionFragmentDirections
-                    .actionIpAssetHoldingsFragmentToWithdrawFragment(currentWithdrawalStatus as WithdrawalStatus)
-                findNavController().navigate(directions)
-            } catch (e: Exception) {
-                Log.e("TransactionFragment", "Withdraw Navigation Error", e)
-                Toast.makeText(
-                    requireContext(),
-                    getString(R.string.withdraw_navigation_error),
-                    Toast.LENGTH_SHORT
-                ).show()
+        try {
+            if (ipAsset.currencyCode == "USD") {
+                // USD withdrawal flow
+                val currentWithdrawalStatus = viewModel.withdrawalStatus.value
+                if (currentWithdrawalStatus != null) {
+                    val directions = TransactionFragmentDirections
+                        .actionIpAssetHoldingsFragmentToWithdrawFragment(currentWithdrawalStatus as WithdrawalStatus)
+                    findNavController().navigate(directions)
+                } else {
+                    Log.w("TransactionFragment", "Withdrawal status is null, cannot navigate to USD withdrawal.")
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.withdraw_status_null_warning),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            } else {
+                // Ticker withdrawal flow - navigate directly to ticker withdrawal input fragment
+                // Use the fragment ID directly with a bundle containing the ipAsset
+                val bundle = Bundle().apply {
+                    putParcelable("ipAsset", ipAsset)
+                }
+                findNavController().navigate(R.id.tickerWithdrawalInputFragment, bundle)
             }
-        } else {
-            Log.w("TransactionFragment", "Withdrawal status is null, cannot navigate.")
+        } catch (e: Exception) {
+            Log.e("TransactionFragment", "Withdraw Navigation Error", e)
             Toast.makeText(
                 requireContext(),
-                getString(R.string.withdraw_status_null_warning),
+                getString(R.string.withdraw_navigation_error),
                 Toast.LENGTH_SHORT
             ).show()
         }
@@ -380,6 +396,59 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         
         // 표시되는 모든 트랜잭션 아이템에 콤마 포맷 적용
         formatTransactionAmount()
+        
+        // RecyclerView 상태도 필터에 맞게 업데이트
+        updateRecyclerView()
+    }
+    
+    /**
+     * RecyclerView 설정 - 통화 코드에 따라 적절한 어댑터 사용
+     */
+    private fun setupRecyclerView() {
+        viewBinding.recyclerViewTransactions.layoutManager = LinearLayoutManager(requireContext())
+        
+        // 통화 코드에 따라 적절한 어댑터 설정
+        if (ipAsset.currencyCode == "USD") {
+            viewBinding.recyclerViewTransactions.adapter = usdAdapter
+        } else {
+            // USD가 아닌 티커는 새로운 ticker 전용 어댑터 사용
+            viewBinding.recyclerViewTransactions.adapter = tickerAdapter
+        }
+    }
+    
+    /**
+     * 필터가 변경될 때 RecyclerView 업데이트
+     */
+    private fun updateRecyclerView() {
+        // 필터에 따라 거래 내역 데이터 갱신 처리는 ViewModel + Flow로 자동 처리됨
+        // 필요시 추가 로직 구현 가능
+    }
+    
+    /**
+     * 거래 내역 상세 화면 표시
+     */
+    private fun showTransactionDetail(transaction: TransactionHistory) {
+        // 통화 코드에 따라 적절한 상세 화면으로 이동
+        if (transaction.currencyCode == "USD") {
+            if (transaction.status.toString().contains("DEPOSIT")) {
+                val intent = Intent(requireContext(), UsdDepositDetailActivity::class.java)
+                // 필요한 데이터 전달
+                intent.putExtra("usdAmount", transaction.amount)
+                intent.putExtra("timestamp", transaction.timestamp)
+                startActivity(intent)
+            } else {
+                val intent = Intent(requireContext(), UsdWithdrawalDetailActivity::class.java)
+                // 필요한 데이터 전달
+                intent.putExtra("amount", transaction.amount) 
+                intent.putExtra("timestamp", transaction.timestamp)
+                startActivity(intent)
+            }
+        } else {
+            // 티커 거래일 경우 티커 전용 상세 화면으로 이동
+            val directions = TransactionFragmentDirections
+                .actionIpAssetHoldingsFragmentToTickerTransferDetailFragment(transaction.id)
+            findNavController().navigate(directions)
+        }
     }
     
     /**

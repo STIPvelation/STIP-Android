@@ -14,7 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetBinding
-import com.stip.ipasset.activity.DepositKrwActivity
+import com.stip.ipasset.usd.activity.DepositKrwActivity
 import com.stip.stip.ipasset.IpAssetViewModel
 import com.stip.stip.ipasset.TransactionActivity
 import com.stip.stip.ipasset.adapter.IpAssetListAdapter

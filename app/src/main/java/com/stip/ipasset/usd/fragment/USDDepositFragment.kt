@@ -1,4 +1,4 @@
-package com.stip.stip.ipasset.fragment
+package com.stip.ipasset.usd.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,32 +10,26 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.R
-import com.stip.stip.databinding.FragmentDepositBinding
-import com.stip.stip.databinding.LayoutDepositNotUsdBinding
+import com.stip.stip.databinding.FragmentIpAssetUsdDepositBinding
 import com.stip.stip.databinding.LayoutDepositUsdBinding
 import com.stip.ipasset.usd.model.DepositViewModel
 import com.stip.stip.ipasset.adapter.AccountInfoDecorator
 import com.stip.stip.ipasset.adapter.AccountInfoListAdapter
-import com.stip.stip.ipasset.extension.copyToClipboard
 import com.stip.stip.ipasset.extension.dpToPx
+import com.stip.stip.ipasset.fragment.BaseFragment
 import com.stip.stip.ipasset.model.IpAsset
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+/**
+ * USD 입금을 처리하는 Fragment
+ * 계좌 정보 목록을 표시합니다.
+ */
 @AndroidEntryPoint
-class DepositFragment : BaseFragment<FragmentDepositBinding>() {
-    // 네비게이션 아규먼트가 제거되었으므로 직접 생성자에서 받도록 수정
-    private lateinit var ipAsset: IpAsset
+class USDDepositFragment : BaseFragment<FragmentIpAssetUsdDepositBinding>() {
+    private val args by navArgs<com.stip.ipasset.usd.fragment.USDDepositFragmentArgs>()
+    private val ipAsset: IpAsset get() = args.ipAsset
     private val currencyCode: String get() = ipAsset.currencyCode
-    
-    // 이 프래그먼트는 더 이상 사용되지 않으므로 아규먼트를 생성자로 받습니다
-    companion object {
-        fun newInstance(ipAsset: IpAsset): DepositFragment {
-            val fragment = DepositFragment()
-            fragment.ipAsset = ipAsset
-            return fragment
-        }
-    }
 
     private val viewModel by viewModels<DepositViewModel>()
     private val adapter = AccountInfoListAdapter()
@@ -46,10 +40,7 @@ class DepositFragment : BaseFragment<FragmentDepositBinding>() {
             findNavController().popBackStack()
         }
 
-        // 모든 화폐(USD, KRW 등)에 대해 동일한 계좌 정보를 표시합니다
-        layoutUsd.root.visibility = View.VISIBLE
-        layoutNotUsd.root.visibility = View.GONE
-
+        // USD 입금 레이아웃 바인딩
         bindUsdLayout(layoutUsd)
     }
 
@@ -61,29 +52,12 @@ class DepositFragment : BaseFragment<FragmentDepositBinding>() {
         recyclerView.addItemDecoration(AccountInfoDecorator(space = space.toInt()))
     }
 
-    private fun bindNotUseLayout(binding: LayoutDepositNotUsdBinding) {
-        val tag = "{currencyCode}"
-
-        binding.description.text = getString(R.string.deposit_notice_message_not_usd).replace(
-            tag,
-            ipAsset.currencyCode
-        )
-
-        binding.copy.setOnClickListener {
-            viewModel.depositUrl.value?.let {
-                requireContext().copyToClipboard(
-                    label = "Deposit Address",
-                    text = it
-                )
-            }
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         bind()
 
+        // USD 계좌 정보 가져오기
         viewModel.fetchAccountInfo(currencyCode)
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -95,7 +69,7 @@ class DepositFragment : BaseFragment<FragmentDepositBinding>() {
         }
     }
 
-    override fun inflate(inflater: LayoutInflater, container: ViewGroup?): FragmentDepositBinding {
-        return FragmentDepositBinding.inflate(inflater, container, false)
+    override fun inflate(inflater: LayoutInflater, container: ViewGroup?): FragmentIpAssetUsdDepositBinding {
+        return FragmentIpAssetUsdDepositBinding.inflate(inflater, container, false)
     }
 }

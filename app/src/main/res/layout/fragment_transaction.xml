@@ -231,6 +231,53 @@
         </LinearLayout>
     </HorizontalScrollView>
 
+    <!-- RecyclerView for transaction history items -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_transactions"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:visibility="visible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/filter_tabs_scroll"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:listitem="@layout/item_transaction_history" />
+        
+    <!-- Empty state container -->
+    <LinearLayout
+        android:id="@+id/empty_state_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/filter_tabs_scroll">
+
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@android:drawable/ic_menu_info_details"
+            android:tint="@color/gray_F4F7FC_100"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="거래 내역이 없습니다."
+            android:textColor="@color/text_gray_B0B8C1_100"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+    <!-- Sample items for demo (will be visible only when no real transaction data available) -->
     <LinearLayout
         android:id="@+id/sample_item_deposit"
         android:layout_width="0dp"

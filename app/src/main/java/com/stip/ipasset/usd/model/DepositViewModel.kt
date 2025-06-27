@@ -1,4 +1,4 @@
-package com.stip.stip.ipasset
+package com.stip.ipasset.usd.model
 
 import android.app.Application
 import android.graphics.Bitmap
