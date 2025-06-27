@@ -467,7 +467,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                     it.text = String.format("%,.2f USD", 5000.0)
                 }
                 depositItem.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.2f USD", 6500000.0)
+                    it.text = String.format("%,.2f KRW", 6500000.0)
                 }
             }
 
@@ -477,7 +477,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                     it.text = String.format("%,.2f USD", 10000.0)
                 }
                 withdrawItem.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.2f USD", 13000000.0)
+                    it.text = String.format("%,.2f KRW", 13000000.0)
                 }
             }
 
@@ -487,7 +487,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                     it.text = String.format("%,.2f USD", 2500.0)
                 }
                 deposit2Item.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.2f USD", 3250000.0)
+                    it.text = String.format("%,.2f KRW", 3250000.0)
                 }
             }
         } catch (e: Exception) {
@@ -508,9 +508,20 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
             }
 
             try {
-                viewBinding.equivalentAmount.text = "≈ ${String.format("%,.2f", usdEquivalentValue)} USD"
+                // For USD tickers, show KRW conversion
+                if (ipAsset.currencyCode == "USD") {
+                    // Apply KRW conversion rate (approximate 1 USD = 1,300 KRW)
+                    val krwValue = usdEquivalentValue * 1300.0
+                    viewBinding.equivalentAmount.text = "≈ ${String.format("%,.2f", krwValue)} KRW"
+                } else {
+                    viewBinding.equivalentAmount.text = "≈ ${String.format("%,.2f", usdEquivalentValue)} USD"
+                }
             } catch (e: IllegalArgumentException) {
-                viewBinding.equivalentAmount.text = "≈ 0.00 USD"
+                if (ipAsset.currencyCode == "USD") {
+                    viewBinding.equivalentAmount.text = "≈ 0.00 KRW"
+                } else {
+                    viewBinding.equivalentAmount.text = "≈ 0.00 USD"
+                }
             }
 
             // Setup currency icon based on asset type

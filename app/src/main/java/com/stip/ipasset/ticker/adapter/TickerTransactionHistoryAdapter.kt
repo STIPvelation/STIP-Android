@@ -58,13 +58,18 @@ class TickerTransactionHistoryAdapter(
         fun bind(item: TransactionHistory) {
             binding.formattedAmount.text = "${String.format("%,.2f", item.quantity)} ${item.currencyCode}"
             
-            // USD 환산 금액 표시 - 티커 거래 내역에 USD 금액 표시
-            if (item.usdAmount > 0) {
-                binding.usdAmount.text = "${String.format("%,.2f", item.usdAmount / 100.0)} USD"
-                binding.usdAmount.visibility = android.view.View.VISIBLE
+            // USD 환산 금액 표시 - USD 티커가 아닐때만 표시
+            if (item.currencyCode != "USD") {
+                if (item.usdAmount > 0) {
+                    binding.usdAmount.text = "${String.format("%,.2f", item.usdAmount / 100.0)} USD"
+                    binding.usdAmount.visibility = android.view.View.VISIBLE
+                } else {
+                    binding.usdAmount.text = "-- USD"
+                    binding.usdAmount.visibility = android.view.View.VISIBLE
+                }
             } else {
-                binding.usdAmount.text = "-- USD"
-                binding.usdAmount.visibility = android.view.View.VISIBLE
+                // USD 티커의 경우 환산 금액을 표시하지 않음
+                binding.usdAmount.visibility = android.view.View.GONE
             }
 
             // Define separate variables to avoid destructuring ambiguity
