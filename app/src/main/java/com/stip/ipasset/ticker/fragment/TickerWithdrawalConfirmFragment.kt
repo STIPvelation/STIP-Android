@@ -59,34 +59,25 @@ class TickerWithdrawalConfirmFragment : BaseFragment<FragmentIpAssetTickerWithdr
     }
 
     private fun showCompletionDialog() {
+        // 사용자 지정 레이아웃 생성
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_completion, null)
+        
+        // 다이얼로그 생성 및 사용자 지정 레이아웃 설정
         val alertDialog = androidx.appcompat.app.AlertDialog.Builder(requireContext())
-            .setTitle("출금 신청 완료")
-            .setMessage("출금 신청이 완료되었습니다.")
-            .setPositiveButton("확인") { dialog, _ -> 
-                dialog.dismiss()
-                // 이전 화면으로 돌아가기
-                findNavController().popBackStack()
-            }
+            .setView(dialogView)
             .setCancelable(false)
             .create()
-        
-        // 다이얼로그가 보여진 후 텍스트뷰를 찾아서 중앙 정렬 적용
-        alertDialog.show()
-        
-        // 제목 텍스트뷰 중앙 정렬 (두 가지 방식으로 적용)
-        val titleId = resources.getIdentifier("alertTitle", "id", "android")
-        val titleView = alertDialog.findViewById<android.widget.TextView>(titleId)
-        titleView?.apply {
-            textAlignment = View.TEXT_ALIGNMENT_CENTER
-            gravity = android.view.Gravity.CENTER
+            
+        // 확인 버튼 찾아서 리스너 설정
+        val confirmButton = dialogView.findViewById<android.widget.Button>(R.id.btn_confirm)
+        confirmButton.setOnClickListener {
+            alertDialog.dismiss()
+            // 이전 화면으로 돌아가기
+            findNavController().popBackStack()
         }
         
-        // 다이얼로그 윈도우에 제목 중앙 정렬 설정
-        alertDialog.window?.setGravity(android.view.Gravity.CENTER)
-        
-        // 메시지 텍스트뷰 중앙 정렬
-        val messageView = alertDialog.findViewById<android.widget.TextView>(android.R.id.message)
-        messageView?.textAlignment = View.TEXT_ALIGNMENT_CENTER
+        // 다이얼로그 표시
+        alertDialog.show()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
