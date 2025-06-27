@@ -174,31 +174,15 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_small"
-                        android:layout_marginEnd="@dimen/margin_small"
                         android:ellipsize="middle"
+                        android:gravity="end"
                         android:maxLines="1"
                         android:text="0x1234...5678"
                         android:textColor="#232D3F"
                         android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@+id/btnCopyAddress"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tvAddressLabel" />
-
-                    <androidx.appcompat.widget.AppCompatButton
-                        android:id="@+id/btnCopyAddress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="@dimen/button_height_small"
-                        android:background="@drawable/bg_rounded_button_light_blue"
-                        android:paddingHorizontal="@dimen/text_small"
-                        android:text="복사"
-                        android:textColor="#30C6E8"
-                        android:textSize="14sp"
-                        android:drawableStart="@drawable/ic_copy"
-                        android:drawablePadding="@dimen/margin_6dp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvAddressValue"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/tvAddressValue" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -208,7 +192,7 @@
                 android:layout_width="0dp"
                 android:layout_marginHorizontal="@dimen/padding_medium"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="36dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="4dp"
