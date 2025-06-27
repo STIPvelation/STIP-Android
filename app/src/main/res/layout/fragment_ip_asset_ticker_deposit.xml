@@ -23,7 +23,7 @@
         android:layout_marginTop="@dimen/padding_medium"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_deposit_notice"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/material_toolbar">
@@ -36,19 +36,5 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
-    <TextView
-        android:id="@+id/tv_deposit_notice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="본 주소는 입금 전용입니다."
-        android:textColor="#FF9F43"
-        android:textSize="14sp"
-        android:gravity="center"
-        android:paddingVertical="16dp"
-        android:background="#FFF5E6"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
