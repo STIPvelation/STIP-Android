@@ -71,7 +71,7 @@
                     android:id="@+id/tv_transaction_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="입금 완료"
+                    android:text="USD 입금 완료"
                     android:textColor="#ED2A2A"
                     android:textSize="16sp" />
 

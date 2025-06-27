@@ -209,69 +209,8 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
             }
         }
         
-        // Set click listeners for sample transaction items to display a Toast message
-        viewBinding.sampleItemDeposit.setOnClickListener {
-            // Show a toast with transaction details instead of launching an activity
-            Toast.makeText(
-                requireContext(),
-                "Sample Deposit: 5,000.00 USD (≈ 6,500,000 KRW)",
-                Toast.LENGTH_SHORT
-            ).show()
-            
-            // Update list item formatting
-            try {
-                viewBinding.sampleItemDeposit.findViewById<TextView>(R.id.formatted_amount)?.let {
-                    it.text = String.format("%,.2f USD", 5000.0)
-                }
-                viewBinding.sampleItemDeposit.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.0f KRW", 6500000.0)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        
-        viewBinding.sampleItemWithdraw.setOnClickListener {
-            // Show a toast with transaction details instead of launching an activity
-            Toast.makeText(
-                requireContext(),
-                "Sample Withdrawal: 10,000.00 USD (≈ 13,000,000 KRW)",
-                Toast.LENGTH_SHORT
-            ).show()
-            
-            // Update list item formatting
-            try {
-                viewBinding.sampleItemWithdraw.findViewById<TextView>(R.id.formatted_amount)?.let {
-                    it.text = String.format("%,.2f USD", 10000.0)
-                }
-                viewBinding.sampleItemWithdraw.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.0f KRW", 13000000.0) // 출금 예시를 위한 KRW 값
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-        
-        viewBinding.sampleItemDeposit2.setOnClickListener {
-            // Show a toast with transaction details instead of launching an activity
-            Toast.makeText(
-                requireContext(),
-                "Sample Deposit: 2,500.00 USD (≈ 3,250,000 KRW)",
-                Toast.LENGTH_SHORT
-            ).show()
-            
-            // Update list item formatting
-            try {
-                viewBinding.sampleItemDeposit2.findViewById<TextView>(R.id.formatted_amount)?.let {
-                    it.text = String.format("%,.2f USD", 2500.0)
-                }
-                viewBinding.sampleItemDeposit2.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.0f KRW", 3250000.0)
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
+        // All sample transaction item references have been removed
+        // as part of the transaction history feature removal
 
         viewBinding.withdrawButtonContainer.setOnClickListener {
             if (ipAsset.currencyCode == "USD") {
@@ -356,56 +295,17 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         }
     }
 
-    // 샘플 트랜잭션 히스토리 보이기
+    // Sample transaction history display methods have been removed
     private fun showSampleTransactionHistory() {
-        // 현재 필터에 따라 샘플 아이템 필터링
-        filterTransactionsBasedOnCurrentFilter()
+        // This method is kept as a stub to maintain API compatibility
+        // All sample transaction functionality has been removed
     }
     
     private fun filterTransactionsBasedOnCurrentFilter() {
-        // 처음에 모든 아이템을 숨김
-        viewBinding.sampleItemDeposit.visibility = View.GONE
-        viewBinding.sampleItemWithdraw.visibility = View.GONE
-        viewBinding.sampleItemDeposit2.visibility = View.GONE
+        // This method is kept as a stub to maintain API compatibility
+        // All sample transaction filtering code has been removed
         
-        // 현재 선택된 필터에 맞는 아이템만 표시
-        when(currentFilter) {
-            com.stip.stip.ipasset.model.Filter.ALL -> {
-                // 전체: 모든 트랜잭션 표시
-                viewBinding.sampleItemDeposit.visibility = View.VISIBLE
-                viewBinding.sampleItemWithdraw.visibility = View.VISIBLE
-                viewBinding.sampleItemDeposit2.visibility = View.VISIBLE
-            }
-            com.stip.stip.ipasset.model.Filter.DEPOSIT -> {
-                // 입금: 입금 관련 트랜잭션만 표시
-                viewBinding.sampleItemDeposit.visibility = View.VISIBLE
-                viewBinding.sampleItemDeposit2.visibility = View.VISIBLE
-                viewBinding.sampleItemWithdraw.visibility = View.GONE
-            }
-            com.stip.stip.ipasset.model.Filter.WITHDRAW -> {
-                // 출금: 출금 관련 트랜잭션만 표시
-                viewBinding.sampleItemWithdraw.visibility = View.VISIBLE
-                viewBinding.sampleItemDeposit.visibility = View.GONE
-                viewBinding.sampleItemDeposit2.visibility = View.GONE
-            }
-            com.stip.stip.ipasset.model.Filter.REFUND -> {
-                // 반환: 반환 관련 트랜잭션만 표시 (이 예제에서는 없음)
-                viewBinding.sampleItemDeposit.visibility = View.GONE
-                viewBinding.sampleItemWithdraw.visibility = View.GONE
-                viewBinding.sampleItemDeposit2.visibility = View.GONE
-            }
-            else -> {
-                // 기타 필터: 모든 트랜잭션 표시
-                viewBinding.sampleItemDeposit.visibility = View.VISIBLE
-                viewBinding.sampleItemWithdraw.visibility = View.VISIBLE
-                viewBinding.sampleItemDeposit2.visibility = View.VISIBLE
-            }
-        }
-        
-        // 표시되는 모든 트랜잭션 아이템에 콤마 포맷 적용
-        formatTransactionAmount()
-        
-        // RecyclerView 상태도 필터에 맞게 업데이트
+        // Update RecyclerView state based on the filter
         updateRecyclerView()
     }
     
@@ -448,44 +348,11 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     }
     
     /**
-     * 거래내역 목록의 금액에 3자리마다 콤마(,) 포맷 적용
-     * 뷰가 안전하게 초기화되었는지 확인하고 작업 수행
+     * Transaction history formatting has been removed
      */
     private fun formatTransactionAmount() {
-        try {
-            // 입금 아이템 1 (5,000 USD)
-            viewBinding.sampleItemDeposit?.let { depositItem ->
-                depositItem.findViewById<TextView>(R.id.formatted_amount)?.let {
-                    it.text = String.format("%,.2f USD", 5000.0)
-                }
-                depositItem.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.2f KRW", 6500000.0)
-                }
-            }
-
-            // 출금 아이템 (10,000 USD)
-            viewBinding.sampleItemWithdraw?.let { withdrawItem ->
-                withdrawItem.findViewById<TextView>(R.id.formatted_amount)?.let {
-                    it.text = String.format("%,.2f USD", 10000.0)
-                }
-                withdrawItem.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.2f KRW", 13000000.0)
-                }
-            }
-
-            // 입금 아이템 2 (2,500 USD)
-            viewBinding.sampleItemDeposit2?.let { deposit2Item ->
-                deposit2Item.findViewById<TextView>(R.id.formatted_amount)?.let {
-                    it.text = String.format("%,.2f USD", 2500.0)
-                }
-                deposit2Item.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.2f KRW", 3250000.0)
-                }
-            }
-        } catch (e: Exception) {
-            // 오류가 발생해도 앱이 크래쉬되지 않도록 예외 처리
-            e.printStackTrace()
-        }
+        // All transaction history related code has been removed
+        // This method is kept as a stub to maintain API compatibility
     }
     
     private fun collectData() {
