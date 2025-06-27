@@ -11,8 +11,12 @@
         android:label="IpAssetHoldingsFragment">
 
         <action
-            android:id="@+id/action_ipAssetHoldingsFragment_to_depositFragment"
-            app:destination="@id/depositFragment" />
+            android:id="@+id/action_ipAssetHoldingsFragment_to_usdDepositFragment"
+            app:destination="@id/usdDepositFragment" />
+            
+        <action
+            android:id="@+id/action_ipAssetHoldingsFragment_to_tickerDepositFragment"
+            app:destination="@id/tickerDepositFragment" />
 
         <action
             android:id="@+id/action_ipAssetHoldingsFragment_to_withdrawFragment"
@@ -32,9 +36,18 @@
     </fragment>
 
     <fragment
-        android:id="@+id/depositFragment"
-        android:name="com.stip.stip.ipasset.fragment.DepositFragment"
-        android:label="DepositFragment">
+        android:id="@+id/usdDepositFragment"
+        android:name="com.stip.stip.ipasset.USD.USDDepositFragment"
+        android:label="USDDepositFragment">
+        <argument
+            android:name="ipAsset"
+            app:argType="com.stip.stip.ipasset.model.IpAsset" />
+    </fragment>
+    
+    <fragment
+        android:id="@+id/tickerDepositFragment"
+        android:name="com.stip.stip.ipasset.Ticker.TickerDepositFragment"
+        android:label="TickerDepositFragment">
         <argument
             android:name="ipAsset"
             app:argType="com.stip.stip.ipasset.model.IpAsset" />

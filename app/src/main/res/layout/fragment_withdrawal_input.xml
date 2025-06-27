@@ -422,6 +422,7 @@
 
     <!-- We've already implemented the fee info card properly above -->
 
+    <!-- 기존 스타일의 키패드 RecyclerView -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_withdrawal_apply"
         android:layout_width="0dp"
@@ -430,7 +431,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginBottom="16dp"
         android:backgroundTint="@color/sky_30C6E8_100"
-        android:text="출금신청"
+        android:text="입금 "
         android:textColor="@color/white"
         android:textSize="18sp"
         android:textStyle="bold"
@@ -438,9 +439,9 @@
         app:layout_constraintBottom_toTopOf="@+id/rv_keypad"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fee_info_card" />
+        app:layout_constraintTop_toBottomOf="@+id/fee_info_card"
+        app:layout_constraintVertical_bias="0.475" />
 
-    <!-- 기존 스타일의 키패드 RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_keypad"
         android:layout_width="match_parent"

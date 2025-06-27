@@ -170,8 +170,18 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
 
     private fun setupClickListeners() {
         viewBinding.depositButtonContainer.setOnClickListener {
-            // Start DepositKrwActivity directly when deposit button is clicked
-            startActivity(Intent(requireContext(), DepositKrwActivity::class.java))
+            // 통화 코드에 따라 다른 입금 프래그먼트로 이동
+            if (ipAsset.currencyCode == "USD") {
+                // USD일 경우 USD 입금 프래그먼트로 이동
+                val directions = TransactionFragmentDirections
+                    .actionIpAssetHoldingsFragmentToUsdDepositFragment(ipAsset)
+                findNavController().navigate(directions)
+            } else {
+                // 그 외의 경우 (BTC, ETH 등) Ticker 입금 프래그먼트로 이동
+                val directions = TransactionFragmentDirections
+                    .actionIpAssetHoldingsFragmentToTickerDepositFragment(ipAsset)
+                findNavController().navigate(directions)
+            }
         }
         
         // Set click listeners for sample transaction items

@@ -222,7 +222,7 @@ class WithdrawalInputFragment() : BaseFragment<FragmentWithdrawalInputBinding>()
     
     private fun showInfoDialog(title: String, message: String) {
         InfoDialogFragment.newInstance(
-            titleResId = R.string.back, // 실제 표시에는 title 파라미터가 사용됨
+            titleResId = R.string.dialog_title_info, // 실제 표시에는 title 파라미터가 사용됨
             message = message,
             titleColorResId = R.color.dialog_title_info_blue
         ).apply {

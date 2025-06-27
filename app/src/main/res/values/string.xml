@@ -1328,6 +1328,9 @@
     <string name="withdrawal_quantity">출금수량</string>
     <string name="withdrawal_total_vat_included">총출금 (수수료 포함)</string>
     <string name="withdrawal_min_amount">최소 1</string>
+    
+    <!-- 입금 관련 문자열 -->
+    <string name="toast_address_copied">주소가 클립보드에 복사되었습니다.</string>
     <string name="withdrawal_error_available_amount_exceeded">출금 가능 금액을 초과했습니다.</string>
     <string name="withdrawal_error_limit_exceeded">출금 한도를 초과했습니다.</string>
 
