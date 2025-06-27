@@ -43,8 +43,8 @@ class TickerWithdrawalConfirmFragment : BaseFragment<FragmentIpAssetTickerWithdr
         tvTotalAmountValue.text = String.format("%.2f", totalAmount)
         tvTotalAmountCurrency.text = " $currencyCode"
         
-        // 주소 복사 버튼 리스너
-        btnCopyAddress.setOnClickListener {
+        // 주소 복사 리스너 (TextView에 포함된 drawableEnd 아이콘)
+        tvAddressValue.setOnClickListener {
             val clipboard = requireContext().getSystemService(android.content.Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
             val clip = android.content.ClipData.newPlainText("Withdrawal Address", args.address)
             clipboard.setPrimaryClip(clip)

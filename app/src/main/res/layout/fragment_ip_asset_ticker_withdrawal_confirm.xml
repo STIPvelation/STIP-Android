@@ -184,6 +184,8 @@
                         android:textColor="#232D3F"
                         android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
+                        android:clickable="true"
+                        android:focusable="true"
                         app:layout_constraintBaseline_toBaselineOf="@+id/tvAddressLabel"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tvAddressLabel" />
