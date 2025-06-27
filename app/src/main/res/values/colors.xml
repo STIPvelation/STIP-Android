@@ -269,6 +269,10 @@
     <color name="gray_F8FAFF_100">#F8FAFF</color>
     <color name="text_gray_232D3F_100">#232D3F</color>
     <color name="gray_F0F0F5_100">#F0F0F5</color>
+    
+    <!-- 입출금 태그 색상 -->
+    <color name="light_pink_deposit">#FFCCD5</color> <!-- 연한 분홍색 - 입금 완료 -->
+    <color name="light_blue_withdrawal">#CCE5FF</color> <!-- 연한 하늘색 - 출금 완료 -->
 </resources>
 
 
