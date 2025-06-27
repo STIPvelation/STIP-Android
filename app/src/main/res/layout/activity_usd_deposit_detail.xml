@@ -194,7 +194,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="40dp"
-                android:background="#40C4FF"
+                android:background="#30C6E8"
                 android:text="확인"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"

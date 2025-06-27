@@ -22,8 +22,6 @@ import com.stip.stip.databinding.FragmentTransactionBinding
 import com.stip.stip.ipasset.TransactionViewModel
 // Transaction history adapters have been removed
 // import com.stip.ipasset.ticker.adapter.TickerTransactionHistoryAdapter
-// import com.stip.ipasset.usd.adapter.UsdTransactionHistoryAdapter
-
 import com.stip.stip.ipasset.model.Filter
 import com.stip.stip.ipasset.model.IpAsset
 import com.stip.stip.ipasset.model.TransactionHistory
@@ -32,6 +30,9 @@ import com.stip.stip.ipasset.model.WithdrawalStatus
 import com.stip.ipasset.usd.activity.DepositKrwActivity
 import com.stip.ipasset.usd.activity.UsdDepositDetailActivity
 import com.stip.ipasset.usd.activity.UsdWithdrawalDetailActivity
+import com.stip.stip.ipasset.model.USDDepositTransaction
+import com.stip.stip.ipasset.model.USDWithdrawalTransaction
+import com.stip.stip.ipasset.ticker.adapter.USDTransactionAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -45,22 +46,37 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
 
     private val viewModel by viewModels<TransactionViewModel>()
     
-    // Transaction history adapters have been removed
-    /*
     // USD 전용 어댑터
     private val usdAdapter by lazy {
-        UsdTransactionHistoryAdapter { transaction ->
-            showTransactionDetail(transaction)
+        USDTransactionAdapter { transaction ->
+            when (transaction) {
+                is USDDepositTransaction -> showUsdDepositDetail(transaction)
+                is USDWithdrawalTransaction -> showUsdWithdrawalDetail(transaction)
+                else -> Toast.makeText(requireContext(), "Unknown transaction type", Toast.LENGTH_SHORT).show()
+            }
         }
     }
     
-    // 티커 전용 어댑터
-    private val tickerAdapter by lazy {
-        TickerTransactionHistoryAdapter { transaction ->
-            showTransactionDetail(transaction)
-        }
+    /**
+     * USD 입금 완료 상세화면으로 이동
+     */
+    private fun showUsdDepositDetail(transaction: USDDepositTransaction) {
+        val intent = Intent(requireContext(), com.stip.ipasset.activity.UsdDepositDetailActivity::class.java)
+        intent.putExtra("transaction", transaction)
+        startActivity(intent)
     }
-    */
+    
+    /**
+     * USD 출금 완료 상세화면으로 이동
+     */
+    private fun showUsdWithdrawalDetail(transaction: USDWithdrawalTransaction) {
+        val intent = Intent(requireContext(), com.stip.ipasset.activity.UsdWithdrawalDetailActivity::class.java)
+        intent.putExtra("transaction", transaction)
+        startActivity(intent)
+    }
+
+    // USD 더미 데이터
+    private val usdDummyTransactions = mutableListOf<Any>()
 
     private var currentFilter = com.stip.stip.ipasset.model.Filter.ALL
 
@@ -75,7 +91,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         setupFilterTabs()
         setupClickListeners()
         setupRecyclerView()
-        showSampleTransactionHistory() // 샘플 데이터도 유지
+        createUSDDummyData() // USD 더미 데이터 생성
         collectData()
 
         // 거래 내역 불러오기
@@ -142,8 +158,8 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         // ViewModel에 필터 적용
         viewModel.applyFilter(filter)
         
-        // UI 업데이트 (샘플 트랜잭션 아이템 필터링)
-        filterTransactionsBasedOnCurrentFilter()
+        // UI 업데이트 (USD 트랜잭션 아이템 필터링)
+        filterUSDTransactionsBasedOnCurrentFilter()
     }
     
     private fun updateActiveTab(filter: com.stip.stip.ipasset.model.Filter) {
@@ -296,12 +312,92 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     }
 
     // Sample transaction history display methods have been removed
+    /**
+     * USD 더미 데이터 생성
+     */
+    private fun createUSDDummyData() {
+        // 더미 데이터 목록 초기화
+        usdDummyTransactions.clear()
+        
+        // 입금 완료 더미 데이터
+        usdDummyTransactions.add(USDDepositTransaction(
+            id = 1001,
+            amount = 0.37,
+            amountKrw = 500,
+            timestamp = 1719014640, // 2025.06.11 10:24
+            status = "입금 완료",
+            txHash = "0x123abc456def789",
+            exchangeRate = 1350.0
+        ))
+        
+        usdDummyTransactions.add(USDDepositTransaction(
+            id = 1003,
+            amount = 0.22,
+            amountKrw = 300,
+            timestamp = 1718755920, // 2025.06.07 14:32
+            status = "입금 완료",
+            txHash = "0x789def456abc123",
+            exchangeRate = 1365.0
+        ))
+        
+        // 출금 완료 더미 데이터
+        usdDummyTransactions.add(USDWithdrawalTransaction(
+            id = 1002,
+            amount = 0.15,
+            amountKrw = 200,
+            timestamp = 1718928180, // 2025.06.10 16:03
+            status = "출금 완료",
+            txHash = "0xabc123def456789",
+            exchangeRate = 1333.0,
+            recipientAddress = "0xUserWalletAddress123456789",
+            fee = 0.001
+        ))
+        
+        // 초기 필터 적용
+        filterUSDTransactionsBasedOnCurrentFilter()
+    }
+    
+    /**
+     * USD 트랜잭션 필터링
+     */
+    private fun filterUSDTransactionsBasedOnCurrentFilter() {
+        val filteredItems = when (currentFilter) {
+            Filter.ALL -> usdDummyTransactions
+            Filter.DEPOSIT -> usdDummyTransactions.filterIsInstance<USDDepositTransaction>()
+            Filter.WITHDRAW -> usdDummyTransactions.filterIsInstance<USDWithdrawalTransaction>()
+            Filter.REFUND -> emptyList() // 현재 반환 더미데이터 없음
+            Filter.PROCESSING -> emptyList() // 현재 진행중 더미데이터 없음
+            else -> usdDummyTransactions
+        }
+        
+        // 어댑터에 필터링된 아이템 설정
+        usdAdapter.submitList(filteredItems)
+        
+        // 빈 상태 표시 설정
+        viewBinding.emptyStateContainer.visibility = if (filteredItems.isEmpty()) View.VISIBLE else View.GONE
+        viewBinding.recyclerViewTransactions.visibility = if (filteredItems.isNotEmpty()) View.VISIBLE else View.GONE
+    }
+    
+    // [중복 메서드 제거됨] showUsdDepositDetail 및 showUsdWithdrawalDetail 메서드는 이제 코드 상단에 정의되어 있습니다.
+    
+    /**
+     * 리사이클러뷰 설정
+     */
+    private fun setupRecyclerView() {
+        viewBinding.recyclerViewTransactions.apply {
+            layoutManager = LinearLayoutManager(context)
+            adapter = usdAdapter
+        }
+    }
+    
     private fun showSampleTransactionHistory() {
         // This method is kept as a stub to maintain API compatibility
         // All sample transaction functionality has been removed
     }
     
     private fun filterTransactionsBasedOnCurrentFilter() {
+        // 이 메서드는 더 이상 사용하지 않습니다.
+        // 대신 filterUSDTransactionsBasedOnCurrentFilter()를 사용합니다.
         // This method is kept as a stub to maintain API compatibility
         // All sample transaction filtering code has been removed
         
@@ -310,32 +406,15 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     }
     
     /**
-     * RecyclerView 설정 - 통화 코드에 따라 적절한 어댑터 사용
-     */
-    private fun setupRecyclerView() {
-        viewBinding.recyclerViewTransactions.layoutManager = LinearLayoutManager(requireContext())
-        
-        // Transaction history adapters have been removed
-        // 임시 빈 어댑터 설정
-        viewBinding.recyclerViewTransactions.adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
-                return object : androidx.recyclerview.widget.RecyclerView.ViewHolder(View(requireContext())) {}
-            }
-            
-            override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
-                // Empty implementation
-            }
-            
-            override fun getItemCount(): Int = 0
-        }
-    }
-    
-    /**
      * 필터가 변경될 때 RecyclerView 업데이트
      */
     private fun updateRecyclerView() {
-        // 필터에 따라 거래 내역 데이터 갱신 처리는 ViewModel + Flow로 자동 처리됨
-        // 필요시 추가 로직 구현 가능
+        // Check if we have filtered items to show
+        val hasItems = usdAdapter.itemCount > 0
+        
+        // Show/hide empty state based on whether we have items
+        viewBinding.emptyStateContainer.visibility = if (!hasItems) View.VISIBLE else View.GONE
+        viewBinding.recyclerViewTransactions.visibility = if (hasItems) View.VISIBLE else View.GONE
     }
     
     /**
