@@ -209,6 +209,7 @@ class IpAssetFragment : BaseFragment<FragmentIpAssetBinding>() {
     private fun buildListWithUsdFirst(ipAssets: List<IpAsset>): List<IpAsset> {
         val usdItem = ipAssets.find { it.currencyCode == "USD" }
         val otherItems = ipAssets.filter { it.currencyCode != "USD" }
+            .sortedBy { it.currencyCode } // Sort non-USD tickers alphabetically by currencyCode
 
         return buildList {
             usdItem?.let { add(it) }
