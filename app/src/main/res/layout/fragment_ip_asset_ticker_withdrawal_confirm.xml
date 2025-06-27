@@ -27,14 +27,14 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="16dp"
-            android:paddingBottom="24dp">
+            android:paddingHorizontal="@dimen/padding_medium"
+            android:paddingBottom="@dimen/margin_large">
 
             <TextView
                 android:id="@+id/tvWithdrawalInfoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="@dimen/margin_large"
                 android:text="출금 정보"
                 android:textColor="#232D3F"
                 android:textSize="22sp"
@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:text="티커"
                         android:textColor="#505060"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -75,7 +75,7 @@
                         android:layout_height="wrap_content"
                         android:text="WETALK"
                         android:textColor="#232D3F"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tvTickerLabel" />
@@ -83,8 +83,8 @@
                     <View
                         android:id="@+id/divider1"
                         android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="18dp"
+                        android:layout_height="@dimen/policy_divider_height"
+                        android:layout_marginTop="@dimen/padding_18dp"
                         android:background="#F0F0F5"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -94,10 +94,10 @@
                         android:id="@+id/tvAmountLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="@dimen/padding_18dp"
                         android:text="출금수량"
                         android:textColor="#505060"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
@@ -107,7 +107,7 @@
                         android:layout_height="wrap_content"
                         android:text="39.00 WETALK"
                         android:textColor="#232D3F"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tvAmountLabel" />
@@ -115,8 +115,8 @@
                     <View
                         android:id="@+id/divider2"
                         android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="18dp"
+                        android:layout_height="@dimen/policy_divider_height"
+                        android:layout_marginTop="@dimen/padding_18dp"
                         android:background="#F0F0F5"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -126,10 +126,10 @@
                         android:id="@+id/tvFeeLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="@dimen/padding_18dp"
                         android:text="출금수수료"
                         android:textColor="#505060"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
@@ -139,7 +139,7 @@
                         android:layout_height="wrap_content"
                         android:text="1.00 WETALK"
                         android:textColor="#232D3F"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tvFeeLabel" />
@@ -147,8 +147,8 @@
                     <View
                         android:id="@+id/divider3"
                         android:layout_width="0dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="18dp"
+                        android:layout_height="@dimen/policy_divider_height"
+                        android:layout_marginTop="@dimen/padding_18dp"
                         android:background="#F0F0F5"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -158,10 +158,10 @@
                         android:id="@+id/tvAddressLabel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="18dp"
+                        android:layout_marginTop="@dimen/padding_18dp"
                         android:text="출금 주소"
                         android:textColor="#505060"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
@@ -169,13 +169,13 @@
                         android:id="@+id/tvAddressValue"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:layout_marginEnd="12dp"
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:layout_marginEnd="@dimen/margin_small"
                         android:ellipsize="middle"
                         android:maxLines="1"
                         android:text="0x1234...5678"
                         android:textColor="#232D3F"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/btnCopyAddress"
                         app:layout_constraintStart_toStartOf="parent"
@@ -184,14 +184,14 @@
                     <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btnCopyAddress"
                         android:layout_width="wrap_content"
-                        android:layout_height="36dp"
+                        android:layout_height="@dimen/button_height_small"
                         android:background="@drawable/bg_rounded_button_light_blue"
-                        android:paddingHorizontal="14dp"
+                        android:paddingHorizontal="@dimen/text_small"
                         android:text="복사"
                         android:textColor="#30C6E8"
                         android:textSize="14sp"
                         android:drawableStart="@drawable/ic_copy"
-                        android:drawablePadding="6dp"
+                        android:drawablePadding="@dimen/margin_6dp"
                         app:layout_constraintBottom_toBottomOf="@+id/tvAddressValue"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tvAddressValue" />
@@ -232,7 +232,7 @@
                         android:layout_height="wrap_content"
                         android:text="40.00"
                         android:textColor="#30C6E8"
-                        android:textSize="22sp"
+                        android:textSize="@dimen/text_xxlarge"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toStartOf="@+id/tvTotalAmountCurrency"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -253,7 +253,7 @@
                         android:id="@+id/tvTotalAmountDesc"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="@dimen/common_side_margin_20dp"
                         android:text="출금수량 + 수수료 포함"
                         android:textColor="#8A8A8A"
                         android:textSize="14sp"
@@ -286,7 +286,7 @@
                         android:layout_width="32dp"
                         android:layout_height="32dp"
                         android:background="@drawable/bg_circle_red_light"
-                        android:padding="8dp"
+                        android:padding="@dimen/margin_small"
                         android:src="@drawable/ic_warning"
                         app:tint="#FF6B6B"
                         app:layout_constraintStart_toStartOf="parent"
@@ -309,15 +309,15 @@
                         android:id="@+id/clNoticeItem1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/padding_medium"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/ivWarningIcon">
 
                         <ImageView
                             android:id="@+id/ivNoticeIcon1"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
+                            android:layout_width="@dimen/text_large"
+                            android:layout_height="@dimen/text_large"
                             android:src="@drawable/ic_close_circle"
                             app:tint="#FF6B6B"
                             app:layout_constraintStart_toStartOf="parent"
@@ -326,10 +326,10 @@
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="@dimen/margin_small"
                             android:text="출금 신청 후에는 취소가 불가능합니다."
                             android:textColor="#232D3F"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/text_medium_small"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/ivNoticeIcon1"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -339,15 +339,15 @@
                         android:id="@+id/clNoticeItem2"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/margin_small"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/clNoticeItem1">
 
                         <ImageView
                             android:id="@+id/ivNoticeIcon2"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
+                            android:layout_width="@dimen/text_large"
+                            android:layout_height="@dimen/text_large"
                             android:src="@drawable/ic_info_circle"
                             app:tint="#FF6B6B"
                             app:layout_constraintStart_toStartOf="parent"
@@ -356,10 +356,10 @@
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="@dimen/margin_small"
                             android:text="네트워크(Polygon)를 반드시 확인해주세요. 다른 네트워크로 출금 시 복구가 불가능합니다."
                             android:textColor="#232D3F"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/text_medium_small"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/ivNoticeIcon2"
                             app:layout_constraintTop_toTopOf="parent" />
@@ -369,15 +369,15 @@
                         android:id="@+id/clNoticeItem3"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="@dimen/margin_small"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/clNoticeItem2">
 
                         <ImageView
                             android:id="@+id/ivNoticeIcon3"
-                            android:layout_width="18dp"
-                            android:layout_height="18dp"
+                            android:layout_width="@dimen/text_large"
+                            android:layout_height="@dimen/text_large"
                             android:src="@drawable/ic_info_circle"
                             app:tint="#FF6B6B"
                             app:layout_constraintStart_toStartOf="parent"
@@ -386,10 +386,10 @@
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="12dp"
+                            android:layout_marginStart="@dimen/margin_small"
                             android:text="출금 소요시간은 네트워크 상황에 따라 달라질 수 있습니다."
                             android:textColor="#232D3F"
-                            android:textSize="15sp"
+                            android:textSize="@dimen/text_medium_small"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@+id/ivNoticeIcon3"
                             app:layout_constraintTop_toTopOf="parent" />

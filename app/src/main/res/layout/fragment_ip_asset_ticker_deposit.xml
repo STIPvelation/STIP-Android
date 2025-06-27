@@ -5,17 +5,21 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.MaterialToolbar
+        android:background="@android:color/white"
         android:id="@+id/material_toolbar"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/button_height_large"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_navigate_back"
+        app:cardCornerRadius="@dimen/corner_radius_large"
         app:titleCentered="true"
         app:titleTextAppearance="@style/TitleText" />
 
     <FrameLayout
+        android:layout_marginHorizontal="@dimen/padding_medium"
+        android:layout_marginTop="@dimen/padding_medium"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,6 +28,7 @@
         app:layout_constraintTop_toBottomOf="@+id/material_toolbar">
 
         <include
+            android:padding="@dimen/margin_large"
             android:id="@+id/layout_ticker"
             layout="@layout/layout_deposit_ticker"
             android:layout_width="match_parent"

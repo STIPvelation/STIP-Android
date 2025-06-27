@@ -60,7 +60,7 @@
                         android:layout_height="wrap_content"
                         android:text="출금가능"
                         android:textColor="#333333"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,7 +70,7 @@
                         android:layout_height="wrap_content"
                         android:text="40.00 WETALK"
                         android:textColor="#333333"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_available_label" />
@@ -79,10 +79,10 @@
                         android:id="@+id/tv_max_amount_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/padding_medium"
                         android:text="출금한도"
                         android:textColor="#333333"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_available_label" />
 
@@ -92,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:text="1,000,000 WETALK"
                         android:textColor="#333333"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_max_amount_label" />
@@ -120,8 +120,8 @@
 
                     <ImageView
                         android:id="@+id/iv_wallet_icon"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
+                        android:layout_width="@dimen/icon_small"
+                        android:layout_height="@dimen/icon_small"
                         android:src="@drawable/ic_wallet"
                         app:tint="#30C6E8"
                         app:layout_constraintStart_toStartOf="parent"
@@ -134,7 +134,7 @@
                         android:layout_marginStart="8dp"
                         android:text="출금수량"
                         android:textColor="#333333"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_wallet_icon"
                         app:layout_constraintStart_toEndOf="@+id/iv_wallet_icon"
                         app:layout_constraintTop_toTopOf="@+id/iv_wallet_icon" />
@@ -143,16 +143,16 @@
                         android:id="@+id/et_amount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/padding_medium"
                         android:background="@drawable/bg_edit_text_withdrawal_border"
                         android:hint="0.00 WETALK"
                         android:inputType="numberDecimal"
                         android:textAlignment="textEnd"
                         android:textColor="#30C6E8"
                         android:textColorHint="#CCCCCC"
-                        android:paddingVertical="10dp"
-                        android:paddingHorizontal="12dp"
-                        android:textSize="20sp"
+                        android:paddingVertical="@dimen/margin_small"
+                        android:paddingHorizontal="@dimen/margin_small"
+                        android:textSize="@dimen/text_xlarge"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -163,7 +163,7 @@
                         android:id="@+id/percentage_buttons_container"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/padding_medium"
                         android:paddingHorizontal="4dp"
                         android:orientation="horizontal"
                         android:gravity="center"
@@ -180,7 +180,7 @@
                             android:padding="0dp"
                             android:background="@drawable/bg_rounded_button_light_blue"
                             android:text="10%"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_small"
                             android:textColor="#D8F6FC" />
 
                         <Button
@@ -192,7 +192,7 @@
                             android:padding="0dp"
                             android:background="@drawable/bg_rounded_button_light_blue"
                             android:text="25%"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_small"
                             android:textColor="#D8F6FC" />
 
                         <Button
@@ -204,7 +204,7 @@
                             android:padding="0dp"
                             android:background="@drawable/bg_rounded_button_light_blue"
                             android:text="50%"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_small"
                             android:textColor="#D8F6FC" />
 
                         <Button
@@ -215,7 +215,7 @@
                             android:padding="0dp"
                             android:background="@drawable/bg_rounded_button_light_blue"
                             android:text="100%"
-                            android:textSize="13sp"
+                            android:textSize="@dimen/text_small"
                             android:textColor="#D8F6FC" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -243,8 +243,8 @@
 
                     <ImageView
                         android:id="@+id/iv_link_icon"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
+                        android:layout_width="@dimen/icon_xsmall"
+                        android:layout_height="@dimen/icon_xsmall"
                         android:src="@drawable/ic_link"
                         app:tint="#30C6E8"
                         app:layout_constraintStart_toStartOf="parent"
@@ -257,7 +257,7 @@
                         android:layout_marginStart="8dp"
                         android:text="출금 주소"
                         android:textColor="#333333"
-                        android:textSize="16sp"
+                        android:textSize="@dimen/text_medium"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_link_icon"
                         app:layout_constraintStart_toEndOf="@+id/iv_link_icon"
                         app:layout_constraintTop_toTopOf="@+id/iv_link_icon" />
@@ -265,14 +265,14 @@
                     <EditText
                         android:id="@+id/et_address"
                         android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:layout_marginTop="16dp"
+                        android:layout_height="@dimen/button_height_small"
+                        android:layout_marginTop="@dimen/padding_medium"
                         android:background="@drawable/bg_edit_text_border"
                         android:hint="출금 주소를 입력해주세요"
                         android:inputType="text"
-                        android:paddingStart="12dp"
-                        android:paddingEnd="12dp"
-                        android:textSize="14sp"
+                        android:paddingStart="@dimen/margin_small"
+                        android:paddingEnd="@dimen/margin_small"
+                        android:textSize="@dimen/text_normal"
                         android:textColorHint="#CCCCCC"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -306,7 +306,7 @@
                         android:layout_height="wrap_content"
                         android:text="수수료 (부가세 포함)"
                         android:textColor="#666666"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -316,7 +316,7 @@
                         android:layout_height="wrap_content"
                         android:text="1.00 WETALK"
                         android:textColor="#30C6E8"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_fee_label" />
@@ -325,10 +325,10 @@
                         android:id="@+id/tv_total_fee_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
+                        android:layout_marginTop="@dimen/padding_medium"
                         android:text="총출금 (수수료 포함)"
                         android:textColor="#666666"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/tv_fee_label" />
 
@@ -338,7 +338,7 @@
                         android:layout_height="wrap_content"
                         android:text="1.00 WETALK"
                         android:textColor="#30C6E8"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         android:textStyle="bold"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tv_total_fee_label" />
@@ -352,7 +352,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
                 android:layout_marginTop="24dp"
-                app:cardCornerRadius="12dp"
+                app:cardCornerRadius="@dimen/corner_radius_medium"
                 app:cardElevation="0dp"
                 android:backgroundTint="#F2F2F2"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -363,15 +363,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="@dimen/padding_medium">
                     
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawablePadding="8dp"
+                        android:drawablePadding="@dimen/margin_small"
                         android:text="중요 유의사항"
                         android:textColor="#333333"
-                        android:textSize="15sp"
+                        android:textSize="@dimen/text_medium_small"
                         android:textStyle="bold"
                         app:drawableStartCompat="@drawable/ic_info_circle"
                         app:drawableTint="#333333" />
@@ -379,10 +379,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="• 최소 출금 금액은 1 WETALK입니다."
+                        android:layout_marginTop="@dimen/margin_small"
+                        android:text="• 최소 출금 금액은 1.00 입니다."
                         android:textColor="#666666"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/text_normal" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -390,7 +390,7 @@
                         android:layout_marginTop="8dp"
                         android:text="• 다른 네트워크로 출금 시 복구가 불가합니다."
                         android:textColor="#666666"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/text_normal" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -398,7 +398,7 @@
                         android:layout_marginTop="8dp"
                         android:text="• 출금 소요시간은 네트워크 상태에 따라 다릅니다."
                         android:textColor="#666666"
-                        android:textSize="14sp" />
+                        android:textSize="@dimen/text_normal" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 

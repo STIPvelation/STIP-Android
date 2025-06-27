@@ -23,6 +23,8 @@
     <dimen name="common_side_margin_20dp">20dp</dimen>
 
     <dimen name="margin_6dp">6dp</dimen>
+    <dimen name="margin_8dp">8dp</dimen>
+    <dimen name="padding_18dp">18dp</dimen>
     
     <!-- 반응형 여백 -->    
     <dimen name="spacing_xsmall">4dp</dimen>
@@ -44,9 +46,12 @@
     <dimen name="text_large">18sp</dimen>
     <dimen name="text_xlarge">20sp</dimen>
     <dimen name="text_xxlarge">24sp</dimen>
+    <dimen name="text_xxxlarge">32sp</dimen>
+    <dimen name="text_medium_small">15sp</dimen>
     <dimen name="text_size_xlarge">19sp</dimen>
 
     <!-- 반응형 아이콘 및 카드 크기 -->
+    <dimen name="icon_xsmall">22dp</dimen>
     <dimen name="icon_small">24dp</dimen>
     
     <!-- 트랜잭션 화면 샘플 아이템 보이기 위한 리사이클러뷰 최소 크기 -->
@@ -68,6 +73,14 @@
     <dimen name="padding_small">8dp</dimen>
     <dimen name="padding_medium">16dp</dimen>
     <dimen name="padding_large">24dp</dimen>
+    
+    <!-- 버튼 높이 및 코너 반경 -->
+    <dimen name="button_height_small">36dp</dimen>
+    <dimen name="button_height_medium">44dp</dimen>
+    <dimen name="button_height_large">48dp</dimen>
+    <dimen name="corner_radius_small">4dp</dimen>
+    <dimen name="corner_radius_medium">8dp</dimen>
+    <dimen name="corner_radius_large">12dp</dimen>
     
     <!-- PIN 입력 화면 관련 치수 -->
     <dimen name="keypad_bottom_margin">44dp</dimen>

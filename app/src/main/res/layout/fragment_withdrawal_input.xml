@@ -9,7 +9,7 @@
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/material_toolbar"
         android:layout_width="0dp"
-        android:layout_height="56dp"
+        android:layout_height="@dimen/spacing_xxxlarge"
         android:background="@color/white"
         android:elevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,8 +27,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
         android:layout_marginTop="8dp"
-        app:cardCornerRadius="16dp"
-        app:cardElevation="1dp"
+        app:cardCornerRadius="@dimen/margin_medium"
+        app:cardElevation="@dimen/card_elevation_normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/material_toolbar">
@@ -37,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="@dimen/padding_medium">
 
             <LinearLayout
                 android:id="@+id/bank_container"
@@ -47,15 +47,15 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_bank"
                     app:tint="@color/sky_30C6E8_100" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="실명계좌"
                     android:textColor="@color/black" />
 
@@ -69,7 +69,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_medium"
                     android:textStyle="bold"
                     android:text="신한은행 110-123-**6789" />
             </LinearLayout>
@@ -82,23 +82,23 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_dollar_sign"
                     app:tint="@color/sky_30C6E8_100" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="출금가능"
                     android:textColor="@color/black" />
                     
                 <ImageView
                     android:id="@+id/btn_withdrawable_info"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
+                    android:layout_marginStart="@dimen/margin_xsmall"
                     android:src="@drawable/ic_info_circle_small"
                     android:clickable="true"
                     android:focusable="true" />
@@ -113,7 +113,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_medium"
                     android:textStyle="bold"
                     android:text="8,999 USD" />
             </LinearLayout>
@@ -125,23 +125,23 @@
                 android:gravity="center_vertical">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_chart"
                     app:tint="@color/sky_30C6E8_100" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="출금한도"
                     android:textColor="@color/black" />
                     
                 <ImageView
                     android:id="@+id/btn_withdrawal_limit_info"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginStart="4dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
+                    android:layout_marginStart="@dimen/margin_xsmall"
                     android:src="@drawable/ic_info_circle_small"
                     android:clickable="true"
                     android:focusable="true" />
@@ -156,7 +156,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_medium"
                     android:textStyle="bold"
                     android:text="498,999.00 USD" />
             </LinearLayout>
@@ -168,9 +168,9 @@
         android:id="@+id/withdrawal_input_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="16dp"
+        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
+        android:layout_marginTop="@dimen/margin_medium"
+        app:cardCornerRadius="@dimen/margin_medium"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -186,12 +186,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_marginBottom="12dp"
-                android:paddingStart="16dp">
+                android:layout_marginBottom="@dimen/margin_small"
+                android:paddingStart="@dimen/padding_medium">
                 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_credit_card"
                     app:tint="@color/sky_30C6E8_100" />
                     
@@ -199,10 +199,10 @@
                     android:id="@+id/label_withdrawal_amount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="출금금액"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/text_medium" />
             </LinearLayout>
 
             <!-- 이미지와 동일하게 테두리가 있는 입력 필드 -->
@@ -213,8 +213,8 @@
                 android:background="@drawable/bg_input_border"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
-                android:paddingVertical="8dp"
-                android:paddingHorizontal="16dp"
+                android:paddingVertical="@dimen/padding_small"
+                android:paddingHorizontal="@dimen/padding_medium"
                 android:clickable="true"
                 android:focusable="true">
 
@@ -225,11 +225,11 @@
                     android:layout_height="wrap_content"
                     android:text="최소 1"
                     android:textColor="#B0B8C1"
-                    android:textSize="18sp" />
+                    android:textSize="@dimen/text_large" />
 
                 <View
                     android:layout_width="0dp"
-                    android:layout_height="1dp"
+                    android:layout_height="@dimen/policy_divider_height"
                     android:layout_weight="1" />
 
                 <!-- 입력된 금액 -->
@@ -245,7 +245,7 @@
                         android:layout_height="wrap_content"
                         android:text="1"
                         android:textColor="@color/black"
-                        android:textSize="28sp"
+                        android:textSize="@dimen/text_xxlarge"
                         android:textStyle="bold" />
 
                     <!-- USD 라벨 -->
@@ -253,10 +253,10 @@
                         android:id="@+id/tv_withdrawal_unit"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
+                        android:layout_marginStart="@dimen/margin_small"
                         android:text="USD"
                         android:textColor="@color/sky_30C6E8_100"
-                        android:textSize="28sp"
+                        android:textSize="@dimen/text_xxlarge"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -268,8 +268,8 @@
         android:id="@+id/fee_info_card"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="16dp"
+        android:layout_marginTop="@dimen/margin_medium"
+        app:cardCornerRadius="@dimen/margin_medium"
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/white"
         app:layout_constraintEnd_toEndOf="@id/withdrawal_input_card"
@@ -286,24 +286,24 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="20dp"
-                android:paddingBottom="16dp"
+                android:paddingTop="@dimen/margin_large"
+                android:paddingBottom="@dimen/margin_medium"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_percent"
                     app:tint="@color/sky_30C6E8_100" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="수수료 (부가세 포함)"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/text_medium" />
 
                 <View
                     android:layout_width="0dp"
@@ -316,44 +316,44 @@
                     android:layout_height="wrap_content"
                     android:text="1.00 USD"
                     android:textColor="@color/black"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/text_medium"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <!-- 구분선 -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/policy_divider_height"
                 android:background="#F2F2F2" />
 
             <!-- 총출금 행 -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp"
+                android:paddingTop="@dimen/padding_medium"
+                android:paddingBottom="@dimen/padding_medium"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_sum"
                     app:tint="@color/sky_30C6E8_100" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="총출금 (수수료 포함)"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="@dimen/text_medium" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:layout_marginStart="10dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:gravity="end"
                     android:layout_weight="1">
                     
@@ -364,17 +364,17 @@
                         android:text="1.00"
                         android:gravity="end"
                         android:textColor="@color/sky_30C6E8_100"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_large"
                         android:textStyle="bold" />
                         
                     <TextView
                         android:id="@+id/total_withdrawal_currency"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="@dimen/margin_xsmall"
                         android:text="USD"
                         android:textColor="@color/sky_30C6E8_100"
-                        android:textSize="18sp"
+                        android:textSize="@dimen/text_large"
                         android:textStyle="bold" />
                 </LinearLayout>
             </LinearLayout>
@@ -383,23 +383,23 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="12dp"
-                android:paddingBottom="20dp"
+                android:paddingTop="@dimen/margin_small"
+                android:paddingBottom="@dimen/margin_large"
                 android:gravity="center">
                 
                 <ImageView
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="@dimen/icon_small"
+                    android:layout_height="@dimen/icon_small"
                     android:src="@drawable/ic_info_circle"
                     android:tint="#999999" />
                     
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginStart="@dimen/margin_small"
                     android:text="출금 신청 이후 취소가 불가합니다."
                     android:textColor="#999999"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/text_normal" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
@@ -409,12 +409,12 @@
         android:id="@+id/error_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
+        android:layout_marginTop="@dimen/margin_small"
         android:gravity="center"
         android:text="출금 가능 금액을 초과했습니다."
         android:textColor="@color/color_rise"
-        android:textSize="14sp"
+        android:textSize="@dimen/text_normal"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/withdrawal_input_card"
         app:layout_constraintStart_toStartOf="@id/withdrawal_input_card"
@@ -426,16 +426,16 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_withdrawal_apply"
         android:layout_width="0dp"
-        android:layout_height="56dp"
-        android:layout_marginHorizontal="20dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="16dp"
+        android:layout_height="@dimen/spacing_xxxlarge"
+        android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
+        android:layout_marginTop="@dimen/margin_large"
+        android:layout_marginBottom="@dimen/margin_medium"
         android:backgroundTint="@color/sky_30C6E8_100"
         android:text="입금 "
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="@dimen/text_large"
         android:textStyle="bold"
-        app:cornerRadius="12dp"
+        app:cornerRadius="@dimen/margin_small"
         app:layout_constraintBottom_toTopOf="@+id/rv_keypad"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -446,9 +446,9 @@
         android:id="@+id/rv_keypad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="16dp"
-        android:paddingVertical="4dp"
+        android:layout_marginHorizontal="@dimen/margin_medium"
+        android:layout_marginBottom="@dimen/margin_medium"
+        android:paddingVertical="@dimen/margin_xsmall"
         android:background="@color/white"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="3"
