@@ -90,8 +90,11 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         setupToolbar()
         setupFilterTabs()
         setupClickListeners()
+        // USD 티커인 경우에만 더미 데이터 생성
+        if (ipAsset.currencyCode == "USD") {
+            createUSDDummyData() // USD 더미 데이터 생성
+        }
         setupRecyclerView()
-        createUSDDummyData() // USD 더미 데이터 생성
         collectData()
 
         // 거래 내역 불러오기
@@ -158,8 +161,10 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         // ViewModel에 필터 적용
         viewModel.applyFilter(filter)
         
-        // UI 업데이트 (USD 트랜잭션 아이템 필터링)
-        filterUSDTransactionsBasedOnCurrentFilter()
+        // USD 티커인 경우에만 USD 트랜잭션 아이템 필터링
+        if (ipAsset.currencyCode == "USD") {
+            filterUSDTransactionsBasedOnCurrentFilter()
+        }
     }
     
     private fun updateActiveTab(filter: com.stip.stip.ipasset.model.Filter) {
@@ -361,6 +366,9 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
      * USD 트랜잭션 필터링
      */
     private fun filterUSDTransactionsBasedOnCurrentFilter() {
+        // USD 티커가 아닌 경우 필터링하지 않음
+        if (ipAsset.currencyCode != "USD") return
+        
         val filteredItems = when (currentFilter) {
             Filter.ALL -> usdDummyTransactions
             Filter.DEPOSIT -> usdDummyTransactions.filterIsInstance<USDDepositTransaction>()
@@ -386,7 +394,25 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     private fun setupRecyclerView() {
         viewBinding.recyclerViewTransactions.apply {
             layoutManager = LinearLayoutManager(context)
-            adapter = usdAdapter
+            // 적절한 어댑터 설정 (USD만 USD 어댑터 사용)
+            setupAppropriateAdapter()
+        }
+    }
+    
+    /**
+     * 티커 종류에 맞는 어댑터 설정
+     * USD 티커일 경우에만 USD 전용 어댑터를 사용합니다.
+     */
+    private fun setupAppropriateAdapter() {
+        // 현재 선택된 자산이 USD인 경우에만 USD 어댑터 사용
+        if (ipAsset.currencyCode == "USD") {
+            viewBinding.recyclerViewTransactions.adapter = usdAdapter
+            // USD 더미 데이터 기반 필터링 적용
+            filterUSDTransactionsBasedOnCurrentFilter()
+        } else {
+            // USD가 아닌 경우 빈 상태 표시 (별도 티커용 어댑터 개발 필요)
+            viewBinding.emptyStateContainer.visibility = View.VISIBLE
+            viewBinding.recyclerViewTransactions.visibility = View.GONE
         }
     }
     
