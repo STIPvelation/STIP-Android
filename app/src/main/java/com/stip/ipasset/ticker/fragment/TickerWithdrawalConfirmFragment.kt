@@ -69,8 +69,24 @@ class TickerWithdrawalConfirmFragment : BaseFragment<FragmentIpAssetTickerWithdr
             }
             .setCancelable(false)
             .create()
-            
+        
+        // 다이얼로그가 보여진 후 텍스트뷰를 찾아서 중앙 정렬 적용
         alertDialog.show()
+        
+        // 제목 텍스트뷰 중앙 정렬 (두 가지 방식으로 적용)
+        val titleId = resources.getIdentifier("alertTitle", "id", "android")
+        val titleView = alertDialog.findViewById<android.widget.TextView>(titleId)
+        titleView?.apply {
+            textAlignment = View.TEXT_ALIGNMENT_CENTER
+            gravity = android.view.Gravity.CENTER
+        }
+        
+        // 다이얼로그 윈도우에 제목 중앙 정렬 설정
+        alertDialog.window?.setGravity(android.view.Gravity.CENTER)
+        
+        // 메시지 텍스트뷰 중앙 정렬
+        val messageView = alertDialog.findViewById<android.widget.TextView>(android.R.id.message)
+        messageView?.textAlignment = View.TEXT_ALIGNMENT_CENTER
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
