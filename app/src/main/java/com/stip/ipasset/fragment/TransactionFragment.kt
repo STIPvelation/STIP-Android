@@ -467,7 +467,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                     it.text = String.format("%,.2f USD", 5000.0)
                 }
                 depositItem.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.0f KRW", 6500000.0)
+                    it.text = String.format("%,.2f USD", 6500000.0)
                 }
             }
 
@@ -477,7 +477,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                     it.text = String.format("%,.2f USD", 10000.0)
                 }
                 withdrawItem.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.0f KRW", 13000000.0)
+                    it.text = String.format("%,.2f USD", 13000000.0)
                 }
             }
 
@@ -487,7 +487,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
                     it.text = String.format("%,.2f USD", 2500.0)
                 }
                 deposit2Item.findViewById<TextView>(R.id.usd_amount)?.let {
-                    it.text = String.format("%,.0f KRW", 3250000.0)
+                    it.text = String.format("%,.2f USD", 3250000.0)
                 }
             }
         } catch (e: Exception) {
@@ -508,12 +508,86 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
             }
 
             try {
-                viewBinding.equivalentAmount.text = "≈ ${String.format("%,.0f", usdEquivalentValue)} KRW"
+                viewBinding.equivalentAmount.text = "≈ ${String.format("%,.2f", usdEquivalentValue)} USD"
             } catch (e: IllegalArgumentException) {
-                viewBinding.equivalentAmount.text = "≈ 0 KRW"
+                viewBinding.equivalentAmount.text = "≈ 0.00 USD"
             }
 
-            // No longer need to update adapter since RecyclerView has been removed
+            // Setup currency icon based on asset type
+            setupCurrencyIcon()
         }
+    }
+    
+    /**
+     * 통화 아이콘을 설정하는 메서드 - IpAssetListAdapter와 동일한 로직 사용
+     * USD와 티커에 따라 다른 아이콘 표시
+     */
+    private fun setupCurrencyIcon() {
+        // 기본적으로 모든 아이콘 숨김
+        viewBinding.currencyIconText.visibility = View.GONE
+        viewBinding.currencyIconImage.visibility = View.GONE
+        
+        // 로고 배경 색상 설정
+        val backgroundColorRes = when(ipAsset.currencyCode) {
+            "USD" -> R.color.token_usd
+            "JWV" -> R.color.token_jwv
+            "MDM" -> R.color.token_mdm
+            "CDM" -> R.color.token_cdm
+            "IJECT" -> R.color.token_iject
+            "WETALK" -> R.color.token_wetalk
+            "SLEEP" -> R.color.token_sleep
+            "KCOT" -> R.color.token_kcot
+            "MSK" -> R.color.token_msk
+            "SMT" -> R.color.token_smt
+            "AXNO" -> R.color.token_axno
+            "KATV" -> R.color.token_katv
+            else -> R.color.token_usd // 기본값
+        }
+        
+        // 배경 색상 적용 (필요한 경우)
+        viewBinding.currencyIconBackground?.let { 
+            it.backgroundTintList = requireContext().getColorStateList(backgroundColorRes)
+        }
+        
+        if (ipAsset.currencyCode == "USD") {
+            // USD인 경우 $ 텍스트 표시
+            viewBinding.currencyIconText.apply {
+                text = "$"
+                visibility = View.VISIBLE
+            }
+        } else {
+            // 티커인 경우 해당 티커의 로고 또는 처음 2자 표시 (동일하게)
+            try {
+                val resourceId = getTickerLogoResourceId(ipAsset.currencyCode)
+                if (resourceId > 0) {
+                    // 티커 이미지가 있는 경우 이미지 표시
+                    viewBinding.currencyIconImage.apply {
+                        setImageResource(resourceId)
+                        visibility = View.VISIBLE
+                    }
+                } else {
+                    // 티커 이미지가 없는 경우 처음 2자만 표시 (IpAssetListAdapter와 동일하게)
+                    viewBinding.currencyIconText.apply {
+                        text = ipAsset.currencyCode.take(2)  // 처음 2자만 표시
+                        visibility = View.VISIBLE
+                    }
+                }
+            } catch (e: Exception) {
+                // 오류 발생시 처음 2자만 표시
+                viewBinding.currencyIconText.apply {
+                    text = ipAsset.currencyCode.take(2)  // 처음 2자만 표시
+                    visibility = View.VISIBLE
+                }
+            }
+        }
+    }
+    
+    /**
+     * 티커 코드에 해당하는 로고 리소스 ID 가져오기
+     */
+    private fun getTickerLogoResourceId(tickerCode: String): Int {
+        val context = requireContext()
+        val resName = "ic_ticker_${tickerCode.lowercase()}"
+        return context.resources.getIdentifier(resName, "drawable", context.packageName)
     }
 }

@@ -41,7 +41,7 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     // 숫자 포맷터 설정
     private val decimalFormat = DecimalFormat("#,##0.00")
     private val amountFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
-        minimumFractionDigits = 0
+        minimumFractionDigits = 2
         maximumFractionDigits = 2
     }
     
@@ -140,7 +140,7 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
         }
         
         if (amount > availableAmount) {
-            Toast.makeText(context, "출금 가능 금액을 초과했습니다", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "출금 가능 수량을 초과했습니다", Toast.LENGTH_SHORT).show()
             return false
         }
         

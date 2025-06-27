@@ -97,14 +97,36 @@ class IpAssetListAdapter(
             logoBackground.setBackgroundResource(R.drawable.bg_circle_token)
             logoBackground.backgroundTintList = context.getColorStateList(backgroundColorRes)
             
-            // 로고 텍스트 설정 (iOS TransactionView.swift 참고)
+            // 로고 이미지나 텍스트 설정
             val logoText = binding.root.findViewById<TextView>(R.id.token_logo_text)
-            if (currencyCode == "USD") {
-                logoText.text = "$" // USD는 $ 기호 표시
+            
+            // 티커용 이미지가 있는지 확인하고 이미지가 있으면 이미지로 표시
+            val resourceId = getTickerLogoResourceId(context, currencyCode)
+            
+            if (resourceId > 0) {
+                // 이미지 리소스가 있는 경우
+                logoText.visibility = View.GONE
+                
+                // 이미지뷰 찾기
+                val imageView = binding.root.findViewById<android.widget.ImageView>(R.id.token_logo_image)
+                
+                imageView.visibility = View.VISIBLE
+                imageView.setImageResource(resourceId)
             } else {
-                // 처음 2자만 표시
-                logoText.text = currencyCode.take(2)
+                // 이미지 리소스가 없는 경우 텍스트로 표시
+                if (currencyCode == "USD") {
+                    logoText.text = "$" // USD는 $ 기호 표시
+                } else {
+                    // 처음 2자만 표시
+                    logoText.text = currencyCode.take(2)
+                }
             }
+        }
+        
+        // 티커 코드에 해당하는 로고 리소스 ID 가져오기
+        private fun getTickerLogoResourceId(context: android.content.Context, tickerCode: String): Int {
+            val resName = "ic_ticker_${tickerCode.lowercase()}"
+            return context.resources.getIdentifier(resName, "drawable", context.packageName)
         }
     }
 }

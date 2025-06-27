@@ -37,6 +37,14 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="$" />
+                
+            <ImageView
+                android:id="@+id/token_logo_image"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:contentDescription="@null" />
         </FrameLayout>
 
         <TextView

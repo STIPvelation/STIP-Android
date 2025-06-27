@@ -26,11 +26,11 @@ class WithdrawalInputViewModel @Inject constructor(
     private val _withdrawalAmount = MutableStateFlow("")
     val withdrawalAmount = _withdrawalAmount.asStateFlow()
     val withdrawalState = withdrawalAmount.combine(withdrawalStatus.filterNotNull()) { withdrawalAmount, withdrawalInfo ->
-        val amount = withdrawalAmount.toLongOrNull() ?: 0L
+        val amount = withdrawalAmount.toDoubleOrNull() ?: 0.0
         val fee = withdrawalStatus.value?.fee ?: 0.0
 
         when {
-            amount < 1 -> WithdrawalInputState(isEnabled = false)
+            amount < 1.0 -> WithdrawalInputState(isEnabled = false)
             withdrawalAmount.isEmpty() -> WithdrawalInputState(isEnabled = false)
             amount > withdrawalInfo.availableAmount + fee -> WithdrawalInputState(
                 isEnabled = false,

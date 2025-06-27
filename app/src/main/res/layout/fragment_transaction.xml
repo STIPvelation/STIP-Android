@@ -39,16 +39,29 @@
                 android:id="@+id/currency_icon_container"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/circular_blue_gradient"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
+                <View
+                    android:id="@+id/currency_icon_background"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_circle_token" />
+
+                <ImageView
+                    android:id="@+id/currency_icon_image"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:visibility="gone"
+                    android:contentDescription="@null" />
+
                 <TextView
+                    android:id="@+id/currency_icon_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="$"
                     android:textColor="@android:color/white"
                     android:textSize="28sp"
                     android:textStyle="bold" />

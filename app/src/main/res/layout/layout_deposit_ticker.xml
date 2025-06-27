@@ -212,7 +212,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="해당 주소는 JWV 전용 입금 주소입니다.
+                    android:text="해당 주소는 입금전용 주소입니다.
 다른 디지털 IP 입금 시 오류 또는 손실이
 발생할 수 있으며 복구가 불가능합니다."
                     android:lineSpacingExtra="4dp"
