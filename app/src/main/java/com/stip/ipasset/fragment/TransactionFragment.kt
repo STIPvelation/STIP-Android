@@ -30,9 +30,9 @@ import com.stip.stip.ipasset.model.WithdrawalStatus
 import com.stip.ipasset.usd.activity.DepositKrwActivity
 import com.stip.ipasset.usd.activity.UsdDepositDetailActivity
 import com.stip.ipasset.usd.activity.UsdWithdrawalDetailActivity
-import com.stip.stip.ipasset.model.USDDepositTransaction
-import com.stip.stip.ipasset.model.USDWithdrawalTransaction
-import com.stip.stip.ipasset.ticker.adapter.USDTransactionAdapter
+import com.stip.ipasset.usd.model.USDDepositTransaction
+import com.stip.ipasset.usd.model.USDWithdrawalTransaction
+import com.stip.ipasset.usd.adapter.USDTransactionAdapter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean

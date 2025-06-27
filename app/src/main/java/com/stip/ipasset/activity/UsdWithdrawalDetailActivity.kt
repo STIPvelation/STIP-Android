@@ -1,9 +1,10 @@
 package com.stip.ipasset.activity
 
 import android.os.Bundle
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import com.stip.stip.databinding.ActivityUsdWithdrawalDetailBinding
-import com.stip.stip.ipasset.model.USDWithdrawalTransaction
+import com.stip.ipasset.usd.model.USDWithdrawalTransaction
 
 class UsdWithdrawalDetailActivity : AppCompatActivity() {
     
@@ -16,11 +17,16 @@ class UsdWithdrawalDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         // Get transaction data from intent
-        transaction = intent.getParcelableExtra("transaction")
+        transaction = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("transaction", USDWithdrawalTransaction::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("transaction")
+        }
         
         // Setup back button
         binding.btnBack.setOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
         
         // Set title

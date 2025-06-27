@@ -1,9 +1,11 @@
 package com.stip.ipasset.activity
 
 import android.os.Bundle
+import android.os.Build
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.stip.stip.databinding.ActivityUsdDepositDetailBinding
-import com.stip.stip.ipasset.model.USDDepositTransaction
+import com.stip.ipasset.usd.model.USDDepositTransaction
 
 class UsdDepositDetailActivity : AppCompatActivity() {
     
@@ -16,11 +18,16 @@ class UsdDepositDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
         
         // Get transaction data from intent
-        transaction = intent.getParcelableExtra("transaction")
+        transaction = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            intent.getParcelableExtra("transaction", USDDepositTransaction::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra("transaction")
+        }
         
         // Setup back button
         binding.btnBack.setOnClickListener {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
         }
         
         // Set title
