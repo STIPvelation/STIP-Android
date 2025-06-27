@@ -27,13 +27,13 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="@dimen/padding_medium"
             android:paddingBottom="@dimen/margin_large">
 
             <TextView
                 android:id="@+id/tvWithdrawalInfoTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_medium"
                 android:layout_marginTop="@dimen/margin_large"
                 android:text="출금 정보"
                 android:textColor="#232D3F"
@@ -45,6 +45,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardWithdrawalInfo"
                 android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -83,6 +84,7 @@
                     <View
                         android:id="@+id/divider1"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="@dimen/policy_divider_height"
                         android:layout_marginTop="@dimen/padding_18dp"
                         android:background="#F0F0F5"
@@ -115,6 +117,7 @@
                     <View
                         android:id="@+id/divider2"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="@dimen/policy_divider_height"
                         android:layout_marginTop="@dimen/padding_18dp"
                         android:background="#F0F0F5"
@@ -147,6 +150,7 @@
                     <View
                         android:id="@+id/divider3"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="@dimen/policy_divider_height"
                         android:layout_marginTop="@dimen/padding_18dp"
                         android:background="#F0F0F5"
@@ -168,6 +172,7 @@
                     <TextView
                         android:id="@+id/tvAddressValue"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_small"
                         android:layout_marginEnd="@dimen/margin_small"
@@ -201,6 +206,7 @@
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardTotalAmount"
                 android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -265,6 +271,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cardNotice"
                 android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 app:cardBackgroundColor="#FFF5F5"
@@ -308,6 +315,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/clNoticeItem1"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/padding_medium"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -325,6 +333,7 @@
 
                         <TextView
                             android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_small"
                             android:text="출금 신청 후에는 취소가 불가능합니다."
@@ -338,6 +347,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/clNoticeItem2"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_small"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -355,6 +365,7 @@
 
                         <TextView
                             android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_small"
                             android:text="네트워크(Polygon)를 반드시 확인해주세요. 다른 네트워크로 출금 시 복구가 불가능합니다."
@@ -368,6 +379,7 @@
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:id="@+id/clNoticeItem3"
                         android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_small"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -385,6 +397,7 @@
 
                         <TextView
                             android:layout_width="0dp"
+                android:layout_marginHorizontal="@dimen/padding_medium"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="@dimen/margin_small"
                             android:text="출금 소요시간은 네트워크 상황에 따라 달라질 수 있습니다."
