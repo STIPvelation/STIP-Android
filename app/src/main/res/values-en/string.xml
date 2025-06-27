@@ -1292,7 +1292,7 @@ Furthermore, as part of our suspicious transaction review process, we may reques
         <string name="no_business_plan_link">No business plan link available.</string>
         <string name="no_related_video_link">No related video link available.</string>
         <string name="error_loading_details">Failed to load details.</string>
-
+    <string name="menu_price_alert_en">Price Alert</string>
 
 
 

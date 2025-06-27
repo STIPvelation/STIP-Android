@@ -243,7 +243,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="시세알림"
+                    android:text="@string/menu_price_alert"
                     android:textColor="#232D3F"
                     android:textSize="14sp"
                     android:textStyle="bold"
