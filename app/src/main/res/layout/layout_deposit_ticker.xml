@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:background="#F8F8F8">
 
-        <androidx.cardview.widget.CardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_qr"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -19,6 +19,8 @@
             android:layout_marginTop="24dp"
             app:cardCornerRadius="20dp"
             app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#4D30C6E8"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -52,81 +54,83 @@
                     tools:text="JWV" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/address_section"
+        android:id="@+id/address_section"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/card_qr">
+
+        <TextView
+            android:id="@+id/tv_deposit_address_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_link"
+            android:drawablePadding="8dp"
+            android:drawableTint="#40BCD8"
+            android:text="입금주소"
+            android:textColor="#40BCD8"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/address_container"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="1dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#4D30C6E8"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/card_qr">
+            app:layout_constraintTop_toBottomOf="@id/tv_deposit_address_label">
 
-            <TextView
-                android:id="@+id/tv_deposit_address_label"
-                android:layout_width="wrap_content"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:drawableStart="@drawable/ic_link"
-                android:drawablePadding="8dp"
-                android:drawableTint="#40BCD8"
-                android:text="입금주소"
-                android:textColor="#40BCD8"
-                android:textSize="16sp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:padding="16dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/address_container"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                app:cardBackgroundColor="@color/white"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="1dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_deposit_address_label">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    android:id="@+id/tv_deposit_address"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:padding="16dp">
+                    android:gravity="center_vertical"
+                    android:textColor="@color/black"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toStartOf="@id/iv_copy"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    tools:text="3423jdkfjcsdfisdifdfsdg4" />
 
-                    <TextView
-                        android:id="@+id/tv_deposit_address"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        app:layout_constraintEnd_toStartOf="@id/iv_copy"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        tools:text="3423jdkfjcsdfisdifdfsdg4" />
+                <ImageView
+                    android:id="@+id/iv_copy"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="16dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:clickable="true"
+                    android:contentDescription="@null"
+                    android:focusable="true"
+                    android:src="@drawable/ic_copy"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:tint="#40BCD8" />
 
-                    <ImageView
-                        android:id="@+id/iv_copy"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="16dp"
-                        android:background="?attr/selectableItemBackgroundBorderless"
-                        android:clickable="true"
-                        android:contentDescription="@null"
-                        android:focusable="true"
-                        android:src="@drawable/ic_copy"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:tint="#40BCD8" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.cardview.widget.CardView
@@ -193,9 +197,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="해당 주소는 입금전용 주소입니다.
-다른 디지털 IP 입금 시 오류 또는 손실이
-발생할 수 있으며 복구가 불가능합니다."
+                    android:text="해당 주소는 입금전용 주소입니다.\n다른 디지털 IP 입금 시 오류 또는 손실이\n발생할 수 있으며 복구가 불가능합니다."
                     android:lineSpacingExtra="4dp"
                     android:textColor="@color/black"
                     android:textSize="14sp"
@@ -208,7 +210,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_check_circle"
+                    android:src="@drawable/ic_shield"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_info_1"
                     app:tint="#40BCD8" />
@@ -218,21 +220,20 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="당사의 이상거래 감지 절차에 따라 자금 출처 확인을 위한 서류 제출이 요구될 수 있으며, 이에 따라 입금이 지연될 수 있습니다."
+                    android:text="당사의 이상거래 검토 절차에 따라 자금 출처\n확인을 위한 서류 제출이 요구될 수 있으며,\n이에 따라 입금이 지연될 수 있습니다."
                     android:lineSpacingExtra="4dp"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/iv_info_2"
                     app:layout_constraintTop_toTopOf="@id/iv_info_2" />
-
-
+                    
                 <ImageView
                     android:id="@+id/iv_info_3"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_security"
+                    android:src="@drawable/ic_info_circle"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_info_2"
                     app:tint="#40BCD8" />
@@ -242,39 +243,33 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="서류 검토 결과에 따라 입금이 승인되지 않을 수도 있으며, 반송 시 출금 수수료가 부과될 수 있습니다."
+                    android:text="서류 검토 결과에 따라 입금이 승인되지 않을\n수도 있으며, 반송 시 송금 수수료가 부과될 수\n있습니다."
                     android:lineSpacingExtra="4dp"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@id/iv_info_3"
                     app:layout_constraintTop_toTopOf="@id/iv_info_3" />
-
-                <ImageView
-                    android:id="@+id/iv_warning_final"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_error"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_info_3"
-                    app:tint="#FFA000" />
-
+                    
                 <TextView
-                    android:id="@+id/tv_warning_final"
+                    android:id="@+id/tv_note"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
                     android:text="본 주소는 입금 전용입니다."
-                    android:textColor="#FFA000"
+                    android:drawableStart="@drawable/ic_warning_triangle"
+                    android:drawablePadding="8dp"
+                    android:gravity="center_vertical"
+                    android:textColor="#FF9500"
                     android:textSize="14sp"
                     android:textStyle="bold"
-                    android:lineSpacingExtra="4dp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/iv_warning_final"
-                    app:layout_constraintTop_toTopOf="@id/iv_warning_final" />
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/tv_info_3" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
+
         </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -174,19 +174,19 @@
                         <Button
                             android:id="@+id/btn_percent_10"
                             android:layout_width="0dp"
-                            android:layout_height="32dp"
-                            android:layout_weight="1"
+                            android:layout_height="36dp"
                             android:layout_marginEnd="6dp"
-                            android:padding="0dp"
+                            android:layout_weight="1"
                             android:background="@drawable/bg_rounded_button_light_blue"
+                            android:padding="0dp"
                             android:text="10%"
-                            android:textSize="@dimen/text_small"
-                            android:textColor="#D8F6FC" />
+                            android:textColor="#D8F6FC"
+                            android:textSize="@dimen/text_small" />
 
                         <Button
                             android:id="@+id/btn_percent_25"
                             android:layout_width="0dp"
-                            android:layout_height="32dp"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="6dp"
                             android:padding="0dp"
@@ -198,7 +198,7 @@
                         <Button
                             android:id="@+id/btn_percent_50"
                             android:layout_width="0dp"
-                            android:layout_height="32dp"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="6dp"
                             android:padding="0dp"
@@ -210,7 +210,7 @@
                         <Button
                             android:id="@+id/btn_percent_100"
                             android:layout_width="0dp"
-                            android:layout_height="32dp"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
                             android:padding="0dp"
                             android:background="@drawable/bg_rounded_button_light_blue"
