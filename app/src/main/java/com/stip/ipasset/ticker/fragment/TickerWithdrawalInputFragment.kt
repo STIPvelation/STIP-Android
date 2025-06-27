@@ -2,6 +2,7 @@ package com.stip.ipasset.ticker.fragment
 
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.stip.stip.ipasset.fragment.BaseFragment
 import com.stip.stip.ipasset.model.IpAsset
 import com.stip.stip.ipasset.WithdrawalInputViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
 
@@ -36,6 +38,13 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     private val maxAmount = 1000000.0
     private val fee = 1.0
     
+    // 숫자 포맷터 설정
+    private val decimalFormat = DecimalFormat("#,##0.00")
+    private val amountFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
+        minimumFractionDigits = 0
+        maximumFractionDigits = 2
+    }
+    
     private fun bind() = with(viewBinding) {
         // 툴바 설정
         materialToolbar.title = "$currencyCode ${getString(R.string.common_withdrawal_action)}"
@@ -43,13 +52,13 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
             findNavController().popBackStack()
         }
         
-        // 가용 잔액 및 한도 설정
-        tvAvailableAmount.text = "$availableAmount $currencyCode"
+        // 가용 잔액 및 한도 설정 (소수점 2자리)
+        tvAvailableAmount.text = decimalFormat.format(availableAmount) + " $currencyCode"
         tvMaxAmount.text = NumberFormat.getNumberInstance(Locale.getDefault()).format(maxAmount) + " $currencyCode"
         
-        // 수수료 정보 표시
-        tvFeeAmount.text = "$fee $currencyCode"
-        tvTotalFeeAmount.text = "$fee $currencyCode" // 총 수수료는 일단 동일하게 설정
+        // 수수료 정보 표시 (소수점 2자리)
+        tvFeeAmount.text = decimalFormat.format(fee) + " $currencyCode"
+        updateTotalAmount(0.0)
         
         // 퍼센트 버튼 리스너 설정
         setupPercentageButtons()
@@ -59,7 +68,29 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                // 금액이 변경될 때 수행할 로직 (검증 등)
+                // 금액이 변경될 때 총출금 금액 업데이트
+                val amountText = s?.toString() ?: ""
+                val amount = amountText.replace(",", "").toDoubleOrNull() ?: 0.0
+                updateTotalAmount(amount)
+                
+                // 콤마(,) 포맷팅 적용
+                if (s != null && !amountText.isEmpty()) {
+                    // 현재 텍스트 변경 중 재귀적인 호출을 방지하기 위한 플래그
+                    if (!s.toString().contains(",") || s.toString().matches(Regex("[0-9]+,[0-9]{3}.*"))) {
+                        // 콤마 제거 후 숫자만 추출
+                        val cleanString = s.toString().replace(",", "")
+                        val parsed = cleanString.toDoubleOrNull() ?: 0.0
+                        
+                        // 3자리마다 콤마 추가한 포맷 적용
+                        val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(parsed)
+                        
+                        // 이전 리스너 제거 -> 텍스트 변경 -> 리스너 다시 추가
+                        etAmount.removeTextChangedListener(this)
+                        etAmount.setText(formatted)
+                        etAmount.setSelection(formatted.length)
+                        etAmount.addTextChangedListener(this)
+                    }
+                }
             }
         })
 
@@ -71,6 +102,12 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
         }
     }
     
+    // 총출금 금액 업데이트 (수수료 포함)
+    private fun updateTotalAmount(withdrawalAmount: Double) {
+        val totalAmount = withdrawalAmount + fee
+        viewBinding.tvTotalFeeAmount.text = decimalFormat.format(totalAmount) + " $currencyCode"
+    }
+    
     private fun setupPercentageButtons() = with(viewBinding) {
         btnPercent10.setOnClickListener { calculateAmountByPercentage(0.1) }
         btnPercent25.setOnClickListener { calculateAmountByPercentage(0.25) }
@@ -80,7 +117,7 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     
     private fun calculateAmountByPercentage(percentage: Double) = with(viewBinding) {
         val calculatedAmount = availableAmount * percentage
-        etAmount.setText(String.format(Locale.getDefault(), "%.2f", calculatedAmount))
+        etAmount.setText(amountFormat.format(calculatedAmount))
     }
     
     private fun validateInputs(): Boolean = with(viewBinding) {
@@ -119,7 +156,8 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
 
     private fun navigateToConfirmation() {
         // 입력한 데이터를 NavDirections를 통해 확인 화면으로 이동
-        val withdrawalAmount = viewBinding.etAmount.text.toString().toFloatOrNull() ?: 0.0f
+        val withdrawalAmountText = viewBinding.etAmount.text.toString().replace(",", "")
+        val withdrawalAmount = withdrawalAmountText.toFloatOrNull() ?: 0.0f
         val withdrawalAddress = viewBinding.etAddress.text.toString().trim()
         
         val action = TickerWithdrawalInputFragmentDirections

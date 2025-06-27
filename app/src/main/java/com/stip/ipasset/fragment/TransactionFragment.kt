@@ -187,9 +187,22 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
 
     private fun setupClickListeners() {
         viewBinding.depositButtonContainer.setOnClickListener {
-            // 모든 케이스에 대해 DepositKrwActivity로 이동
-            val intent = Intent(requireContext(), DepositKrwActivity::class.java)
-            startActivity(intent)
+            // 통화 코드에 따라 다른 입금 화면으로 이동
+            if (ipAsset.currencyCode == "USD") {
+                // USD 입금은 DepositKrwActivity로 이동
+                val intent = Intent(requireContext(), DepositKrwActivity::class.java)
+                startActivity(intent)
+            } else {
+                // 티커 입금은 ticker deposit fragment로 이동
+                try {
+                    val directions = TransactionFragmentDirections.actionIpAssetHoldingsFragmentToTickerDepositFragment(ipAsset)
+                    findNavController().navigate(directions)
+                    Log.d("TransactionFragment", "티커 입금 페이지로 이동: ${ipAsset.currencyCode}")
+                } catch (e: Exception) {
+                    Log.e("TransactionFragment", "티커 입금 페이지 이동 오류", e)
+                    Toast.makeText(requireContext(), "티커 입금 페이지 이동 오류", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
         
         // Set click listeners for sample transaction items to display a Toast message
