@@ -172,7 +172,6 @@
                     <TextView
                         android:id="@+id/tvAddressValue"
                         android:layout_width="0dp"
-                android:layout_marginHorizontal="@dimen/padding_medium"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_small"
                         android:layout_marginEnd="@dimen/margin_small"
@@ -200,6 +199,7 @@
                         app:layout_constraintBottom_toBottomOf="@+id/tvAddressValue"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/tvAddressValue" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
 

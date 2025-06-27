@@ -128,25 +128,6 @@
             </androidx.cardview.widget.CardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/btn_copy_address"
-            android:layout_width="120dp"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:background="#40BCD8"
-            android:drawableStart="@drawable/ic_copy"
-            android:drawablePadding="8dp"
-            android:drawableTint="@color/white"
-            android:gravity="center"
-            android:padding="12dp"
-            android:text="복사"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:elevation="1dp"
-            android:stateListAnimator="@null"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/address_section" />
 
         <androidx.cardview.widget.CardView
             android:id="@+id/warning_card"
@@ -159,7 +140,7 @@
             app:cardElevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_copy_address">
+            app:layout_constraintTop_toBottomOf="@id/address_section">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

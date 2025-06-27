@@ -85,10 +85,6 @@ class TickerDepositFragment : BaseFragment<FragmentIpAssetTickerDepositBinding>(
         binding.root.findViewById<android.widget.ImageView>(R.id.iv_copy).setOnClickListener {
             copyAddressToClipboard(address)
         }
-        
-        binding.root.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btn_copy_address).setOnClickListener {
-            copyAddressToClipboard(address)
-        }
     }
     
     private fun copyAddressToClipboard(address: String) {
