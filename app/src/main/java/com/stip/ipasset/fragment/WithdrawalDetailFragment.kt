@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.stip.stip.R // R 리소스 사용 위해 필요
-import com.stip.stip.databinding.DepositWithdrawCheckBinding
+import com.stip.stip.databinding.DepositWithdrawCheckTickerBinding
 import com.stip.stip.ipasset.model.TransactionHistory // 실제 모델 경로 확인
 import com.stip.stip.ipasset.TransactionDetailViewModel // !!! 실제 사용하는 ViewModel 클래스로 변경 !!!
 import kotlinx.coroutines.launch
@@ -24,10 +24,10 @@ import java.util.Locale
  * 입출금 완료 내역 상세 화면 Fragment
  * R.layout.deposit_withdraw_check 레이아웃 사용
  */
-class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check) {
+class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check_ticker) {
 
     // ViewBinding
-    private var _binding: DepositWithdrawCheckBinding? = null
+    private var _binding: DepositWithdrawCheckTickerBinding? = null
     private val binding get() = _binding!!
 
     // Navigation Argument (transactionId 수신)
@@ -38,7 +38,7 @@ class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = DepositWithdrawCheckBinding.bind(view)
+        _binding = DepositWithdrawCheckTickerBinding.bind(view)
 
         setupToolbar()
         setupConfirmButton()
@@ -106,30 +106,28 @@ class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check) {
         val isWithdrawal = transaction.status == TransactionHistory.Status.WITHDRAWAL_COMPLETED
 
         // --- 헤더 타이틀 설정 ---
-        binding.tvTitle.text = getString(
-            if (isDeposit) R.string.title_krw_deposit_detail else R.string.title_krw_withdrawal_detail
-        )
+        binding.tvTitle.text = 
+            if (isDeposit) "KRW 입금 완료" else "KRW 출금 완료"
 
         // --- 상태 텍스트 및 색상 설정 ---
         if (isDeposit) {
-            binding.tvStatus.text = getString(R.string.status_deposit_completed) // "입금 완료"
-            binding.tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.deposit_red)) // 빨간색
+            binding.tvStatus.text = "입금 완료" 
+            binding.tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_rise))
         } else if (isWithdrawal) {
-            binding.tvStatus.text = getString(R.string.status_withdrawal_complete) // "출금 완료"
-            binding.tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.withdrawal_blue)) // 파란색
+            binding.tvStatus.text = "출금 완료" 
+            binding.tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.color_fall))
         } else {
             binding.tvStatus.text = transaction.status.name
             binding.tvStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
         }
 
         // --- 유형 텍스트 설정 ---
-        binding.valueType.text = getString(
+        binding.valueType.text = 
             when (transaction.currencyCode.uppercase(Locale.ROOT)) {
-                "KRW" -> if (isDeposit) R.string.value_type_krw_deposit else R.string.value_type_krw_withdrawal
-                "USD" -> if (isDeposit) R.string.value_type_usd_deposit else R.string.value_type_usd_withdrawal
-                else -> if (isDeposit) R.string.value_type_deposit else R.string.value_type_withdrawal
+                "KRW" -> if (isDeposit) "KRW 입금" else "KRW 출금"
+                "USD" -> if (isDeposit) "USD 입금" else "USD 출금"
+                else -> if (isDeposit) "입금" else "출금"
             }
-        )
 
         // --- 계좌정보 노출 여부 (법정화폐 출금만) ---
         val isFiat = transaction.currencyCode.equals("KRW", true) || transaction.currencyCode.equals("USD", true)
@@ -139,7 +137,7 @@ class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check) {
         binding.valueAccount.visibility = if (showAccountInfo) View.VISIBLE else View.GONE
 
         if (showAccountInfo) {
-            binding.labelAccount.text = getString(R.string.label_withdrawal_account) // "출금계좌"
+            binding.labelAccount.text = "출금계좌"
             // TODO: 실제 API에서 출금 계좌 정보 가져오기
             // binding.valueAccount.text = transaction.bankAccount
             binding.valueAccount.text = "" // 빈 값 표시

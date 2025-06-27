@@ -98,10 +98,10 @@ class TickerTransferDetailFragment : Fragment(R.layout.deposit_withdraw_check_ti
         binding.tvTitle.text = headerTickerName // 헤더에 티커명만 표시
 
         val (statusText, colorRes) = when (transaction.status) {
-            TransactionHistory.Status.DEPOSIT_COMPLETED -> getString(R.string.status_deposit_completed) to R.color.deposit_red
-            TransactionHistory.Status.WITHDRAWAL_COMPLETED -> getString(R.string.status_withdrawal_complete) to R.color.withdrawal_blue
-            TransactionHistory.Status.REFUND_COMPLETED -> getString(R.string.status_refund_completed) to R.color.deposit_red
-            TransactionHistory.Status.PROCESSING -> getString(R.string.status_processing) to R.color.text_gray_808080_100
+            TransactionHistory.Status.DEPOSIT_COMPLETED -> "입금 완료" to R.color.color_rise
+            TransactionHistory.Status.WITHDRAWAL_COMPLETED -> "출금 완료" to R.color.color_fall
+            TransactionHistory.Status.REFUND_COMPLETED -> "환불 완료" to R.color.color_rise
+            TransactionHistory.Status.PROCESSING -> "처리중" to R.color.text_gray_808080_100
         }
 
         binding.tvStatus.text = statusText
@@ -112,9 +112,9 @@ class TickerTransferDetailFragment : Fragment(R.layout.deposit_withdraw_check_ti
 
         binding.valueCompletionTime.text = formatTimestamp(transaction.timestamp)
         binding.valueType.text = if (transaction.status == TransactionHistory.Status.DEPOSIT_COMPLETED) {
-            getString(R.string.value_type_deposit)
+            "입금"
         } else {
-            getString(R.string.value_type_withdrawal)
+            "출금"
         }
 
         binding.valueNetwork.text = transaction.networkName ?: "Polygon"
