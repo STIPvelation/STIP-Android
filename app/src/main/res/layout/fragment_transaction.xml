@@ -258,7 +258,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:listitem="@layout/item_transaction_history" />
+        /><!-- Removed reference to deleted item_transaction_history layout -->
         
     <!-- Empty state container -->
     <LinearLayout

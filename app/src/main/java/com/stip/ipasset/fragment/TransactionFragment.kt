@@ -20,8 +20,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentTransactionBinding
 import com.stip.stip.ipasset.TransactionViewModel
-import com.stip.ipasset.ticker.adapter.TickerTransactionHistoryAdapter
-import com.stip.ipasset.usd.adapter.UsdTransactionHistoryAdapter
+// Transaction history adapters have been removed
+// import com.stip.ipasset.ticker.adapter.TickerTransactionHistoryAdapter
+// import com.stip.ipasset.usd.adapter.UsdTransactionHistoryAdapter
 
 import com.stip.stip.ipasset.model.Filter
 import com.stip.stip.ipasset.model.IpAsset
@@ -44,6 +45,8 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
 
     private val viewModel by viewModels<TransactionViewModel>()
     
+    // Transaction history adapters have been removed
+    /*
     // USD 전용 어댑터
     private val usdAdapter by lazy {
         UsdTransactionHistoryAdapter { transaction ->
@@ -57,6 +60,7 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
             showTransactionDetail(transaction)
         }
     }
+    */
 
     private var currentFilter = com.stip.stip.ipasset.model.Filter.ALL
 
@@ -411,12 +415,18 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     private fun setupRecyclerView() {
         viewBinding.recyclerViewTransactions.layoutManager = LinearLayoutManager(requireContext())
         
-        // 통화 코드에 따라 적절한 어댑터 설정
-        if (ipAsset.currencyCode == "USD") {
-            viewBinding.recyclerViewTransactions.adapter = usdAdapter
-        } else {
-            // USD가 아닌 티커는 새로운 ticker 전용 어댑터 사용
-            viewBinding.recyclerViewTransactions.adapter = tickerAdapter
+        // Transaction history adapters have been removed
+        // 임시 빈 어댑터 설정
+        viewBinding.recyclerViewTransactions.adapter = object : androidx.recyclerview.widget.RecyclerView.Adapter<androidx.recyclerview.widget.RecyclerView.ViewHolder>() {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): androidx.recyclerview.widget.RecyclerView.ViewHolder {
+                return object : androidx.recyclerview.widget.RecyclerView.ViewHolder(View(requireContext())) {}
+            }
+            
+            override fun onBindViewHolder(holder: androidx.recyclerview.widget.RecyclerView.ViewHolder, position: Int) {
+                // Empty implementation
+            }
+            
+            override fun getItemCount(): Int = 0
         }
     }
     
@@ -431,28 +441,10 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     /**
      * 거래 내역 상세 화면 표시
      */
-    private fun showTransactionDetail(transaction: TransactionHistory) {
-        // 통화 코드에 따라 적절한 상세 화면으로 이동
-        if (transaction.currencyCode == "USD") {
-            if (transaction.status.toString().contains("DEPOSIT")) {
-                val intent = Intent(requireContext(), UsdDepositDetailActivity::class.java)
-                // 필요한 데이터 전달
-                intent.putExtra("usdAmount", transaction.amount)
-                intent.putExtra("timestamp", transaction.timestamp)
-                startActivity(intent)
-            } else {
-                val intent = Intent(requireContext(), UsdWithdrawalDetailActivity::class.java)
-                // 필요한 데이터 전달
-                intent.putExtra("amount", transaction.amount) 
-                intent.putExtra("timestamp", transaction.timestamp)
-                startActivity(intent)
-            }
-        } else {
-            // 티커 거래일 경우 티커 전용 상세 화면으로 이동
-            val directions = TransactionFragmentDirections
-                .actionIpAssetHoldingsFragmentToTickerTransferDetailFragment(transaction.id)
-            findNavController().navigate(directions)
-        }
+    // Transaction history detail view has been removed
+    private fun showTransactionDetail(transaction: Any) {
+        // 기능이 제거되었습니다
+        Toast.makeText(requireContext(), "Transaction history feature has been removed", Toast.LENGTH_SHORT).show()
     }
     
     /**
