@@ -51,6 +51,12 @@
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" />
+            
+        <!-- 티커 트랜잭션 데모 액티비티 -->
+        <activity
+            android:name="com.stip.ipasset.ticker.TickerTransactionDemoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.stip.stip.signup.main.MainSignUpActivity"
@@ -95,6 +101,16 @@
             
         <activity
             android:name="com.stip.ipasset.activity.UsdWithdrawalDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.ipasset.ticker.activity.TickerDepositDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.ipasset.ticker.activity.TickerWithdrawCheckActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
@@ -146,6 +162,11 @@
             
         <activity
             android:name="com.stip.stip.more.activity.MoreIpDonationAgreementActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.ipasset.ticker.activity.TickerWithdrawCheckActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 

@@ -138,7 +138,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="완료일시"
-                        android:textColor="#666666"
+                        android:textColor="#000000"
                         android:textSize="16sp" />
                         
                     <View
@@ -166,7 +166,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="유형"
-                        android:textColor="#666666"
+                        android:textColor="#000000"
                         android:textSize="16sp" />
                         
                     <View

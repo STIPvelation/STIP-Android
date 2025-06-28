@@ -96,7 +96,7 @@
         android:id="@+id/tickerTransferDetailFragment"
         android:name="com.stip.stip.ipasset.fragment.TickerTransferDetailFragment"
         android:label="fragment_ticker_transfer_detail"
-        tools:layout="@layout/deposit_withdraw_check_ticker">
+        tools:layout="@layout/activity_ticker_withdraw_detail">
 
         <argument
             android:name="transactionId"

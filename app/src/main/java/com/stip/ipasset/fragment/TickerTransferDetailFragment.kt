@@ -16,7 +16,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.stip.stip.R
-import com.stip.stip.databinding.DepositWithdrawCheckTickerBinding
+import com.stip.stip.databinding.ActivityTickerWithdrawDetailBinding
 import com.stip.stip.ipasset.TransactionDetailViewModel
 import com.stip.stip.ipasset.model.TransactionHistory
 import kotlinx.coroutines.launch
@@ -24,9 +24,9 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class TickerTransferDetailFragment : Fragment(R.layout.deposit_withdraw_check_ticker) {
+class TickerTransferDetailFragment : Fragment(R.layout.activity_ticker_withdraw_detail) {
 
-    private var _binding: DepositWithdrawCheckTickerBinding? = null
+    private var _binding: ActivityTickerWithdrawDetailBinding? = null
     private val binding get() = _binding!!
 
     private val args: TickerTransferDetailFragmentArgs by navArgs()
@@ -34,7 +34,7 @@ class TickerTransferDetailFragment : Fragment(R.layout.deposit_withdraw_check_ti
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = DepositWithdrawCheckTickerBinding.bind(view)
+        _binding = ActivityTickerWithdrawDetailBinding.bind(view)
 
         setupToolbar()
         setupConfirmButton()

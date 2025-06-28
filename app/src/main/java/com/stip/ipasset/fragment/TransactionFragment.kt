@@ -1,9 +1,10 @@
 package com.stip.stip.ipasset.fragment
 
 import androidx.core.content.ContextCompat
-
 import android.content.Intent
 import android.os.Bundle
+import com.stip.ipasset.ticker.activity.TickerDepositDetailActivity
+import com.stip.ipasset.ticker.activity.TickerWithdrawCheckActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentTransactionBinding
 import com.stip.stip.ipasset.TransactionViewModel
-// Transaction history adapters have been removed
-// import com.stip.ipasset.ticker.adapter.TickerTransactionHistoryAdapter
 import com.stip.stip.ipasset.model.Filter
 import com.stip.stip.ipasset.model.IpAsset
 import com.stip.stip.ipasset.model.TransactionHistory
@@ -33,6 +32,9 @@ import com.stip.ipasset.usd.activity.UsdWithdrawalDetailActivity
 import com.stip.ipasset.usd.model.USDDepositTransaction
 import com.stip.ipasset.usd.model.USDWithdrawalTransaction
 import com.stip.ipasset.usd.adapter.USDTransactionAdapter
+import com.stip.ipasset.ticker.adapter.TickerTransactionAdapter
+import com.stip.ipasset.ticker.model.TickerDepositTransaction
+import com.stip.ipasset.ticker.model.TickerWithdrawalTransaction
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
@@ -57,6 +59,20 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         }
     }
     
+    // 티커 전용 어댑터
+    private val tickerAdapter by lazy {
+        TickerTransactionAdapter { transaction ->
+            when (transaction) {
+                is TickerDepositTransaction -> showTickerDepositDetail(transaction)
+                is TickerWithdrawalTransaction -> showTickerWithdrawalDetail(transaction)
+                else -> Toast.makeText(requireContext(), "Unknown ticker transaction type", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    // 티커 더미 데이터
+    private val tickerDummyTransactions = mutableListOf<Any>()
+    
     /**
      * USD 입금 완료 상세화면으로 이동
      */
@@ -72,6 +88,39 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
     private fun showUsdWithdrawalDetail(transaction: USDWithdrawalTransaction) {
         val intent = Intent(requireContext(), com.stip.ipasset.activity.UsdWithdrawalDetailActivity::class.java)
         intent.putExtra("transaction", transaction)
+        startActivity(intent)
+    }
+    
+    /**
+     * 티커 입금 완료 상세화면으로 이동
+     */
+    private fun showTickerDepositDetail(transaction: TickerDepositTransaction) {
+        // 티커 입금 상세 액티비티로 이동
+        val intent = Intent(requireContext(), TickerDepositDetailActivity::class.java)
+        intent.putExtra("transactionId", transaction.id)
+        intent.putExtra("tickerSymbol", transaction.tickerSymbol)
+        intent.putExtra("tickerAmount", transaction.tickerAmount)
+        intent.putExtra("usdAmount", transaction.usdAmount)
+        intent.putExtra("timestamp", transaction.timestamp)
+        intent.putExtra("status", transaction.status)
+        intent.putExtra("txHash", transaction.txHash)
+        startActivity(intent)
+    }
+    
+    /**
+     * 티커 출금 완료 상세화면으로 이동
+     */
+    private fun showTickerWithdrawalDetail(transaction: TickerWithdrawalTransaction) {
+        // 티커 출금 상세 액티비티로 이동
+        val intent = Intent(requireContext(), TickerWithdrawCheckActivity::class.java)
+        intent.putExtra("transactionId", transaction.id)
+        intent.putExtra("tickerSymbol", transaction.tickerSymbol)
+        intent.putExtra("tickerAmount", transaction.tickerAmount)
+        intent.putExtra("usdAmount", transaction.usdAmount)
+        intent.putExtra("timestamp", transaction.timestamp)
+        intent.putExtra("status", transaction.status)
+        intent.putExtra("txHash", transaction.txHash)
+        intent.putExtra("recipientAddress", transaction.recipientAddress)
         startActivity(intent)
     }
 
@@ -90,9 +139,11 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         setupToolbar()
         setupFilterTabs()
         setupClickListeners()
-        // USD 티커인 경우에만 더미 데이터 생성
+        // 티커 종류에 따라 더미 데이터 생성
         if (ipAsset.currencyCode == "USD") {
             createUSDDummyData() // USD 더미 데이터 생성
+        } else {
+            createTickerDummyData() // 티커 더미 데이터 생성
         }
         setupRecyclerView()
         collectData()
@@ -161,9 +212,11 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         // ViewModel에 필터 적용
         viewModel.applyFilter(filter)
         
-        // USD 티커인 경우에만 USD 트랜잭션 아이템 필터링
+        // 티커 종류에 따라 트랜잭션 아이템 필터링
         if (ipAsset.currencyCode == "USD") {
             filterUSDTransactionsBasedOnCurrentFilter()
+        } else {
+            filterTickerTransactionsBasedOnCurrentFilter()
         }
     }
     
@@ -386,16 +439,91 @@ class TransactionFragment : com.stip.stip.ipasset.fragment.BaseFragment<Fragment
         viewBinding.recyclerViewTransactions.visibility = if (filteredItems.isNotEmpty()) View.VISIBLE else View.GONE
     }
     
-    // [중복 메서드 제거됨] showUsdDepositDetail 및 showUsdWithdrawalDetail 메서드는 이제 코드 상단에 정의되어 있습니다.
+    /**
+     * 티커 더미 데이터 생성
+     */
+    private fun createTickerDummyData() {
+        // 더미 데이터 목록 초기화
+        tickerDummyTransactions.clear()
+        
+        // 입금 완료 더미 데이터
+        tickerDummyTransactions.add(TickerDepositTransaction(
+            id = 1001,
+            tickerAmount = 10.37,
+            tickerSymbol = ipAsset.currencyCode,
+            usdAmount = 5000.0,
+            timestamp = 1719014640, // 2025.06.11 10:24
+            status = "입금 완료",
+            txHash = "0x123abc456def789"
+        ))
+        
+        tickerDummyTransactions.add(TickerDepositTransaction(
+            id = 1003,
+            tickerAmount = 20.22,
+            tickerSymbol = ipAsset.currencyCode,
+            usdAmount = 3000.0,
+            timestamp = 1718755920, // 2025.06.07 14:32
+            status = "입금 완료",
+            txHash = "0x789def456abc123"
+        ))
+        
+        // 출금 완료 더미 데이터
+        tickerDummyTransactions.add(TickerWithdrawalTransaction(
+            id = 1002,
+            tickerAmount = 15.15,
+            tickerSymbol = ipAsset.currencyCode,
+            usdAmount = 2000.0,
+            timestamp = 1718928180, // 2025.06.10 16:03
+            status = "출금 완료",
+            txHash = "0xabc123def456789",
+            recipientAddress = "0xUserWalletAddress123456789",
+            fee = 0.001
+        ))
+        
+        // 초기 필터 적용
+        filterTickerTransactionsBasedOnCurrentFilter()
+    }
+    
+    /**
+     * 티커 트랜잭션 필터링
+     */
+    private fun filterTickerTransactionsBasedOnCurrentFilter() {
+        // 티커가 아닌 경우 필터링하지 않음
+        if (ipAsset.currencyCode == "USD") return
+        
+        val filteredItems = when (currentFilter) {
+            Filter.ALL -> tickerDummyTransactions
+            Filter.DEPOSIT -> tickerDummyTransactions.filterIsInstance<TickerDepositTransaction>()
+            Filter.WITHDRAW -> tickerDummyTransactions.filterIsInstance<TickerWithdrawalTransaction>()
+            Filter.REFUND -> emptyList() // 현재 반환 더미데이터 없음
+            Filter.PROCESSING -> emptyList() // 현재 진행중 더미데이터 없음
+            else -> tickerDummyTransactions
+        }
+        
+        // 어댑터에 필터링된 아이템 설정
+        tickerAdapter.submitList(filteredItems)
+        
+        // 빈 상태 표시 설정
+        viewBinding.emptyStateContainer.visibility = if (filteredItems.isEmpty()) View.VISIBLE else View.GONE
+        viewBinding.recyclerViewTransactions.visibility = if (filteredItems.isNotEmpty()) View.VISIBLE else View.GONE
+    }
     
     /**
      * 리사이클러뷰 설정
      */
     private fun setupRecyclerView() {
-        viewBinding.recyclerViewTransactions.apply {
-            layoutManager = LinearLayoutManager(context)
-            // 적절한 어댑터 설정 (USD만 USD 어댑터 사용)
-            setupAppropriateAdapter()
+        viewBinding.recyclerViewTransactions.layoutManager = LinearLayoutManager(requireContext())
+        
+        // 티커 종류에 따라 다른 어댑터 설정
+        if (ipAsset.currencyCode == "USD") {
+            viewBinding.recyclerViewTransactions.adapter = usdAdapter
+            // USD 트랜잭션 필터링 및 어댑터에 전달
+            filterUSDTransactionsBasedOnCurrentFilter()
+        } else {
+            // 티커 트랜잭션을 위한 어댑터 설정
+            viewBinding.recyclerViewTransactions.adapter = tickerAdapter
+            // 티커 트랜잭션 필터링 및 어댑터에 전달
+            filterTickerTransactionsBasedOnCurrentFilter()
         }
     }
     

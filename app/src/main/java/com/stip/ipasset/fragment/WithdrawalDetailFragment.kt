@@ -12,7 +12,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.stip.stip.R // R 리소스 사용 위해 필요
-import com.stip.stip.databinding.DepositWithdrawCheckTickerBinding
+import com.stip.stip.databinding.ActivityTickerWithdrawDetailBinding
 import com.stip.stip.ipasset.model.TransactionHistory // 실제 모델 경로 확인
 import com.stip.stip.ipasset.TransactionDetailViewModel // !!! 실제 사용하는 ViewModel 클래스로 변경 !!!
 import kotlinx.coroutines.launch
@@ -24,10 +24,10 @@ import java.util.Locale
  * 입출금 완료 내역 상세 화면 Fragment
  * R.layout.deposit_withdraw_check 레이아웃 사용
  */
-class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check_ticker) {
+class WithdrawalDetailFragment : Fragment(R.layout.activity_ticker_withdraw_detail) {
 
     // ViewBinding
-    private var _binding: DepositWithdrawCheckTickerBinding? = null
+    private var _binding: ActivityTickerWithdrawDetailBinding? = null
     private val binding get() = _binding!!
 
     // Navigation Argument (transactionId 수신)
@@ -38,7 +38,7 @@ class WithdrawalDetailFragment : Fragment(R.layout.deposit_withdraw_check_ticker
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        _binding = DepositWithdrawCheckTickerBinding.bind(view)
+        _binding = ActivityTickerWithdrawDetailBinding.bind(view)
 
         setupToolbar()
         setupConfirmButton()
