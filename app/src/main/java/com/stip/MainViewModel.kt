@@ -8,6 +8,8 @@ import android.util.Log
 import com.stip.stip.signup.Constants
 import com.stip.stip.signup.utils.PreferenceUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -15,6 +17,22 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     // 주입받을 의존성 있으면 여기에 추가
 ) : ViewModel() {
+
+    // 데이터 새로고침 이벤트 (거래 후 자산 및 거래 내역 정보 업데이트용)
+    private val _refreshAppDataEvent = MutableSharedFlow<Boolean>()
+    val refreshAppDataEvent: SharedFlow<Boolean> = _refreshAppDataEvent
+    
+    // 입출금 등 거래 완료 후 자산 및 거래 내역 정보 새로고침
+    fun refreshAppData() {
+        viewModelScope.launch {
+            _refreshAppDataEvent.emit(true)
+        }
+    }
+    
+    // 기존 메소드 호환성 유지 (deprecated)
+    fun refreshTickerHoldings() {
+        refreshAppData()
+    }
 
     // --- 인증 여부 확인 ---
     val isAuthenticated: Boolean

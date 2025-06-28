@@ -6,15 +6,16 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.stip.ipasset.usd.model.USDDepositTransaction
-import com.stip.ipasset.usd.model.USDWithdrawalTransaction
+import com.stip.ipasset.usd.model.*
 import com.stip.stip.R
 import com.stip.stip.databinding.ItemUsdDepositTransactionBinding
+import com.stip.stip.databinding.ItemUsdProcessTransactionBinding
+import com.stip.stip.databinding.ItemUsdReturnTransactionBinding
 import com.stip.stip.databinding.ItemUsdWithdrawalTransactionBinding
 
 /**
  * USD 입출금 트랜잭션 어댑터
- * 입금 완료와 출금 완료 두 가지 타입의 트랜잭션을 처리합니다.
+ * 입금 완료, 출금 완료, 입금 진행중, 출금 진행중, 입금 반려, 출금 반려 여섯 가지 타입의 트랜잭션을 처리합니다.
  */
 class USDTransactionAdapter(
     private val onItemClick: (Any) -> Unit
@@ -36,6 +37,18 @@ class USDTransactionAdapter(
                 )
                 WithdrawalViewHolder(binding, onItemClick)
             }
+            VIEW_TYPE_RETURN -> {
+                val binding = ItemUsdReturnTransactionBinding.inflate(
+                    inflater, parent, false
+                )
+                ReturnViewHolder(binding, onItemClick)
+            }
+            VIEW_TYPE_PROCESS -> {
+                val binding = ItemUsdProcessTransactionBinding.inflate(
+                    inflater, parent, false
+                )
+                ProcessViewHolder(binding, onItemClick)
+            }
             else -> throw IllegalArgumentException("Unknown view type: $viewType")
         }
     }
@@ -45,6 +58,8 @@ class USDTransactionAdapter(
         when (holder) {
             is DepositViewHolder -> holder.bind(item as USDDepositTransaction)
             is WithdrawalViewHolder -> holder.bind(item as USDWithdrawalTransaction)
+            is ReturnViewHolder -> holder.bind(item as USDReturnTransaction)
+            is ProcessViewHolder -> holder.bind(item as USDProcessTransaction)
         }
     }
 
@@ -52,6 +67,8 @@ class USDTransactionAdapter(
         return when (getItem(position)) {
             is USDDepositTransaction -> VIEW_TYPE_DEPOSIT
             is USDWithdrawalTransaction -> VIEW_TYPE_WITHDRAWAL
+            is USDReturnTransaction -> VIEW_TYPE_RETURN
+            is USDProcessTransaction -> VIEW_TYPE_PROCESS
             else -> throw IllegalArgumentException("Unknown item type at position $position")
         }
     }
@@ -119,6 +136,68 @@ class USDTransactionAdapter(
     }
 
     /**
+     * 반환됨 ViewHolder
+     */
+    class ReturnViewHolder(
+        private val binding: ItemUsdReturnTransactionBinding,
+        private val onItemClick: (USDReturnTransaction) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: USDReturnTransaction) {
+            binding.apply {
+                // 날짜 및 시간 설정
+                tvDate.text = item.date
+                tvTime.text = item.time
+
+                // 금액 설정
+                tvAmountUsd.text = String.format("%.2f USD", item.usdAmount)
+                tvAmountKrw.text = String.format("%,d KRW", item.krwAmount)
+
+                // 상태 설정 (반환됨)
+                tvStatus.text = item.status
+                tvStatus.background = ContextCompat.getDrawable(
+                    itemView.context,
+                    R.drawable.bg_status_return
+                )
+
+                // 클릭 이벤트
+                root.setOnClickListener { onItemClick(item) }
+            }
+        }
+    }
+
+    /**
+     * 진행중 ViewHolder
+     */
+    class ProcessViewHolder(
+        private val binding: ItemUsdProcessTransactionBinding,
+        private val onItemClick: (USDProcessTransaction) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+
+        fun bind(item: USDProcessTransaction) {
+            binding.apply {
+                // 날짜 및 시간 설정
+                tvDate.text = item.date
+                tvTime.text = item.time
+
+                // 금액 설정
+                tvAmountUsd.text = String.format("%.2f USD", item.usdAmount)
+                tvAmountKrw.text = String.format("%,d KRW", item.krwAmount)
+
+                // 상태 설정 (진행중)
+                tvStatus.text = item.status
+                tvStatus.background = ContextCompat.getDrawable(
+                    itemView.context,
+                    R.drawable.bg_status_in_progress
+                )
+
+                // 클릭 이벤트
+                root.setOnClickListener { onItemClick(item) }
+            }
+        }
+    }
+
+    /**
      * DiffUtil Callback
      */
     class TransactionDiffCallback : DiffUtil.ItemCallback<Any>() {
@@ -127,6 +206,10 @@ class USDTransactionAdapter(
                 oldItem is USDDepositTransaction && newItem is USDDepositTransaction ->
                     oldItem.id == newItem.id
                 oldItem is USDWithdrawalTransaction && newItem is USDWithdrawalTransaction ->
+                    oldItem.id == newItem.id
+                oldItem is USDReturnTransaction && newItem is USDReturnTransaction ->
+                    oldItem.id == newItem.id
+                oldItem is USDProcessTransaction && newItem is USDProcessTransaction ->
                     oldItem.id == newItem.id
                 else -> false
             }
@@ -138,6 +221,10 @@ class USDTransactionAdapter(
                     oldItem == newItem
                 oldItem is USDWithdrawalTransaction && newItem is USDWithdrawalTransaction ->
                     oldItem == newItem
+                oldItem is USDReturnTransaction && newItem is USDReturnTransaction ->
+                    oldItem == newItem
+                oldItem is USDProcessTransaction && newItem is USDProcessTransaction ->
+                    oldItem == newItem
                 else -> false
             }
         }
@@ -146,5 +233,7 @@ class USDTransactionAdapter(
     companion object {
         private const val VIEW_TYPE_DEPOSIT = 1
         private const val VIEW_TYPE_WITHDRAWAL = 2
+        private const val VIEW_TYPE_RETURN = 3
+        private const val VIEW_TYPE_PROCESS = 4
     }
 }

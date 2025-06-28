@@ -3,7 +3,7 @@ package com.stip.ipasset.usd.model
 import android.app.Application
 import android.graphics.Bitmap
 import androidx.lifecycle.AndroidViewModel
-import com.stip.stip.ipasset.model.AccountInfoItem
+import com.stip.ipasset.model.AccountInfoItem
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,19 +49,25 @@ class DepositViewModel @Inject constructor(
         // 입금 계좌 정보
         _depositAccountInfoList.value = listOf(
             AccountInfoItem(
-                accountHolder = "주식회사 아이피미디어그룹",
+                id = "1",
+                name = "주식회사 아이피미디어그룹",
                 accountNumber = "102701-04-435574",
-                bank = "국민은행"
+                bankName = "국민은행",
+                isSelected = false
             ),
             AccountInfoItem(
-                accountHolder = "주식회사 아이피미디어그룹",
+                id = "2",
+                name = "주식회사 아이피미디어그룹",
                 accountNumber = "140-015-070902",
-                bank = "신한은행"
+                bankName = "신한은행",
+                isSelected = false
             ),
             AccountInfoItem(
-                accountHolder = "주식회사 아이피미디어그룹",
+                id = "3",
+                name = "주식회사 아이피미디어그룹",
                 accountNumber = "1005-804-753434",
-                bank = "우리은행"
+                bankName = "우리은행",
+                isSelected = false
             )
         )
         // 추후 API 연동 시 아래 코드 활용

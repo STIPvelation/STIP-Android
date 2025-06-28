@@ -33,21 +33,21 @@
     <!-- Ticker Deposit Fragment -->
     <fragment
         android:id="@+id/tickerDepositFragment"
-        android:name="com.stip.stip.ipasset.Ticker.TickerDepositFragment"
+        android:name="com.stip.ipasset.ticker.fragment.TickerDepositFragment"
         tools:layout="@layout/fragment_ip_asset_ticker_deposit">
         <argument
             android:name="ipAsset"
-            app:argType="com.stip.stip.ipasset.model.IpAsset" />
+            app:argType="com.stip.ipasset.model.IpAsset" />
     </fragment>
     
     <!-- Ticker Withdrawal Input Fragment -->
     <fragment
         android:id="@+id/tickerWithdrawalInputFragment"
-        android:name="com.stip.stip.ipasset.Ticker.TickerWithdrawalInputFragment"
+        android:name="com.stip.ipasset.ticker.fragment.TickerWithdrawalInputFragment"
         tools:layout="@layout/fragment_ip_asset_ticker_withdrawal_input">
         <argument
             android:name="ipAsset"
-            app:argType="com.stip.stip.ipasset.model.IpAsset" />
+            app:argType="com.stip.ipasset.model.IpAsset" />
         <action
             android:id="@+id/actionTickerWithdrawalInputFragmentToTickerWithdrawalConfirmFragment"
             app:destination="@id/tickerWithdrawalConfirmFragment"
@@ -60,10 +60,10 @@
     <!-- Ticker Withdrawal Confirmation Fragment -->
     <fragment
         android:id="@+id/tickerWithdrawalConfirmFragment"
-        android:name="com.stip.stip.ipasset.Ticker.TickerWithdrawalConfirmFragment"
+        android:name="com.stip.ipasset.ticker.fragment.TickerWithdrawalConfirmFragment"
         tools:layout="@layout/fragment_ip_asset_ticker_withdrawal_confirm">
         <argument
             android:name="ipAsset"
-            app:argType="com.stip.stip.ipasset.model.IpAsset" />
+            app:argType="com.stip.ipasset.model.IpAsset" />
     </fragment>
 </navigation>

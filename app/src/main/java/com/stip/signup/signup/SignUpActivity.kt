@@ -71,7 +71,7 @@ class SignUpActivity: BaseActivity<ActivitySignUpBinding, SignUpViewModel>() {
             } else {
                 // 일반 PIN 변경 모드 - PIN 변경 화면으로 바로 이동
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container_view, com.stip.stip.signup.signup.pin.setting.SignUpPinNumberSettingFragment())
+                    .replace(R.id.fcv_section, com.stip.stip.signup.signup.pin.setting.SignUpPinNumberSettingFragment())
                     .commit()
             }
             viewModel.isLoginActivityCheck(isLoginActivity)

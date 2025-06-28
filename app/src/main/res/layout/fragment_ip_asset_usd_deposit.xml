@@ -16,7 +16,7 @@
         android:contentDescription="@string/back_button_desc"
         android:focusable="true"
         android:padding="@dimen/padding_small"
-        android:src="@drawable/ic_arrow_return"
+        android:src="@drawable/ic_navigate_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -484,7 +484,7 @@
                     android:lineSpacingExtra="@dimen/margin_xsmall"
                     android:padding="@dimen/padding_large"
                     android:text="위에 보이는 지정된 계좌로 입금해 주세요.\n입금이 확인된 후, 본인 계좌에 반영됩니다."
-                    android:textColor="@android:color/darker_gray"
+                    android:textColor="@android:color/black"
                     android:textSize="@dimen/text_normal" />
             </LinearLayout>
 

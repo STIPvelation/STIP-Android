@@ -1,7 +1,9 @@
-package com.stip.stip.ipasset.model
+package com.stip.ipasset.model
 
 data class AccountInfoItem(
-    val accountHolder: String,
+    val id: String,
+    val name: String,
     val accountNumber: String,
-    val bank: String
+    val bankName: String,
+    val isSelected: Boolean = false
 )

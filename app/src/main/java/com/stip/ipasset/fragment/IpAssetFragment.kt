@@ -1,224 +1,432 @@
-package com.stip.stip.ipasset.fragment
+package com.stip.ipasset.fragment
 
-import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import android.widget.Filter
+import android.widget.Filterable
+import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.stip.ipasset.usd.fragment.USDDepositFragment
+import com.stip.ipasset.usd.manager.USDAssetManager
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetBinding
-import com.stip.ipasset.usd.activity.DepositKrwActivity
-import com.stip.stip.ipasset.IpAssetViewModel
-import com.stip.stip.ipasset.TransactionActivity
-import com.stip.stip.ipasset.adapter.IpAssetListAdapter
-import com.stip.stip.ipasset.model.IpAsset
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.stip.stip.databinding.ItemTickerAssetBinding
+import com.stip.stip.databinding.ItemUsdAssetBinding
+import dagger.hilt.android.AndroidEntryPoint
+import java.text.NumberFormat
 import java.util.Locale
-import java.util.concurrent.atomic.AtomicBoolean
 
-class IpAssetFragment : BaseFragment<FragmentIpAssetBinding>() {
+@AndroidEntryPoint
+class IpAssetFragment : Fragment() {
 
-    private var isDropdownMenuShowing = AtomicBoolean(false)
-    private var currentAssetList: List<IpAsset> = emptyList()
-
-    private val adapter = IpAssetListAdapter {
-        if (!isDropdownMenuShowing.get()) {
-            startActivity(
-                Intent(requireContext(), TransactionActivity::class.java).putExtra(IpAsset.NAME, it)
-            )
-        }
+    private var _binding: FragmentIpAssetBinding? = null
+    private val binding get() = _binding!!
+    
+    // USD 자산 매니저
+    private val assetManager = USDAssetManager.getInstance()
+    
+    private lateinit var adapter: IpAssetsAdapter
+    private val assetsList = mutableListOf<IpAssetItem>()
+    private val filteredList = mutableListOf<IpAssetItem>()
+    private var currentFilter = FilterType.ALL
+    
+    // 필터 타입 정의
+    enum class FilterType {
+        ALL, HOLDING
     }
-
-    private val viewModel by viewModels<IpAssetViewModel>()
-    private val filterOptions by lazy {
-        listOf(
-            getString(R.string.filter_all),
-            getString(R.string.filter_owned)
-        )
-    }
-
-
-    override fun inflate(inflater: LayoutInflater, container: ViewGroup?): FragmentIpAssetBinding {
-        return FragmentIpAssetBinding.inflate(inflater, container, false)
+    
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentIpAssetBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        setupSwipeRefresh()
+        
+        // USD 데이터 변경 관찰
+        observeUsdData()
+        
+        // KRW 입금 버튼 클릭 시 USDDepositFragment로 이동
+        binding.buttonKrwDeposit.setOnClickListener {
+            try {
+                // 프래그먼트 트랜잭션을 사용하여 USDDepositFragment로 교체
+                val fragmentManager = requireActivity().supportFragmentManager
+                val fragmentTransaction = fragmentManager.beginTransaction()
+                
+                // 애니메이션 추가
+                fragmentTransaction.setCustomAnimations(
+                    R.anim.slide_in_right,  // 들어오는 애니메이션 (없으면 생성 필요)
+                    R.anim.slide_out_left,   // 나가는 애니메이션 (없으면 생성 필요)
+                    R.anim.slide_in_left,    // 들어오는 애니메이션 (백스택에서 돌아올 때)
+                    R.anim.slide_out_right   // 나가는 애니메이션 (백스택에서 돌아올 때)
+                )
+                
+                // 새로운 USDDepositFragment 인스턴스 생성
+                val usdDepositFragment = USDDepositFragment()
+                
+                // 프래그먼트 교체 및 백스택에 추가
+                fragmentTransaction.replace(R.id.fragment_container, usdDepositFragment)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
+                
+            } catch (e: Exception) {
+                // 오류 발생 시 메시지 표시
+                Toast.makeText(requireContext(), "화면 전환 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+        
         setupRecyclerView()
-        setupDropdownMenu()
-        setupSearchBar()
-        collectData()
-
-        viewBinding.buttonKrwDeposit.setOnClickListener {
-            val intent = Intent(requireContext(), DepositKrwActivity::class.java)
-            startActivity(intent)
-        }
-
-        PhoneFraudAlertDialogFragment.newInstance().show(childFragmentManager, null)
+        setupDummyData()
+        setupSearchAndFilter()
+        setupSwipeRefresh()
     }
-
-    private fun setupRecyclerView() = with(viewBinding.ipAssets) {
-        adapter = this@IpAssetFragment.adapter
-        layoutManager = LinearLayoutManager(requireContext())
+    
+    private fun setupRecyclerView() {
+        adapter = IpAssetsAdapter(this)
+        binding.ipAssets.layoutManager = LinearLayoutManager(requireContext())
+        binding.ipAssets.adapter = adapter
     }
-
-    private fun setupSwipeRefresh() {
-        viewBinding.swipeRefreshLayout.setOnRefreshListener {
-            // 실제 API 호출 대신 하드코딩된 데이터를 표시
-            lifecycleScope.launch {
-                // 0.5초 지연 효과 추가 (사용자 경험 개선)
-                delay(500)
-                
-                // 하드코딩된 데이터를 다시 설정
-                val hardcodedAssets = createHardcodedAssets()
-                currentAssetList = hardcodedAssets
-                adapter.submitList(buildListWithUsdFirst(hardcodedAssets))
-                
-                // 리프레시 애니메이션 종료
-                viewBinding.swipeRefreshLayout.isRefreshing = false
-            }
-        }
-    }
-
-
-    private fun collectData() {
-        // 하드코딩된 총 보유자산 금액 설정
-        val totalAmount = 12850.75
-        viewBinding.totalIpAssets.text = String.format(Locale.US, "%,.2f USD", totalAmount)
-        
-        // 하드코딩된 1개의 USD와 11개의 티커 데이터 생성
-        val hardcodedAssets = createHardcodedAssets()
-        currentAssetList = hardcodedAssets
-        adapter.submitList(buildListWithUsdFirst(hardcodedAssets))
-        viewBinding.swipeRefreshLayout.isRefreshing = false
-        
-        // ViewModel 관련 변수 감지
-        lifecycleScope.launch {
-            viewModel.isLoading.collect { isLoading ->
-                if (!isLoading) {
-                    // ViewModel에서 데이터를 가져오는 대신 하드코딩된 데이터를 사용
-                    adapter.submitList(buildListWithUsdFirst(hardcodedAssets))
-                    viewBinding.swipeRefreshLayout.isRefreshing = false
-                }
-            }
+    
+    /**
+     * USDAssetManager로부터 USD 데이터 변화 관찰
+     */
+    private fun observeUsdData() {
+        assetManager.balance.observe(viewLifecycleOwner) { balance ->
+            // USD 자산 아이템 업데이트
+            updateUsdAssetItem(balance)
+            
+            // 직접 총 보유자산 표시 업데이트 (소수점 2자리 고정)
+            val totalAssets = assetsList.sumOf { it.usdEquivalent }
+            val formatter = java.text.DecimalFormat("#,##0.00")
+            binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
+            
+            android.util.Log.d("IpAssetFragment", "Updated total assets display: ${formatter.format(totalAssets)} USD")
         }
     }
     
     /**
-     * 하드코딩된 1개의 USD와 11개의 티커 데이터를 생성하는 함수
+     * USD 자산 업데이트
      */
-    private fun createHardcodedAssets(): List<IpAsset> {
-        return listOf(
-            // USD 데이터
-            IpAsset(1, "USD", 10000, 10000),
-            
-            // 11개 티커 데이터 (iOS TransactionView.swift 기반)
-            IpAsset(2, "JWV", 350, 420),
-            IpAsset(3, "MDM", 200, 280),
-            IpAsset(4, "CDM", 0, 0),   // 0개 소유 예시
-            IpAsset(5, "IJECT", 500, 650),
-            IpAsset(6, "WETALK", 120, 130),
-            IpAsset(7, "SLEEP", 0, 0),  // 0개 소유 예시
-            IpAsset(8, "KCOT", 800, 1100),
-            IpAsset(9, "MSK", 50, 70),
-            IpAsset(10, "SMT", 0, 0),   // 0개 소유 예시
-            IpAsset(11, "AXNO", 150, 180),
-            IpAsset(12, "KATV", 20, 20)
+    private fun updateUsdAssetItem(balance: Double) {
+        // USD 데이터 업데이트
+        val existingUsdIndex = assetsList.indexOfFirst { it.isUsd }
+        
+        val usdAssetItem = IpAssetItem(
+            currencyCode = "USD",
+            amount = balance,
+            usdEquivalent = balance,
+            krwEquivalent = balance * 1300.0,
+            isUsd = true
         )
-    }
-
-    private fun setupSearchBar() {
-        viewBinding.searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(s: Editable?) {
-                val query = s.toString().trim()
-                val filteredList = if (query.isEmpty()) {
-                    buildListWithUsdFirst(currentAssetList)
-                } else {
-                    buildListWithUsdFirst(
-                        currentAssetList.filter {
-                            it.currencyCode.contains(query, ignoreCase = true)
-                        }
-                    )
-                }
-                adapter.submitList(filteredList)
-            }
-        })
-    }
-
-    private fun setupDropdownMenu() {
-        val filterAll = viewBinding.filterAll
-        val filterHeld = viewBinding.filterHeld
         
-        // 초기 상태 설정 - "전체" 선택
-        updateFilterSelection(true, false)
-        
-        // 전체 필터 클릭 리스너
-        filterAll.setOnClickListener {
-            updateFilterSelection(true, false)
-            // 전체 필터링: 모든 하드코딩 데이터 표시
-            this@IpAssetFragment.adapter.submitList(buildListWithUsdFirst(currentAssetList))
+        if (existingUsdIndex >= 0) {
+            // 기존 USD 항목 업데이트
+            assetsList[existingUsdIndex] = usdAssetItem
+        } else {
+            // 없으면 추가 (리스트 맨 앞에)
+            assetsList.add(0, usdAssetItem)
         }
         
-        // 보유중 필터 클릭 리스너 
-        filterHeld.setOnClickListener {
-            updateFilterSelection(false, true)
-            // 보유중 필터링: 금액이 0보다 큰 자산만 표시
-            val heldAssets = currentAssetList.filter { it.amount > 0 }
-            this@IpAssetFragment.adapter.submitList(buildListWithUsdFirst(heldAssets))
+        // 총 자산 계산 및 표시 - 소수점 2자리 고정 포맷
+        val totalAssets = assetsList.sumOf { it.usdEquivalent }
+        val formatter = java.text.DecimalFormat("#,##0.00")
+        binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
+        
+        // 데이터 변경 알림
+        applyFiltering()
+    }
+    
+    private fun setupDummyData() {
+        // 기존 리스트 초기화
+        assetsList.clear()
+        
+        // USDAssetManager로부터 USD 데이터 가져오기
+        val balance = assetManager.balance.value ?: 0.0
+        
+        // USD 추가 (항상 최상단에 위치)
+        val usdAssetItem = IpAssetItem(
+            currencyCode = "USD",
+            amount = balance,
+            usdEquivalent = balance,
+            krwEquivalent = balance * 1300.0,
+            isUsd = true
+        )
+        assetsList.add(usdAssetItem)
+        
+        // 총 자산 계산 및 표시 (USD만 있으므로 USD 값과 동일)
+        val totalAssets = assetsList.sumOf { it.usdEquivalent }
+        binding.totalIpAssets.text = "$${NumberFormat.getNumberInstance(Locale.US).format(totalAssets)} USD"
+        
+        // 필터링 적용
+        applyFiltering()
+    }
+    
+    private fun setupSearchAndFilter() {
+        // 검색 기능 - TextWatcher 추가
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            
+            override fun afterTextChanged(s: Editable?) {
+                applySearchFilter(s?.toString() ?: "")
+            }
+        })
+        
+        // 검색 - 키보드 엔터 이벤트
+        binding.searchEditText.setOnEditorActionListener { textView, _, _ ->
+            applySearchFilter(textView.text.toString())
+            false
+        }
+        
+        // 전체 필터
+        binding.filterAll.setOnClickListener {
+            currentFilter = FilterType.ALL
+            updateFilterButtonUI()
+            applyFiltering(binding.searchEditText.text.toString())
+        }
+        
+        // 보유중 필터
+        binding.filterHeld.setOnClickListener {
+            currentFilter = FilterType.HOLDING
+            updateFilterButtonUI()
+            applyFiltering(binding.searchEditText.text.toString())
         }
     }
     
-    private fun updateFilterSelection(allSelected: Boolean, heldSelected: Boolean) {
-        val filterAll = viewBinding.filterAll
-        val filterHeld = viewBinding.filterHeld
+    private fun updateFilterButtonUI() {
+        if (currentFilter == FilterType.ALL) {
+            binding.filterAll.setBackgroundResource(R.drawable.bg_filter_active)
+            binding.filterAll.setTextColor(requireContext().getColor(R.color.sky_30C6E8_100))
+            binding.filterHeld.setBackgroundResource(R.drawable.bg_filter_inactive)
+            binding.filterHeld.setTextColor(requireContext().getColor(android.R.color.darker_gray))
+        } else {
+            binding.filterHeld.setBackgroundResource(R.drawable.bg_filter_active)
+            binding.filterHeld.setTextColor(requireContext().getColor(R.color.sky_30C6E8_100))
+            binding.filterAll.setBackgroundResource(R.drawable.bg_filter_inactive)
+            binding.filterAll.setTextColor(requireContext().getColor(android.R.color.darker_gray))
+        }
+    }
+    
+    private fun applySearchFilter(query: String) {
+        applyFiltering(query)
+    }
+    
+    private fun applyFiltering(searchQuery: String = "") {
+        // 1. 먼저 USD 항상 포함
+        filteredList.clear()
+        val usd = assetsList.firstOrNull { it.isUsd }
         
-        // 선택된 필터 스타일 적용
-        if (allSelected) {
-            filterAll.setBackgroundResource(R.color.sky_30C6E8_10)
-            filterAll.setTextColor(ContextCompat.getColor(requireContext(), R.color.sky_30C6E8_100))
-            filterAll.typeface = ResourcesCompat.getFont(requireContext(), R.font.pretendard_bold_font_family)
-            
-            filterHeld.background = null
-            filterHeld.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
-            filterHeld.typeface = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular_font_family)
-        } else if (heldSelected) {
-            filterHeld.setBackgroundResource(R.color.sky_30C6E8_10)
-            filterHeld.setTextColor(ContextCompat.getColor(requireContext(), R.color.sky_30C6E8_100))
-            filterHeld.typeface = ResourcesCompat.getFont(requireContext(), R.font.pretendard_bold_font_family)
-            
-            filterAll.background = null
-            filterAll.setTextColor(ContextCompat.getColor(requireContext(), android.R.color.darker_gray))
-            filterAll.typeface = ResourcesCompat.getFont(requireContext(), R.font.pretendard_regular_font_family)
+        if (usd != null && (currentFilter == FilterType.ALL || usd.amount > 0)) {
+            filteredList.add(usd)
         }
+        
+        // 2. 검색어와 필터에 맞는 티커들 추가
+        val filteredTickers = assetsList
+            .filter { !it.isUsd } // USD 아닌 것들만
+            .filter { 
+                // 검색어 필터링
+                if (searchQuery.isNotEmpty()) {
+                    it.currencyCode.contains(searchQuery, ignoreCase = true)
+                } else true
+            }
+            .filter {
+                // 보유중 필터링
+                if (currentFilter == FilterType.HOLDING) it.amount > 0 else true 
+            }
+            .sortedBy { it.currencyCode } // 알파벳 순 정렬
+        
+        filteredList.addAll(filteredTickers)
+        
+        // 3. 결과 적용
+        adapter.submitList(filteredList.toList())
     }
-
-    private fun buildListWithUsdFirst(ipAssets: List<IpAsset>): List<IpAsset> {
-        val usdItem = ipAssets.find { it.currencyCode == "USD" }
-        val otherItems = ipAssets.filter { it.currencyCode != "USD" }
-            .sortedBy { it.currencyCode } // Sort non-USD tickers alphabetically by currencyCode
-
-        return buildList {
-            usdItem?.let { add(it) }
-            addAll(otherItems)
+    
+    private fun setupSwipeRefresh() {
+        // 스와이프 리프레시 설정
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            // 데이터 새로고침 시뮬레이션
+            // 실제로는 API 호출을 통해 데이터를 불러오면 됩니다
+            setupDummyData()
+            
+            // 2초 후 리프레시 종료
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (binding.swipeRefreshLayout.isRefreshing) {
+                    binding.swipeRefreshLayout.isRefreshing = false
+                }
+            }, 2000) // 2초 후 리프레시 인디케이터 중지
         }
+        
+        // 리프레시 색상 설정
+        binding.swipeRefreshLayout.setColorSchemeResources(
+            R.color.sky_30C6E8_100
+        )
     }
+    
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+    
+        companion object {
+        fun newInstance() = IpAssetFragment()
+    }
+}
+
+// 자산 데이터 클래스
+data class IpAssetItem(
+    val currencyCode: String,
+    val amount: Double,
+    val usdEquivalent: Double,
+    val krwEquivalent: Double,
+    val isUsd: Boolean
+)
+
+// 리사이클러뷰 어댑터
+class IpAssetsAdapter(private val fragment: Fragment) : ListAdapter<IpAssetItem, RecyclerView.ViewHolder>(AssetDiffCallback()) {
 
     companion object {
-        @JvmStatic
-        fun newInstance() = IpAssetFragment()
+        private const val VIEW_TYPE_USD = 0
+        private const val VIEW_TYPE_TICKER = 1
+    }
+    
+    override fun getItemViewType(position: Int): Int {
+        return if (getItem(position).isUsd) VIEW_TYPE_USD else VIEW_TYPE_TICKER
+    }
+    
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_USD -> {
+                val binding = ItemUsdAssetBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                UsdAssetViewHolder(binding)
+            }
+            else -> {
+                val binding = ItemTickerAssetBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
+                TickerViewHolder(binding)
+            }
+        }
+    }
+    
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        val item = getItem(position)
+        when (holder) {
+            is UsdAssetViewHolder -> holder.bind(item)
+            is TickerViewHolder -> holder.bind(item)
+        }
+    }
+    
+    // USD 뷰홀더
+    inner class UsdAssetViewHolder(private val binding: ItemUsdAssetBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: IpAssetItem) {
+            binding.name.text = item.currencyCode
+            val formatter = NumberFormat.getNumberInstance(Locale.US)
+            formatter.minimumFractionDigits = 2
+            formatter.maximumFractionDigits = 2
+            binding.amount.text = formatter.format(item.amount)
+            
+            // USD 클릭 시 USDTransactionFragment로 이동
+            binding.root.setOnClickListener {
+                try {
+                    // fragment 인스턴스를 사용
+                    val fragmentManager = fragment.requireActivity().supportFragmentManager
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+                    
+                    // 애니메이션 추가
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left,
+                        R.anim.slide_in_left,
+                        R.anim.slide_out_right
+                    )
+                    
+                    // 상위 액티비티의 헤더 숨기기
+                    val headerLayout = fragment.requireActivity().findViewById<View>(R.id.headerLayout)
+                    headerLayout?.visibility = View.GONE
+                    
+                    // 새 USDTransactionFragment 인스턴스 생성
+                    val transactionFragment = com.stip.ipasset.usd.fragment.USDTransactionFragment()
+                    
+                    // Bundle에 USD 데이터 전달
+                    val bundle = Bundle().apply {
+                        putString("currencyCode", item.currencyCode)
+                        putDouble("amount", item.amount)
+                    }
+                    transactionFragment.arguments = bundle
+                    
+                    // 프래그먼트 교체 및 백스택에 추가
+                    fragmentTransaction.replace(R.id.fragment_container, transactionFragment)
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+                } catch (e: Exception) {
+                    Toast.makeText(fragment.requireContext(), "화면 전환 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+    
+    // 티커 뷰홀더
+    inner class TickerViewHolder(private val binding: ItemTickerAssetBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: IpAssetItem) {
+            // 티커 로고 설정
+            val tickerInitials = item.currencyCode.take(2)
+            binding.tokenLogoText.text = tickerInitials
+            
+            // 티커 색상 설정
+            val context = binding.root.context
+            val colorResId = when(item.currencyCode) {
+                "JWV" -> R.color.token_jwv
+                "MDM" -> R.color.token_mdm
+                "CDM" -> R.color.token_cdm
+                "IJECT" -> R.color.token_iject
+                "WETALK" -> R.color.token_wetalk
+                "SLEEP" -> R.color.token_sleep
+                "KCOT" -> R.color.token_kcot
+                "MSK" -> R.color.token_msk
+                "SMT" -> R.color.token_smt
+                "AXNO" -> R.color.token_axno
+                "KATV" -> R.color.token_katv
+                else -> R.color.token_usd
+            }
+            binding.tokenLogoBackground.backgroundTintList = context.getColorStateList(colorResId)
+            
+            // 티커 이름과 가격 설정
+            binding.name.text = item.currencyCode
+            binding.amount.text = NumberFormat.getNumberInstance(Locale.US).format(item.amount)
+            binding.usdAmount.text = "$${NumberFormat.getNumberInstance(Locale.US).format(item.usdEquivalent)}"
+        }
+    }
+}
+
+// DiffUtil
+class AssetDiffCallback : DiffUtil.ItemCallback<IpAssetItem>() {
+    override fun areItemsTheSame(oldItem: IpAssetItem, newItem: IpAssetItem): Boolean {
+        return oldItem.currencyCode == newItem.currencyCode
+    }
+    
+    override fun areContentsTheSame(oldItem: IpAssetItem, newItem: IpAssetItem): Boolean {
+        return oldItem == newItem
     }
 }

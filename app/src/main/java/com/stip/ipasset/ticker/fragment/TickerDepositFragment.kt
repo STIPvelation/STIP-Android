@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -16,10 +18,9 @@ import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetTickerDepositBinding
 import com.stip.stip.databinding.LayoutDepositTickerBinding
 import com.stip.ipasset.usd.model.DepositViewModel
-import com.stip.stip.ipasset.extension.copyToClipboard
-import com.stip.stip.ipasset.fragment.BaseFragment
-import androidx.navigation.fragment.navArgs
-import com.stip.stip.ipasset.model.IpAsset
+import com.stip.ipasset.extension.copyToClipboard
+import com.stip.ipasset.fragment.BaseFragment
+import com.stip.ipasset.model.IpAsset
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -31,7 +32,7 @@ import kotlinx.coroutines.withContext
  */
 @AndroidEntryPoint
 class TickerDepositFragment : BaseFragment<FragmentIpAssetTickerDepositBinding>() {
-    private val args by navArgs<com.stip.ipasset.ticker.fragment.TickerDepositFragmentArgs>()
+    private val args by navArgs<TickerDepositFragmentArgs>()
     private val ipAsset: IpAsset get() = args.ipAsset
     private val currencyCode: String get() = ipAsset.currencyCode
 
@@ -58,31 +59,43 @@ class TickerDepositFragment : BaseFragment<FragmentIpAssetTickerDepositBinding>(
         "ETIP 반도체" to "et54dkf93kfd93kfd93kdf",
         "ETIP 바이오" to "et23dkf93kfd93kfd93kfd"
     )
-
-    private fun bind() = with(viewBinding) {
-        materialToolbar.title = "$currencyCode ${getString(R.string.common_deposit_action)}"
-        materialToolbar.setNavigationOnClickListener {
-            findNavController().popBackStack()
-        }
-
-        // 티커 레이아웃 바인딩
-        layoutTicker?.let { bindTickerLayout(it) }
+    
+    override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentIpAssetTickerDepositBinding {
+        return FragmentIpAssetTickerDepositBinding.inflate(inflater, container, false)
     }
 
-    private fun bindTickerLayout(binding: LayoutDepositTickerBinding) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind()
+    }
+
+    private fun bind() {
+        val binding = binding ?: return
+        with(binding) {
+            materialToolbar.title = "$currencyCode ${getString(R.string.common_deposit_action)}"
+            materialToolbar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+
+            // 티커 레이아웃 바인딩
+            layoutTicker?.let { bindTickerLayout(it) }
+        }
+    }
+
+    private fun bindTickerLayout(tickerBinding: LayoutDepositTickerBinding) {
         val address = tickerAddressMap[currencyCode] ?: ""
         
         // 티커 심볼 표시
-        binding.root.findViewById<android.widget.TextView>(R.id.tv_ticker_code).text = currencyCode
+        tickerBinding.tvTickerCode.text = currencyCode
         
         // 입금 주소 표시
-        binding.root.findViewById<android.widget.TextView>(R.id.tv_deposit_address).text = address
+        tickerBinding.tvDepositAddress.text = address
         
         // QR 코드 생성 (비동기로 처리)
         generateQRCode(address)
         
         // 주소 복사 버튼 설정
-        binding.root.findViewById<android.widget.ImageView>(R.id.iv_copy).setOnClickListener {
+        tickerBinding.ivCopy.setOnClickListener {
             copyAddressToClipboard(address)
         }
     }
@@ -122,20 +135,11 @@ class TickerDepositFragment : BaseFragment<FragmentIpAssetTickerDepositBinding>(
             
             bitmap?.let { bmp ->
                 withContext(Dispatchers.Main) {
-                    // Find the QR code ImageView the same way we access other views
-                    viewBinding.layoutTicker?.root?.findViewById<android.widget.ImageView>(R.id.iv_qr_code)?.setImageBitmap(bmp)
+                    val binding = binding ?: return@withContext
+                    binding.layoutTicker?.ivQrCode?.setImageBitmap(bmp)
                 }
             }
         }
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        bind()
-    }
-
-    override fun inflate(inflater: LayoutInflater, container: ViewGroup?): FragmentIpAssetTickerDepositBinding {
-        return FragmentIpAssetTickerDepositBinding.inflate(inflater, container, false)
     }
     
     /**

@@ -165,11 +165,6 @@
             android:exported="false"
             android:screenOrientation="portrait" />
             
-        <activity
-            android:name="com.stip.ipasset.ticker.activity.TickerWithdrawCheckActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
         <!-- FileProvider for camera functionality -->
         <provider
             android:name="androidx.core.content.FileProvider"

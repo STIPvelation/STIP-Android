@@ -13,7 +13,7 @@ import androidx.fragment.app.commit
 import androidx.appcompat.app.AlertDialog
 import com.stip.stip.iptransaction.fragment.IpProfitLossFragment
 import com.stip.stip.databinding.ActivityMainBinding
-import com.stip.stip.ipasset.fragment.IpAssetFragment
+import com.stip.ipasset.fragment.IpAssetFragment
 import com.stip.stip.iptransaction.fragment.IpHoldingFragment
 import com.stip.stip.iphome.fragment.IpHomeFragment
 import com.stip.stip.iptransaction.fragment.IpInvestmentFragment
@@ -22,10 +22,11 @@ import com.stip.stip.ipinfo.fragment.IpTrendFragment
 import com.stip.stip.iptransaction.fragment.IpUnfilledFragment
 import com.stip.stip.more.fragment.MoreFragment
 import com.google.android.material.tabs.TabLayout
-
+import dagger.hilt.android.AndroidEntryPoint
 
 // 만약 HeaderUpdater 인터페이스를 정의했다면 유지, 아니라면 이 줄은 필요 없음
 // class MainActivity : AppCompatActivity(), MoreFragment.MoreFragmentListener {
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding

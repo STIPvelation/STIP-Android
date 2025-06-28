@@ -12,6 +12,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import com.stip.ipasset.repository.IpAssetRepository
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.R
 import com.stip.stip.ScrollableToTop
@@ -50,6 +55,16 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel.memberInfo.observe(viewLifecycleOwner) { memberInfo ->
             // TODO: 회원정보를 UI에 반영하는 코드 작성
+        }
+
+        // 자산 및 거래 내역 데이터 새로고침 이벤트 수신 설정
+        lifecycleScope.launch {
+            repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.STARTED) {
+                mainViewModel.refreshAppDataEvent.collect {
+                    // 보유 잔고 데이터 새로고침
+                    loadHoldingData()
+                }
+            }
         }
 
         loadHoldingData()

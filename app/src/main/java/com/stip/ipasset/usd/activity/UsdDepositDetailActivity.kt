@@ -6,7 +6,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatButton
 import com.stip.stip.R
-import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -23,7 +22,7 @@ class UsdDepositDetailActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_usd_deposit_detail)
+        setContentView(R.layout.fragment_ip_asset_usd_deposit_transaction_detail)
         
         // Initialize views
         btnBack = findViewById(R.id.btn_back)

@@ -2,39 +2,30 @@ package com.stip.ipasset.usd.model
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
-import java.text.SimpleDateFormat
-import java.util.Date
+import java.text.NumberFormat
 import java.util.Locale
 
 /**
- * USD 출금 완료 트랜잭션 모델
+ * USD 출금 트랜잭션 데이터 클래스
  */
 @Parcelize
 data class USDWithdrawalTransaction(
-    val id: Long,
-    val amount: Double,
-    val amountKrw: Long,
-    val timestamp: Long,
+    val id: String,
+    val date: String, // 날짜 형식: "2025.06.29"
+    val time: String, // 시간 형식: "10:24"
     val status: String = "출금 완료",
+    val usdAmount: Double,
+    val krwAmount: Int,
     val txHash: String? = null,
-    val exchangeRate: Double? = null,
     val recipientAddress: String? = null,
-    val fee: Double = 0.0
+    val fee: Double = 0.0,
+    val statusColorRes: Int = android.R.color.holo_blue_dark // 기본 상태 색상
 ) : Parcelable {
-    fun getFormattedUsdAmount(): String = String.format("%.2f USD", amount)
-    fun getFormattedKrwAmount(): String = String.format("%,d KRW", amountKrw)
-
-    fun getFormattedDate(): String {
-        val date = Date(timestamp * 1000)
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-        return dateFormat.format(date)
-    }
-
-    fun getFormattedTime(): String {
-        val date = Date(timestamp * 1000)
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return timeFormat.format(date)
-    }
-
-    fun getFormattedFee(): String = String.format("%.2f USD", fee)
+    fun getFormattedUsdAmount(): String = "${NumberFormat.getNumberInstance(Locale.US).format(usdAmount)} USD"
+    fun getFormattedKrwAmount(): String = "${NumberFormat.getNumberInstance(Locale.US).format(krwAmount)} KRW"
+    
+    fun getFormattedDate(): String = date
+    fun getFormattedTime(): String = time
+    
+    fun getFormattedFee(): String = "${NumberFormat.getNumberInstance(Locale.US).format(fee)} USD"
 }

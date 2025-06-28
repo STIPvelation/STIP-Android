@@ -273,6 +273,8 @@
     <!-- 입출금 태그 색상 -->
     <color name="light_pink_deposit">#FFCCD5</color> <!-- 연한 분홍색 - 입금 완료 -->
     <color name="light_blue_withdrawal">#CCE5FF</color> <!-- 연한 하늘색 - 출금 완료 -->
+    <color name="light_green_return">#D4EDDA</color> <!-- 연한 초록색 - 반환됨 -->
+    <color name="light_orange_in_progress">#FFF3CD</color> <!-- 연한 주황색 - 진행중 -->
 </resources>
 
 
