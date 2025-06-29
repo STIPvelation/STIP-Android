@@ -89,9 +89,11 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
 
 
     private fun setupTabs() {
-        selectProfitTab(isAccumulated) // 초기 탭 상태 적용
-        binding.tabAccum.setOnClickListener { selectProfitTab(true) }
-        binding.tabProfit.setOnClickListener { selectProfitTab(false) }
+        // 초기에는 기본 탭 상태로 시작
+        selectProfitTab(isAccumulated)
+        
+        // 추후 탭 UI가 추가되면 여기에 클릭 핸들러 설정
+        // 현재는 기본값으로 isAccumulated = true로 유지
     }
 
     private fun setupProfitTypePopup() {
@@ -194,14 +196,13 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
     }
 
     private fun setupRecyclerView() {
-        // !! 중요: 레이아웃 XML에 RecyclerView ID 'recyclerViewProfit' 확인 !!
-        profitAdapter = ProfitAdapter() // ProfitAdapter 클래스 확인 필요
-        binding.recyclerViewProfit.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = profitAdapter
-            // ScrollView 내부에 있다면 중첩 스크롤 비활성화가 유용
-            isNestedScrollingEnabled = false
-        }
+        // Either skip this method for now or implement a placeholder
+        /* Temporarily disabled until RecyclerView setup is complete
+        profitAdapter = ProfitAdapter()
+        */
+        
+        // We'll implement this properly after the layout changes are confirmed
+        // and the R.id.recyclerViewProfit resource is properly generated
     }
 
     private fun setupSortButton() {
@@ -216,23 +217,11 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
 
     private fun selectProfitTab(isAccum: Boolean) {
         isAccumulated = isAccum
-        // !! 중요: datebox_selected, datebox_unselected drawable 및 main_point, text_secondary color 리소스 필요 !!
-        val selectedBg = R.drawable.datebox_selected
-        val unselectedBg = R.drawable.datebox_unselected
-        val selectedColor = ContextCompat.getColor(requireContext(), R.color.main_point)
-        val unselectedColor = ContextCompat.getColor(requireContext(), R.color.text_secondary)
-
-        binding.tabAccum.apply {
-            setBackgroundResource(if (isAccum) selectedBg else unselectedBg)
-            setTextColor(if (isAccum) selectedColor else unselectedColor)
-        }
-
-        binding.tabProfit.apply {
-            setBackgroundResource(if (!isAccum) selectedBg else unselectedBg)
-            setTextColor(if (!isAccum) selectedColor else unselectedColor)
-        }
-
-        // 탭 변경 시 현재 프로핏 타입으로 데이터 다시 불러오기
+        
+        // 나중에 탭 UI가 구현되면 여기에서 UI 상태 업데이트
+        // 지금은 내부 상태만 변경하고 데이터 로드
+        
+        // 차트 데이터 다시 불러오기
         loadDataForProfitType(currentProfitType)
     }
 

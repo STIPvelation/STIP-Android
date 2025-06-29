@@ -48,6 +48,7 @@
 
     <color name="error_red">#D32F2F</color>
     <color name="light_blue_bg">#E6F5FF</color>
+    <color name="nominal_profit_color">#1674EA</color>
 
     <!-- Transaction colors -->
     <color name="deposit_red">#ED2A2A</color>

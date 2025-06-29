@@ -99,6 +99,13 @@
 
     <string name="all_ip_filter">ALL IP</string>
 
+    <!-- 이익 손실 관련 문자열 -->
+    <string name="label_profit_amount">수익금액</string>
+    <string name="placeholder_item_price">0</string>
+    <string name="label_profit_rate">수익률</string>
+    <string name="placeholder_percent">0%</string>
+    <string name="label_original_price">매수가</string>
+
     <string name="keypad_error_incorrect_password">PIN 번호가 일치하지 않습니다.</string>
     <string name="unit_default">N/A</string>
 
@@ -479,23 +486,20 @@
     <string name="ip_refresh_desc">IP정보를 새롭게 갱신 합니다.</string>
     <string name="ip_refresh_button">갱신</string>
     <string name="execution_effect_title">체결 시 효과</string>
-    <string name="execution_effect_desc">매수 매도 체결시 반짝임 이펙트.</string>
 
-    <string name="order_section_title">오더 화면</string>
-    <string name="new_quote_effect_title">신규 호가 이펙트</string>
-    <string name="new_quote_effect_desc">매수 매도 체결시 반짝임 이펙트.</string>
-    <string name="quote_depth_range_title">호가창 증감 범위</string>
-    <string name="quote_depth_range_desc">호가창의 수가 증가 혹은 감소에 따라 반응 효과.</string>
+<!-- 수익/손실 화면 테이블 헤더 -->
+<string name="trade_header_assets">자산</string>
+    <string name="trade_header_invest">투자</string>
 
-    <string name="display_mode_section_title">화면 모드</string>
-    <string name="display_mode_normal_title">일반 모드</string>
-    <string name="display_mode_normal_desc">STIP에서 제공하는 일반 화면 모드 입니다.</string>
-    <string name="display_mode_dark_title">다크 모드</string>
-    <string name="display_mode_dark_desc">STIP에서 제공하는 검정색 디자인 모드입니다.</string>
-    <string name="display_mode_design_title">디자인 모드</string>
-    <string name="display_mode_design_desc">분기별로 신규 디자인 화면을 제공합니다.</string>
-    <string name="display_mode_user_title">유저 모드</string>
-    <string name="display_mode_user_desc">유저의 디자인으로 화면을 제공합니다.</string>
+<string name="display_mode_section_title">화면 모드</string>
+<string name="display_mode_normal_title">일반 모드</string>
+<string name="display_mode_normal_desc">STIP에서 제공하는 일반 화면 모드 입니다.</string>
+<string name="display_mode_dark_title">다크 모드</string>
+<string name="display_mode_dark_desc">STIP에서 제공하는 검정색 디자인 모드입니다.</string>
+<string name="display_mode_design_title">디자인 모드</string>
+<string name="display_mode_design_desc">분기별로 신규 디자인 화면을 제공합니다.</string>
+<string name="display_mode_user_title">유저 모드</string>
+<string name="display_mode_user_desc">유저의 디자인으로 화면을 제공합니다.</string>
 
     <string name="title_security_auth">보안 / 인증</string>
     <string name="no_filled_orders">체결 내역이 없습니다</string>
