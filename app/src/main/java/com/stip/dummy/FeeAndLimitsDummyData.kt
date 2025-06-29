@@ -45,20 +45,21 @@ object FeeAndLimitsDummyData {
     
     /**
      * 티커별 최대 출금 한도
+     * 모든 티커에 대해 1,000,000으로 고정
      */
     private val maxWithdrawalAmounts = mapOf(
-        "USD" to 100000.0,
-        "JWV" to 100000.0,
-        "MDM" to 100000.0,
-        "CDM" to 100000.0,
-        "IJECT" to 100000.0,
-        "WETALK" to 100000.0,
-        "SLEEP" to 100000.0,
-        "KCOT" to 100000.0,
-        "MSK" to 100000.0,
-        "SMT" to 100000.0,
-        "AXNO" to 100000.0,
-        "KATV" to 100000.0
+        "USD" to 1000000.0,
+        "JWV" to 1000000.0,
+        "MDM" to 1000000.0,
+        "CDM" to 1000000.0,
+        "IJECT" to 1000000.0,
+        "WETALK" to 1000000.0,
+        "SLEEP" to 1000000.0,
+        "KCOT" to 1000000.0,
+        "MSK" to 1000000.0,
+        "SMT" to 1000000.0,
+        "AXNO" to 1000000.0,
+        "KATV" to 1000000.0
     )
     
     /**

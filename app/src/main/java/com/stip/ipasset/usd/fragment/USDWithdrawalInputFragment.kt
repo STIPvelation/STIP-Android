@@ -32,6 +32,19 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
     // USD 자산 매니저
     private val assetManager = USDAssetManager.getInstance()
 
+    override fun onResume() {
+        super.onResume()
+        // 화면에 돌아올 때 데이터 새로고침
+        assetManager.refreshData()
+        // 출금가능 금액 다시 포맷팅
+        formatWithdrawableAmount()
+        // 초기 입력값 리셋
+        currentInput = "1"
+        decimalMode = false
+        decimalDigits = 0
+        updateDisplay()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -299,6 +312,7 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
     
     /**
      * 화면 표시 업데이트 - 입력 중인 금액을 있는 그대로 표시하면서 필요한 포맷팅만 적용
+     * 소수점 2자리까지 항상 표시하도록 수정
      */
     private fun updateDisplay() {
         try {
@@ -307,27 +321,37 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
             
             // 1. 입력값 처리
             if (currentInput.isEmpty()) {
-                displayText = "1"
+                displayText = "1.00"
                 amount = 1.0
             } else {
                 val cleanInput = currentInput.replace(",", "")
+                amount = cleanInput.toDoubleOrNull() ?: 1.0
                 
-                // 마지막에 소수점만 있는 경우 (예: "123.")
-                if (cleanInput.endsWith(".")) {
-                    displayText = formatWholeNumber(cleanInput.dropLast(1)) + "."
-                    amount = cleanInput.dropLast(1).toDoubleOrNull() ?: 1.0
-                } 
-                // 소수점 있는 완전한 수 (예: "123.45")
-                else if (cleanInput.contains(".")) {
-                    val parts = cleanInput.split(".")
-                    val wholeNumber = formatWholeNumber(parts[0])
-                    displayText = wholeNumber + "." + parts[1]
-                    amount = cleanInput.toDoubleOrNull() ?: 1.0
-                } 
-                // 그냥 정수 (예: "123")
-                else {
-                    displayText = formatWholeNumber(cleanInput)
-                    amount = cleanInput.toDoubleOrNull() ?: 1.0
+                // 소수점 입력 중인 경우 특수 처리
+                if (decimalMode && decimalDigits < 2) {
+                    // 소수점만 입력된 경우 (예: "123.")
+                    if (cleanInput.endsWith(".")) {
+                        val wholeNumber = formatWholeNumber(cleanInput.dropLast(1))
+                        displayText = wholeNumber + "."
+                    } 
+                    // 소수점 이하 1자리만 입력된 경우 (예: "123.4")
+                    else if (cleanInput.contains(".")) {
+                        val parts = cleanInput.split(".")
+                        val wholeNumber = formatWholeNumber(parts[0])
+                        displayText = wholeNumber + "." + parts[1]
+                    } else {
+                        // 정수만 있는 경우
+                        displayText = formatWholeNumber(cleanInput)
+                    }
+                } else {
+                    // 소수점 완성되었거나 정수인 경우 - 항상 소수점 2자리 표시
+                    val formatter = java.text.DecimalFormat("#,##0.00")
+                    displayText = formatter.format(amount)
+                    // 소수점 모드와 자릿수 업데이트
+                    if (amount % 1 != 0.0) {
+                        decimalMode = true
+                        decimalDigits = 2
+                    }
                 }
             }
             

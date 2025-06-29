@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stip.dummy.AssetDummyData
@@ -83,6 +84,16 @@ class TickerTransactionFragment : Fragment() {
         binding.materialToolbar.post {
             binding.materialToolbar.title = "총 보유"
         }
+        
+        // MainActivity의 헤더 타이틀 텍스트뷰 숨기기
+        activity?.findViewById<TextView>(R.id.headerTitle)?.apply {
+            visibility = View.GONE // 텍스트와 공간까지 완전히 제거
+        }
+    }
+    
+    override fun onStop() {
+        super.onStop()
+        // 필요하다면 프래그먼트를 떠날 때 헤더 타이틀 복원
     }
     
     private fun setupTickerInfo() {

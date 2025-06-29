@@ -38,8 +38,8 @@ class USDAssetManager private constructor() {
         // 데이터 초기화
         refreshData()
 
-        // 출금 한도 설정 (500,000 USD로 고정)
-        _withdrawalLimit.value = 500000.0
+        // 출금 한도 설정 (1,000,000으로 고정 - 모든 티커 공통)
+        _withdrawalLimit.value = 1000000.0
 
         // 출금 수수료 설정
         val fee = FeeAndLimitsDummyData.getWithdrawalFee("USD")
@@ -115,13 +115,10 @@ class USDAssetManager private constructor() {
                 android.util.Log.d("USDAssetManager", "Preserving existing balance: ${_balance.value}")
             }
             
-            // 출금 가능 금액 업데이트
-            // 이미 값이 설정되어 있으면 그 값 유지, 아니면 전체 잔액으로 설정
-            if (_withdrawableAmount.value == null) {
-                val withdrawableAmountValue = _balance.value ?: 10000.0
-                _withdrawableAmount.value = withdrawableAmountValue
-                android.util.Log.d("USDAssetManager", "Set initial withdrawable amount: $withdrawableAmountValue")
-            }
+            // 출금 가능 금액 업데이트 - 항상 최신 잔액을 반영하도록 수정
+            val withdrawableAmountValue = _balance.value ?: 10000.0
+            _withdrawableAmount.value = withdrawableAmountValue
+            android.util.Log.d("USDAssetManager", "Updated withdrawable amount: $withdrawableAmountValue")
             
             // 출금 한도 업데이트
             // 이미 값이 설정되어 있으면 그 값 유지, 아니면 500,000 USD로 설정

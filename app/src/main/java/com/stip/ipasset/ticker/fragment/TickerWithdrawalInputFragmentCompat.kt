@@ -95,31 +95,63 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
             
             // 금액 입력 TextWatcher 설정
             etAmount.addTextChangedListener(object : TextWatcher {
+                private var isFormatting = false
+                private val decimalFormat = NumberFormat.getNumberInstance(Locale.getDefault()) as DecimalFormat
+                
+                init {
+                    // 소수점 두 자리로 제한하고 3자리마다 콤마 설정
+                    decimalFormat.apply {
+                        maximumFractionDigits = 2
+                        minimumFractionDigits = 0 // 필요한 경우만 소수점 표시
+                        isGroupingUsed = true // 3자리마다 콤마 사용
+                    }
+                }
+                
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
-                    // 금액이 변경될 때 총출금 금액 업데이트
-                    val amountText = s?.toString() ?: ""
-                    val amount = amountText.replace(",", "").toDoubleOrNull() ?: 0.0
-                    updateTotalAmount(amount)
+                    // 재귀적인 호출을 방지하기 위한 플래그 확인
+                    if (isFormatting || s == null) return
                     
-                    // 콤마(,) 포맷팅 적용
-                    if (s != null && !amountText.isEmpty()) {
-                        // 현재 텍스트 변경 중 재귀적인 호출을 방지하기 위한 플래그
-                        if (!s.toString().contains(",") || s.toString().matches(Regex("[0-9]+,[0-9]{3}.*"))) {
-                            // 콤마 제거 후 숫자만 추출
-                            val cleanString = s.toString().replace(",", "")
-                            val parsed = cleanString.toDoubleOrNull() ?: 0.0
-                            
-                            // 3자리마다 콤마 추가한 포맷 적용
-                            val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(parsed)
-                            
-                            // 이전 리스너 제거 -> 텍스트 변경 -> 리스너 다시 추가
-                            etAmount.removeTextChangedListener(this)
-                            etAmount.setText(formatted)
-                            etAmount.setSelection(formatted.length)
-                            etAmount.addTextChangedListener(this)
-                        }
+                    isFormatting = true
+                    
+                    try {
+                        // 금액 텍스트 가져오기
+                        val amountText = s.toString()
+                        
+                        // 콤마 제거 후 숫자만 추출
+                        val cleanString = amountText.replace(",", "")
+                        
+                        // 현재 커서 위치 저장
+                        val cursorPosition = etAmount.selectionStart
+                        
+                        // 숫자로 변환 (입력이 비어있거나 잘못된 경우 0으로 처리)
+                        val parsed = cleanString.toDoubleOrNull() ?: 0.0
+                        
+                        // 총 출금액 업데이트 (수수료 포함)
+                        updateTotalAmount(parsed)
+                        
+                        // 3자리마다 콤마 추가 및 소수점 제한 적용한 포맷
+                        val formatted = decimalFormat.format(parsed)
+                        
+                        // 이전/이후 텍스트 길이 차이로 커서 위치 계산
+                        val formattedLength = formatted.length
+                        val cleanLength = cleanString.length
+                        val cursorOffset = formattedLength - cleanLength
+                        var newCursorPosition = cursorPosition + cursorOffset
+                        if (newCursorPosition > formattedLength) newCursorPosition = formattedLength
+                        if (newCursorPosition < 0) newCursorPosition = 0
+                        
+                        // 텍스트 변경
+                        etAmount.removeTextChangedListener(this)
+                        etAmount.setText(formatted)
+                        etAmount.setSelection(newCursorPosition.coerceAtMost(formatted.length))
+                    } catch (e: Exception) {
+                        // 예외 발생 시 안전하게 처리
+                    } finally {
+                        // 리스너 다시 추가
+                        etAmount.addTextChangedListener(this)
+                        isFormatting = false
                     }
                 }
             })

@@ -9,8 +9,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import com.stip.stip.MainViewModel
+import kotlinx.coroutines.launch
 import com.stip.dummy.FeeAndLimitsDummyData
 import com.stip.ipasset.ticker.repository.IpAssetRepository
 import com.stip.stip.R
@@ -33,16 +39,37 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     override fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): FragmentIpAssetTickerWithdrawalInputBinding {
         return FragmentIpAssetTickerWithdrawalInputBinding.inflate(inflater, container, false)
     }
-    private val args by navArgs<com.stip.ipasset.ticker.fragment.TickerWithdrawalInputFragmentArgs>()
-    private val ipAsset: IpAsset get() = args.ipAsset
-    private val currencyCode: String get() = ipAsset.currencyCode
+    
+    // MainViewModel 인스턴스 가져오기
+    private val mainViewModel: MainViewModel by activityViewModels()
+    
+    private val args by navArgs<TickerWithdrawalInputFragmentArgs>()
+    
+    // 항상 최신 데이터를 가져오도록 수정
+    private val ipAsset: IpAsset 
+        get() {
+            // 저장소에서 먼저 최신 데이터를 조회
+            val repository = IpAssetRepository.getInstance(requireContext())
+            return repository.getAsset(args.ipAsset.id) ?: args.ipAsset
+        }
+        
+    private val currencyCode: String get() = args.ipAsset.currencyCode // currencyCode는 변경되지 않으므로 args에서 직접 가져옴
 
     private val viewModel by viewModels<WithdrawalInputViewModel>()
     
     // 출금 가능한 최대 금액 (저장소에서 가져옴)
     private val repository: IpAssetRepository by lazy { IpAssetRepository.getInstance(requireContext()) }
+    
+    // 항상 최신 데이터를 가져오도록 수정
+    private fun getLatestAvailableAmount(): Double {
+        // 저장소에서 최신 데이터를 강제로 조회
+        val asset = repository.getAsset(ipAsset.id)
+        return (asset?.amount ?: ipAsset.amount).toDouble()
+    }
+    
+    // 호환성을 위해 기존 프로퍼티 유지
     private val availableAmount: Double
-        get() = (repository.getAsset(ipAsset.id)?.amount ?: ipAsset.amount).toDouble()
+        get() = getLatestAvailableAmount()
     private val maxAmount: Double
         get() = FeeAndLimitsDummyData.getMaxWithdrawalAmount(currencyCode)
     private val fee: Double
@@ -56,7 +83,89 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
         }
     }
     
-    // 숫자 포맷터 설정
+    // 화면에 돌아올 때마다 최신 데이터로 새로고침
+    override fun onResume() {
+        super.onResume()
+        
+        try {
+            // 리포지토리에서 최신 데이터를 강제로 다시 가져옴
+            val repository = IpAssetRepository.getInstance(requireContext())
+            val assetId = args.ipAsset.id
+            val refreshedAsset = repository.getAsset(assetId)
+            
+            // 로그 추가하여 디버깅
+            android.util.Log.d("TickerWithdrawal", "onResume - Asset ID: $assetId")
+            android.util.Log.d("TickerWithdrawal", "onResume - 이전 잔액: ${args.ipAsset.amount}, 현재 잔액: ${refreshedAsset?.amount}")
+            
+            // UI 즉시 업데이트 (포커스가 다른 곳에 있더라도)
+            if (refreshedAsset != null && refreshedAsset.amount != args.ipAsset.amount) {
+                android.util.Log.d("TickerWithdrawal", "잔액이 변경되었습니다! UI 업데이트 진행")
+                
+                // 화면 애니메이션으로 변경 강조
+                val binding = binding ?: return
+                binding.tvAvailableAmount.apply {
+                    // 색상 값 직접 사용 (노란색 하이라이트)
+                    setBackgroundColor(0xFFFFEB3B.toInt())
+                    postDelayed({
+                        setBackgroundColor(0x00000000) // 투명색
+                    }, 1000)
+                }
+            }
+            
+            // 항상 최신 데이터로 UI 새로고침
+            updateUI()
+        } catch (e: Exception) {
+            android.util.Log.e("TickerWithdrawal", "onResume 오류: ${e.message}")
+            e.printStackTrace()
+            // 오류가 발생해도 UI는 업데이트
+            updateUI()
+        }
+    }
+    
+    private fun updateUI() {
+        val binding = binding ?: return
+        
+        // ✅ ipAsset getter를 통해 최신 데이터 사용 (중복 호출 방지)
+        val currentAsset = ipAsset
+        val currentAmount = currentAsset.amount
+        
+        // 로깅 추가
+        android.util.Log.d("TickerWithdrawal", "✅ updateUI - Asset ID: ${currentAsset.id}, 최신 잔액: $currentAmount, 화폐: ${currentAsset.currencyCode}")
+        android.util.Log.d("TickerWithdrawal", "🔍 리포지토리 데이터 직접 확인: ${repository.getAsset(currentAsset.id)?.amount}")
+        
+        // 이전 값과 비교하여 변경 감지
+        val previousAmount = binding.tvAvailableAmount.tag as? Double
+        
+        // 금액 표시 업데이트
+        binding.tvAvailableAmount.text = "${String.format("%,.2f", currentAmount)} ${currencyCode}"
+        binding.tvMaxAmount.text = "최대 ${String.format("%,.2f", maxAmount)} ${currencyCode}"
+        binding.tvFeeAmount.text = "${String.format("%,.2f", fee)} ${currencyCode}"
+        
+        // 태그에 현재 금액 저장 (다음 업데이트에서 변경 감지용)
+        binding.tvAvailableAmount.tag = currentAmount
+        
+        // 첫 로드가 아니고, 이전과 금액이 다를 경우에만 애니메이션 효과 추가
+        if (previousAmount != null && currentAmount != previousAmount) {
+            android.util.Log.d("TickerWithdrawal", "💰 금액 변경 감지! 이전: $previousAmount, 현재: $currentAmount")
+            
+            // 색상 애니메이션 (노란색 -> 원래 색상)
+            val colorAnimator = android.animation.ValueAnimator.ofObject(
+                android.animation.ArgbEvaluator(),
+                android.graphics.Color.YELLOW,  // 직접 노란색 사용
+                binding.tvAvailableAmount.currentTextColor
+            )
+            colorAnimator.duration = 1500
+            colorAnimator.addUpdateListener { animator ->
+                val color = animator.animatedValue as Int
+                binding.tvAvailableAmount.setTextColor(color)
+            }
+            colorAnimator.start()
+        } else {
+            android.util.Log.d("TickerWithdrawal", "ℹ️ 금액 변경 없음 또는 첫 로드 - 이전: $previousAmount, 현재: $currentAmount")
+        }
+    }
+    
+    // 숫자 포맷터 설정 - 항상 소수점 2자리 표시
     private val decimalFormat = DecimalFormat("#,##0.00")
     private val amountFormat = NumberFormat.getNumberInstance(Locale.getDefault()).apply {
         minimumFractionDigits = 2
@@ -72,45 +181,76 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
                 findNavController().popBackStack()
             }
             
-            // 가용 잔액 및 한도 설정 (소수점 2자리)
-            tvAvailableAmount.text = decimalFormat.format(availableAmount) + " $currencyCode"
-            tvMaxAmount.text = NumberFormat.getNumberInstance(Locale.getDefault()).format(maxAmount) + " $currencyCode"
-            
-            // 수수료 정보 표시 (소수점 2자리)
-            tvFeeAmount.text = decimalFormat.format(fee) + " $currencyCode"
+            // UI 업데이트 (가용 잔액, 한도, 수수료 등)
+            updateUI()
             updateTotalAmount(0.0)
             
             // 퍼센트 버튼 리스너 설정
             setupPercentageButtons()
             
-            // 금액 입력 TextWatcher 설정
+            // 금액 입력 TextWatcher 설정 - 소수점 2자리 포맷팅 적용
             etAmount.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
                 override fun afterTextChanged(s: Editable?) {
                     // 금액이 변경될 때 총출금 금액 업데이트
                     val amountText = s?.toString() ?: ""
-                    val amount = amountText.replace(",", "").toDoubleOrNull() ?: 0.0
-                    updateTotalAmount(amount)
-                    
-                    // 콤마(,) 포맷팅 적용
-                    if (s != null && !amountText.isEmpty()) {
-                        // 현재 텍스트 변경 중 재귀적인 호출을 방지하기 위한 플래그
-                        if (!s.toString().contains(",") || s.toString().matches(Regex("[0-9]+,[0-9]{3}.*"))) {
-                            // 콤마 제거 후 숫자만 추출
-                            val cleanString = s.toString().replace(",", "")
-                            val parsed = cleanString.toDoubleOrNull() ?: 0.0
-                            
-                            // 3자리마다 콤마 추가한 포맷 적용
-                            val formatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(parsed)
-                            
-                            // 이전 리스너 제거 -> 텍스트 변경 -> 리스너 다시 추가
-                            etAmount.removeTextChangedListener(this)
-                            etAmount.setText(formatted)
-                            etAmount.setSelection(formatted.length)
-                            etAmount.addTextChangedListener(this)
-                        }
+                    if (amountText.isEmpty()) {
+                        updateTotalAmount(0.0)
+                        return
                     }
+                    
+                    // 현재 커서 위치 저장
+                    val cursorPosition = binding.etAmount.selectionStart
+                    
+                    // 재귀적 호출 방지를 위한 체크
+                    if (amountText.contains(".00$") || 
+                        (!amountText.endsWith(".") && amountText.contains(".") && amountText.split(".")[1].length == 2)) {
+                        // 이미 올바른 형식이면 처리하지 않음
+                        val amount = amountText.replace(",", "").toDoubleOrNull() ?: 0.0
+                        updateTotalAmount(amount)
+                        return
+                    }
+                    
+                    // 콤마와 소수점 처리
+                    val cleanString = amountText.replace(",", "")
+                    val parsed = cleanString.toDoubleOrNull() ?: 0.0
+                    
+                    // 소수점 입력 중인지 확인
+                    if (cleanString.endsWith(".")) {
+                        // 소수점만 있는 경우 그대로 유지 (예: "123.")
+                        val wholeNumberFormatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(parsed)
+                        binding.etAmount.removeTextChangedListener(this)
+                        binding.etAmount.setText("$wholeNumberFormatted.")
+                        // 커서 위치를 소수점 바로 뒤로
+                        binding.etAmount.setSelection(("$wholeNumberFormatted.").length)
+                        binding.etAmount.addTextChangedListener(this)
+                    } else if (cleanString.contains(".") && cleanString.split(".")[1].length <= 2) {
+                        // 소수점 이하 1-2자리 있는 경우 (예: "123.4" 또는 "123.45")
+                        val parts = cleanString.split(".")
+                        val wholeNumber = parts[0].toLongOrNull() ?: 0L
+                        val wholeNumberFormatted = NumberFormat.getNumberInstance(Locale.getDefault()).format(wholeNumber)
+                        binding.etAmount.removeTextChangedListener(this)
+                        binding.etAmount.setText("$wholeNumberFormatted.${parts[1]}")
+                        // 커서 위치 계산 및 설정
+                        val newCursorPos = if (cursorPosition > wholeNumberFormatted.length + 1) {
+                            wholeNumberFormatted.length + 1 + (cursorPosition - cleanString.indexOf(".") - 1)
+                        } else {
+                            cursorPosition + (wholeNumberFormatted.length - parts[0].length)
+                        }
+                        binding.etAmount.setSelection(newCursorPos.coerceAtMost("$wholeNumberFormatted.${parts[1]}".length))
+                        binding.etAmount.addTextChangedListener(this)
+                    } else {
+                        // 소수점이 없거나 소수점 이하 숫자가 많은 경우 - 소수점 2자리로 포맷팅
+                        val twoDecimalFormat = DecimalFormat("#,##0.00")
+                        binding.etAmount.removeTextChangedListener(this)
+                        binding.etAmount.setText(twoDecimalFormat.format(parsed))
+                        binding.etAmount.setSelection(twoDecimalFormat.format(parsed).length)
+                        binding.etAmount.addTextChangedListener(this)
+                    }
+                    
+                    // 금액 업데이트
+                    updateTotalAmount(parsed)
                 }
             })
 
@@ -194,6 +334,11 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
 
     private fun navigateToConfirmation() {
         val binding = binding ?: return
+        
+        // 항상 최신 자산 데이터 사용
+        val latestAsset = ipAsset // ipAsset getter는 이미 최신 데이터를 반환함
+        android.util.Log.d("TickerWithdrawal", "navigateToConfirmation - 최신 자산 데이터 잔액: ${latestAsset.amount}")
+        
         // 입력한 데이터를 NavDirections를 통해 확인 화면으로 이동
         val withdrawalAmountText = binding.etAmount.text.toString().replace(",", "")
         val withdrawalAmount = withdrawalAmountText.toFloatOrNull() ?: 0.0f
@@ -201,7 +346,7 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
         
         val action = TickerWithdrawalInputFragmentDirections
             .actionTickerWithdrawalInputFragmentToTickerWithdrawalConfirmFragment(
-                ipAsset,
+                latestAsset, // 여기에서 최신 자산 데이터를 전달
                 withdrawalAmount,
                 fee.toFloat(),
                 withdrawalAddress
@@ -212,6 +357,18 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         bind()
+        
+        // 전체 앱 데이터 새로고침 이벤트 구독
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.refreshAppDataEvent.collect { refreshTriggered ->
+                    if (refreshTriggered) {
+                        android.util.Log.d("TickerWithdrawal", "✅ 앱 데이터 새로고침 이벤트 감지")
+                        updateUI()
+                    }
+                }
+            }
+        }
     }
 
     // No need for additional inflate method as getViewBinding is already implemented

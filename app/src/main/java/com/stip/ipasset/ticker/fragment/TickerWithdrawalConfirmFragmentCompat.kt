@@ -1,5 +1,8 @@
 package com.stip.ipasset.ticker.fragment
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -68,6 +71,11 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
             tvAddressValue.text = address
             tvTickerValue.text = currencyCode
             
+            // 출금 주소 복사 기능 추가
+            tvAddressValue.setOnClickListener {
+                copyAddressToClipboard(address)
+            }
+            
             // 총 출금액 (출금액 + 수수료)
             val total = amount + fee
             tvTotalAmountValue.text = "${decimalFormat.format(total.toDouble())} $currencyCode"
@@ -86,13 +94,34 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
         // 출금 진행 로직 (실제로는 API 호출 등이 여기에 구현됨)
         // 여기서는 간단하게 2초 딜레이 후 성공으로 처리
         android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
+            // 자산 업데이트 처리 (출금이므로 음수로 전달)
+            val isSuccess = com.stip.dummy.AssetDummyData.updateAssetAmount(
+                code = currencyCode, 
+                amount = -amount // 출금이므로 음수 처리
+            )
+            
             showLoadingIndicator(false)
             
-            // 출금 신청 완료 후 상세 화면으로 이동
-            navigateToWithdrawalDetail()
+            if (isSuccess) {
+                // 출금 신청 완료 후 트랜잭션 다이얼로그 표시
+                showTransactionDialog()
+            } else {
+                // 잔액 부족 등의 오류 처리
+                Toast.makeText(requireContext(), "출금 처리 중 오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
         }, 2000)
     }
     
+    /**
+     * 주소를 클립보드에 복사하는 함수
+     */
+    private fun copyAddressToClipboard(address: String) {
+        val clipboardManager = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val clipData = ClipData.newPlainText("출금 주소", address)
+        clipboardManager.setPrimaryClip(clipData)
+        Toast.makeText(requireContext(), "출금 주소가 복사되었습니다", Toast.LENGTH_SHORT).show()
+    }
+
     private fun showLoadingIndicator(isLoading: Boolean) {
         val binding = binding ?: return
         with(binding) {
@@ -112,6 +141,17 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
         
         // 메인 화면으로 이동 (모든 백스택 제거)
         parentFragmentManager.popBackStack(null, androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE)
+    }
+    
+    private fun showTransactionDialog() {
+        // 출금 완료 트랜잭션 다이얼로그를 표시
+        val dialog = TickerTransactionDialogFragment.newInstance(
+            title = "출금 신청 완료",
+            message = "$currencyCode ${amount.toString()} 출금이 정상적으로 신청되었습니다.",
+            confirmButtonText = "확인",
+            confirmListener = { navigateToWithdrawalDetail() }
+        )
+        dialog.show(parentFragmentManager, "transaction_dialog")
     }
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
