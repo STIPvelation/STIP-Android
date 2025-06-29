@@ -195,7 +195,7 @@
             android:background="@android:color/white"
             android:paddingTop="8dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/item_ip_asset" />
+            tools:listitem="@layout/item_ticker_asset" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <!-- 사기 주의 안내 팝업을 위한 프레임 -->

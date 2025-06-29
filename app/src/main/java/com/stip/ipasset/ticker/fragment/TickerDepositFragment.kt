@@ -12,8 +12,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
+
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
 import com.stip.stip.R
@@ -31,9 +30,9 @@ import kotlinx.coroutines.withContext
  */
 @AndroidEntryPoint
 class TickerDepositFragment : Fragment() {
-    private val args by navArgs<TickerDepositFragmentArgs>()
-    private val ipAsset: IpAsset get() = args.ipAsset
-    private val currencyCode: String get() = ipAsset.currencyCode
+    private var ipAsset: IpAsset? = null
+    private val currencyCode: String get() = ipAsset?.currencyCode ?: ""
+
 
     private val viewModel by viewModels<DepositViewModel>()
     
@@ -69,6 +68,8 @@ class TickerDepositFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 번들에서 데이터 추출
+        ipAsset = arguments?.getParcelable("ipAsset")
         setupViews()
     }
 
@@ -76,7 +77,8 @@ class TickerDepositFragment : Fragment() {
         val toolbar = view?.findViewById<Toolbar>(R.id.toolbar)
         toolbar?.title = "$currencyCode 입금"
         toolbar?.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            // 프래그먼트 매니저를 사용하여 이전 화면으로 돌아감
+            requireActivity().supportFragmentManager.popBackStack()
         }
 
         // 티커 정보 바인딩
@@ -150,10 +152,24 @@ class TickerDepositFragment : Fragment() {
      * 출금 입력 화면으로 이동하는 함수
      */
     private fun navigateToWithdrawal() {
-        // 현재 화면에서 출금 화면으로 전환
-        findNavController().navigate(
-            R.id.tickerWithdrawalInputFragment,
-            Bundle().apply { putParcelable("ipAsset", ipAsset) }
-        )
+        try {
+            // 프래그먼트 트랜잭션을 사용하여 출금 화면으로 전환
+            val fragmentManager = requireActivity().supportFragmentManager
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            
+            // 애니메이션 추가
+            fragmentTransaction.setCustomAnimations(
+                R.anim.slide_in_right,
+                R.anim.slide_out_left,
+                R.anim.slide_in_left,
+                R.anim.slide_out_right
+            )
+            
+            // 티커 출금 프래그먼트로 이동 (TickerWithdrawalFragment가 존재한다면 사용)
+            // 현재는 토스트 메시지로 대체
+            Toast.makeText(requireContext(), "${currencyCode} 출금 기능 준비 중", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "화면 전환 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 }

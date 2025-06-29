@@ -17,6 +17,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.stip.dummy.AssetDummyData
+import com.stip.ipasset.ticker.fragment.TickerTransactionFragment
 import com.stip.ipasset.usd.fragment.USDDepositFragment
 import com.stip.ipasset.usd.manager.USDAssetManager
 import com.stip.stip.R
@@ -168,9 +170,25 @@ class IpAssetFragment : Fragment() {
         )
         assetsList.add(usdAssetItem)
         
-        // 총 자산 계산 및 표시 (USD만 있으므로 USD 값과 동일)
+        // AssetDummyData에서 11개의 티커 자산 가져와서 추가
+        val tickerAssets = AssetDummyData.getDefaultAssets().filter { it.ticker != "USD" }
+        
+        // 11개의 티커 자산 추가
+        tickerAssets.forEach { asset ->
+            val tickerItem = IpAssetItem(
+                currencyCode = asset.ticker,
+                amount = asset.balance,
+                usdEquivalent = asset.value,
+                krwEquivalent = asset.value * 1300.0,  // USD 가격 * 환율
+                isUsd = false
+            )
+            assetsList.add(tickerItem)
+        }
+        
+        // 총 자산 계산 및 표시
         val totalAssets = assetsList.sumOf { it.usdEquivalent }
-        binding.totalIpAssets.text = "$${NumberFormat.getNumberInstance(Locale.US).format(totalAssets)} USD"
+        val formatter = java.text.DecimalFormat("#,##0.00")
+        binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
         
         // 필터링 적용
         applyFiltering()
@@ -416,6 +434,41 @@ class IpAssetsAdapter(private val fragment: Fragment) : ListAdapter<IpAssetItem,
             binding.name.text = item.currencyCode
             binding.amount.text = NumberFormat.getNumberInstance(Locale.US).format(item.amount)
             binding.usdAmount.text = "$${NumberFormat.getNumberInstance(Locale.US).format(item.usdEquivalent)}"
+            
+            // 클릭 이벤트 처리 - 티커 트랜잭션 화면으로 이동
+            binding.root.setOnClickListener {
+                try {
+                    // fragment 인스턴스를 사용
+                    val fragmentManager = fragment.requireActivity().supportFragmentManager
+                    val fragmentTransaction = fragmentManager.beginTransaction()
+                    
+                    // 애니메이션 추가
+                    fragmentTransaction.setCustomAnimations(
+                        R.anim.slide_in_right,
+                        R.anim.slide_out_left,
+                        R.anim.slide_in_left,
+                        R.anim.slide_out_right
+                    )
+                    
+                    // 상위 액티비티의 헤더 숨기기
+                    val headerLayout = fragment.requireActivity().findViewById<View>(R.id.headerLayout)
+                    headerLayout?.visibility = View.GONE
+                    
+                    // 티커 트랜잭션 프래그먼트 생성
+                    val tickerTransactionFragment = TickerTransactionFragment.newInstance(
+                        tickerCode = item.currencyCode,
+                        amount = item.amount,
+                        usdEquivalent = item.usdEquivalent
+                    )
+                    
+                    // 프래그먼트 교체 및 백스택에 추가
+                    fragmentTransaction.replace(R.id.fragment_container, tickerTransactionFragment)
+                    fragmentTransaction.addToBackStack(null)
+                    fragmentTransaction.commit()
+                } catch (e: Exception) {
+                    Toast.makeText(fragment.requireContext(), "화면 전환 오류: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }
