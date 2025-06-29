@@ -113,6 +113,11 @@
             android:name="com.stip.ipasset.ticker.activity.TickerWithdrawCheckActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+            
+        <activity
+            android:name="com.stip.ipasset.ticker.activity.TickerWithdrawalDetailActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name="com.stip.stip.more.activity.MemberInfoEditActivity"

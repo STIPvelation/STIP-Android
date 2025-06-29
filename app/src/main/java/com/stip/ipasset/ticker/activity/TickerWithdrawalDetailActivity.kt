@@ -6,17 +6,17 @@ import android.content.Context
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.stip.stip.databinding.ActivityTickerDepositDetailBinding
+import com.stip.stip.databinding.ActivityTickerWithdrawDetailBinding
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TickerDepositDetailActivity : AppCompatActivity() {
+class TickerWithdrawalDetailActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityTickerDepositDetailBinding
+    private lateinit var binding: ActivityTickerWithdrawDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityTickerDepositDetailBinding.inflate(layoutInflater)
+        binding = ActivityTickerWithdrawDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         setupClickListeners()
@@ -44,6 +44,17 @@ class TickerDepositDetailActivity : AppCompatActivity() {
             Toast.makeText(this, "거래 ID가 복사되었습니다.", Toast.LENGTH_SHORT).show()
         }
 
+        // 수신자 주소 복사 버튼은 레이아웃에 없음
+        // valueTo를 사용하여 주소 표시
+        // 임시로 주석 처리
+        /*
+        binding.btnCopyTo.setOnClickListener {
+            val address = binding.valueTo.text.toString()
+            copyToClipboard("Recipient Address", address)
+            Toast.makeText(this, "수신자 주소가 복사되었습니다.", Toast.LENGTH_SHORT).show()
+        }
+        */
+
         // 확인 버튼
         binding.confirmButton.setOnClickListener {
             finish()
@@ -58,16 +69,22 @@ class TickerDepositDetailActivity : AppCompatActivity() {
         val timestamp = intent.getLongExtra("timestamp", 0L)
         val status = intent.getStringExtra("status") ?: ""
         val txHash = intent.getStringExtra("txHash") ?: ""
+        val recipientAddress = intent.getStringExtra("recipientAddress") ?: ""
+        val fee = intent.getDoubleExtra("fee", 0.0)
 
         // 화면 타이틀 설정
-        binding.tvTitle.text = "입금 내역 상세"
+        binding.tvTitle.text = "출금 내역 상세"
 
         // 상태 메시지
-        binding.tvStatus.text = "입금 완료"
+        binding.tvStatus.text = "출금 완료"
 
         // 금액 정보
         binding.tvAmount.text = "${tickerAmount.toString()} ${tickerSymbol}"
         binding.tvAmountUsd.text = "≈ ${String.format("%.2f", usdAmount)} USD"
+
+        // 수수료 - 해당 필드는 레이아웃에 없음
+        // 임시로 주석 처리
+        // binding.valueFee.text = "${fee} ${tickerSymbol}"
 
         // 시간 포맷팅
         val date = Date(timestamp * 1000)
@@ -75,11 +92,14 @@ class TickerDepositDetailActivity : AppCompatActivity() {
         binding.valueCompletionTime.text = sdf.format(date)
 
         // 유형
-        binding.valueType.text = "입금"
+        binding.valueType.text = "출금"
 
         // 네트워크
         binding.valueNetwork.text = "Polygon"
-
+        
+        // 수신자 주소
+        binding.valueTo.text = recipientAddress
+        
         // 트랜잭션 ID
         binding.valueTxid.text = txHash
     }

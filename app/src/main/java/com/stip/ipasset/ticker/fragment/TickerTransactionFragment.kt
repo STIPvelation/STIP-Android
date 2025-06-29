@@ -1,12 +1,20 @@
 package com.stip.ipasset.ticker.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DividerItemDecoration
 import com.stip.dummy.AssetDummyData
+import com.stip.dummy.TickerTransactionDummyData
 import com.stip.ipasset.model.IpAsset
+import com.stip.ipasset.ticker.activity.TickerDepositDetailActivity
+import com.stip.ipasset.ticker.activity.TickerWithdrawalDetailActivity
+import com.stip.ipasset.ticker.adapter.TickerTransactionAdapter
+import com.stip.ipasset.ticker.model.TickerDepositTransaction
+import com.stip.ipasset.ticker.model.TickerWithdrawalTransaction
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetTickerTransactionBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +30,9 @@ class TickerTransactionFragment : Fragment() {
     private var tickerCode: String? = null
     private var amount: Double = 0.0
     private var usdEquivalent: Double = 0.0
+    
+    private lateinit var transactionAdapter: TickerTransactionAdapter
+    private var currentFilter: TransactionFilter = TransactionFilter.ALL
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +64,12 @@ class TickerTransactionFragment : Fragment() {
         // 티커 정보 표시
         setupTickerInfo()
         
+        // 어댑터 초기화 및 설정
+        setupTransactionAdapter()
+        
+        // 필터 탭 설정
+        setupFilterTabs()
+        
         // 버튼 리스너 설정
         setupButtonListeners()
     }
@@ -63,7 +80,7 @@ class TickerTransactionFragment : Fragment() {
             val asset = AssetDummyData.getAssetByCode(code) ?: return
             
             // 툴바 타이틀 설정
-            binding.materialToolbar.title = "${code} 총 보유"
+            binding.materialToolbar.title = "총 보유"
             
             // 티커 로고 설정
             val tickerInitials = code.take(2)
@@ -160,9 +177,146 @@ class TickerTransactionFragment : Fragment() {
         android.widget.Toast.makeText(requireContext(), "${tickerCode} 출금 기능 준비 중", android.widget.Toast.LENGTH_SHORT).show()
     }
     
+    // 거래 내역 어댑터 설정
+    private fun setupTransactionAdapter() {
+        // 어댑터 초기화
+        transactionAdapter = TickerTransactionAdapter { transaction ->
+            when (transaction) {
+                is TickerDepositTransaction -> {
+                    // 입금 내역 상세 화면으로 이동
+                    val intent = Intent(requireContext(), TickerDepositDetailActivity::class.java).apply {
+                        putExtra("tickerSymbol", transaction.tickerSymbol)
+                        putExtra("tickerAmount", transaction.tickerAmount)
+                        putExtra("usdAmount", transaction.usdAmount)
+                        putExtra("timestamp", transaction.timestamp)
+                        putExtra("status", transaction.status)
+                        putExtra("txHash", transaction.txHash)
+                    }
+                    startActivity(intent)
+                }
+                is TickerWithdrawalTransaction -> {
+                    // 출금 내역 상세 화면으로 이동
+                    val intent = Intent(requireContext(), TickerWithdrawalDetailActivity::class.java).apply {
+                        putExtra("tickerSymbol", transaction.tickerSymbol)
+                        putExtra("tickerAmount", transaction.tickerAmount)
+                        putExtra("usdAmount", transaction.usdAmount)
+                        putExtra("timestamp", transaction.timestamp)
+                        putExtra("status", transaction.status)
+                        putExtra("txHash", transaction.txHash)
+                        putExtra("recipientAddress", transaction.recipientAddress)
+                        putExtra("fee", transaction.fee)
+                    }
+                    startActivity(intent)
+                }
+            }
+        }
+
+        // 리사이클러뷰 설정
+        binding.recyclerViewTransactions.apply {
+            adapter = transactionAdapter
+            addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+        }
+
+        // 초기 데이터 로드
+        loadTransactionData()
+    }
+
+    // 필터 탭 설정
+    private fun setupFilterTabs() {
+        // 전체 탭
+        binding.tabAll.setOnClickListener {
+            currentFilter = TransactionFilter.ALL
+            updateTabSelection()
+            loadTransactionData()
+        }
+
+        // 입금 탭
+        binding.tabDeposit.setOnClickListener {
+            currentFilter = TransactionFilter.DEPOSIT
+            updateTabSelection()
+            loadTransactionData()
+        }
+
+        // 출금 탭
+        binding.tabWithdrawal.setOnClickListener {
+            currentFilter = TransactionFilter.WITHDRAWAL
+            updateTabSelection()
+            loadTransactionData()
+        }
+
+        // 초기 탭 선택 상태 설정
+        updateTabSelection()
+    }
+
+    // 탭 선택 상태 업데이트
+    private fun updateTabSelection() {
+        // 모든 탭을 비선택 상태로 초기화
+        binding.tabAll.setBackgroundResource(R.drawable.bg_rounded_transparent_button)
+        binding.tabAll.setTextColor(resources.getColor(android.R.color.darker_gray, null))
+        
+        binding.tabDeposit.setBackgroundResource(R.drawable.bg_rounded_transparent_button)
+        binding.tabDeposit.setTextColor(resources.getColor(android.R.color.darker_gray, null))
+        
+        binding.tabWithdrawal.setBackgroundResource(R.drawable.bg_rounded_transparent_button)
+        binding.tabWithdrawal.setTextColor(resources.getColor(android.R.color.darker_gray, null))
+
+        // 선택된 탭 강조
+        when (currentFilter) {
+            TransactionFilter.ALL -> {
+                binding.tabAll.setBackgroundResource(R.drawable.bg_rounded_blue_button)
+                binding.tabAll.setTextColor(resources.getColor(android.R.color.white, null))
+            }
+            TransactionFilter.DEPOSIT -> {
+                binding.tabDeposit.setBackgroundResource(R.drawable.bg_rounded_blue_button)
+                binding.tabDeposit.setTextColor(resources.getColor(android.R.color.white, null))
+            }
+            TransactionFilter.WITHDRAWAL -> {
+                binding.tabWithdrawal.setBackgroundResource(R.drawable.bg_rounded_blue_button)
+                binding.tabWithdrawal.setTextColor(resources.getColor(android.R.color.white, null))
+            }
+        }
+    }
+
+    // 트랜잭션 데이터 로드 및 필터링
+    private fun loadTransactionData() {
+        // 티커코드가 없으면 빈 리스트 표시
+        val tickerCode = this.tickerCode ?: return
+        
+        val transactions = when (currentFilter) {
+            TransactionFilter.ALL -> {
+                TickerTransactionDummyData.getAllTransactions(tickerCode)
+            }
+            TransactionFilter.DEPOSIT -> {
+                TickerTransactionDummyData.getTickerDepositTransactions(tickerCode)
+            }
+            TransactionFilter.WITHDRAWAL -> {
+                TickerTransactionDummyData.getTickerWithdrawalTransactions(tickerCode)
+            }
+        }
+
+        // 어댑터에 데이터 설정
+        transactionAdapter.submitList(transactions)
+        
+        // 빈 상태 처리
+        if (transactions.isEmpty()) {
+            binding.emptyStateContainer.visibility = View.VISIBLE
+            binding.recyclerViewTransactions.visibility = View.GONE
+        } else {
+            binding.emptyStateContainer.visibility = View.GONE
+            binding.recyclerViewTransactions.visibility = View.VISIBLE
+        }
+    }
+    
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    // 트랜잭션 필터 열거형
+    enum class TransactionFilter {
+        ALL,       // 전체
+        DEPOSIT,   // 입금
+        WITHDRAWAL  // 출금
     }
     
     companion object {

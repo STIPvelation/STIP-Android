@@ -37,17 +37,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/ivShare"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_back"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/primary" />
-            <!-- Temporarily using ic_back until ic_share is added -->
+        <!-- Temporarily using ic_back until ic_share is added -->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
     
@@ -71,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="출금 신청 완료"
+                android:text="출금 완료"
                 android:textColor="#007AFF"
                 android:textSize="24sp"
                 android:textStyle="bold"
@@ -85,7 +75,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="0.00000000 KATV"
+                android:text="0.00 KATV"
                 android:textSize="28sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -206,8 +196,8 @@
                 android:id="@+id/btnCopyTxid"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_back"
-                app:tint="#007AFF"
+                android:src="@drawable/ic_copy"
+                app:tint="@color/primary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/labelTxid"
                 app:layout_constraintBottom_toBottomOf="@id/labelTxid" />

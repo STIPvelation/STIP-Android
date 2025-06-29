@@ -58,8 +58,8 @@ class USDTransactionFragment : Fragment() {
         val headerLayout = requireActivity().findViewById<View>(R.id.headerLayout)
         headerLayout?.visibility = View.GONE
         
-        // 툴바 제목 설정 - 입출금 문구 등이 자동으로 표시되지 않도록 빈 문자열로 설정
-        binding.materialToolbar.title = ""
+        // 툴바 제목 설정 - 총 보유 표기
+        binding.materialToolbar.title = "총 보유"
         
         // Set up back button using the MaterialToolbar
         binding.materialToolbar.setNavigationOnClickListener {

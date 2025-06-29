@@ -432,8 +432,8 @@ class IpAssetsAdapter(private val fragment: Fragment) : ListAdapter<IpAssetItem,
             
             // 티커 이름과 가격 설정
             binding.name.text = item.currencyCode
-            binding.amount.text = NumberFormat.getNumberInstance(Locale.US).format(item.amount)
-            binding.usdAmount.text = "$${NumberFormat.getNumberInstance(Locale.US).format(item.usdEquivalent)}"
+            binding.amount.text = String.format(Locale.US, "%.2f", item.amount)
+            binding.usdAmount.text = "$${String.format(Locale.US, "%.2f", item.usdEquivalent)}"
             
             // 클릭 이벤트 처리 - 티커 트랜잭션 화면으로 이동
             binding.root.setOnClickListener {
