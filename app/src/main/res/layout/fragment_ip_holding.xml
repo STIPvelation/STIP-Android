@@ -2,14 +2,22 @@
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView_holding"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FA"
-    android:fillViewport="true">
+    android:fillViewport="true"
+    android:scrollbars="vertical"
+    android:scrollbarStyle="insideOverlay"
+    android:overScrollMode="always"
+    android:fadeScrollbars="false"
+    android:clipToPadding="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/padding_large">
 
     <!-- Summary Card -->
     <com.google.android.material.card.MaterialCardView
@@ -32,20 +40,24 @@
             android:id="@+id/summary_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
+            android:paddingStart="@dimen/padding_medium"
+            android:paddingEnd="@dimen/padding_medium"
+            android:paddingTop="@dimen/padding_medium"
+            android:paddingBottom="@dimen/padding_medium">
 
+        <!-- Flexible guideline based on screen size -->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_summary_center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
+            app:layout_constraintGuide_percent="0.45" />
 
         <TextView
             android:id="@+id/holdingUsdLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/margin_xsmall"
             android:text="@string/holding_usd"
             android:textColor="#757575"
             android:textSize="13sp"
@@ -58,7 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="@dimen/margin_xsmall"
             android:text="@string/holding_usd_number"
             android:textColor="#212121"
             android:textSize="18sp"
@@ -92,8 +104,8 @@
             android:id="@+id/totalBuyText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
+            android:layout_marginEnd="@dimen/margin_xsmall"
             android:gravity="end"
             android:text="@string/total_buy_number"
             android:textColor="#212121"
@@ -107,7 +119,7 @@
             android:id="@+id/totalValuationLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/margin_small"
             android:text="@string/total_valuation"
             android:textColor="#757575"
             android:textSize="13sp"
@@ -118,8 +130,8 @@
             android:id="@+id/totalValuationText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
+            android:layout_marginEnd="@dimen/margin_xsmall"
             android:gravity="end"
             android:text="@string/total_valuation_number"
             android:textColor="#212121"
@@ -133,7 +145,7 @@
             android:id="@+id/availableOrderLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="@dimen/margin_small"
             android:text="@string/available_order"
             android:textColor="#757575"
             android:textSize="13sp"
@@ -144,8 +156,8 @@
             android:id="@+id/availableOrderText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
+            android:layout_marginEnd="@dimen/margin_xsmall"
             android:gravity="end"
             android:text="@string/available_order_number"
             android:textColor="#212121"
@@ -159,7 +171,7 @@
             android:id="@+id/totalAssetLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
             android:text="@string/total_asset"
             android:textColor="#30C6E8"
             android:textSize="13sp"
@@ -171,7 +183,7 @@
             android:id="@+id/totalAssetText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
             android:layout_marginTop="4dp"
             android:text="@string/total_asset_number"
             android:textColor="#30C6E8"
@@ -195,7 +207,7 @@
             android:id="@+id/valuationProfitText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
             android:gravity="end"
             android:text="@string/valuation_profit_number"
             android:textColor="#212121"
@@ -220,7 +232,7 @@
             android:id="@+id/profitRateText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="@dimen/margin_xsmall"
             android:gravity="end"
             android:text="@string/profit_rate_percentage"
             android:textColor="#212121"
@@ -284,7 +296,7 @@
                 android:id="@+id/portfolioPieChart"
                 android:layout_width="0dp"
                 android:layout_height="180dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="@dimen/margin_small"
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -293,56 +305,65 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
     
-    <!-- Holdings Header -->
-    <androidx.cardview.widget.CardView
-        android:id="@+id/list_header_card"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
-        app:cardBackgroundColor="#30C6E8"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/portfolio_card">
-        
-        <TextView
-            android:id="@+id/item_list_header"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:gravity="center"
-            android:text="@string/myiptext"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </androidx.cardview.widget.CardView>     <!-- Holdings RecyclerView Card -->
-    <androidx.cardview.widget.CardView
+    <!-- Holdings Container Card -->
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/holdings_card"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="12dp"
-        app:cardElevation="2dp"
+        app:cardElevation="1dp"
         app:strokeColor="#30C6E8"
         app:strokeWidth="0.3dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list_header_card">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/holdings_recycler_view"
+        app:layout_constraintTop_toBottomOf="@id/portfolio_card">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:padding="8dp" />
-    </androidx.cardview.widget.CardView>
+            android:layout_height="wrap_content">
+            
+            <!-- Holdings Header -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/list_header_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="#30C6E8"
+                app:cardElevation="1dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                
+                <TextView
+                    android:id="@+id/item_list_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:gravity="center"
+                    android:text="@string/myiptext"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </androidx.cardview.widget.CardView>
+            
+            <!-- Holdings RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/holdings_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:clipToPadding="false"
+                android:paddingHorizontal="8dp"
+                android:overScrollMode="never"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/list_header_card" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
     <!-- Empty State Card -->
     <androidx.cardview.widget.CardView
@@ -362,7 +383,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/list_header_card">
+        app:layout_constraintTop_toBottomOf="@id/holdings_card">
         
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/noipcurrently"

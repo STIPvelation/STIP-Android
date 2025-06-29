@@ -33,6 +33,11 @@
     <dimen name="spacing_large">24dp</dimen>
     <dimen name="spacing_xlarge">32dp</dimen>
 
+    <!-- 반응형 마진/패딩 (Responsive margin/padding) -->
+
+
+
+
     <!-- 로그인 이력 카드 elevation -->
     <dimen name="card_elevation_normal">4dp</dimen>
     <dimen name="card_elevation_unusual">8dp</dimen>

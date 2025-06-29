@@ -196,13 +196,20 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
     }
 
     private fun setupRecyclerView() {
-        // Either skip this method for now or implement a placeholder
-        /* Temporarily disabled until RecyclerView setup is complete
         profitAdapter = ProfitAdapter()
-        */
-        
-        // We'll implement this properly after the layout changes are confirmed
-        // and the R.id.recyclerViewProfit resource is properly generated
+        val recyclerView = view?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerViewProfit)
+        recyclerView?.let {
+            it.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            it.adapter = profitAdapter
+            it.isNestedScrollingEnabled = false
+            
+            // Add divider between items
+            val dividerItemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
+                recyclerView.context,
+                androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+            )
+            it.addItemDecoration(dividerItemDecoration)
+        }
     }
 
     private fun setupSortButton() {
