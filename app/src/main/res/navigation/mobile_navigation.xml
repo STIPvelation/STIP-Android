@@ -12,8 +12,8 @@
 
     <fragment
         android:id="@+id/navigation_ip_inform"
-        android:name="com.stip.stip.signup.main.ip.IpInformFragment"
-        tools:layout="@layout/fragment_ip_inform" />
+        android:name="com.stip.ipasset.fragment.IPHoldingFragment"
+        tools:layout="@layout/fragment_ip_holding" />
 
     <fragment
         android:id="@+id/navigation_investment_history"
@@ -65,5 +65,14 @@
         <argument
             android:name="ipAsset"
             app:argType="com.stip.ipasset.model.IpAsset" />
+        <argument
+            android:name="withdrawalAmount"
+            app:argType="float" />
+        <argument
+            android:name="fee"
+            app:argType="float" />
+        <argument
+            android:name="address"
+            app:argType="string" />
     </fragment>
 </navigation>

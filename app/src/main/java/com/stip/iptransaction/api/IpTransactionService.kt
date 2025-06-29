@@ -52,6 +52,8 @@ interface IpTransactionApi {
 }
 
 object IpTransactionService {
+    // 테스트 모드 플래그 - true일 때 더미 데이터 반환
+    var USE_DUMMY_DATA = true
     private const val BASE_URL = "https://backend.stipvelation.com/"
     private const val X_API_KEY: String = "AIzaSyAM4J1XFF6SAkXeY78ONDyRtgo3mhk78kE"
     
@@ -111,10 +113,86 @@ object IpTransactionService {
         )
     }
     
+    // 더미 데이터 생성 메서드
+    private fun createDummyHoldingsData(): List<DipHoldingitem> {
+        return listOf(
+            DipHoldingitem(
+                name = "JWV",
+                quantity = 125,
+                buyPrice = 12500.0,
+                totalValuation = 1875000.0,
+                totalBuyAmount = 1562500.0,
+                profit = 312500.0,
+                profitRate = 20.0
+            ),
+            DipHoldingitem(
+                name = "MDM",
+                quantity = 88,
+                buyPrice = 32000.0,
+                totalValuation = 2493750.0,
+                totalBuyAmount = 2800000.0,
+                profit = -306250.0,
+                profitRate = -10.9
+            ),
+            DipHoldingitem(
+                name = "JWV",
+                quantity = 45,
+                buyPrice = 65000.0,
+                totalValuation = 3600000.0,
+                totalBuyAmount = 2925000.0,
+                profit = 675000.0,
+                profitRate = 23.1
+            ),
+            DipHoldingitem(
+                name = "IJECT",
+                quantity = 62,
+                buyPrice = 46000.0,
+                totalValuation = 3100000.0,
+                totalBuyAmount = 2852000.0,
+                profit = 248000.0,
+                profitRate = 8.7
+            ),
+            DipHoldingitem(
+                name = "WETALK",
+                quantity = 18,
+                buyPrice = 145000.0,
+                totalValuation = 2430000.0,
+                totalBuyAmount = 2610000.0,
+                profit = -180000.0,
+                profitRate = -6.9
+            ),
+            DipHoldingitem(
+                name = "SLEEP",
+                quantity = 200,
+                buyPrice = 15000.0,
+                totalValuation = 3750000.0,
+                totalBuyAmount = 3000000.0,
+                profit = 750000.0,
+                profitRate = 25.0
+            ),
+            DipHoldingitem(
+                name = "KCOT",
+                quantity = 95,
+                buyPrice = 41000.0,
+                totalValuation = 4037500.0,
+                totalBuyAmount = 3895000.0,
+                profit = 142500.0,
+                profitRate = 3.7
+            )
+        )
+    }
+    
     // IP 보유 현황 조회
     fun getIpHoldings(
         callback: (List<DipHoldingitem>?, Throwable?) -> Unit
     ) {
+        if (USE_DUMMY_DATA) {
+            // 테스트 모드일 때 더미 데이터 반환
+            callback(createDummyHoldingsData(), null)
+            return
+        }
+        
+        // 실제 API 호출
         ipTransactionApi.getIpHoldings().enqueue(
             object : retrofit2.Callback<List<DipHoldingitem>> {
                 override fun onResponse(
@@ -135,10 +213,35 @@ object IpTransactionService {
         )
     }
     
-    // IP 보유 현황 요약 조회
+    // 더미 데이터 요약 생성
+    private fun createDummySummaryData(): MyIpHoldingsSummaryItem {
+        val holdingsList = createDummyHoldingsData()
+        val totalBuy = holdingsList.sumOf { it.totalBuyAmount }
+        val totalValuation = holdingsList.sumOf { it.totalValuation }
+        val valuationProfit = totalValuation - totalBuy
+        val profitRate = if (totalBuy > 0) (valuationProfit / totalBuy) * 100 else 0.0
+        
+        return MyIpHoldingsSummaryItem(
+            holdingUsd = 25000000.0,
+            totalBuy = totalBuy,
+            totalValuation = totalValuation,
+            valuationProfit = valuationProfit,
+            profitRate = profitRate,
+            availableOrder = 20000000.0
+        )
+    }
+    
+    // IP 보유 현황 요약 조회 (더미 데이터 반환으로 수정)
     fun getIpHoldingsSummary(
         callback: (MyIpHoldingsSummaryItem?, Throwable?) -> Unit
     ) {
+        if (USE_DUMMY_DATA) {
+            // 테스트 모드일 때 더미 데이터 반환
+            callback(createDummySummaryData(), null)
+            return
+        }
+        
+        // 실제 API 호출
         ipTransactionApi.getIpHoldingsSummary().enqueue(
             object : retrofit2.Callback<MyIpHoldingsSummaryItem> {
                 override fun onResponse(

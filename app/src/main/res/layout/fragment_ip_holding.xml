@@ -1,19 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="#F8F9FA"
+    android:fillViewport="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/summary_section"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <!-- Summary Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/summary_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:strokeColor="#30C6E8"
+        app:strokeWidth="0.3dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/summary_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline_summary_center"
@@ -24,237 +43,362 @@
 
         <TextView
             android:id="@+id/holdingUsdLabel"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="@string/holding_usd"
+            android:textColor="#757575"
+            android:textSize="13sp"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/holdingUsdText"
-            style="@style/DefaultTextStyle_16"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="8dp"
             android:text="@string/holding_usd_number"
+            android:textColor="#212121"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/holdingUsdLabel" />
 
-        <TextView
-            android:id="@+id/totalBuyLabel"
-            style="@style/DefaultTextStyle_12"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/total_buy"
+        <!-- Divider -->
+        <View
+            android:id="@+id/divider_horizontal_top"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_marginTop="16dp"
+            android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/holdingUsdText" />
+            
+        <TextView
+            android:id="@+id/totalBuyLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/total_buy"
+            android:textColor="#757575"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider_horizontal_top" />
 
         <TextView
             android:id="@+id/totalBuyText"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="end"
             android:text="@string/total_buy_number"
+            android:textColor="#212121"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/totalBuyLabel"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toEndOf="@id/totalBuyLabel" />
 
         <TextView
             android:id="@+id/totalValuationLabel"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="@string/total_valuation"
+            android:textColor="#757575"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/totalBuyLabel" />
 
         <TextView
             android:id="@+id/totalValuationText"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="end"
             android:text="@string/total_valuation_number"
+            android:textColor="#212121"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/totalValuationLabel"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toEndOf="@id/totalValuationLabel" />
 
         <TextView
             android:id="@+id/availableOrderLabel"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="12dp"
             android:text="@string/available_order"
+            android:textColor="#757575"
+            android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/totalValuationLabel" />
 
         <TextView
             android:id="@+id/availableOrderText"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginEnd="8dp"
             android:gravity="end"
             android:text="@string/available_order_number"
+            android:textColor="#212121"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/availableOrderLabel"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toEndOf="@id/availableOrderLabel" />
 
         <TextView
             android:id="@+id/totalAssetLabel"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:text="@string/total_asset"
+            android:textColor="#30C6E8"
+            android:textSize="13sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/totalAssetText"
-            style="@style/DefaultTextStyle_16"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="4dp"
             android:text="@string/total_asset_number"
+            android:textColor="#30C6E8"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
             app:layout_constraintTop_toBottomOf="@id/totalAssetLabel" />
 
         <TextView
             android:id="@+id/valuationProfitLabel"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="@string/valuation_profit"
+            android:textColor="#757575"
+            android:textSize="13sp"
             app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
             app:layout_constraintTop_toTopOf="@id/totalBuyLabel" />
 
         <TextView
             android:id="@+id/valuationProfitText"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:gravity="end"
             android:text="@string/valuation_profit_number"
+            android:textColor="#212121"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/valuationProfitLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/valuationProfitLabel" />
 
         <TextView
             android:id="@+id/profitRateLabel"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
             android:text="@string/profit_rate"
+            android:textColor="#757575"
+            android:textSize="13sp"
             app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
             app:layout_constraintTop_toTopOf="@id/totalValuationLabel" />
 
         <TextView
             android:id="@+id/profitRateText"
-            style="@style/DefaultTextStyle_12"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:gravity="end"
             android:text="@string/profit_rate_percentage"
+            android:textColor="#212121"
+            android:textSize="13sp"
+            android:textStyle="bold"
             app:layout_constraintBaseline_toBaselineOf="@id/profitRateLabel"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/profitRateLabel" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 
-    <TextView
-        android:id="@+id/tvPortfolioTitle"
-        style="@style/DefaultTextStyle_14"
-        android:layout_width="wrap_content"
+    <!-- Portfolio Section Card -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/portfolio_card"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:text="@string/dip_portfolio"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/summary_section" />
-
-    <ImageView
-        android:id="@+id/ivExpandIcon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="12dp"
-        android:src="@drawable/ic_arrow_up"
-        android:contentDescription="Expand/Collapse"
-        app:layout_constraintBottom_toBottomOf="@+id/tvPortfolioTitle"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="4dp"
+        app:strokeColor="#30C6E8"
+        app:strokeWidth="0.3dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvPortfolioTitle" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/summary_card">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp">
+            
+            <TextView
+                android:id="@+id/tvPortfolioTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/dip_portfolio"
+                android:textColor="#212121"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/portfolioPieChart"
+            <ImageView
+                android:id="@+id/ivExpandIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_arrow_up"
+                android:contentDescription="Expand/Collapse"
+                android:tint="#757575"
+                app:layout_constraintBottom_toBottomOf="@+id/tvPortfolioTitle"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tvPortfolioTitle" />
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/portfolioPieChart"
+                android:layout_width="0dp"
+                android:layout_height="180dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvPortfolioTitle" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+    
+    <!-- Holdings Header -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/list_header_card"
         android:layout_width="0dp"
-        android:layout_height="180dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:cardBackgroundColor="#30C6E8"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvPortfolioTitle" />
-    <TextView
-        android:id="@+id/item_list_header"
-        style="@style/DefaultTextStyle_14"
-        android:layout_width="0dp"
-        android:layout_height="34dp"
-        android:background="@color/profit_loss"
-        android:gravity="center"
-        android:text="@string/myiptext"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/portfolioPieChart" /> <androidx.recyclerview.widget.RecyclerView
-    android:id="@+id/holdings_recycler_view"
-    android:layout_width="0dp"
-    android:layout_height="0dp"
-    android:layout_marginTop="0dp"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@id/item_list_header" />
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/noipcurrently"
+        app:layout_constraintTop_toBottomOf="@id/portfolio_card">
+        
+        <TextView
+            android:id="@+id/item_list_header"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:gravity="center"
+            android:text="@string/myiptext"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>     <!-- Holdings RecyclerView Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/holdings_card"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="#FFFFFF"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#30C6E8"
+        app:strokeWidth="0.3dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/list_header_card">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/holdings_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="8dp" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Empty State Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/empty_state_card"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        app:cardBackgroundColor="#FFFFFF"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp"
+        app:strokeColor="#30C6E8"
+        app:strokeWidth="0.3dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/item_list_header">
+        app:layout_constraintTop_toBottomOf="@id/list_header_card">
+        
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/noipcurrently"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/noip_message_text"
-            style="@style/noipcolor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/noip"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/empty_state_icon"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginBottom="16dp"
+                android:src="@android:drawable/ic_menu_info_details"
+                android:tint="#BDBDBD"
+                android:contentDescription="No IP"
+                app:layout_constraintBottom_toTopOf="@+id/noip_message_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintVertical_chainStyle="packed" 
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.45" />
+
+            <TextView
+                android:id="@+id/noip_message_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/noip"
+                android:textColor="#616161"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:padding="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/empty_state_icon" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

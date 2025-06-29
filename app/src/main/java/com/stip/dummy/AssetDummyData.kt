@@ -1,32 +1,77 @@
 package com.stip.dummy
 
 import com.stip.ipasset.model.IpAsset
+import android.graphics.Color
 
 /**
- * 입출금 관련 더미 데이터를 중앙화하여 관리하는 클래스
- * - 모든 화면에서 일관된 더미 데이터를 사용할 수 있도록 함
- * - 테스트용으로만 사용되며, 실제 배포에서는 API 또는 DB에서 데이터 로드
+ * 앱 전체에서 일관된 자산 및 IP 정보를 제공하는 중앙화된 더미 데이터 클래스
+ * - IP 홀딩, 입출금 및 거래 화면 등에서 사용되는 모든 데이터의 일관성 유지
+ * - 테스트 및 개발 목적으로만 사용
  */
 object AssetDummyData {
+    
+    // 기본 컬러값 (외부에서도 사용 가능하도록 공개)
+    val COLORS = listOf(
+        0xFF4CAF50.toInt(), // ETIP-A 녹색
+        0xFF2196F3.toInt(), // ETIP-E 파란색
+        0xFFFF9800.toInt(), // NTIP-N 주황색
+        0xFF9C27B0.toInt(), // MTIP-M 보라색
+        0xFF607D8B.toInt(), // STIP-S 회색
+        0xFFE91E63.toInt(), // BTIP-B 분홍색
+        0xFF009688.toInt(), // DTIP-D 청록색
+        0xFF673AB7.toInt(), // JTIP-J 진보라색
+        0xFFFF5722.toInt(), // CTIP-C 주황-빨강색
+        0xFF795548.toInt(), // FTIP-F 갈색
+        0xFF3F51B5.toInt()  // KTIP-K 남색
+    )
     
     // 변경 가능한 자산 리스트 (업데이트를 위해 mutable로 변경)
     private val assets = mutableListOf(
         // USD 데이터
-        IpAsset(id = "1", name = "US Dollar", ticker = "USD", balance = 10000.0, value = 10000.0),
+        IpAsset(id = "1", name = "US Dollar", ticker = "USD", balance = 25000.0, value = 25000.0),
         
-        // 11개 티커 데이터 (iOS TransactionView.swift 기반)
-        IpAsset(id = "2", name = "JWV Token", ticker = "JWV", balance = 350.0, value = 420.0),
-        IpAsset(id = "3", name = "MDM Token", ticker = "MDM", balance = 200.0, value = 280.0),
-        IpAsset(id = "4", name = "CDM Token", ticker = "CDM", balance = 0.0, value = 0.0),   // 0개 소유 예시
-        IpAsset(id = "5", name = "IJECT Token", ticker = "IJECT", balance = 500.0, value = 650.0),
-        IpAsset(id = "6", name = "WETALK Token", ticker = "WETALK", balance = 120.0, value = 130.0),
-        IpAsset(id = "7", name = "SLEEP Token", ticker = "SLEEP", balance = 0.0, value = 0.0),  // 0개 소유 예시
-        IpAsset(id = "8", name = "KCOT Token", ticker = "KCOT", balance = 800.0, value = 1100.0),
-        IpAsset(id = "9", name = "MSK Token", ticker = "MSK", balance = 50.0, value = 70.0),
-        IpAsset(id = "10", name = "SMT Token", ticker = "SMT", balance = 0.0, value = 0.0),   // 0개 소유 예시
-        IpAsset(id = "11", name = "AXNO Token", ticker = "AXNO", balance = 150.0, value = 180.0),
-        IpAsset(id = "12", name = "KATV Token", ticker = "KATV", balance = 20.0, value = 20.0)
+        // 11개 IP 티커 데이터 - IPHoldingDummyData와 일관성 유지
+        IpAsset(id = "2", name = "엔터테인먼트 IP A", ticker = "JWV", balance = 120.0, value = 1874400.0),
+        IpAsset(id = "3", name = "엔터테인먼트 IP E", ticker = "MDM", balance = 80.0, value = 1820000.0),
+        IpAsset(id = "4", name = "뉴미디어 IP N", ticker = "CDM", balance = 45.0, value = 1602000.0),
+        IpAsset(id = "5", name = "음악 IP M", ticker = "IJECT", balance = 180.0, value = 1521000.0),
+        IpAsset(id = "6", name = "스포츠 IP S", ticker = "WETALK", balance = 28.0, value = 1184400.0),
+        IpAsset(id = "7", name = "브랜드 IP B", ticker = "SLEEP", balance = 32.0, value = 889600.0),
+        IpAsset(id = "8", name = "디자인 IP D", ticker = "KCOT", balance = 45.0, value = 837000.0),
+        IpAsset(id = "9", name = "게임 IP J", ticker = "MSK", balance = 12.0, value = 628800.0),
+        IpAsset(id = "10", name = "캐릭터 IP C", ticker = "SMT", balance = 18.0, value = 561600.0),
+        IpAsset(id = "11", name = "영화 IP F", ticker = "AXNO", balance = 8.0, value = 517600.0),
+        IpAsset(id = "12", name = "K-컨텐츠 IP K", ticker = "KATV", balance = 28.0, value = 359800.0)
     )
+    
+    /**
+     * 자산의 단가 정보 반환 (현재가)
+     */
+    fun getAssetPrice(ticker: String): Double {
+        val asset = getAssetByTicker(ticker) ?: return 0.0
+        if (asset.balance <= 0) return 0.0
+        return asset.value / asset.balance
+    }
+    
+    /**
+     * 자산의 컬러 정보 반환
+     */
+    fun getAssetColor(ticker: String): Int {
+        return when (ticker) {
+            "JWV" -> COLORS[0]
+            "MDM" -> COLORS[1]
+            "CDM" -> COLORS[2]
+            "IJECT" -> COLORS[3]
+            "WETALK" -> COLORS[4]
+            "SLEEP" -> COLORS[5]
+            "KCOT" -> COLORS[6]
+            "MSK" -> COLORS[7]
+            "SMT" -> COLORS[8]
+            "AXNO" -> COLORS[9]
+            "KATV" -> COLORS[10]
+            else -> Color.GRAY
+        }
+    }
     
     /**
      * 기본 자산 더미 데이터 반환
@@ -50,6 +95,13 @@ object AssetDummyData {
     }
     
     /**
+     * 특정 티커의 자산 정보 반환
+     */
+    fun getAssetByTicker(ticker: String): IpAsset? {
+        return getDefaultAssets().find { it.ticker == ticker }
+    }
+    
+    /**
      * 특정 코드의 자산 업데이트 (출금/입금 처리)
      * @param code 티커 코드
      * @param amount 변경할 금액 (출금은 음수, 입금은 양수)
@@ -68,7 +120,7 @@ object AssetDummyData {
             // 새 자산 객체를 생성하여 기존 자산을 교체 (value는 1:1 비율로 간단히 계산)
             assets[assetIndex] = asset.copy(
                 balance = newBalance,
-                value = newBalance // 간단하게 1:1 비율로 처리
+                value = newBalance * (asset.value / asset.balance) // 단가 유지하며 value 계산
             )
             return true
         }
@@ -80,5 +132,18 @@ object AssetDummyData {
      */
     fun getTotalUsdValue(): Double {
         return getDefaultAssets().sumOf { it.value }
+    }
+    
+    /**
+     * IP 자산 비율 정보 반환 (포트폴리오 차트용)
+     */
+    fun getPortfolioRatios(): List<Pair<String, Float>> {
+        val nonUsdAssets = assets.filter { it.ticker != "USD" }
+        val totalValue = nonUsdAssets.sumOf { it.value }
+        
+        return nonUsdAssets.map { asset ->
+            val ratio = (asset.value / totalValue * 100).toFloat()
+            Pair(asset.ticker, ratio)
+        }
     }
 }

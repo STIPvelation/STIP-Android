@@ -66,10 +66,14 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
                 }
             }
         }
+        
+        // 포트폴리오 차트 접기/펼치기 기능 설정
+        setupExpandCollapseAction()
 
         loadHoldingData()
 
         setupPieChart() // 수정된 범례 설정 반영
+        updateChartVisibilityState() // 초기 차트 가시성 상태 설정
     }
 
     private fun loadHoldingData() {
@@ -145,7 +149,7 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
         }
     }
 
-    // 차트 가시성 및 아이콘 업데이트 (변경 없음)
+    // 차트 가시성 및 아이콘 업데이트
     private fun updateChartVisibilityState() {
         if (isChartExpanded) {
             binding.portfolioPieChart.visibility = View.VISIBLE
@@ -153,6 +157,14 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
         } else {
             binding.portfolioPieChart.visibility = View.GONE
             binding.ivExpandIcon.setImageResource(R.drawable.ic_arrow_down)
+        }
+    }
+    
+    // 확장/축소 기능 구현
+    private fun setupExpandCollapseAction() {
+        binding.ivExpandIcon.setOnClickListener {
+            isChartExpanded = !isChartExpanded
+            updateChartVisibilityState()
         }
     }
 
@@ -245,7 +257,7 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
         if (!shouldShowChart) {
             isChartExpanded = false
         }
-        // updateChartVisibilityState() // onViewCreated 마지막에 호출되므로 여기서 호출 불필요
+        updateChartVisibilityState() // 차트 데이터 로드 후 가시성 업데이트
     }
 
     // 가운데 텍스트 생성 함수 (총 평가금액 표시)
