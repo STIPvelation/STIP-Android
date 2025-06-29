@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
 import com.stip.ipasset.fragment.BaseFragment
 import com.stip.ipasset.model.IpAsset
+import com.stip.stip.MainActivity
 import com.stip.ipasset.ticker.viewmodel.WithdrawalConfirmViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetTickerWithdrawalConfirmBinding
@@ -38,12 +40,25 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
     // ViewModel 생성
     private val viewModel by viewModels<WithdrawalConfirmViewModel>()
     
+    override fun onResume() {
+        super.onResume()
+        
+        // 티커 화면에서는 헤더 레이아웃 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
+    }
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         
         // Bundle에서 인자 추출
         arguments?.let { args ->
-            args.getParcelable<IpAsset>(ARG_IP_ASSET)?.let { asset ->
+            // API 레벨 33+ 호환성 수정
+            (if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                args.getParcelable(ARG_IP_ASSET, IpAsset::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                args.getParcelable<IpAsset>(ARG_IP_ASSET)
+            })?.let { asset ->
                 ipAsset = asset
             }
             amount = args.getFloat(ARG_AMOUNT, 0.0f)

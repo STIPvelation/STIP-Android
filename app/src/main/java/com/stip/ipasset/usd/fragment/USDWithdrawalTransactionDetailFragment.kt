@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.stip.ipasset.usd.model.USDWithdrawalTransaction
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetUsdWithdralTransactionDetailBinding
+import com.stip.stip.MainActivity
 
 /**
  * USD 출금 트랜잭션 상세 화면 Fragment
@@ -40,6 +41,13 @@ class USDWithdrawalTransactionDetailFragment : Fragment() {
         setupBackButton()
         setupConfirmButton()
         displayTransactionDetails()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // 헤더 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
+        // 필요한 경우 데이터 갱신 로직 추가
     }
 
     private fun setupBackButton() {

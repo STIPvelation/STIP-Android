@@ -51,6 +51,17 @@ class MainActivity : AppCompatActivity() {
     // 인증 상태 확인 - 실제 로그인 상태 확인
     private val isAuthenticated: Boolean get() = com.stip.stip.signup.utils.PreferenceUtil.getToken() != null
     
+    // 헤더 타이틀 설정 메소드
+    fun setHeaderTitle(title: String) {
+        binding.headerTitle.text = title
+    }
+    
+    // 헤더 숨기기/보이기 메소드
+    fun setHeaderVisibility(visible: Boolean) {
+        binding.headerLayout.visibility = if (visible) View.VISIBLE else View.GONE
+        binding.headerTitle.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+    
     // 로그인이 필요한 기능 접근 시 로그인 화면으로 리다이렉트
     private fun redirectToLogin() {
         Toast.makeText(this, "로그인이 필요한 서비스입니다.", Toast.LENGTH_SHORT).show()

@@ -17,6 +17,7 @@ import com.stip.ipasset.usd.model.DepositViewModel
 import com.stip.ipasset.extension.dpToPx
 import com.stip.ipasset.fragment.BaseFragment
 import com.stip.ipasset.model.IpAsset
+import com.stip.stip.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -92,16 +93,18 @@ class USDDepositFragment : BaseFragment<FragmentIpAssetUsdDepositBinding>() {
         }, 2000) // Hide after 2 seconds
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        
-        // 상위 액티비티의 헤더 숨기기 (직접 진입 시에도 확실히 헤더가 보이지 않도록)
-        val headerLayout = requireActivity().findViewById<View>(R.id.headerLayout)
-        headerLayout?.visibility = View.GONE
+    override fun onResume() {
+        super.onResume()
+        // 헤더 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
         
         bind()
         setupBankAccounts()
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        
         // USD 계좌 정보 가져오기
         viewModel.fetchAccountInfo(currencyCode)
     }

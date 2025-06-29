@@ -370,6 +370,6 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
             }
         }
     }
-
+    
     // No need for additional inflate method as getViewBinding is already implemented
 }

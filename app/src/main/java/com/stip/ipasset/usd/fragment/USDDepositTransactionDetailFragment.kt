@@ -10,6 +10,7 @@ import androidx.navigation.fragment.navArgs
 import com.stip.ipasset.usd.model.USDDepositTransaction
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetUsdDepositTransactionDetailBinding
+import com.stip.stip.MainActivity
 
 /**
  * USD 입금 트랜잭션 상세 화면 Fragment
@@ -40,6 +41,12 @@ class USDDepositTransactionDetailFragment : Fragment() {
         setupBackButton()
         setupConfirmButton()
         displayTransactionDetails()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // 헤더 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
     }
 
     private fun setupBackButton() {

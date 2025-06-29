@@ -8,6 +8,7 @@ import androidx.lifecycle.Observer
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetUsdWithdrawalInputBinding
 import com.stip.ipasset.fragment.BaseFragment
+import com.stip.stip.MainActivity
 import com.stip.ipasset.usd.adapter.NumericKeypadAdapter
 import com.stip.ipasset.usd.manager.USDAssetManager
 
@@ -34,6 +35,9 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
 
     override fun onResume() {
         super.onResume()
+        // 헤더 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
+        
         // 화면에 돌아올 때 데이터 새로고침
         assetManager.refreshData()
         // 출금가능 금액 다시 포맷팅

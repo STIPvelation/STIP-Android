@@ -449,6 +449,9 @@ class USDTransactionFragment : Fragment() {
     
     override fun onDestroyView() {
         super.onDestroyView()
+        // 어떤 방식으로든 프래그먼트에서 나갈 때 헤더 표시를 복원하여 '입출금' 텍스트가 항상 보이도록 함
+        val headerLayout = requireActivity().findViewById<View>(R.id.headerLayout)
+        headerLayout?.visibility = View.VISIBLE
         _binding = null
     }
     

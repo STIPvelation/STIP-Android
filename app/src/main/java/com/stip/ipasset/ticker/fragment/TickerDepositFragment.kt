@@ -18,6 +18,7 @@ import com.google.zxing.qrcode.QRCodeWriter
 import com.stip.stip.R
 import com.stip.ipasset.usd.model.DepositViewModel
 import com.stip.ipasset.extension.copyToClipboard
+import com.stip.stip.MainActivity
 import com.stip.ipasset.model.IpAsset
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -66,10 +67,22 @@ class TickerDepositFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_ip_asset_ticker_deposit, container, false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        
+        // 티커 화면에서는 헤더 레이아웃 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // 번들에서 데이터 추출
-        ipAsset = arguments?.getParcelable("ipAsset")
+        // 번들에서 데이터 추출 - API 레벨 33+ 호환성 수정
+        ipAsset = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelable("ipAsset", com.stip.ipasset.model.IpAsset::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelable("ipAsset")
+        }
         setupViews()
     }
 

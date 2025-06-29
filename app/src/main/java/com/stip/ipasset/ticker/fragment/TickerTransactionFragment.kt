@@ -17,6 +17,7 @@ import com.stip.ipasset.ticker.adapter.TickerTransactionAdapter
 import com.stip.ipasset.ticker.fragment.TickerWithdrawalInputFragmentCompat
 import com.stip.ipasset.ticker.model.TickerDepositTransaction
 import com.stip.ipasset.ticker.model.TickerWithdrawalTransaction
+import com.stip.stip.MainActivity
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetTickerTransactionBinding
 import dagger.hilt.android.AndroidEntryPoint
@@ -60,7 +61,7 @@ class TickerTransactionFragment : Fragment() {
         
         // 뒤로가기 버튼 설정
         binding.materialToolbar.setNavigationOnClickListener {
-            requireActivity().onBackPressed()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
         
         // 티커 정보 표시
@@ -85,15 +86,12 @@ class TickerTransactionFragment : Fragment() {
             binding.materialToolbar.title = "총 보유"
         }
         
-        // MainActivity의 헤더 타이틀 텍스트뷰 숨기기
-        activity?.findViewById<TextView>(R.id.headerTitle)?.apply {
-            visibility = View.GONE // 텍스트와 공간까지 완전히 제거
-        }
+        // MainActivity의 헤더 완전히 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
     }
     
     override fun onStop() {
         super.onStop()
-        // 필요하다면 프래그먼트를 떠날 때 헤더 타이틀 복원
     }
     
     private fun setupTickerInfo() {

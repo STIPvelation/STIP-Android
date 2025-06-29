@@ -34,8 +34,8 @@ class TransactionDetailViewModel : ViewModel() {
             executionPrice = 35000.0 // 1 BTC = 35,000 USD
         )
         
-        // Simulate delay
-        android.os.Handler().postDelayed({
+        // Simulate delay - Deprecated Handler() 생성자 수정
+        android.os.Handler(android.os.Looper.getMainLooper()).postDelayed({
             _isLoading.value = false
             _transaction.value = dummyTransaction
         }, 500)

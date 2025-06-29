@@ -5,6 +5,8 @@ import android.os.Handler
 import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
+import kotlinx.coroutines.*
+import androidx.lifecycle.lifecycleScope
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.stip.stip.MainActivity
 import com.stip.dummy.AssetDummyData
 import com.stip.ipasset.ticker.fragment.TickerTransactionFragment
 import com.stip.ipasset.usd.fragment.USDDepositFragment
@@ -296,6 +300,20 @@ class IpAssetFragment : Fragment() {
         )
     }
     
+    override fun onResume() {
+        super.onResume()
+        // 입출금 헤더 텍스트 설정
+        (activity as? MainActivity)?.setHeaderTitle("입출금")
+        
+        // 헤더 레이아웃 표시
+        val headerLayout = requireActivity().findViewById<View>(R.id.headerLayout)
+        headerLayout?.visibility = View.VISIBLE
+        
+        // 헤더 타이틀 표시
+        val headerTitle = requireActivity().findViewById<TextView>(R.id.headerTitle)
+        headerTitle?.visibility = View.VISIBLE
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
