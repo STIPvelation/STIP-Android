@@ -132,7 +132,7 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
                             binding.holdingsRecyclerView.apply {
                                 layoutManager = LinearLayoutManager(requireContext())
                                 adapter = dipAdapter
-                                addItemDecoration(MyDividerItemDecoration(requireContext()))
+                                // 아이템 간 구분선 제거
                             }
                             binding.holdingsRecyclerView.visibility = View.VISIBLE
                             binding.noipcurrently.visibility = View.GONE

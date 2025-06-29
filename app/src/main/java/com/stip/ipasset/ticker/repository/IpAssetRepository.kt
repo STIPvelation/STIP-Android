@@ -1,13 +1,18 @@
 package com.stip.ipasset.ticker.repository
 
 import android.content.Context
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.stip.ipasset.model.IpAsset
 
 class IpAssetRepository private constructor(private val context: Context) {
 
+    // LiveData를 통해 자산 데이터를 관리하도록 변경
+    private val _assetsData = MutableLiveData<List<IpAsset>>(emptyList())
+    val assetsData: LiveData<List<IpAsset>> = _assetsData
+
     companion object {
         private var instance: IpAssetRepository? = null
-        private var testData: List<IpAsset> = emptyList()
         
         fun getInstance(context: Context): IpAssetRepository {
             if (instance == null) {
@@ -16,27 +21,38 @@ class IpAssetRepository private constructor(private val context: Context) {
             return instance!!
         }
         
-        fun setTestData(data: List<IpAsset>) {
-            testData = data
+        fun setTestData(context: Context, data: List<IpAsset>) {
+            getInstance(context)._assetsData.postValue(data)
         }
     }
     
     fun getIpAssets(): List<IpAsset> {
-        return testData
+        return _assetsData.value ?: emptyList()
     }
     
     fun getAsset(id: String): IpAsset? {
-        return testData.find { it.id == id }
+        return getIpAssets().find { it.id == id }
+    }
+    
+    // 새 자산 추가 메서드
+    fun addAsset(asset: IpAsset): Boolean {
+        val currentAssets = getIpAssets().toMutableList()
+        if (currentAssets.any { it.id == asset.id }) {
+            return false // 이미 존재하는 자산은 추가하지 않음
+        }
+        currentAssets.add(asset)
+        _assetsData.postValue(currentAssets)
+        return true
     }
     
     fun updateAsset(id: String, newBalance: Double): IpAsset? {
-        val existingIndex = testData.indexOfFirst { it.id == id }
+        val currentAssets = getIpAssets().toMutableList()
+        val existingIndex = currentAssets.indexOfFirst { it.id == id }
         if (existingIndex != -1) {
-            val existing = testData[existingIndex]
+            val existing = currentAssets[existingIndex]
             val updated = existing.copy(balance = newBalance, amount = newBalance)
-            val mutableList = testData.toMutableList()
-            mutableList[existingIndex] = updated
-            testData = mutableList
+            currentAssets[existingIndex] = updated
+            _assetsData.postValue(currentAssets)
             return updated
         }
         return null

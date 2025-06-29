@@ -76,7 +76,7 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
         
         // 테스트 데이터 설정 (실제 앱에서는 API에서 가져와야 함)
         if (repository.getAsset(ipAsset.id) == null) {
-            IpAssetRepository.setTestData(listOf(ipAsset))
+            IpAssetRepository.setTestData(requireContext(), listOf(ipAsset))
         }
     }
     
