@@ -429,7 +429,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical|start"
-                        android:padding="16dp"
+                        android:padding="8dp"
                         android:text="@string/title_profit_detail"
                         android:textColor="#333333"
                         android:textStyle="bold"
@@ -448,6 +448,8 @@
                         android:id="@+id/container_trade_table_header"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:background="@drawable/table_header_gradient"
+                        android:elevation="0.5dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/divider_detail_title">
@@ -458,7 +460,7 @@
                             android:layout_height="0dp"
                             android:paddingEnd="8dp"
                             android:paddingStart="12dp"
-                            android:background="#F7F7F7"
+                            android:background="@android:color/transparent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent">
@@ -493,7 +495,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:background="#F7F7F7"
+                            android:background="@android:color/transparent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/container_profit_rate"
                             app:layout_constraintStart_toEndOf="@id/container_date"
@@ -512,7 +514,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="0.5dp"
-                                android:background="#E0E0E0" />
+                                android:background="#30C6E8"
+                                android:alpha="0.3" />
 
                             <TextView
                                 android:id="@+id/text_cumulative_profit_label"
@@ -530,7 +533,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:background="#F7F7F7"
+                            android:background="@android:color/transparent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/container_assets"
                             app:layout_constraintStart_toEndOf="@id/container_profit_loss"
@@ -549,7 +552,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="0.5dp"
-                                android:background="#E0E0E0" />
+                                android:background="#30C6E8"
+                                android:alpha="0.3" />
 
                             <TextView
                                 android:id="@+id/text_cumulative_rate_label"
@@ -567,7 +571,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:background="#F7F7F7"
+                            android:background="@android:color/transparent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toStartOf="@+id/container_deposit_withdrawal"
                             app:layout_constraintStart_toEndOf="@id/container_profit_rate"
@@ -586,7 +590,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="0.5dp"
-                                android:background="#E0E0E0" />
+                                android:background="#30C6E8"
+                                android:alpha="0.3" />
 
                             <TextView
                                 android:id="@+id/text_investment_label"
@@ -604,7 +609,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:background="#F7F7F7"
+                            android:background="@android:color/transparent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/container_assets"
@@ -623,7 +628,8 @@
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="0.5dp"
-                                android:background="#E0E0E0" />
+                                android:background="#30C6E8"
+                                android:alpha="0.3" />
 
                             <TextView
                                 android:id="@+id/text_withdrawal_label"
