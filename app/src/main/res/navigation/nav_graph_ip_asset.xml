@@ -177,4 +177,14 @@
             android:id="@+id/action_usdTransactionFragment_to_withdrawalDetail"
             app:destination="@id/usdWithdrawalTransactionDetailFragment" />
     </fragment>
+    
+    <fragment
+        android:id="@+id/tickerTransactionFragment"
+        android:name="com.stip.ipasset.ticker.fragment.TickerTransactionFragment"
+        android:label="TickerTransactionFragment">
+        
+        <action
+            android:id="@+id/action_tickerTransactionFragment_to_tickerWithdrawalInputFragment"
+            app:destination="@id/tickerWithdrawalInputFragment" />
+    </fragment>
 </navigation>

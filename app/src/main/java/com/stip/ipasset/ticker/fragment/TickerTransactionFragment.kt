@@ -13,6 +13,7 @@ import com.stip.ipasset.model.IpAsset
 import com.stip.ipasset.ticker.activity.TickerDepositDetailActivity
 import com.stip.ipasset.ticker.activity.TickerWithdrawalDetailActivity
 import com.stip.ipasset.ticker.adapter.TickerTransactionAdapter
+import com.stip.ipasset.ticker.fragment.TickerWithdrawalInputFragmentCompat
 import com.stip.ipasset.ticker.model.TickerDepositTransaction
 import com.stip.ipasset.ticker.model.TickerWithdrawalTransaction
 import com.stip.stip.R
@@ -72,6 +73,16 @@ class TickerTransactionFragment : Fragment() {
         
         // 버튼 리스너 설정
         setupButtonListeners()
+    }
+    
+    override fun onResume() {
+        super.onResume()
+        // 상세 화면에서 돌아올 때 타이틀을 '총 보유'로 유지
+        binding.materialToolbar.title = "총 보유"
+        // 타이틀 텍스트 설정이 다른 곳에서 변경되지 않도록 post 사용
+        binding.materialToolbar.post {
+            binding.materialToolbar.title = "총 보유"
+        }
     }
     
     private fun setupTickerInfo() {
@@ -172,9 +183,42 @@ class TickerTransactionFragment : Fragment() {
     }
     
     private fun navigateToTickerWithdrawalScreen() {
-        // 출금 화면으로 이동하는 로직 구현
-        // 더미 구현: 토스트 메시지로 기능 알림
-        android.widget.Toast.makeText(requireContext(), "${tickerCode} 출금 기능 준비 중", android.widget.Toast.LENGTH_SHORT).show()
+        tickerCode?.let { code ->
+            // 티커에 해당하는 자산 정보 찾기 (예시 코드)
+            val asset = AssetDummyData.getAssetByCode(code) ?: run {
+                android.widget.Toast.makeText(
+                    requireContext(),
+                    "${code} 자산 정보를 찾을 수 없습니다.",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+            
+            try {
+                // NavController를 사용하지 않는 TickerWithdrawalInputFragmentCompat 인스턴스 생성
+                val withdrawalFragment = TickerWithdrawalInputFragmentCompat.newInstance(asset)
+                
+                // Fragment Transaction으로 화면 교체
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, withdrawalFragment)
+                    .addToBackStack(null)
+                    .commit()
+            } catch (e: Exception) {
+                android.util.Log.e("TickerTransaction", "출금 화면 이동 실패: ${e.message}", e)
+                android.widget.Toast.makeText(
+                    requireContext(),
+                    "화면 전환 중 오류가 발생했습니다: ${e.message}",
+                    android.widget.Toast.LENGTH_SHORT
+                ).show()
+            }
+        } ?: run {
+            // 티커 코드가 없는 경우
+            android.widget.Toast.makeText(
+                requireContext(),
+                "티커 정보가 없습니다.",
+                android.widget.Toast.LENGTH_SHORT
+            ).show()
+        }
     }
     
     // 거래 내역 어댑터 설정
