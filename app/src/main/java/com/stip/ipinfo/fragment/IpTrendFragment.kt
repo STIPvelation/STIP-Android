@@ -481,9 +481,19 @@ class IpTrendFragment : Fragment() {
             binding.date1year
         )
 
-        dateButtons.forEachIndexed { index, button ->
-            button.setOnClickListener {
-                selectDateButton(button, dateButtons)
+        dateButtons.forEachIndexed { index, chip ->
+            chip.setOnClickListener {
+                selectDateButton(chip, dateButtons)
+                
+                // 모든 Chip의 텍스트 색상 재설정
+                dateButtons.forEach { btn ->
+                    // 선택된 Chip은 흰색, 아닌 것은 회색 텍스트
+                    if (btn.isChecked) {
+                        btn.setTextColor(Color.WHITE)
+                    } else {
+                        btn.setTextColor(Color.parseColor("#808080"))
+                    }
+                }
                 
                 // Update current period based on selected button
                 currentPeriod = when(index) {
@@ -497,7 +507,17 @@ class IpTrendFragment : Fragment() {
                 // Reload IP data with new period
                 loadTopRisingIps(currentPeriod)
             }
+            
+            // 초기 텍스트 색상 설정
+            if (chip.isChecked) {
+                chip.setTextColor(Color.WHITE)
+            } else {
+                chip.setTextColor(Color.parseColor("#808080"))
+            }
         }
+        
+        // 기본 선택된 버튼의 텍스트 색상을 흰색으로 설정
+        dateButtons.find { it.isChecked }?.setTextColor(Color.WHITE)
         
         // 기본값으로 첫 번째 버튼(1개월) 선택
         selectDateButton(dateButtons[0], dateButtons)
@@ -532,14 +552,33 @@ class IpTrendFragment : Fragment() {
             binding.allText
         )
 
-        buttons.forEach { button ->
-            button.setOnClickListener {
-                selectTimeRangeButton(button, buttons)
+        // Chip에 텍스트 색상 설정 리스너 구현
+        buttons.forEach { chip ->
+            chip.setOnClickListener {
+                selectTimeRangeButton(chip, buttons)
+                
+                // 모든 Chip의 텍스트 색상 재설정
+                buttons.forEach { btn ->
+                    // 선택된 Chip은 흰색, 아닌 것은 회색 텍스트
+                    if (btn.isChecked) {
+                        btn.setTextColor(Color.WHITE)
+                    } else {
+                        btn.setTextColor(Color.parseColor("#808080"))
+                    }
+                }
+            }
+            
+            // 초기 텍스트 색상 설정
+            if (chip.isChecked) {
+                chip.setTextColor(Color.WHITE)
+            } else {
+                chip.setTextColor(Color.parseColor("#808080"))
             }
         }
         
         // 기본값으로 첫 번째 버튼 선택
         selectTimeRangeButton(buttons[0], buttons)
+        buttons[0].setTextColor(Color.WHITE) // 첫 번째 버튼 텍스트 색상 흰색으로 설정
     }
     
     /**

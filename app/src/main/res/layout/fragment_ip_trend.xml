@@ -325,7 +325,7 @@
                         android:textAlignment="center"
                         android:gravity="center"
                         app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
+                        android:textColor="#FFFFFF"
                         app:chipStartPadding="8dp"
                         app:chipEndPadding="8dp" />
 
@@ -338,7 +338,7 @@
                         android:textAlignment="center"
                         android:gravity="center"
                         app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
+                        android:textColor="#FFFFFF"
                         app:chipStartPadding="8dp"
                         app:chipEndPadding="8dp" />
 
@@ -351,7 +351,7 @@
                         android:textAlignment="center"
                         android:gravity="center"
                         app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
+                        android:textColor="#FFFFFF"
                         app:chipStartPadding="8dp"
                         app:chipEndPadding="8dp" />
 
@@ -364,7 +364,7 @@
                         android:textAlignment="center"
                         android:gravity="center"
                         app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
+                        android:textColor="#FFFFFF"
                         app:chipStartPadding="8dp"
                         app:chipEndPadding="8dp" />
                 </com.google.android.material.chip.ChipGroup>
