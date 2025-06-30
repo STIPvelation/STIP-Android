@@ -3,6 +3,9 @@ package com.stip.stip
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ScrollView
+import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import android.util.Log
 import android.view.View
 import android.widget.Toast
@@ -10,7 +13,6 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.appcompat.app.AlertDialog
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.stip.stip.iptransaction.fragment.IpProfitLossFragment
 import com.stip.stip.databinding.ActivityMainBinding
@@ -373,17 +375,34 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showLoginRequiredDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_log_in_inform, null)
         val dialog = AlertDialog.Builder(this)
-            .setTitle("로그인 필요")
-            .setMessage("이 기능을 사용하려면 로그인이 필요합니다.")
-            .setPositiveButton("로그인") { _, _ ->
-                // PIN 번호 입력 화면으로 바로 이동
-                val intent = Intent(this, com.stip.stip.signup.login.LoginPinNumberActivity::class.java)
-                startActivity(intent)
-            }
-            .setNegativeButton("취소", null)
+            .setView(dialogView)
             .create()
-            
+        
+        // 제목과 메시지 설정
+        val titleTextView = dialogView.findViewById<TextView>(R.id.dialogLoginInformTitle)
+        val messageTextView = dialogView.findViewById<TextView>(R.id.dialogLoginInformMessage)
+        titleTextView.text = "로그인 필요"
+        messageTextView.text = "이 기능을 사용하려면 로그인이 필요합니다."
+        
+        // 확인 버튼 (로그인)
+        val confirmButton = dialogView.findViewById<TextView>(R.id.dialogLoginInformButtonConfirm)
+        confirmButton.text = "로그인"
+        confirmButton.setOnClickListener {
+            // PIN 번호 입력 화면으로 바로 이동
+            val intent = Intent(this, com.stip.stip.signup.login.LoginPinNumberActivity::class.java)
+            startActivity(intent)
+            dialog.dismiss()
+        }
+        
+        // 취소 버튼
+        val cancelButton = dialogView.findViewById<TextView>(R.id.dialogLoginInformButtonCancel)
+        cancelButton.text = "취소"
+        cancelButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        
         dialog.show()
     }
 
@@ -411,8 +430,27 @@ class MainActivity : AppCompatActivity() {
     private fun showPhoneFraudAlertDialog() {
         val dialogView = layoutInflater.inflate(R.layout.fragment_phone_fraud_alert_dialog, null)
         
-        val dialog = BottomSheetDialog(this)
-        dialog.setContentView(dialogView)
+        // BottomSheetDialog 대신 AlertDialog 사용하여 전체 내용이 한 번에 보이도록 함
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+            
+        // 다이얼로그 크기 설정
+        dialog.window?.let { window ->
+            window.setBackgroundDrawable(android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT))
+            val params = window.attributes
+            params.width = (resources.displayMetrics.widthPixels * 0.9).toInt()
+            window.attributes = params
+        }
+        
+        // 다이얼로그의 모든 내용이 한 번에 잘 보이도록 최적화
+        // ScrollView가 명시적 ID 없이 레이아웃에 포함되어 있어서 직접 찾기 어려움
+        // 대신에 전체 다이얼로그 높이를 화면의 80%로 제한
+        dialog.window?.let { window ->
+            val params = window.attributes
+            params.height = (resources.displayMetrics.heightPixels * 0.8).toInt()
+            window.attributes = params
+        }
         
         // 확인 버튼 클릭 처리
         dialogView.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btn_confirm).setOnClickListener {
