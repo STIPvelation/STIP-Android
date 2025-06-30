@@ -67,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintWidth_percent="0.35"
-        app:layout_constraintHeight_percent="0.035"
+        app:layout_constraintHeight_percent="0.05"
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_frame_fillter_rounded"
         android:paddingStart="8dp"

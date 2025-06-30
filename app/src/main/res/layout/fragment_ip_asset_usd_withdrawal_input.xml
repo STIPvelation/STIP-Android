@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:background="@color/white">
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/material_toolbar"
@@ -220,7 +225,8 @@
                 android:paddingBottom="10dp"
                 android:paddingHorizontal="24dp"
                 android:clickable="true"
-                android:focusable="true">
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
 
                 <!-- 최소금액 텍스트 -->
                 <TextView
@@ -273,7 +279,7 @@
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="12dp"
-                android:paddingHorizontal="16dp"
+                android:paddingHorizontal="8dp"
                 android:gravity="center">
                 
                 <!-- 10% 버튼 -->
@@ -282,7 +288,7 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="4dp"
                     android:text="10%"
                     android:textSize="12sp"
                     android:textColor="@color/percentage_button_text_color"
@@ -295,7 +301,7 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="4dp"
                     android:text="25%"
                     android:textSize="12sp"
                     android:textColor="@color/percentage_button_text_color"
@@ -308,7 +314,7 @@
                     android:layout_width="0dp"
                     android:layout_height="36dp"
                     android:layout_weight="1"
-                    android:layout_marginEnd="6dp"
+                    android:layout_marginEnd="4dp"
                     android:text="50%"
                     android:textSize="12sp"
                     android:textColor="@color/percentage_button_text_color"
@@ -475,8 +481,8 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginHorizontal="@dimen/common_side_margin_20dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="@dimen/margin_medium"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp"
         android:backgroundTint="@color/sky_30C6E8_100"
         android:text="출금신청"
         android:textColor="@color/white"
@@ -494,7 +500,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_medium"
-        android:layout_marginBottom="48dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="20dp"
         android:paddingVertical="@dimen/margin_xsmall"
         android:background="@color/white"
         android:clipToPadding="false"
@@ -507,3 +514,5 @@
         app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

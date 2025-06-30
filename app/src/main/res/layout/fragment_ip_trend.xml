@@ -17,7 +17,9 @@
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/price_chart_viewpager"
             android:layout_width="0dp"
-            android:layout_height="180dp"
+            android:layout_height="0dp"
+            app:layout_constraintDimensionRatio="H,16:9"
+            android:minHeight="180dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -94,9 +96,9 @@
             android:id="@+id/rising_ip_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="12dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -161,12 +163,13 @@
                         app:singleSelection="true"
                         app:selectionRequired="true"
                         app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="8dp"
                         android:gravity="center_horizontal">
 
                         <com.google.android.material.chip.Chip
                             android:id="@+id/date_1month"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="true"
                             android:text="1개월"
@@ -180,7 +183,7 @@
                         <com.google.android.material.chip.Chip
                             android:id="@+id/date_3months"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="3개월"
                             android:textAlignment="center"
@@ -193,7 +196,7 @@
                         <com.google.android.material.chip.Chip
                             android:id="@+id/date_6months"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="6개월"
                             android:textAlignment="center"
@@ -206,15 +209,15 @@
                         <com.google.android.material.chip.Chip
                             android:id="@+id/date_1year"
                             style="@style/Widget.MaterialComponents.Chip.Choice"
-                            android:layout_width="80dp"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="1년"
                             android:textAlignment="center"
                             android:gravity="center"
                             app:chipBackgroundColor="@color/chip_background_color"
                             android:textColor="@color/chip_text_color"
-                            app:chipStartPadding="8dp"
-                            app:chipEndPadding="8dp" />
+                            app:chipStartPadding="20dp"
+                            app:chipEndPadding="20dp" />
                     </com.google.android.material.chip.ChipGroup>
 
                     <!-- Enhanced RecyclerView with Dividers -->
@@ -225,6 +228,8 @@
                         android:layout_marginTop="12dp"
                         android:background="@android:color/transparent"
                         android:clipToPadding="false"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never"
                         android:paddingBottom="8dp" />
                 </LinearLayout>
             </LinearLayout>
@@ -245,9 +250,9 @@
             android:id="@+id/stip_index_card"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="12dp"
             android:layout_marginTop="12dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="12dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -312,13 +317,14 @@
                         android:layout_marginTop="8dp"
                         android:gravity="center_horizontal"
                         app:chipSpacingHorizontal="8dp"
+                        app:chipSpacingVertical="8dp"
                         app:selectionRequired="true"
                         app:singleSelection="true">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/month_text"
                         style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
                         android:text="1개월"
@@ -332,7 +338,7 @@
                     <com.google.android.material.chip.Chip
                         android:id="@+id/three_months_text"
                         style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3개월"
                         android:textAlignment="center"
@@ -345,7 +351,7 @@
                     <com.google.android.material.chip.Chip
                         android:id="@+id/six_months_text"
                         style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="6개월"
                         android:textAlignment="center"
@@ -358,15 +364,15 @@
                     <com.google.android.material.chip.Chip
                         android:id="@+id/all_text"
                         style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="1년"
                         android:textAlignment="center"
                         android:gravity="center"
                         app:chipBackgroundColor="@color/chip_background_color"
                         android:textColor="#FFFFFF"
-                        app:chipStartPadding="8dp"
-                        app:chipEndPadding="8dp" />
+                        app:chipStartPadding="20dp"
+                        app:chipEndPadding="20dp" />
                 </com.google.android.material.chip.ChipGroup>
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -376,6 +382,8 @@
                     android:layout_marginTop="12dp"
                     android:background="@android:color/transparent"
                     android:clipToPadding="false"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never"
                     android:paddingBottom="8dp" />
                 </LinearLayout>
             </LinearLayout>

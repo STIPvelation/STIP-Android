@@ -310,8 +310,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
 
     private fun setupOrderTypeExplanationPopup() {
         binding.tradingInfoView?.textLabelSettlement?.setOnClickListener {
-            // OrderTypeInfoDialogFragment.show(parentFragmentManager) // show 함수 확인 필요
-            OrderTypeInfoDialogFragment().show(parentFragmentManager, OrderTypeInfoDialogFragment.TAG) // 표준적인 show 호출
+            // Use the static show() method for better consistency
+            OrderTypeInfoDialogFragment.show(parentFragmentManager)
         }
     }
 
