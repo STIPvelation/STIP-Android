@@ -103,7 +103,7 @@ class OrderBookManager(
             
             Log.d(TAG, "Updating order book with currentPrice: $effectivePrice, aggregation: $currentAggregationLevel")
             // 항상 데이터 생성 (빈 리스트 반환 안 함)
-            val rawList = generateDummyOrderBook(0f, fixedTwoDecimalFormatter, numberParseFormat)
+            val rawList = getOrderBookData(0f, fixedTwoDecimalFormatter, numberParseFormat)
             val aggregatedList = if (this.currentAggregationLevel > 0.0) {
                 generateAggregatedOrderBook(rawList, this.currentAggregationLevel)
             } else {
@@ -253,57 +253,43 @@ class OrderBookManager(
     }
 
 
-    fun generateDummyOrderBook(
+    // 더미 데이터 대신 실제 API 호출로 호가창을 가져옵니다
+    fun getOrderBookData(
         currentPrice: Float,
         fixedTwoDecimalFormatter: DecimalFormat,
         numberParseFormat: DecimalFormat
     ): List<OrderBookItem> {
         val sellOrders = mutableListOf<OrderBookItem>()
         val buyOrders = mutableListOf<OrderBookItem>()
-        val numOrdersPerSide = 30  // Always generate exactly 30 orders per side
+        val numOrdersPerSide = 30  // 각 측면에 30개의 주문을 표시
 
-        // Generate exactly 30 sell orders with empty values
+        // TODO: 실제 API에서 호가 데이터를 가져오는 로직 구현
+        // 현재는 빈 데이터로 표시
+        
+        // 판매 주문 (매도) - 30개의 빈 주문
         for (i in numOrdersPerSide downTo 1) {
             sellOrders.add(
                 OrderBookItem(
-                    price = "",   // Empty price
-                    percent = "", // Empty percent
-                    quantity = "", // Empty quantity
+                    price = "",   // 빈 가격
+                    percent = "", // 빈 퍼센트
+                    quantity = "", // 빈 수량
                     isBuy = false
                 )
             )
         }
 
-        // Generate exactly 30 buy orders with empty values
+        // 구매 주문 (매수) - 30개의 빈 주문
         for (i in 1..numOrdersPerSide) {
             buyOrders.add(
                 OrderBookItem(
-                    price = "",   // Empty price
-                    percent = "", // Empty percent
-                    quantity = "", // Empty quantity
+                    price = "",   // 빈 가격
+                    percent = "", // 빈 퍼센트
+                    quantity = "", // 빈 수량
                     isBuy = true
                 )
             )
         }
         
-        // Ensure we have exactly 30 orders on each side
-        while (sellOrders.size < numOrdersPerSide) {
-            sellOrders.add(OrderBookItem(
-                price = "",   // Empty price
-                percent = "", // Empty percent
-                quantity = "", // Empty quantity
-                isBuy = false
-            ))
-        }
-        
-        while (buyOrders.size < numOrdersPerSide) {
-            buyOrders.add(OrderBookItem(
-                price = "",   // Empty price
-                percent = "", // Empty percent
-                quantity = "", // Empty quantity
-                isBuy = true
-            ))
-        }
         
         return sellOrders + buyOrders
     }

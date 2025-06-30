@@ -17,14 +17,18 @@ import com.stip.stip.order.adapter.FilledOrderAdapter
 // MaterialAlertDialogBuilder import는 삭제된 상태 유지
 import com.stip.stip.iphome.fragment.CancelConfirmDialogFragment // ❌️ 커스텀 다이얼로그 import (경로 확인 및 수정 필요)
 import com.stip.stip.signup.utils.PreferenceUtil
-import java.util.Random
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class OrderHistoryManager(
     private val context: Context,
     private val binding: FragmentOrderContentBinding,
     private val unfilledAdapter: UnfilledOrderAdapter,
     private val filledAdapter: FilledOrderAdapter,
-    private val fragmentManager: FragmentManager // 생성자에 FragmentManager 포함
+    private val fragmentManager: FragmentManager, // 생성자에 FragmentManager 포함
+    private val coroutineScope: CoroutineScope // 코루틴 스코프 주입
 ) {
 
     // isUnfilledTabSelected 접근성은 public 또는 public getter로 유지
@@ -64,7 +68,7 @@ class OrderHistoryManager(
         Log.d("OrderHistoryManager", "필터 적용됨: $types / $startDate ~ $endDate")
 
         // 예시: adapter에 필터링된 데이터 적용
-        // 필터링 조건에 따라 dummyData.filter { ... } 형태로 구성 가능
+        // 필터링 조건에 따라 orderList.filter { ... } 형태로 구성 가능
     }
 
 
@@ -123,40 +127,62 @@ class OrderHistoryManager(
 
 
     private fun loadUnfilledOrders() {
-        // 더미 데이터 로딩 (변경 없음)
-        val allDummyUnfilledOrders = listOf(
-            UnfilledOrder("dummy_unfilled_1", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "AXNO", "매수", "--", "15.50", "100.00", "50.00", "14:20:05"),
-            UnfilledOrder("dummy_unfilled_2", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "MSK", "매도", "30.00", "31.00", "20.00", "10.00", "11:15:30"),
-            UnfilledOrder("dummy_unfilled_3", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "", "매수", "--", "15.40", "200.00", "200.00", "09:05:10"),
-            UnfilledOrder("dummy_unfilled_4", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "MDM", "매도", "--", "19.30", "80.00", "40.00", "10:45:00"),
-            UnfilledOrder("dummy_unfilled_5", com.stip.stip.signup.utils.PreferenceUtil.getString("PREF_KEY_COMMON_NUMBER"), "CDM", "매수", "--", "14.10", "120.00", "60.00", "13:12:15")
-        )
-        val randomCount = try { Random().nextInt(allDummyUnfilledOrders.size + 1) } catch (e: Exception) { 3 }
-        val randomizedList = allDummyUnfilledOrders.shuffled().take(randomCount)
-        val hasData = randomizedList.isNotEmpty()
-
-        binding.recyclerViewUnfilledOrders.visibility = if (hasData) View.VISIBLE else View.GONE
-        binding.textNoUnfilledOrders.visibility = if (!hasData) View.VISIBLE else View.GONE
-
-        unfilledAdapter.submitList(randomizedList)
-        updateCancelButtonState(unfilledAdapter.hasCheckedItems())
+        // TODO: 실제 API에서 미체결 주문 데이터 불러오기
+        coroutineScope.launch(Dispatchers.IO) {
+            try {
+                // API 호출 예시 (실제 구현 필요)
+                // val response = orderService.getUnfilledOrders()
+                // val orderList = response.data ?: emptyList()
+                
+                // 임시로 빈 리스트 사용
+                val orderList = emptyList<UnfilledOrder>()
+                
+                withContext(Dispatchers.Main) {
+                    val hasData = orderList.isNotEmpty()
+                    
+                    binding.recyclerViewUnfilledOrders.visibility = if (hasData) View.VISIBLE else View.GONE
+                    binding.textNoUnfilledOrders.visibility = if (!hasData) View.VISIBLE else View.GONE
+                    
+                    unfilledAdapter.submitList(orderList)
+                    updateCancelButtonState(unfilledAdapter.hasCheckedItems())
+                }
+            } catch (e: Exception) {
+                Log.e("OrderHistoryManager", "미체결 주문 로딩 실패", e)
+                withContext(Dispatchers.Main) {
+                    binding.recyclerViewUnfilledOrders.visibility = View.GONE
+                    binding.textNoUnfilledOrders.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     private fun loadFilledOrders() {
-        // 더미 데이터 로딩 (변경 없음)
-        val dummyFilledOrders = listOf(
-            IpInvestmentItem("매수", "AXNO", "12.00", "10.50", "126.00", "0.00", "126.00", "14:21:00", "2025.04.24 14:22"),
-            IpInvestmentItem("매도", "CDM", "8.00", "11.00", "88.00", "0.00", "88.00", "13:11:00", "2025.04.24 13:12"),
-            IpInvestmentItem("매수", "", "5.50", "12.75", "70.12", "0.00", "70.12", "11:20:00", "2025.04.24 11:21")
-        )
-        val randomCount = try { Random().nextInt(dummyFilledOrders.size + 1) } catch (e: Exception) { 2 }
-        val randomizedList = dummyFilledOrders.shuffled().take(randomCount)
-        val hasData = randomizedList.isNotEmpty()
-
-        binding.recyclerViewHistory.visibility = if (hasData) View.VISIBLE else View.GONE
-        binding.textNoUnfilledOrders.visibility = if (!hasData) View.VISIBLE else View.GONE
-
-        filledAdapter.submitList(randomizedList)
+        // TODO: 실제 API에서 체결 주문 데이터 불러오기
+        coroutineScope.launch(Dispatchers.IO) {
+            try {
+                // API 호출 예시 (실제 구현 필요)
+                // val response = orderService.getFilledOrders()
+                // val orderList = response.data ?: emptyList()
+                
+                // 임시로 빈 리스트 사용
+                val orderList = emptyList<IpInvestmentItem>()
+                
+                withContext(Dispatchers.Main) {
+                    val hasData = orderList.isNotEmpty()
+                    
+                    binding.recyclerViewHistory.visibility = if (hasData) View.VISIBLE else View.GONE
+                    binding.textNoUnfilledOrders.visibility = if (!hasData) View.VISIBLE else View.GONE
+                    
+                    filledAdapter.submitList(orderList)
+                }
+            } catch (e: Exception) {
+                Log.e("OrderHistoryManager", "체결 주문 로딩 실패", e)
+                withContext(Dispatchers.Main) {
+                    binding.recyclerViewHistory.visibility = View.GONE
+                    binding.textNoUnfilledOrders.visibility = View.VISIBLE
+                }
+            }
+        }
     }
 
     fun updateHistoryFilterTabAppearance() {

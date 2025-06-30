@@ -116,8 +116,8 @@ class OrderUIStateManager(
             val isLoggedIn = PreferenceUtil.getMemberInfo() != null
             
             if (!isLoggedIn) {
-                // 로그인하지 않은 경우 모든 값을 0으로 표시 (매수/매도 탭에서만)
-                binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(0.0)
+                // 로그인하지 않은 경우 숫자는 표시하지 않고 텍스트만 유지 (매수/매도 탭에서만)
+                binding.textOrderAvailableAmount.text = ""
                 binding.textOrderAvailableUnit.text = if (currentTabPosition == 0) {
                     context.getString(R.string.unit_usd)
                 } else {
@@ -129,21 +129,16 @@ class OrderUIStateManager(
             
             when (currentTabPosition) {
                 0 -> {
-                    val actualBuyableAmount = orderDataCoordinator.getActualBuyableAmount()
-                    binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(actualBuyableAmount.toDouble())
+                    // 매수 탭: 주문가능 수치를 표시하지 않음
+                    binding.textOrderAvailableAmount.text = ""
                     binding.textOrderAvailableUnit.text = context.getString(R.string.unit_usd)
-                    binding.rowOrderAvailable.visibility = if (orderDataCoordinator.availableUsdBalance > 0.0) View.VISIBLE else View.GONE
+                    binding.rowOrderAvailable.visibility = View.VISIBLE
                 }
                 1 -> {
-                    val actualHeldQuantity = orderDataCoordinator.getActualSellableQuantity()
+                    // 매도 탭: 주문가능 수치를 표시하지 않음
                     val tickerName = orderDataCoordinator.currentTicker ?: "--"
-                    if (actualHeldQuantity > 0) {
-                        binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(actualHeldQuantity)
-                        binding.textOrderAvailableUnit.text = tickerName
-                    } else {
-                        binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(0.0)
-                        binding.textOrderAvailableUnit.text = tickerName
-                    }
+                    binding.textOrderAvailableAmount.text = ""
+                    binding.textOrderAvailableUnit.text = tickerName
                     binding.rowOrderAvailable.visibility = View.VISIBLE
                 }
                 else -> {

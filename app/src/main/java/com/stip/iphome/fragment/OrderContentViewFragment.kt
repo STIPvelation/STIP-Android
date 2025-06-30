@@ -7,19 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast // ❗️ Toast import 추가됨
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope // lifecycleScope 사용을 위한 import 추가
 import com.stip.stip.order.adapter.FilledOrderAdapter
 import com.stip.stip.order.adapter.OrderBookAdapter
 import com.stip.stip.R
 import com.stip.stip.iphome.adapter.UnfilledOrderAdapter
 import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.iphome.TradingDataHolder
-import com.stip.stip.order.*
 import com.stip.stip.iphome.util.OrderUtils
 import com.stip.stip.order.OrderDataCoordinator
 import com.stip.stip.order.OrderHistoryManager
 import com.stip.stip.order.OrderUIStateManager
+import com.stip.stip.order.OrderUIInitializer
+import com.stip.stip.order.OrderInputHandler
+import com.stip.stip.order.OrderBookManager
+import com.stip.stip.order.OrderValidator
+import com.stip.stip.order.OrderTickerManager
+import com.stip.stip.order.OrderConfirmResultHandler
+import com.stip.stip.order.OrderInfoManager
+import com.stip.stip.order.OrderButtonHandler
 import com.stip.stip.MainActivity
-
 
 interface OnOrderBookItemClickListener {
     fun onPriceClicked(price: String)
@@ -78,8 +85,9 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val initialBalance = 10000.0
-        val initialHoldings = 200.50
+        // 실제 API 데이터 통합을 위해 초기값을 0으로 설정
+        val initialBalance = 0.0
+        val initialHoldings = 0.0
         val feeRate = 0.001
         val minimumOrderValue = 10.0
 
@@ -126,7 +134,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
         // ✅ OrderHistoryManager 생성 시 parentFragmentManager 전달 확인됨
         historyManager = OrderHistoryManager(
             requireContext(), binding, unfilledOrderAdapter, filledOrderAdapter,
-            parentFragmentManager // ✅ FragmentManager 전달
+            parentFragmentManager, // ✅ FragmentManager 전달
+            lifecycleScope // 코루틴 스코프 전달
         )
         // ✅ 어댑터 콜백 설정 확인됨 (historyManager 생성 후)
         unfilledOrderAdapter.onSelectionChanged = { hasSelection ->
@@ -173,8 +182,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
             getCurrentPrice = { orderDataCoordinator.currentPrice }, getFeeRate = { feeRate },
             currentTicker = { orderDataCoordinator.currentTicker }, minimumOrderValue = minimumOrderValue,
             availableUsdBalance = { orderDataCoordinator.availableUsdBalance }, heldAssetQuantity = { orderDataCoordinator.heldAssetQuantity },
-            showToast = { msg -> OrderUtils.showToast(requireContext(), msg) },
-            showErrorDialog = { title, message, colorRes -> OrderUtils.showErrorDialog(parentFragmentManager, title, message, colorRes) },
+            showToast = { msg: String -> OrderUtils.showToast(requireContext(), msg) },
+            showErrorDialog = { title: Int, message: String, colorRes: Int -> OrderUtils.showErrorDialog(parentFragmentManager, title, message, colorRes) },
             parentFragmentManager = parentFragmentManager, validator = validator
         )
 
