@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.iphome.adapter.IpHomeInfoDetailAdapter
 import com.stip.stip.databinding.FragmentIpHomeInfoDetailBinding
 import com.stip.stip.iphome.model.IpListingItem
+import com.stip.stip.iphome.constants.IpDetailInfo
 import com.stip.stip.R
 
 class IpHomeInfoDetailFragment : Fragment() {
@@ -22,6 +24,8 @@ class IpHomeInfoDetailFragment : Fragment() {
 
     private lateinit var ipHomeInfoDetailAdapter: IpHomeInfoDetailAdapter
     private var currentItem: IpListingItem? = null
+    
+    private val TAG = "IpHomeInfoDetailFrag"
 
     companion object {
         private const val ARG_ITEM = "ip_listing_item"
@@ -57,10 +61,28 @@ class IpHomeInfoDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         currentItem?.let { item ->
-            // 법인명, 대표자
-            binding.tvValueCorporationName?.text = item.companyName
-            binding.tvValueRepresentative?.text = item.representative ?: "-"
-
+            // 티커 가져오기
+            val ticker = item.ticker
+            Log.d(TAG, "현재 티커: $ticker")
+            
+            // 법인명, 대표자 (IpDetailInfo 활용)
+            val companyName = IpDetailInfo.getCompanyNameForTicker(ticker)
+            val ceo = IpDetailInfo.getCEOForTicker(ticker)
+            
+            // 법인명이 IpDetailInfo에 있으면 사용, 아니면 IpListingItem 데이터 사용
+            binding.tvValueCorporationName?.text = if(companyName != IpDetailInfo.DEFAULT_VALUE) {
+                companyName
+            } else {
+                item.companyName
+            }
+            
+            // 대표자명이 IpDetailInfo에 있으면 사용, 아니면 IpListingItem 데이터 사용
+            binding.tvValueRepresentative?.text = if(ceo != IpDetailInfo.DEFAULT_VALUE) {
+                ceo
+            } else {
+                item.representative ?: "-"
+            }
+            
             // 어댑터 설정
             ipHomeInfoDetailAdapter = IpHomeInfoDetailAdapter(listOf(item))
             binding.recyclerViewDetailInfo.apply {
@@ -68,21 +90,31 @@ class IpHomeInfoDetailFragment : Fragment() {
                 adapter = ipHomeInfoDetailAdapter
             }
 
-            // 링크 클릭 리스너 설정
+            // IpDetailInfo에서 각 링크 정보 가져오기
+            val ipLink = IpDetailInfo.getIpLinkForTicker(ticker)
+            val homepageLink = IpDetailInfo.getHomepageForTicker(ticker)
+            val businessPlanLink = IpDetailInfo.getBusinessPlanForTicker(ticker)
+            val videoLink = IpDetailInfo.getVideoForTicker(ticker)
+            
+            // 링크 클릭 리스너 설정 (IpDetailInfo 우선 사용, 없으면 기존 데이터 사용)
             binding.linkDigitalIp.setOnClickListener {
-                openExternalLink(item.digitalIpLink, getString(R.string.no_ip_link))
+                val link = if(ipLink != IpDetailInfo.DEFAULT_VALUE) ipLink else item.digitalIpLink
+                openExternalLink(link, getString(R.string.no_ip_link))
             }
 
             binding.linkHomepage.setOnClickListener {
-                openExternalLink(item.homepageLink, getString(R.string.no_homepage_link))
+                val link = if(homepageLink != IpDetailInfo.DEFAULT_VALUE) homepageLink else item.homepageLink
+                openExternalLink(link, getString(R.string.no_homepage_link))
             }
 
             binding.linkBusinessPlan.setOnClickListener {
-                openExternalLink(item.businessPlanLink, getString(R.string.no_business_plan_link))
+                val link = if(businessPlanLink != IpDetailInfo.DEFAULT_VALUE) businessPlanLink else item.businessPlanLink
+                openExternalLink(link, getString(R.string.no_business_plan_link))
             }
 
             binding.linkRelatedVideo.setOnClickListener {
-                openExternalLink(item.relatedVideoLink, getString(R.string.no_related_video_link))
+                val link = if(videoLink != IpDetailInfo.DEFAULT_VALUE) videoLink else item.relatedVideoLink
+                openExternalLink(link, getString(R.string.no_related_video_link))
             }
 
         } ?: run {
@@ -90,18 +122,16 @@ class IpHomeInfoDetailFragment : Fragment() {
         }
     }
 
-
     private fun openExternalLink(url: String?, errorMessage: String) {
-        if (!url.isNullOrBlank()) {
+        if (!url.isNullOrBlank() && url != IpDetailInfo.DEFAULT_VALUE) {
             try {
+                Log.d(TAG, "링크 열기: $url")
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url.trim()))
-                if (intent.resolveActivity(requireContext().packageManager) != null) {
-                    startActivity(intent)
-                } else {
-                    Toast.makeText(requireContext(), "링크를 열 수 있는 앱이 없습니다.", Toast.LENGTH_SHORT).show()
-                }
+                // 직접 startActivity 호출 - resolveActivity 검사 제거
+                startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "잘못된 링크입니다.", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "링크 열기 실패: $url", e)
+                Toast.makeText(requireContext(), "링크를 여는 중 오류가 발생했습니다: ${e.message}", Toast.LENGTH_SHORT).show()
             }
         } else {
             Toast.makeText(requireContext(), errorMessage, Toast.LENGTH_SHORT).show()

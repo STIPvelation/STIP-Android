@@ -160,14 +160,11 @@ class IpHomeInfoFragment : Fragment() { // <<< 인터페이스 구현 제거
 
     // 바로가기 링크 설정
     private fun setupShortcutLinks() {
+        // BlockchainExplorerUrls 클래스 활용
         binding.tvLinkBlockInquiry.setOnClickListener {
-            // BlockchainExplorerUrls 클래스를 사용하여 티커에 맞는 URL 가져오기
             val blockchainUrl = com.stip.stip.iphome.constants.BlockchainExplorerUrls.getUrlForTicker(currentTicker)
             openExternalUrl(blockchainUrl)
         }
-
-
-
         binding.tvLinkIpRating.setOnClickListener {
             // currentItem 이 null 이 아닌지 먼저 확인
             currentItem?.let { item ->
@@ -193,15 +190,26 @@ class IpHomeInfoFragment : Fragment() { // <<< 인터페이스 구현 제거
         }
 
         binding.tvLinkLicense.setOnClickListener {
-            // ★ IpListingItem 필드: linkLicense: String?
-            openExternalUrl(currentItem?.linkLicense ?: "https://stipvelation.com/license")
+            // IpDetailInfo에서 사업계획서 URL 가져오기 (추가하거나 사용 가능한 경우)
+            // 불가능하면 IpListingItem.linkLicense 필드 사용
+            val businessPlanUrl = com.stip.stip.iphome.constants.IpDetailInfo.getBusinessPlanForTicker(currentTicker)
+            if (businessPlanUrl != com.stip.stip.iphome.constants.IpDetailInfo.DEFAULT_VALUE) {
+                openExternalUrl(businessPlanUrl)
+            } else {
+                openExternalUrl(currentItem?.linkLicense ?: "https://stipvelation.com/license")
+            }
         }
 
 
-
         binding.tvLinkViewVideo.setOnClickListener {
-            // ★ IpListingItem 필드: linkVideo: String?
-            openExternalUrl(currentItem?.linkVideo ?: "https://stipvelation.com/video")
+            // IpDetailInfo에서 관련영상 URL 가져오기
+            // 불가능하면 IpListingItem.linkVideo 필드 사용
+            val videoUrl = com.stip.stip.iphome.constants.IpDetailInfo.getVideoForTicker(currentTicker)
+            if (videoUrl != com.stip.stip.iphome.constants.IpDetailInfo.DEFAULT_VALUE) {
+                openExternalUrl(videoUrl)
+            } else {
+                openExternalUrl(currentItem?.linkVideo ?: "https://stipvelation.com/video")
+            }
         }
     }
 

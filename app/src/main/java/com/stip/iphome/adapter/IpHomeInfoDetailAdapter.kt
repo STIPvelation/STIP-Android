@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.stip.stip.R
 import com.stip.stip.databinding.ItemRegistrationNumberBinding
+import com.stip.stip.iphome.constants.IpDetailInfo
 import com.stip.stip.iphome.model.IpListingItem
 
 class IpHomeInfoDetailAdapter(private var items: List<IpListingItem>) :
@@ -26,7 +27,9 @@ class IpHomeInfoDetailAdapter(private var items: List<IpListingItem>) :
             // binding.tvValueRepresentative.text = item.representative ?: "-"
 
             // --- 나머지 4개 기본 항목 바인딩 ---
-            binding.tvValueRegistrationNumber.text = item.registrationNumber // 등록번호
+            // tickerToBusinessNumber 맵에서 등록번호 가져오기
+            val businessNumber = IpDetailInfo.getBusinessNumberForTicker(item.ticker)
+            binding.tvValueRegistrationNumber.text = businessNumber.ifBlank { item.registrationNumber ?: "-" } // 등록번호
             binding.tvValueBusinessType.text = item.businessType ?: item.category // 업태
             binding.tvValueContactEmail.text = item.contactEmail ?: "-" // 연락처
             binding.tvValueAddressDetail.text = item.address ?: "-" // 소재지
