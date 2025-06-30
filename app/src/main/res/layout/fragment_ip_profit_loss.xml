@@ -360,7 +360,7 @@
                         android:layout_height="20dp"
                         android:layout_marginEnd="16dp"
                         android:contentDescription="@string/desc_dropdown_arrow"
-                        android:src="@drawable/ic_arrow_up"
+                        android:src="@drawable/ic_arrow_down"
                         android:tint="#777777"
                         app:layout_constraintBottom_toBottomOf="@id/text_graph_title"
                         app:layout_constraintEnd_toEndOf="@id/text_graph_title"

@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -97,15 +97,20 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
         if (PreferenceUtil.getToken().isNullOrEmpty()) {
             // 로그인 필요 상태 표시
             binding.recyclerViewInvestmentList.visibility = View.GONE
-            binding.noDataText.visibility = View.VISIBLE
+            binding.noDataContainer.visibility = View.VISIBLE
             binding.noDataText.text = "로그인이 필요합니다."
+            binding.periodText.visibility = View.GONE
             return
         }
+        
+        // 현재 선택된 날짜 범위를 저장
+        currentStartDate = startDate ?: ""
+        currentEndDate = endDate ?: ""
         
         // 로딩 상태 표시
         binding.progressBar.visibility = View.VISIBLE
         binding.recyclerViewInvestmentList.visibility = View.GONE
-        binding.noDataText.visibility = View.GONE
+        binding.noDataContainer.visibility = View.GONE
         
         // API 호출
         IpTransactionService.getIpTransactions(filterTypes, startDate, endDate) { data, error ->
@@ -114,9 +119,8 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
                 binding.progressBar.visibility = View.GONE
                 
                 if (error != null) {
-                    // 오류 처리
-                    binding.noDataText.visibility = View.VISIBLE
-                    binding.noDataText.text = "데이터를 불러오는 중 오류가 발생했습니다."
+                    // 오류가 있어도 기본 메시지 표시
+                    showEmptyState()
                     return@runOnUiThread
                 }
                 
@@ -130,17 +134,31 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
         }
     }
     
+    // 현재 선택된 날짜 범위를 저장하기 위한 변수
+    private var currentStartDate: String = ""
+    private var currentEndDate: String = ""
+    
     private fun showEmptyState() {
         binding.recyclerViewInvestmentList.visibility = View.GONE
-        binding.noDataText.visibility = View.VISIBLE
-        binding.noDataText.text = "거래 내역이 없습니다."
+        binding.noDataContainer.visibility = View.VISIBLE
+        binding.noDataText.text = "해당 기간의 거래내역이 없습니다."
+        binding.periodText.visibility = View.VISIBLE
+        
+        // 필터에서 선택한 기간에 따라 표시
+        if (currentStartDate.isNotEmpty() && currentEndDate.isNotEmpty()) {
+            binding.periodText.text = "$currentStartDate ~ $currentEndDate"
+        } else {
+            // 선택된 필터가 없을 경우 기본값 표시
+            binding.periodText.text = binding.textViewFilterLabel.text.toString()
+        }
+        
         ipInvestmentAdapter.updateData(emptyList())
     }
     
     private fun showInvestmentData(data: List<IpInvestmentItem>) {
         if (data.isNotEmpty()) {
             binding.recyclerViewInvestmentList.visibility = View.VISIBLE
-            binding.noDataText.visibility = View.GONE
+            binding.noDataContainer.visibility = View.GONE
             ipInvestmentAdapter.updateData(data)
         } else {
             showEmptyState()
@@ -182,12 +200,10 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
         // "전체"가 선택된 경우 필터링 없이 모든 데이터 로드
         if (ticker == "전체") {
             loadInvestmentData(null)
-            Toast.makeText(requireContext(), "모든 티커 표시", Toast.LENGTH_SHORT).show()
         } else {
             // 선택된 티커로 데이터 필터링
             val filterTypes = listOf(ticker)
             loadInvestmentData(filterTypes)
-            Toast.makeText(requireContext(), "선택된 티커: $ticker", Toast.LENGTH_SHORT).show()
         }
     }
 }

@@ -286,7 +286,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
-                android:src="@drawable/ic_arrow_up"
+                android:src="@drawable/ic_arrow_down"
                 android:contentDescription="Expand/Collapse"
                 android:tint="#757575"
                 app:layout_constraintBottom_toBottomOf="@+id/tvPortfolioTitle"

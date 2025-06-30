@@ -9,7 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
+
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,16 +60,10 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
 
                 Log.d("CancelOrder", "Cancelling ${selectedIds.size} items: ${selectedIds.joinToString()}")
 
-                val message = resources.getQuantityString(
-                    R.plurals.toast_cancel_order_success_plural,
-                    selectedIds.size,
-                    selectedIds.size
-                )
-
-                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                // Order cancellation message would show here
                 adapter.clearSelection()
             } else {
-                Toast.makeText(requireContext(), getString(R.string.toast_select_orders_to_cancel), Toast.LENGTH_SHORT).show()
+                // No orders selected message would show here
             }
         }
 
@@ -100,10 +94,8 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
                 // binding.progressBar.visibility = View.GONE // 프로그레스바 없음
 
                 if (error != null) {
-                    // 오류 처리
-                    binding.nodatatext.visibility = View.VISIBLE
-                    binding.nodatatext.text = "데이터를 불러오는 중 오류가 발생했습니다."
-                    binding.recyclerViewUnfilled.visibility = View.GONE
+                    // 오류가 있어도 미체결 주문 없음 메시지 표시
+                    showEmptyState()
                     return@runOnUiThread
                 }
 

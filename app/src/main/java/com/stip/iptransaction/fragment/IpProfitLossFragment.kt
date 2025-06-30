@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.NumberPicker
 import android.widget.PopupWindow
 import android.widget.TextView
-import android.widget.Toast
+
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -392,7 +392,7 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
                 Log.e("IpProfitLossFragment", "Error loading profit loss items: ${error.message}")
                 activity?.runOnUiThread {
                     // progressBar 참조 제거됨
-                    Toast.makeText(requireContext(), "손익 데이터를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    // Error loading profit loss data
                 }
                 return@getProfitLossItems
             }
@@ -415,7 +415,7 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
                 } else {
                     // 데이터가 없는 경우
                     profitAdapter.submitList(emptyList())
-                    Toast.makeText(requireContext(), "해당 기간의 손익 데이터가 없습니다.", Toast.LENGTH_SHORT).show()
+                    // No profit loss data for this period
                 }
             }
         }
@@ -478,7 +478,7 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
         binding.textAvgValue.text = "₩0"
         
         // 로그인 필요 메시지 표시
-        Toast.makeText(requireContext(), "로그인이 필요합니다.", Toast.LENGTH_SHORT).show()
+        // Login required
     }
     
     // --- API 호출을 통한 실제 데이터 로딩 ---
@@ -495,7 +495,7 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
             if (error != null) {
                 Log.e("IpProfitLossFragment", "Error loading profit summary: ${error.message}")
                 activity?.runOnUiThread {
-                    Toast.makeText(requireContext(), "수익률 정보를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+                    // Failed to load rate information
                 }
                 return@getProfitLossSummary
             }
