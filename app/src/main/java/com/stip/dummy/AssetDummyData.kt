@@ -27,21 +27,21 @@ object AssetDummyData {
     
     // 변경 가능한 자산 리스트 (업데이트를 위해 mutable로 변경)
     private val assets = mutableListOf(
-        // USD 데이터
-        IpAsset(id = "1", name = "US Dollar", ticker = "USD", balance = 25000.0, value = 25000.0),
+        // USD 데이터 - 숫자 데이터는 API에서 가져올 예정
+        IpAsset(id = "1", name = "US Dollar", ticker = "USD", balance = 0.0, value = 0.0),
         
-        // 11개 IP 티커 데이터 - IPHoldingDummyData와 일관성 유지
-        IpAsset(id = "2", name = "엔터테인먼트 IP A", ticker = "JWV", balance = 120.0, value = 1874400.0),
-        IpAsset(id = "3", name = "엔터테인먼트 IP E", ticker = "MDM", balance = 80.0, value = 1820000.0),
-        IpAsset(id = "4", name = "뉴미디어 IP N", ticker = "CDM", balance = 45.0, value = 1602000.0),
-        IpAsset(id = "5", name = "음악 IP M", ticker = "IJECT", balance = 180.0, value = 1521000.0),
-        IpAsset(id = "6", name = "스포츠 IP S", ticker = "WETALK", balance = 28.0, value = 1184400.0),
-        IpAsset(id = "7", name = "브랜드 IP B", ticker = "SLEEP", balance = 32.0, value = 889600.0),
-        IpAsset(id = "8", name = "디자인 IP D", ticker = "KCOT", balance = 45.0, value = 837000.0),
-        IpAsset(id = "9", name = "게임 IP J", ticker = "MSK", balance = 12.0, value = 628800.0),
-        IpAsset(id = "10", name = "캐릭터 IP C", ticker = "SMT", balance = 18.0, value = 561600.0),
-        IpAsset(id = "11", name = "영화 IP F", ticker = "AXNO", balance = 8.0, value = 517600.0),
-        IpAsset(id = "12", name = "K-컨텐츠 IP K", ticker = "KATV", balance = 28.0, value = 359800.0)
+        // 11개 IP 티커 데이터 - 이름과 티커 정보만 유지, 숫자 데이터는 API에서 가져올 예정
+        IpAsset(id = "2", name = "엔터테인먼트 IP A", ticker = "JWV", balance = 0.0, value = 0.0),
+        IpAsset(id = "3", name = "엔터테인먼트 IP E", ticker = "MDM", balance = 0.0, value = 0.0),
+        IpAsset(id = "4", name = "뉴미디어 IP N", ticker = "CDM", balance = 0.0, value = 0.0),
+        IpAsset(id = "5", name = "음악 IP M", ticker = "IJECT", balance = 0.0, value = 0.0),
+        IpAsset(id = "6", name = "스포츠 IP S", ticker = "WETALK", balance = 0.0, value = 0.0),
+        IpAsset(id = "7", name = "브랜드 IP B", ticker = "SLEEP", balance = 0.0, value = 0.0),
+        IpAsset(id = "8", name = "디자인 IP D", ticker = "KCOT", balance = 0.0, value = 0.0),
+        IpAsset(id = "9", name = "게임 IP J", ticker = "MSK", balance = 0.0, value = 0.0),
+        IpAsset(id = "10", name = "캐릭터 IP C", ticker = "SMT", balance = 0.0, value = 0.0),
+        IpAsset(id = "11", name = "영화 IP F", ticker = "AXNO", balance = 0.0, value = 0.0),
+        IpAsset(id = "12", name = "K-컨텐츠 IP K", ticker = "KATV", balance = 0.0, value = 0.0)
     )
     
     /**

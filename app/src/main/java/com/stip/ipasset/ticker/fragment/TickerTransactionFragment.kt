@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
-import com.stip.dummy.AssetDummyData
-import com.stip.dummy.TickerTransactionDummyData
+// Removed dummy data imports
 import com.stip.ipasset.model.IpAsset
 import com.stip.ipasset.ticker.activity.TickerDepositDetailActivity
 import com.stip.ipasset.ticker.activity.TickerWithdrawalDetailActivity
@@ -96,8 +95,9 @@ class TickerTransactionFragment : Fragment() {
     
     private fun setupTickerInfo() {
         tickerCode?.let { code ->
-            // 티커 데이터 가져오기
-            val asset = AssetDummyData.getAssetByCode(code) ?: return
+            // API로 대체 예정
+            // 임시 데이터 사용
+            val asset = IpAsset(id = code, name = code, ticker = code, balance = amount, value = usdEquivalent)
             
             // 툴바 타이틀 설정
             binding.materialToolbar.title = "총 보유"
@@ -166,23 +166,19 @@ class TickerTransactionFragment : Fragment() {
                 // 티커 입금 프래그먼트로 이동
                 val tickerDepositFragment = TickerDepositFragment()
                 
-                // AssetDummyData에서 데이터 가져오기
-                val asset = AssetDummyData.getAssetByCode(code)
+                // 임시 자산 객체 생성 (API로 대체 예정)
+                val asset = IpAsset(id = code, name = code, ticker = code, balance = amount, value = usdEquivalent)
                 
-                if (asset != null) {
-                    // 번들에 데이터 전달
-                    val bundle = Bundle()
-                    bundle.putParcelable("ipAsset", asset)
-                    tickerDepositFragment.arguments = bundle
-                    
-                    // 프래그먼트 교체 및 백스택에 추가
-                    fragmentTransaction.replace(R.id.fragment_container, tickerDepositFragment)
-                    fragmentTransaction.addToBackStack(null)
-                    fragmentTransaction.commit()
-                } else {
-                    // 자산 데이터를 찾지 못한 경우 오류 메시지 표시
-                    android.widget.Toast.makeText(requireContext(), "${code} 데이터를 찾을 수 없습니다", android.widget.Toast.LENGTH_SHORT).show()
-                }
+                // 번들에 데이터 전달
+                val bundle = Bundle()
+                // Android API 33+ 호환성 위해 타입 명시
+                bundle.putParcelable("ipAsset", asset as android.os.Parcelable)
+                tickerDepositFragment.arguments = bundle
+                
+                // 프래그먼트 교체 및 백스택에 추가
+                fragmentTransaction.replace(R.id.fragment_container, tickerDepositFragment)
+                fragmentTransaction.addToBackStack(null)
+                fragmentTransaction.commit()
             } catch (e: Exception) {
                 android.widget.Toast.makeText(requireContext(), "화면 전환 오류: ${e.message}", android.widget.Toast.LENGTH_SHORT).show()
             }
@@ -193,15 +189,8 @@ class TickerTransactionFragment : Fragment() {
     
     private fun navigateToTickerWithdrawalScreen() {
         tickerCode?.let { code ->
-            // 티커에 해당하는 자산 정보 찾기 (예시 코드)
-            val asset = AssetDummyData.getAssetByCode(code) ?: run {
-                android.widget.Toast.makeText(
-                    requireContext(),
-                    "${code} 자산 정보를 찾을 수 없습니다.",
-                    android.widget.Toast.LENGTH_SHORT
-                ).show()
-                return
-            }
+            // 임시 자산 객체 생성 (API로 대체 예정)
+            val asset = IpAsset(id = code, name = code, ticker = code, balance = amount, value = usdEquivalent)
             
             try {
                 // NavController를 사용하지 않는 TickerWithdrawalInputFragmentCompat 인스턴스 생성
@@ -335,15 +324,19 @@ class TickerTransactionFragment : Fragment() {
         // 티커코드가 없으면 빈 리스트 표시
         val tickerCode = this.tickerCode ?: return
         
-        val transactions = when (currentFilter) {
+        // API 호출로 대체 예정
+        val transactions: List<Any> = when (currentFilter) {
             TransactionFilter.ALL -> {
-                TickerTransactionDummyData.getAllTransactions(tickerCode)
+                listOf<Any>() // 명시적 타입 지정
+                // API 호출: getAllTransactions(tickerCode)
             }
             TransactionFilter.DEPOSIT -> {
-                TickerTransactionDummyData.getTickerDepositTransactions(tickerCode)
+                listOf<TickerDepositTransaction>() // 명시적 타입 지정
+                // API 호출: getDepositTransactions(tickerCode)
             }
             TransactionFilter.WITHDRAWAL -> {
-                TickerTransactionDummyData.getTickerWithdrawalTransactions(tickerCode)
+                listOf<TickerWithdrawalTransaction>() // 명시적 타입 지정
+                // API 호출: getWithdrawalTransactions(tickerCode)
             }
         }
 
@@ -351,7 +344,7 @@ class TickerTransactionFragment : Fragment() {
         transactionAdapter.submitList(transactions)
         
         // 빈 상태 처리
-        if (transactions.isEmpty()) {
+        if (transactions.isEmpty()) { // 명시적 타입 지정으로 오버로드 해결
             binding.emptyStateContainer.visibility = View.VISIBLE
             binding.recyclerViewTransactions.visibility = View.GONE
         } else {

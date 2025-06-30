@@ -17,7 +17,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.stip.stip.MainViewModel
 import kotlinx.coroutines.launch
-import com.stip.dummy.FeeAndLimitsDummyData
+// Removed dummy data import
 import com.stip.ipasset.ticker.repository.IpAssetRepository
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetTickerWithdrawalInputBinding
@@ -71,9 +71,9 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     private val availableAmount: Double
         get() = getLatestAvailableAmount()
     private val maxAmount: Double
-        get() = FeeAndLimitsDummyData.getMaxWithdrawalAmount(currencyCode)
+        get() = 1000000.0  // API로 대체 예정 - 기본값 설정
     private val fee: Double
-        get() = FeeAndLimitsDummyData.getWithdrawalFee(currencyCode)
+        get() = 1.0  // API로 대체 예정 - 기본값 설정
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

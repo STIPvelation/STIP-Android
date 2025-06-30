@@ -11,7 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
-import com.stip.dummy.FeeAndLimitsDummyData
+// Removed dummy data import
 import com.stip.ipasset.fragment.BaseFragment
 import com.stip.ipasset.model.IpAsset
 import com.stip.ipasset.ticker.repository.IpAssetRepository
@@ -47,9 +47,9 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
     private val availableAmount: Double
         get() = (repository.getAsset(ipAsset.id)?.amount ?: ipAsset.amount).toDouble()
     private val maxAmount: Double
-        get() = FeeAndLimitsDummyData.getMaxWithdrawalAmount(currencyCode)
+        get() = 1000000.0  // API로 대체 예정 - 기본값 설정
     private val fee: Double
-        get() = FeeAndLimitsDummyData.getWithdrawalFee(currencyCode)
+        get() = 1.0  // API로 대체 예정 - 기본값 설정
     
     override fun onResume() {
         super.onResume()

@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.ipasset.usd.model.USDReturnTransaction
 import com.stip.ipasset.usd.model.USDProcessTransaction
 import com.stip.ipasset.usd.adapter.USDTransactionAdapter
-import com.stip.dummy.USDTransactionDummyData
+// Removed dummy data import
 import com.stip.ipasset.usd.manager.USDAssetManager
 import com.stip.ipasset.usd.model.TransactionStatus
 import com.stip.ipasset.usd.model.TransactionType

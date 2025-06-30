@@ -2,9 +2,7 @@ package com.stip.ipasset.usd.manager
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.stip.dummy.AssetDummyData
-import com.stip.dummy.FeeAndLimitsDummyData
-import com.stip.dummy.USDTransactionDummyData
+// Removed dummy data imports
 import com.stip.ipasset.model.IpAsset
 import com.stip.ipasset.usd.model.USDTransaction
 
@@ -41,9 +39,8 @@ class USDAssetManager private constructor() {
         // 출금 한도 설정 (1,000,000으로 고정 - 모든 티커 공통)
         _withdrawalLimit.value = 1000000.0
 
-        // 출금 수수료 설정
-        val fee = FeeAndLimitsDummyData.getWithdrawalFee("USD")
-        _fee.value = fee
+        // 출금 수수료 설정 - API로 대체 예정
+        _fee.value = 1.0  // 기본 수수료
 
         // 트랜잭션 데이터 로드
         loadTransactions()
@@ -53,8 +50,8 @@ class USDAssetManager private constructor() {
      * 트랜잭션 데이터 로드
      */
     private fun loadTransactions() {
-        val allTransactions = USDTransactionDummyData.getAllTransactions()
-        _transactions.value = allTransactions
+        // API 호출로 대체 예정
+        _transactions.value = listOf()
     }
 
     /**
@@ -98,11 +95,8 @@ class USDAssetManager private constructor() {
     fun refreshData() {
         try {
             // 최신 자산 정보 로드 - 반드시 값이 존재하도록 확인
-            val usdAsset = AssetDummyData.getAssetByCode("USD") ?: run {
-                // USD 자산이 없으면 직접 기본 값 설정
-                AssetDummyData.getDefaultAssets().firstOrNull { it.ticker == "USD" } ?: 
-                IpAsset(id = "1", name = "US Dollar", ticker = "USD", balance = 10000.0, value = 10000.0)
-            }
+            // API 호출로 대체 예정 - 숫자 데이터 0으로 설정
+            val usdAsset = IpAsset(id = "1", name = "US Dollar", ticker = "USD", balance = 0.0, value = 0.0)
             
             // 로그 출력으로 디버깅
             android.util.Log.d("USDAssetManager", "Retrieved USD asset: $usdAsset")
@@ -116,7 +110,7 @@ class USDAssetManager private constructor() {
             }
             
             // 출금 가능 금액 업데이트 - 항상 최신 잔액을 반영하도록 수정
-            val withdrawableAmountValue = _balance.value ?: 10000.0
+            val withdrawableAmountValue = _balance.value ?: 0.0
             _withdrawableAmount.value = withdrawableAmountValue
             android.util.Log.d("USDAssetManager", "Updated withdrawable amount: $withdrawableAmountValue")
             
@@ -128,8 +122,8 @@ class USDAssetManager private constructor() {
             }
             
             // 수수료 업데이트
-            val fee = FeeAndLimitsDummyData.getWithdrawalFee("USD") ?: 1.0
-            _fee.value = fee
+            // API 호출로 대체 예정 
+            _fee.value = 1.0  // 기본 수수료
             
             // 트랜잭션 데이터 다시 로드
             loadTransactions()

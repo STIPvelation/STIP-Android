@@ -67,8 +67,16 @@ class IpAssetFragment : Fragment() {
         // 전화 사기 경고 다이얼로그 표시
         showPhoneFraudAlertDialog()
         
+        // RecyclerView 및 기타 UI 컴포넌트 설정 (adapter 초기화)
+        setupRecyclerView()
+        setupSearchAndFilter()
+        setupSwipeRefresh()
+        
         // USD 데이터 변경 관찰
         observeUsdData()
+        
+        // 티커 데이터 로드 - 11개 티커 데이터 로드 (adapter 초기화 후 호출)
+        loadTickerData()
         
         // KRW 입금 버튼 클릭 시 USDDepositFragment로 이동
         binding.buttonKrwDeposit.setOnClickListener {
@@ -100,7 +108,6 @@ class IpAssetFragment : Fragment() {
         }
         
         setupRecyclerView()
-        setupDummyData()
         setupSearchAndFilter()
         setupSwipeRefresh()
     }
@@ -160,44 +167,33 @@ class IpAssetFragment : Fragment() {
         applyFiltering()
     }
     
-    private fun setupDummyData() {
-        // 기존 리스트 초기화
-        assetsList.clear()
+    /**
+     * 티커 데이터 로드
+     * AssetDummyData에서 11개 티커 정보를 가져와 표시
+     */
+    private fun loadTickerData() {
+        // 기존 티커 데이터 찾아서 제거 (업데이트 시)
+        val existingTickerIndices = assetsList.indices.filter { !assetsList[it].isUsd }
+        for (i in existingTickerIndices.reversed()) {
+            assetsList.removeAt(i)
+        }
         
-        // USDAssetManager로부터 USD 데이터 가져오기
-        val balance = assetManager.balance.value ?: 0.0
+        // AssetDummyData에서 기본 자산 리스트 가져오기
+        val dummyAssets = AssetDummyData.getDefaultAssets()
         
-        // USD 추가 (항상 최상단에 위치)
-        val usdAssetItem = IpAssetItem(
-            currencyCode = "USD",
-            amount = balance,
-            usdEquivalent = balance,
-            krwEquivalent = balance * 1300.0,
-            isUsd = true
-        )
-        assetsList.add(usdAssetItem)
-        
-        // AssetDummyData에서 11개의 티커 자산 가져와서 추가
-        val tickerAssets = AssetDummyData.getDefaultAssets().filter { it.ticker != "USD" }
-        
-        // 11개의 티커 자산 추가
-        tickerAssets.forEach { asset ->
+        // USD를 제외한 티커만 가져와서 추가
+        dummyAssets.filter { it.ticker != "USD" }.forEach { asset ->
             val tickerItem = IpAssetItem(
                 currencyCode = asset.ticker,
                 amount = asset.balance,
                 usdEquivalent = asset.value,
-                krwEquivalent = asset.value * 1300.0,  // USD 가격 * 환율
+                krwEquivalent = asset.value * 1300.0, // 예시 환율
                 isUsd = false
             )
             assetsList.add(tickerItem)
         }
         
-        // 총 자산 계산 및 표시
-        val totalAssets = assetsList.sumOf { it.usdEquivalent }
-        val formatter = java.text.DecimalFormat("#,##0.00")
-        binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
-        
-        // 필터링 적용
+        // 데이터 변경 알림 및 필터링 적용
         applyFiltering()
     }
     
@@ -287,7 +283,7 @@ class IpAssetFragment : Fragment() {
         binding.swipeRefreshLayout.setOnRefreshListener {
             // 데이터 새로고침 시뮬레이션
             // 실제로는 API 호출을 통해 데이터를 불러오면 됩니다
-            setupDummyData()
+            // Removed dummy data refresh
             
             // 2초 후 리프레시 종료
             Handler(Looper.getMainLooper()).postDelayed({
