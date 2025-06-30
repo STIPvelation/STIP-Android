@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="8dp"
+    android:fillViewport="true"
     android:background="#FFFFFF"
     tools:context=".iphome.fragment.TradingFragment">
 
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/main_container"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:paddingBottom="16dp">
+
     <ImageView
         android:id="@+id/ic_arrow_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.06"
+        app:layout_constraintDimensionRatio="1:1"
         android:layout_marginStart="12dp"
         android:src="@drawable/ic_arrow_return"
         app:layout_constraintBottom_toTopOf="@+id/header_bottom_guideline"
@@ -47,8 +55,10 @@
 
     <ImageView
         android:id="@+id/more_options_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.06"
+        app:layout_constraintDimensionRatio="1:1"
         android:layout_marginEnd="12dp"
         android:src="@drawable/ic_more_vertical"
         app:layout_constraintBottom_toTopOf="@+id/header_bottom_guideline"
@@ -60,7 +70,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="36dp" />
+        app:layout_constraintGuide_percent="0.05" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/price_info_container"
@@ -73,8 +83,10 @@
 
         <ImageView
             android:id="@+id/prev_item_indicator"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.045"
+            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginStart="12dp"
             android:layout_marginTop="16dp"
             android:layout_marginBottom="16dp"
@@ -116,8 +128,10 @@
 
         <ImageView
             android:id="@+id/change_indicator_icon"
-            android:layout_width="8dp"
-            android:layout_height="8dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.02"
+            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginStart="4dp"
             android:layout_marginEnd="4dp"
             android:src="@drawable/ic_arrow_down_blue"
@@ -281,8 +295,10 @@
 
         <ImageView
             android:id="@+id/next_item_indicator"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintWidth_percent="0.045"
+            app:layout_constraintDimensionRatio="1:1"
             android:layout_marginEnd="12dp"
             android:src="@drawable/ic_arrow_next"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -303,7 +319,8 @@
     <FrameLayout
         android:id="@+id/marqueeContainer"
         android:layout_width="match_parent"
-        android:layout_height="18dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.025"
         android:layout_marginBottom="4dp"
         android:clipChildren="true"
         android:clipToPadding="true"
@@ -354,7 +371,8 @@
     <LinearLayout
         android:id="@+id/menu_bar_layout"
         android:layout_width="0dp"
-        android:layout_height="32dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.045"
         android:background="#30C6E8"
         android:orientation="horizontal"
         android:weightSum="4"
@@ -413,3 +431,5 @@
         app:layout_constraintTop_toBottomOf="@+id/menu_bar_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

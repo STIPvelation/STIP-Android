@@ -13,7 +13,8 @@
     <LinearLayout
         android:id="@+id/frame_4235"
         android:layout_width="0dp"
-        android:layout_height="36dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.05"
         android:background="@drawable/bg_frame_rounded"
         android:gravity="center_vertical"
         android:orientation="horizontal"
@@ -25,8 +26,9 @@
 
         <ImageView
             android:id="@+id/ic_round_se"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
             android:contentDescription="@string/search_icon_description"
             android:src="@drawable/ic_round_search"
             app:tint="#888888" />
@@ -34,8 +36,9 @@
         <EditText
             android:id="@+id/ipSearch"
             style="@style/ip_search"
-            android:layout_width="match_parent"
-            android:layout_height="24dp"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.9"
             android:layout_marginStart="8dp"
             android:background="@android:color/transparent"
             android:gravity="center_vertical"
@@ -59,10 +62,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/frame_17074" />
 
-
     <RelativeLayout
         android:id="@+id/frame_4043"
-        android:layout_width="136dp" android:layout_height="26dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.35"
+        app:layout_constraintHeight_percent="0.035"
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_frame_fillter_rounded"
         android:paddingStart="8dp"
@@ -108,10 +113,11 @@
         app:layout_constraintEnd_toEndOf="@id/frame_4043">
     </LinearLayout>
 
-
     <RelativeLayout
         android:id="@+id/frame_17074"
-        android:layout_width="0dp" android:layout_height="30dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.04"
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_frame_rounded"
         app:layout_constraintEnd_toEndOf="parent"
@@ -218,7 +224,6 @@
 
             </LinearLayout>
 
-
             <LinearLayout
                 android:id="@+id/sortChangeContainer"
                 android:layout_width="0dp"
@@ -270,7 +275,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-
 
             <LinearLayout
                 android:id="@+id/sortVolumeContainer"
