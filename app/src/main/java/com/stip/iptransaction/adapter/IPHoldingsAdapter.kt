@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.stip.dummy.IPHoldingDummyData
+import com.stip.stip.iptransaction.model.DipHoldingitem
 import com.stip.stip.R
 
 /**
@@ -16,9 +16,9 @@ import com.stip.stip.R
 class IPHoldingsAdapter(private val context: Context) :
     RecyclerView.Adapter<IPHoldingsAdapter.ViewHolder>() {
 
-    private var holdingsList: List<IPHoldingDummyData.IPHoldingItem> = emptyList()
+    private var holdingsList: List<DipHoldingitem> = emptyList()
 
-    fun setData(items: List<IPHoldingDummyData.IPHoldingItem>) {
+    fun setData(items: List<DipHoldingitem>) {
         holdingsList = items
         notifyDataSetChanged()
     }
@@ -45,31 +45,31 @@ class IPHoldingsAdapter(private val context: Context) :
         private val purchaseAmountTextView: TextView = itemView.findViewById(R.id.item_1_text_purchase_amount_value)
         private val profitLossTextView: TextView = itemView.findViewById(R.id.item_1_text_pl_value)
 
-        fun bind(item: IPHoldingDummyData.IPHoldingItem) {
+        fun bind(item: DipHoldingitem) {
             // Set asset name
             nameTextView.text = item.name
 
             // Set quantity
-            quantityTextView.text = item.holdingQuantity.toString()
+            quantityTextView.text = item.quantity.toString()
 
             // Set average buy price
-            avgPriceTextView.text = item.buyPrice
+            avgPriceTextView.text = String.format("%,.0f", item.buyPrice)
 
             // Set valuation price
-            valuationTextView.text = item.currentPrice
+            val valuationPerUnit = if (item.quantity > 0) item.totalValuation / item.quantity else 0.0
+            valuationTextView.text = String.format("%,.0f", valuationPerUnit)
 
             // Set purchase amount
-            purchaseAmountTextView.text = item.valueInUsd
+            purchaseAmountTextView.text = String.format("%,.0f", item.totalBuyAmount)
 
             // Set profit/loss
-            profitLossTextView.text = item.profitLoss
-            val profitLossColor = if (item.profitLossPercentage >= 0)
+            profitLossTextView.text = String.format("%+,.0f", item.profit)
+            val profitLossColor = if (item.profitRate >= 0)
                 Color.parseColor("#4CAF50") else Color.parseColor("#F44336")
             profitLossTextView.setTextColor(profitLossColor)
 
             // Set return rate
-            val returnRateText = if (item.profitLossPercentage >= 0)
-                "+${item.profitLossPercentage}%" else "${item.profitLossPercentage}%"
+            val returnRateText = String.format("%+.1f%%", item.profitRate)
             returnRateTextView.text = returnRateText
             returnRateTextView.setTextColor(profitLossColor)
         }
