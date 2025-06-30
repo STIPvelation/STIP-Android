@@ -12,18 +12,15 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.viewpager2.widget.ViewPager2
 import com.stip.stip.MainActivity
 import com.stip.stip.R
 import com.stip.stip.ScrollableToTop
 import com.stip.stip.databinding.FragmentIpNewsBinding
 // DipListingInfoFragment import removed
 // DipNewsAdapter import removed
-import com.stip.stip.ipinfo.adapter.IpToonAdapter
 import com.stip.stip.ipinfo.adapter.NewsCardAdapter
-import com.stip.stip.ipinfo.adapter.NewsPageAdapter
+// NewsPageAdapter import removed
 // DipNewsItem import removed
-import com.stip.stip.ipinfo.model.IpToonItem
 import com.stip.stip.ipinfo.model.NewsItem
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.Runnable
@@ -42,7 +39,7 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
     private var _binding: FragmentIpNewsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var newsPageAdapter: NewsPageAdapter
+    // Removed newsPageAdapter as viewpager was removed
     private var timeUpdateJob: Job? = null
     private var currentBreakingNews: NewsItem? = null
     private val switchHandler = Handler(Looper.getMainLooper())
@@ -65,15 +62,7 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
 
         super.onViewCreated(view, savedInstanceState)
 
-        newsPageAdapter = NewsPageAdapter(this) { newsItem -> openLink(newsItem.link) }
-        binding.viewpagerNews.adapter = newsPageAdapter
-        binding.viewpagerNews.isSaveEnabled = false
-
-        binding.viewpagerNews.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                updateDotIndicator(position)
-            }
-        })
+        // Viewpager and indicators removed from layout
 
         binding.textSingleNewsSwiper.isSelected = true
         binding.textSingleNewsSwiper.setOnClickListener {
@@ -109,18 +98,10 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
         }
     }
 
-    private fun updateDotIndicator(position: Int) {
-        val dots = listOf(binding.dot1, binding.dot2, binding.dot3, binding.dot4)
-        dots.forEachIndexed { index, imageView ->
-            imageView.setImageResource(
-                if (index == position) R.drawable.ic_dot_active else R.drawable.ic_dot_inactive
-            )
-        }
-    }
+    // Removed updateDotIndicator as dot indicators were removed from layout
 
     private fun displayNews(newsList: List<NewsItem>) {
-        val newsPages = newsList.chunked(5)
-        newsPageAdapter.submitList(newsPages)
+        // NewsPages for viewpager removed from layout
 
         currentBreakingNews = newsList.firstOrNull()
         binding.textSingleNewsSwiper.text = currentBreakingNews?.title ?: ""

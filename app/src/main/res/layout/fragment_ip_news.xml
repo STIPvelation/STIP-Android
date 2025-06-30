@@ -11,80 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <!-- 🔹 최신 IP뉴스 타이틀 -->
-        <TextView
-            android:id="@+id/text_news_titles"
-            style="@style/DefaultTextStyle_16"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/frame_bottom_line_unselected"
-            android:padding="12dp"
-            android:text="@string/title_latest_news"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextSwitcher
-            android:id="@+id/newsSwitcher"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:inAnimation="@android:anim/slide_in_left"
-            android:outAnimation="@android:anim/slide_out_right"
-            android:padding="8dp" />
-
-
-        <!-- 🔹 뉴스 ViewPager2 -->
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewpager_news"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:overScrollMode="never"
-            app:layout_constraintBottom_toTopOf="@id/dot_indicator"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/text_news_titles" />
-
-        <!-- 🔹 인디케이터 -->
-        <LinearLayout
-            android:id="@+id/dot_indicator"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:minHeight="24dp"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/viewpager_news">
-
-            <ImageView
-                android:id="@+id/dot_1"
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:src="@drawable/ic_dot_active" />
-
-            <ImageView
-                android:id="@+id/dot_2"
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:layout_marginStart="9dp"
-                android:src="@drawable/ic_dot_inactive" />
-
-            <ImageView
-                android:id="@+id/dot_3"
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:layout_marginStart="9dp"
-                android:src="@drawable/ic_dot_inactive" />
-
-            <ImageView
-                android:id="@+id/dot_4"
-                android:layout_width="6dp"
-                android:layout_height="6dp"
-                android:layout_marginStart="9dp"
-                android:src="@drawable/ic_dot_inactive" />
-        </LinearLayout>
-
         <!-- 🔹 마르퀴스 뉴스 -->
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/news_swiper_container"
@@ -96,7 +22,7 @@
             android:paddingEnd="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dot_indicator">
+            app:layout_constraintTop_toTopOf="parent">
 
 
             <TextView

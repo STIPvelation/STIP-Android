@@ -21,9 +21,9 @@ object NewsRepository {
     private var isLoading = false
     private val rssScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private val rssSources = listOf(
-        "https://www.e-patentnews.com/rss/rss_news.php" to 10,
-        "https://ipwatchdog.com/feed" to 5,
-        "https://www.epo.org/en/news-events/news/feed" to 5
+        "https://www.e-patentnews.com/rss/rss_news.php" to 60,
+        "https://ipwatchdog.com/feed" to 20,
+        "https://www.epo.org/en/news-events/news/feed" to 20
     )
 
     suspend fun getNews(force: Boolean = false): List<NewsItem> {
@@ -69,7 +69,7 @@ object NewsRepository {
             }
             val combinedNews = deferredNews.awaitAll().flatten()
                 .sortedByDescending { parsePubDate(it.pubDate) }
-                .take(20)
+                .take(100)
             cachedNews = combinedNews
             return@withContext combinedNews
         } catch (e: Exception) {
