@@ -85,13 +85,43 @@ class IpHomeInfoFragment : Fragment() { // <<< 인터페이스 구현 제거
         Log.d(TAG, "updateUiForTicker: Updating UI for ticker = $ticker")
         binding.tvTickerName.text = getString(R.string.ticker_name_format, ticker ?: "N/A")
 
+        // 티커 로고 설정 (이니셜과 색상)
+        ticker?.let { code ->
+            // 티커 이니셜 설정 (첫 두 글자 사용)
+            val tickerInitials = code.take(2)
+            binding.currencyIconText.text = tickerInitials
+            
+            // TokenLogos 유틸리티를 사용하여 티커별 색상 설정
+            val colorResId = com.stip.iphome.constants.TokenLogos.getColorForTicker(code)
+            binding.currencyIconBackground.backgroundTintList = context?.getColorStateList(colorResId)
+            
+            // TokenIssuanceData 클래스에서 첫 발행일 가져오기
+            val firstIssuanceDate = com.stip.stip.iphome.constants.TokenIssuanceData.getFirstIssuanceDateForTicker(code, "정보 없음")
+            binding.tvFirstIssuanceDate.text = firstIssuanceDate
+            
+            // TokenIssuanceData 클래스에서 총 발행 한도 가져오기
+            val totalIssuanceLimit = com.stip.stip.iphome.constants.TokenIssuanceData.getTotalIssuanceLimit()
+            binding.tvTotalIssuanceLimit.text = totalIssuanceLimit
+            
+            // PatentRegistrationNumbers 클래스에서 특허 등록번호 가져오기
+            val registrationNumber = com.stip.stip.iphome.constants.PatentRegistrationNumbers.getRegistrationNumberForTicker(code)
+            Log.d(TAG, "설정된 등록번호: $registrationNumber (티커: $code)")
+            
+            if (registrationNumber.isBlank()) {
+                // 등록번호가 없는 경우 숨김
+                binding.registrationNumberBox.visibility = View.GONE
+                Log.d(TAG, "등록번호 없음, 숨김 처리: $code")
+            } else {
+                binding.registrationNumberBox.text = registrationNumber
+                binding.registrationNumberBox.visibility = View.VISIBLE
+            }
+        }
+
         currentItem = TradingDataHolder.ipListingItems.firstOrNull { it.ticker == ticker }
 
         if (currentItem == null) {
             Log.w(TAG, "updateUiForTicker: No IpListingItem found for ticker = $ticker")
             // 데이터 없을 경우 UI 초기화
-            binding.tvFirstIssuanceDate.text = "정보 없음"
-            binding.tvTotalIssuanceLimit.text = "정보 없음"
             binding.registrationNumberBox.text = "정보 없음"
             binding.recyclerViewInfoDetails.adapter = null // ID 확인 필요
             binding.recyclerViewLicenseScope.adapter = null // ID 확인 필요
@@ -99,9 +129,29 @@ class IpHomeInfoFragment : Fragment() { // <<< 인터페이스 구현 제거
             return
         }
 
-        binding.tvFirstIssuanceDate.text = currentItem?.firstIssuanceDate ?: "정보 없음"
-        binding.tvTotalIssuanceLimit.text = currentItem?.totalIssuanceLimit ?: "정보 없음"
-        binding.registrationNumberBox.text = currentItem?.registrationNumber ?: "정보 없음"
+        // 티커 등록번호 설정 (PatentRegistrationNumbers 사용 우선, 없으면 currentItem에서 가져옴)
+        val ticker = currentItem?.ticker
+        if (ticker != null) {
+            val registrationNumber = com.stip.stip.iphome.constants.PatentRegistrationNumbers.getRegistrationNumberForTicker(ticker)
+            if (registrationNumber.isBlank()) {
+                // 등록번호가 없는 경우 숨김
+                binding.registrationNumberBox.visibility = View.GONE
+                Log.d(TAG, "등록번호 없음, 숨김 처리: $ticker")
+            } else {
+                binding.registrationNumberBox.text = registrationNumber
+                binding.registrationNumberBox.visibility = View.VISIBLE
+                Log.d(TAG, "티커 등록번호: $ticker = $registrationNumber")
+            }
+        } else {
+            val regNumber = currentItem?.registrationNumber ?: ""
+            if (regNumber.isBlank()) {
+                binding.registrationNumberBox.visibility = View.GONE
+            } else {
+                binding.registrationNumberBox.text = regNumber
+                binding.registrationNumberBox.visibility = View.VISIBLE
+                Log.d(TAG, "등록번호 설정: $regNumber")
+            }
+        }
 
         // 어댑터 설정 함수 호출
         setupUsagePlanRecycler(currentItem!!) // currentItem이 null 아님 보장
@@ -111,8 +161,9 @@ class IpHomeInfoFragment : Fragment() { // <<< 인터페이스 구현 제거
     // 바로가기 링크 설정
     private fun setupShortcutLinks() {
         binding.tvLinkBlockInquiry.setOnClickListener {
-            // ★ IpListingItem 필드: linkBlock: String?
-            openExternalUrl(currentItem?.linkBlock ?: "https://stipvelation.com/block")
+            // BlockchainExplorerUrls 클래스를 사용하여 티커에 맞는 URL 가져오기
+            val blockchainUrl = com.stip.stip.iphome.constants.BlockchainExplorerUrls.getUrlForTicker(currentTicker)
+            openExternalUrl(blockchainUrl)
         }
 
 
