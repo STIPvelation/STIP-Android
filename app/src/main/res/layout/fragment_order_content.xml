@@ -783,6 +783,5 @@
                 android:src="@drawable/ic_arrow_polygon" />
         </RelativeLayout>
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
