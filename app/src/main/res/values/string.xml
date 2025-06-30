@@ -896,34 +896,8 @@
     <string name="ip_breaking_news">Breaking NEWS</string>
 
 
-    <string name="dip_listing_info">디지털IP 리포트</string>
-    <string name="dip_listing_info_jwb">JWV 디지털IP 리포트</string>
-    <string name="dip_listing_info_AXNO">AXNO 디지털IP 리포트</string>
-    <string name="dip_listing_info_WETALK">WETALK 디지털IP 리포트</string>
-    <string name="dip_listing_info_MDM">MDM 디지털IP 리포트</string>
-    <string name="dip_listing_info_CDM">CDM 디지털IP 리포트</string>
-    <string name="dip_listing_info_katv">KATV 디지털IP 리포트</string>
-    <string name="dip_listing_info_iject">IJECT 디지털IP 리포트</string>
-    <string name="dip_listing_info_msk">MSK 디지털IP 리포트</string>
-    <string name="dip_listing_info_etip1">ETIP 제조업 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipai">ETIP AI 디지털IP 리포트</string>
-    <string name="dip_listing_info_music">Music 디지털IP 리포트</string>
-    <string name="dip_listing_info_movie">Movie 디지털IP 리포트</string>
-    <string name="dip_listing_info_franchise">Franchise 디지털IP 리포트</string>
-    <string name="dip_listing_info_drama">Drama 디지털IP 상장정보</string>
-    <string name="dip_listing_info_character">Character 디지털IP 리포트</string>
-    <string name="dip_listing_info_cartoon">Cartoon 디지털IP 리포트</string>
-    <string name="dip_listing_info_art">Art 디지털IP 리포트</string>
-    <string name="dip_listing_info_dance">Dance 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipre">ETIP 신재생 에너지 디지털IP 리포트</string>
-    <string name="dip_listing_info_patent">ETIP 전기 자동차 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipsct">ETIP 반도체 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipmusic">ETIP 음악 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipfranchise">ETIP 프렌차이즈 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipdance">ETIP 댄스 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipcharacter">ETIP 캐릭터 디지털IP 리포트</string>
-    <string name="dip_listing_info_etipetc">ETIP 종합특허 디지털IP 리포트</string>
-    <string name="dip_listing_info_game">Game 디지털IP 리포트</string>
+    <string name="dip_listing_info">IP NEWS</string>
+
 
 
     <!-- 보유IP-->

@@ -17,11 +17,12 @@ import com.stip.stip.MainActivity
 import com.stip.stip.R
 import com.stip.stip.ScrollableToTop
 import com.stip.stip.databinding.FragmentIpNewsBinding
-import com.stip.stip.ipinfo.DipListingInfoFragment
-import com.stip.stip.ipinfo.adapter.DipNewsAdapter
+// DipListingInfoFragment import removed
+// DipNewsAdapter import removed
 import com.stip.stip.ipinfo.adapter.IpToonAdapter
+import com.stip.stip.ipinfo.adapter.NewsCardAdapter
 import com.stip.stip.ipinfo.adapter.NewsPageAdapter
-import com.stip.stip.ipinfo.model.DipNewsItem
+// DipNewsItem import removed
 import com.stip.stip.ipinfo.model.IpToonItem
 import com.stip.stip.ipinfo.model.NewsItem
 import kotlinx.coroutines.Job
@@ -79,13 +80,7 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
             currentBreakingNews?.let { openLink(it.link) }
         }
 
-        binding.navigateNextDipListingInfo.setOnClickListener {
-            (requireActivity() as? MainActivity)?.hideHeaderAndTabs()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, DipListingInfoFragment())
-                .addToBackStack(null)
-                .commit()
-        }
+        // DIP LISTING feature removed
 
         // NewsRepository에서 미리 캐싱된 뉴스가 있으면 바로 표시, 아니면 비동기로 로딩
         val cached = com.stip.stip.ipinfo.NewsRepository.getCachedNews()
@@ -98,7 +93,7 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
             }
         }
 
-        setupDipNewsRecyclerView()
+        // DIP LISTING feature removed
         startAutoUpdateTime()
     }
 
@@ -131,6 +126,14 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
         binding.textSingleNewsSwiper.text = currentBreakingNews?.title ?: ""
         switchHandler.removeCallbacks(switchRunnable)
         switchHandler.post(switchRunnable)
+        
+        // Setup news card items
+        binding.recyclerViewNewsItems.apply {
+            adapter = NewsCardAdapter(newsList) { newsItem ->
+                // Handle click on news item
+                openLink(newsItem.link)
+            }
+        }
     }
 
     private fun openLink(link: String?) {
@@ -186,48 +189,6 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
     private fun isSameDay(cal1: Calendar, cal2: Calendar): Boolean {
         return cal1.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) &&
                 cal1.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)
-    }
-
-    private fun setupDipNewsRecyclerView() {
-        val context = requireContext()
-
-        val dipNewsItems = listOf(
-            DipNewsItem(
-                logoResId = null,
-                name = "ETIP AI",
-                description = context.getString(R.string.dip_listing_info_etipai),
-                date = "방금 전"
-            ),
-            DipNewsItem(
-                logoResId = null,
-                name = "ETIP 제조업",
-                description = context.getString(R.string.dip_listing_info_etip1),
-                date = "10분 전"
-            ),
-            DipNewsItem(
-                logoResId = null,
-                name = "ETIP 반도체",
-                description = context.getString(R.string.dip_listing_info_etipsct),
-                date = "20분 전"
-            ),
-            DipNewsItem(
-                logoResId = null,
-                name = "ETIP 전기차",
-                description = context.getString(R.string.dip_listing_info_patent),
-                date = "1시간 전"
-            ),
-            DipNewsItem(
-                logoResId = null,
-                name = "ETIP 신재생",
-                description = context.getString(R.string.dip_listing_info_etipre),
-                date = "어제"
-            )
-        )
-
-        binding.recyclerViewDipNews.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = DipNewsAdapter(dipNewsItems)
-        }
     }
 
     private fun startAutoUpdateTime() {

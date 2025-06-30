@@ -140,10 +140,9 @@
 
         <!-- 🔹 구분선 -->
 
-
-        <!-- 🔹 디지털IP 상장정보 타이틀 -->
+        <!-- 🔹 뉴스 아이템 섹션 -->
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/dip_listing_info_header"
+            android:id="@+id/news_items_header"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="12dp"
@@ -152,47 +151,28 @@
             app:layout_constraintTop_toBottomOf="@id/section_separator_ip_news">
 
             <TextView
-                android:id="@+id/text_dip_titles"
+                android:id="@+id/text_news_items_title"
                 style="@style/DefaultTextStyle_16"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:text="@string/dip_listing_info"
+                android:text="최신 뉴스"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/navigate_next_dip_listing_info"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:id="@+id/navigate_next_dip_listing_info"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_arrow_next"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/section_separator_dip_listing_info"
-            android:layout_width="0dp"
-            android:layout_height="14dp"
-            android:background="#F4F4F4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dip_listing_info_header" />
-
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewDipNews"
+            android:id="@+id/recyclerViewNewsItems"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:clipToPadding="false"
             android:overScrollMode="never"
+            android:paddingBottom="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/section_separator_dip_listing_info" />
+            app:layout_constraintTop_toBottomOf="@id/news_items_header" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
