@@ -45,7 +45,9 @@
             android:paddingStart="@dimen/padding_medium"
             android:paddingEnd="@dimen/padding_medium"
             android:paddingTop="@dimen/padding_medium"
-            android:paddingBottom="@dimen/padding_medium">
+            android:paddingBottom="@dimen/padding_medium"
+            android:clipChildren="false"
+            android:clipToPadding="false">
 
         <!-- Flexible guideline based on screen size -->
         <androidx.constraintlayout.widget.Guideline
@@ -53,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.45" />
+            app:layout_constraintGuide_percent="0.48" />
 
         <TextView
             android:id="@+id/holdingUsdLabel"
@@ -77,6 +79,12 @@
             android:textColor="#212121"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="14sp"
+            app:autoSizeMaxTextSize="18sp"
+            app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/holdingUsdLabel" />
 
@@ -113,6 +121,11 @@
             android:textColor="#212121"
             android:textSize="13sp"
             android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeMaxTextSize="13sp"
             app:layout_constraintBaseline_toBaselineOf="@id/totalBuyLabel"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toEndOf="@id/totalBuyLabel" />
@@ -139,6 +152,11 @@
             android:textColor="#212121"
             android:textSize="13sp"
             android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeMaxTextSize="13sp"
             app:layout_constraintBaseline_toBaselineOf="@id/totalValuationLabel"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toEndOf="@id/totalValuationLabel" />
@@ -165,6 +183,11 @@
             android:textColor="#212121"
             android:textSize="13sp"
             android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="10sp"
+            app:autoSizeMaxTextSize="13sp"
             app:layout_constraintBaseline_toBaselineOf="@id/availableOrderLabel"
             app:layout_constraintEnd_toStartOf="@id/guideline_summary_center"
             app:layout_constraintStart_toEndOf="@id/availableOrderLabel" />
@@ -191,6 +214,12 @@
             android:textColor="#30C6E8"
             android:textSize="18sp"
             android:textStyle="bold"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:autoSizeTextType="uniform"
+            app:autoSizeMinTextSize="14sp"
+            app:autoSizeMaxTextSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline_summary_center"
             app:layout_constraintTop_toBottomOf="@id/totalAssetLabel" />
 

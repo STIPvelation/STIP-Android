@@ -12,7 +12,7 @@
         android:paddingStart="20dp"
         android:paddingEnd="15dp"
         android:paddingTop="10dp"
-        android:paddingBottom="10dp">
+        android:paddingBottom="12dp">
 
         <FrameLayout
             android:id="@+id/token_logo_container"
@@ -80,6 +80,8 @@
             android:orientation="vertical"
             android:gravity="end"
             android:minWidth="120dp"
+            android:paddingBottom="2dp"
+            android:minHeight="36dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/arrow_forward"
             app:layout_constraintTop_toTopOf="parent"

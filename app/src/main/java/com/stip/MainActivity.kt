@@ -25,6 +25,7 @@ import com.stip.stip.ipinfo.fragment.IpTrendFragment
 import com.stip.stip.iptransaction.fragment.IpUnfilledFragment
 import com.stip.stip.more.fragment.MoreFragment
 import com.google.android.material.tabs.TabLayout
+
 import dagger.hilt.android.AndroidEntryPoint
 
 // 만약 HeaderUpdater 인터페이스를 정의했다면 유지, 아니라면 이 줄은 필요 없음
@@ -239,6 +240,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 replaceFragment(ipInfoSubFragments[0])
                 binding.secondaryTabLayout.getTabAt(0)?.select()
+                // 다이얼로그 표시 제거됨 - 준비중 기능
             }
 
             2 -> {
@@ -254,18 +256,23 @@ class MainActivity : AppCompatActivity() {
                 )
                 replaceFragment(ipTransactionSubFragments[0])
                 binding.secondaryTabLayout.getTabAt(0)?.select()
+                // 다이얼로그 표시 제거됨 - 준비중 기능
             }
 
             3 -> {
                 binding.secondaryTabLayout.visibility = View.GONE
                 binding.tabUnderline.visibility = View.GONE
                 replaceFragment(IpAssetFragment.newInstance())
+                
+                // 출금 페이지인 경우 전화사기 경고 다이얼로그만 표시
+                // IpAsset은 준비중 다이얼로그 표시하지 않음
             }
 
             4 -> {
                 binding.secondaryTabLayout.visibility = View.GONE
                 binding.tabUnderline.visibility = View.GONE
                 replaceFragment(MoreFragment())
+                // 더보기 페이지는 이미 구현되어 있으므로 별도의 안내 메시지 없음
             }
         }
     }
