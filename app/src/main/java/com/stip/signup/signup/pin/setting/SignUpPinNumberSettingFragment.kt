@@ -312,12 +312,7 @@ class SignUpPinNumberSettingFragment : BaseFragment<FragmentSignUpPinNumberSetti
 
     /** 동일한 숫자 또는 연속된 숫자(오름차순/내림차순) 체크 */
     private fun isSequentialOrRepeated(pin: String): Boolean {
-        // 테스트용 PIN "123456" 체크 - 항상 통과 처리
-        if (pin == "123456") {
-            android.util.Log.d("PinSetting", "테스트 PIN 입력 감지 - 검증 통과 처리")
-            return false // 검사 통과
-        }
-        
+
         if (pin.length != 6) return false // 6자리 고정
 
         // 1. 동일한 숫자로만 이루어진 경우 (예: 111111)
@@ -337,12 +332,7 @@ class SignUpPinNumberSettingFragment : BaseFragment<FragmentSignUpPinNumberSetti
 
     /** 개인정보 포함 여부 체크 */
     private fun containsPersonalInfo(pin: String): Boolean {
-        // 테스트용 PIN "123456" 체크 - 항상 통과 처리
-        if (pin == "123456") {
-            android.util.Log.d("PinSetting", "테스트 PIN 입력 감지 - 검증 통과 처리")
-            return false // 검사 통과
-        }
-        
+
         val userPersonalInfo = listOf(
             activityViewModel.birthdate.value,
             activityViewModel.phoneNumber.value
