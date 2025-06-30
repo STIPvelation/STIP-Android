@@ -375,6 +375,9 @@
                         app:tabSelectedTextColor="@color/main_point"
                         app:tabTextColor="#30C6E8"
                         app:tabIndicatorHeight="2dp"
+                        app:tabIndicatorFullWidth="true"
+                        app:tabMode="fixed"
+                        app:tabGravity="fill"
                         app:layout_constraintTop_toBottomOf="@id/divider_graph_title"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent">
