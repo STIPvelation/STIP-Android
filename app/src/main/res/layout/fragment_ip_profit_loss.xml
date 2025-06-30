@@ -21,15 +21,14 @@
             android:id="@+id/contentContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/padding_medium">
+            android:paddingBottom="16dp">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/notice_card"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginEnd="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="12dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -59,7 +58,7 @@
                         style="@style/DefaultTextStyle_12"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/margin_xsmall"
+                        android:layout_marginStart="8dp"
                         android:textColor="#333333"
                         android:text="@string/text_notice_profit" />
                 </LinearLayout>
@@ -70,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_marginTop="16dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -85,10 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:paddingStart="@dimen/padding_small"
-                    android:paddingEnd="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small"
-                    android:paddingBottom="@dimen/padding_small"
+                    android:padding="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -105,7 +101,7 @@
                         android:id="@+id/icon_down"
                         android:layout_width="8dp"
                         android:layout_height="8dp"
-                        android:layout_marginStart="@dimen/margin_xsmall"
+                        android:layout_marginStart="8dp"
                         android:contentDescription="@string/desc_dropdown_arrow"
                         android:tint="#30C6E8"
                         android:src="@drawable/ic_arrow_down_filled" />
@@ -131,10 +127,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
-                    android:paddingStart="@dimen/padding_small"
-                    android:paddingEnd="@dimen/padding_small"
-                    android:paddingTop="@dimen/padding_small"
-                    android:paddingBottom="@dimen/padding_small"
+                    android:padding="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -150,7 +143,7 @@
                         android:id="@+id/iconDown"
                         android:layout_width="8dp"
                         android:layout_height="8dp"
-                        android:layout_marginStart="@dimen/margin_xsmall"
+                        android:layout_marginStart="8dp"
                         android:contentDescription="@string/desc_dropdown_arrow"
                         android:tint="#30C6E8"
                         android:src="@drawable/ic_arrow_down_filled" />
@@ -162,9 +155,8 @@
                 android:id="@+id/text_profit_period"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginEnd="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_medium"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="16dp"
                 android:paddingVertical="8dp"
                 android:background="#EAEAEA"
                 android:gravity="center"
@@ -179,9 +171,8 @@
                 android:id="@+id/summary_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginEnd="@dimen/margin_small"
-                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginHorizontal="12dp"
+                android:layout_marginTop="12dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="1dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -195,8 +186,7 @@
                 android:id="@+id/labels_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginHorizontal="12dp"
                 android:layout_marginTop="24dp"
                 app:cardCornerRadius="8dp"
                 app:cardElevation="0dp"
@@ -210,10 +200,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/padding_medium"
-                    android:paddingEnd="@dimen/padding_medium"
-                    android:paddingTop="@dimen/padding_medium"
-                    android:paddingBottom="@dimen/padding_medium">
+                    android:padding="16dp">
 
                     <!-- First column - now profitRateLabel (swapped) -->
                     <TextView
@@ -312,7 +299,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.45" />
+                app:layout_constraintGuide_percent="0.5" />
 
             <View
                 android:id="@+id/vertical_divider_rate"
@@ -329,9 +316,8 @@
                 android:id="@+id/card_graph_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="12dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -422,9 +408,8 @@
                 android:id="@+id/card_profit_detail_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/margin_medium"
-                android:layout_marginStart="@dimen/margin_small"
-                android:layout_marginEnd="@dimen/margin_small"
+                android:layout_marginTop="16dp"
+                android:layout_marginHorizontal="12dp"
                 app:cardCornerRadius="10dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
@@ -522,7 +507,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_daily_profit" />
 
@@ -538,7 +523,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_cumulative_profit" />
                         </LinearLayout>
@@ -560,7 +545,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_daily_rate" />
 
@@ -576,7 +561,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_cumulative_rate" />
                         </LinearLayout>
@@ -598,7 +583,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_assets" />
 
@@ -614,7 +599,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_invest" />
                         </LinearLayout>
@@ -624,11 +609,10 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:orientation="vertical"
-                            android:gravity="center"
-                            android:layout_marginStart="@dimen/margin_xsmall"
+                            android:background="@android:color/transparent"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/separator4"
+                            app:layout_constraintStart_toEndOf="@id/container_assets"
                             app:layout_constraintTop_toTopOf="parent">
 
                             <TextView
@@ -637,7 +621,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_deposit" />
 
@@ -653,7 +637,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="center"
                                 android:paddingVertical="8dp"
-                                android:textSize="@dimen/text_small"
+                                android:textSize="12sp"
                                 android:textColor="#555555"
                                 android:text="@string/trade_header_withdrawal" />
                         </LinearLayout>
@@ -707,21 +691,6 @@
                         android:layout_height="1dp"
                         android:background="#E0E0E0"
                         app:layout_constraintTop_toBottomOf="@id/container_trade_table_header" />
-
-                    <!-- RecyclerView for profit items -->
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/recyclerViewProfit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/margin_small"
-                        android:paddingBottom="@dimen/padding_medium"
-                        android:clipToPadding="false"
-                        android:overScrollMode="never"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/divider_before_list"
-                        tools:itemCount="5"
-                        tools:listitem="@layout/item_profit" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.card.MaterialCardView>
