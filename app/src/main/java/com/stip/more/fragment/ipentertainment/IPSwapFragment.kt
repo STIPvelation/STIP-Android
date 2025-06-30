@@ -15,7 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
-import com.stip.common.fragment.UnderConstructionDialogFragment
+import com.stip.more.fragment.UnderConstructionDialogFragment
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpSwapBinding

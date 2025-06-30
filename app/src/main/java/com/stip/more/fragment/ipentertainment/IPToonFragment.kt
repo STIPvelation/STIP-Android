@@ -21,7 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayout
-import com.stip.common.fragment.UnderConstructionDialogFragment
+import com.stip.more.fragment.UnderConstructionDialogFragment
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpToonBinding
