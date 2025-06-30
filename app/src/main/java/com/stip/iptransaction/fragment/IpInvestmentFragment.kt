@@ -16,8 +16,9 @@ import com.stip.stip.databinding.FragmentIpInvestmentBinding
 import com.stip.stip.iptransaction.api.IpTransactionService
 import com.stip.stip.iptransaction.model.IpInvestmentItem
 import com.stip.stip.signup.utils.PreferenceUtil
+import com.stip.stip.iptransaction.fragment.TickerSelectionDialogFragment
 
-class IpInvestmentFragment : Fragment(), ScrollableToTop {
+class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogFragment.TickerSelectionListener {
 
     private lateinit var mainViewModel: com.stip.stip.MainViewModel
 
@@ -56,7 +57,7 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop {
         }
 
         binding.buttonIpSearch.setOnClickListener {
-            Toast.makeText(requireContext(), "준비중", Toast.LENGTH_SHORT).show()
+            showTickerSelectionDialog()
         }
 
         parentFragmentManager.setFragmentResultListener("investmentFilterResult", viewLifecycleOwner) { _, bundle ->
@@ -161,5 +162,32 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    /**
+     * 티커 선택 다이얼로그를 표시하는 메소드
+     */
+    private fun showTickerSelectionDialog() {
+        val dialogFragment = TickerSelectionDialogFragment.newInstance(this)
+        dialogFragment.show(parentFragmentManager, "TickerSelectionDialogFragment")
+    }
+    
+    /**
+     * 티커 선택 리스너 구현
+     */
+    override fun onTickerSelected(ticker: String) {
+        // 선택된 티커로 버튼 텍스트 업데이트
+        binding.buttonIpSearch.text = ticker
+        
+        // "전체"가 선택된 경우 필터링 없이 모든 데이터 로드
+        if (ticker == "전체") {
+            loadInvestmentData(null)
+            Toast.makeText(requireContext(), "모든 티커 표시", Toast.LENGTH_SHORT).show()
+        } else {
+            // 선택된 티커로 데이터 필터링
+            val filterTypes = listOf(ticker)
+            loadInvestmentData(filterTypes)
+            Toast.makeText(requireContext(), "선택된 티커: $ticker", Toast.LENGTH_SHORT).show()
+        }
     }
 }
