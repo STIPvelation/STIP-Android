@@ -136,96 +136,106 @@
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:id="@+id/info_button"
+                        android:id="@+id/expand_collapse_button"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_info"
+                        android:src="@drawable/ic_expand_less"
                         android:tint="#808080" />
                 </LinearLayout>
 
-                <!-- Modern Date Selector with Pill Design -->
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/datebox"
+                <!-- Collapsible Content Container -->
+                <LinearLayout
+                    android:id="@+id/collapsible_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:singleSelection="true"
-                    app:selectionRequired="true"
-                    app:chipSpacingHorizontal="8dp"
-                    android:gravity="center_horizontal">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/date_1month"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+                    
+                    <!-- Modern Date Selector with Pill Design -->
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/datebox"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:text="1개월"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
-                        app:chipStartPadding="8dp"
-                        app:chipEndPadding="8dp" />
+                        android:layout_marginTop="8dp"
+                        app:singleSelection="true"
+                        app:selectionRequired="true"
+                        app:chipSpacingHorizontal="8dp"
+                        android:gravity="center_horizontal">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/date_3months"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/date_1month"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="1개월"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            app:chipBackgroundColor="@color/chip_background_color"
+                            android:textColor="@color/chip_text_color"
+                            app:chipStartPadding="8dp"
+                            app:chipEndPadding="8dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/date_3months"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="3개월"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            app:chipBackgroundColor="@color/chip_background_color"
+                            android:textColor="@color/chip_text_color"
+                            app:chipStartPadding="8dp"
+                            app:chipEndPadding="8dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/date_6months"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="6개월"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            app:chipBackgroundColor="@color/chip_background_color"
+                            android:textColor="@color/chip_text_color"
+                            app:chipStartPadding="8dp"
+                            app:chipEndPadding="8dp" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/date_1year"
+                            style="@style/Widget.MaterialComponents.Chip.Choice"
+                            android:layout_width="80dp"
+                            android:layout_height="wrap_content"
+                            android:text="1년"
+                            android:textAlignment="center"
+                            android:gravity="center"
+                            app:chipBackgroundColor="@color/chip_background_color"
+                            android:textColor="@color/chip_text_color"
+                            app:chipStartPadding="8dp"
+                            app:chipEndPadding="8dp" />
+                    </com.google.android.material.chip.ChipGroup>
+
+                    <!-- Enhanced RecyclerView with Dividers -->
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerViewIpRise"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="3개월"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
-                        app:chipStartPadding="8dp"
-                        app:chipEndPadding="8dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/date_6months"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="6개월"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
-                        app:chipStartPadding="8dp"
-                        app:chipEndPadding="8dp" />
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/date_1year"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="80dp"
-                        android:layout_height="wrap_content"
-                        android:text="1년"
-                        android:textAlignment="center"
-                        android:gravity="center"
-                        app:chipBackgroundColor="@color/chip_background_color"
-                        android:textColor="@color/chip_text_color"
-                        app:chipStartPadding="8dp"
-                        app:chipEndPadding="8dp" />
-                </com.google.android.material.chip.ChipGroup>
-
-                <!-- Enhanced RecyclerView with Dividers -->
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewIpRise"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:background="@android:color/transparent"
-                    android:clipToPadding="false"
-                    android:paddingBottom="8dp" />
+                        android:layout_marginTop="12dp"
+                        android:background="@android:color/transparent"
+                        android:clipToPadding="false"
+                        android:paddingBottom="8dp" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <View
             android:id="@+id/section_separator_after_iprise"
             android:layout_width="0dp"
-            android:layout_height="14dp"
+            android:layout_height="8dp"
             android:background="#F4F4F4"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/rising_ip_card" />
@@ -236,7 +246,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="12dp"
             android:layout_marginEnd="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp"
@@ -278,26 +288,32 @@
                         android:textStyle="bold" />
 
                     <ImageView
-                        android:id="@+id/stip_index_info_button"
+                        android:id="@+id/stip_index_expand_button"
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/ic_info"
+                        android:src="@drawable/ic_expand_less"
                         android:tint="#808080" />
                 </LinearLayout>
 
-                <!-- Modern Period Selector with Pill Design -->
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/time_range_buttons"
+                <!-- 접기/펼치기 가능한 콘텐츠 컨테이너 -->
+                <LinearLayout
+                    android:id="@+id/stip_index_collapsible_content"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:singleSelection="true"
-                    app:selectionRequired="true"
-                    app:chipSpacingHorizontal="8dp"
-                    android:gravity="center_horizontal">
-
-
+                    android:orientation="vertical"
+                    android:layout_marginTop="8dp">
+                    
+                    <!-- Modern Period Selector with Pill Design -->
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/time_range_buttons"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center_horizontal"
+                        app:chipSpacingHorizontal="8dp"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/month_text"
@@ -361,14 +377,16 @@
                     android:background="@android:color/transparent"
                     android:clipToPadding="false"
                     android:paddingBottom="8dp" />
+                </LinearLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
         <View
             android:id="@+id/section_separator_after_iprise1"
             android:layout_width="0dp"
-            android:layout_height="14dp"
+            android:layout_height="8dp"
             android:background="#F4F4F4"
+            android:layout_marginTop="12dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/stip_index_card" />

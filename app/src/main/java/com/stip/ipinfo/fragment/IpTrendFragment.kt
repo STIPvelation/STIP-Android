@@ -3,6 +3,9 @@ package com.stip.stip.ipinfo.fragment
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Color
+import android.transition.AutoTransition
+import android.transition.TransitionManager
+// import android.view.View 제거 - 이미 다른 View import가 있음
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
@@ -138,6 +141,8 @@ class IpTrendFragment : Fragment() {
         setupTimeRangeButtons()
         setupDateButtons()
         setupViewPagerListener()
+        setupExpandCollapseButton() // 상승률 상위 IP 접기/펼치기 버튼 설정
+        setupStipIndexExpandButton() // STIP Index 접기/펼치기 버튼 설정
         
         // 환율 데이터 로드
         loadFxRateData()
@@ -418,6 +423,54 @@ class IpTrendFragment : Fragment() {
     }
 
         /**
+     * 접기/펼치기 버튼 설정 - 상승률 상위 IP 섹션
+     */
+    private fun setupExpandCollapseButton() {
+        // 초기 상태는 펼쳐진 상태로 설정
+        var isContentExpanded = true
+        
+        binding.expandCollapseButton.setOnClickListener {
+            isContentExpanded = !isContentExpanded
+            
+            // 콘텐츠 접기/펼치기
+            binding.collapsibleContent.visibility = if (isContentExpanded) android.view.View.VISIBLE else android.view.View.GONE
+            
+            // 버튼 아이콘 변경
+            val iconResource = if (isContentExpanded) R.drawable.ic_expand_less else R.drawable.ic_expand_more
+            binding.expandCollapseButton.setImageResource(iconResource)
+            
+            // 애니메이션 효과 (선택적)
+            val transition = AutoTransition()
+            transition.duration = 300
+            TransitionManager.beginDelayedTransition(binding.risingIpCard, transition)
+        }
+    }
+    
+    /**
+     * 접기/펼치기 버튼 설정 - STIP Index 섹션
+     */
+    private fun setupStipIndexExpandButton() {
+        // 초기 상태는 펼쳐진 상태로 설정
+        var isContentExpanded = true
+        
+        binding.stipIndexExpandButton.setOnClickListener {
+            isContentExpanded = !isContentExpanded
+            
+            // 콘텐츠 접기/펼치기
+            binding.stipIndexCollapsibleContent.visibility = if (isContentExpanded) android.view.View.VISIBLE else android.view.View.GONE
+            
+            // 버튼 아이콘 변경
+            val iconResource = if (isContentExpanded) R.drawable.ic_expand_less else R.drawable.ic_expand_more
+            binding.stipIndexExpandButton.setImageResource(iconResource)
+            
+            // 애니메이션 효과
+            val transition = AutoTransition()
+            transition.duration = 300
+            TransitionManager.beginDelayedTransition(binding.stipIndexCard, transition)
+        }
+    }
+    
+    /**
      * 날짜 범위 버튼(1주, 1개월 등) 설정
      */
     private fun setupDateButtons() {
