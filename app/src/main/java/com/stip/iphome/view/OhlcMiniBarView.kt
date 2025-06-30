@@ -1,4 +1,4 @@
-package com.stip.stip.view
+package com.stip.stip.iphome.view
 
 import android.content.Context
 import android.graphics.Canvas

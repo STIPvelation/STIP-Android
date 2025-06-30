@@ -13,7 +13,7 @@ import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.iptransaction.model.IpInvestmentItem
 import com.stip.stip.iptransaction.model.UnfilledOrder
 import com.stip.stip.iphome.adapter.UnfilledOrderAdapter
-import com.stip.stip.FilledOrderAdapter
+import com.stip.stip.order.adapter.FilledOrderAdapter
 // MaterialAlertDialogBuilder import는 삭제된 상태 유지
 import com.stip.stip.iphome.fragment.CancelConfirmDialogFragment // ❌️ 커스텀 다이얼로그 import (경로 확인 및 수정 필요)
 import com.stip.stip.signup.utils.PreferenceUtil

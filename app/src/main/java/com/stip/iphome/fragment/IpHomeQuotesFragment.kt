@@ -8,7 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.stip.stip.DailyQuotesAdapter
+import com.stip.stip.iphome.adapter.DailyQuotesAdapter
 import com.stip.stip.R
 import com.stip.stip.iphome.adapter.QuotesAdapter
 import com.stip.stip.databinding.FragmentIpHomeQuotesBinding

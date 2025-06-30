@@ -7,8 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast // ❗️ Toast import 추가됨
 import androidx.fragment.app.Fragment
-import com.stip.stip.FilledOrderAdapter
-import com.stip.stip.OrderBookAdapter
+import com.stip.stip.order.adapter.FilledOrderAdapter
+import com.stip.stip.order.adapter.OrderBookAdapter
 import com.stip.stip.R
 import com.stip.stip.iphome.adapter.UnfilledOrderAdapter
 import com.stip.stip.databinding.FragmentOrderContentBinding

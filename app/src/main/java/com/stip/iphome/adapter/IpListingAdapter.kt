@@ -12,6 +12,7 @@ import com.stip.stip.databinding.ItemIpListingBinding
 import com.stip.stip.iphome.fragment.TradingFragment
 import com.stip.stip.iphome.model.IpListingItem
 import com.stip.stip.iphome.model.IpCategory
+import com.stip.stip.iphome.view.OhlcMiniBarView
 
 class IpListingAdapter(var items: List<IpListingItem>) :
     RecyclerView.Adapter<IpListingAdapter.IpListingViewHolder>() {

@@ -16,7 +16,7 @@ import android.view.animation.TranslateAnimation
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import com.stip.stip.InfoTabListener
+import com.stip.stip.iphome.listener.InfoTabListener
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentTradingDetailBinding
 import com.stip.stip.iphome.TradingDataHolder

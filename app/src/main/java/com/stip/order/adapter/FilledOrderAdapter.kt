@@ -1,4 +1,4 @@
-package com.stip.stip
+package com.stip.stip.order.adapter
 
 import android.text.Spannable
 import android.text.SpannableString
@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.stip.stip.databinding.ItemFilledOrderBinding
 import com.stip.stip.iptransaction.model.IpInvestmentItem
+import com.stip.stip.R
 
 class FilledOrderAdapter :
     ListAdapter<IpInvestmentItem, FilledOrderAdapter.FilledOrderViewHolder>(DIFF_CALLBACK) {
@@ -58,23 +59,18 @@ class FilledOrderAdapter :
 
             binding.textNameType.text = spannable
             binding.textExecutionTime.text = item.executionTime
-
-            binding.textUnitPriceLabel.text = context.getString(R.string.filled_price)
-            binding.textUnitPrice.text = "$${item.unitPrice}"
-            binding.textUnitPrice.setTextColor(color)
-
-            binding.textQuantityLabel.text = context.getString(R.string.filled_quantity1)
+            binding.textUnitPrice.text = item.unitPrice
             binding.textQuantity.text = item.quantity
-            binding.textQuantity.setTextColor(color)
-
-            binding.textAmountLabel.text = context.getString(R.string.filled_total)
-            binding.textAmount.text = "$${item.amount}"
-            binding.textAmount.setTextColor(color)
+            binding.textAmount.text = item.amount
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilledOrderViewHolder {
-        val binding = ItemFilledOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ItemFilledOrderBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return FilledOrderViewHolder(binding)
     }
 

@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.stip.stip.iptransaction.fragment.IpProfitLossFragment
 import com.stip.stip.databinding.ActivityMainBinding
 import com.stip.ipasset.fragment.IpAssetFragment
@@ -141,7 +142,12 @@ class MainActivity : AppCompatActivity() {
         }
         binding.tabIpasset.setOnClickListener {
             if (isAuthenticated) {
-                handleBottomTabClick(3, force = true)
+                // 입출금 탭 클릭 시 전화 사기 경고 다이얼로그 표시 여부 확인
+                if (shouldShowPhoneFraudAlert()) {
+                    showPhoneFraudAlertDialog()
+                } else {
+                    handleBottomTabClick(3, force = true)
+                }
             } else {
                 showLoginRequiredDialog()
             }
@@ -381,14 +387,62 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    /**
+     * 전화 사기 경고 다이얼로그를 표시해야 하는지 확인
+     * 하루에 한 번만 표시되도록 처리
+     */
+    private fun shouldShowPhoneFraudAlert(): Boolean {
+        val sharedPreferences = getSharedPreferences("phone_fraud_alert_prefs", MODE_PRIVATE)
+        
+        // 오늘 날짜 확인
+        val today = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_YEAR).toString() + 
+                    java.util.Calendar.getInstance().get(java.util.Calendar.YEAR).toString()
+                    
+        // 마지막으로 다이얼로그를 표시한 날짜 확인
+        val lastShownDate = sharedPreferences.getString("last_shown_date", "")
+        
+        // 오늘 이미 표시했으면 다시 표시하지 않음
+        return lastShownDate != today
+    }
+    
+    /**
+     * 전화 사기 경고 다이얼로그 표시
+     */
+    private fun showPhoneFraudAlertDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.fragment_phone_fraud_alert_dialog, null)
+        
+        val dialog = BottomSheetDialog(this)
+        dialog.setContentView(dialogView)
+        
+        // 확인 버튼 클릭 처리
+        dialogView.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btn_confirm).setOnClickListener {
+            dialog.dismiss()
+            handleBottomTabClick(3, force = true)
+        }
+        
+        // 오늘 하루 보지 않기 버튼 클릭 처리
+        dialogView.findViewById<androidx.appcompat.widget.AppCompatButton>(R.id.btn_cancel).setOnClickListener {
+            // 오늘 날짜 저장
+            val sharedPreferences = getSharedPreferences("phone_fraud_alert_prefs", MODE_PRIVATE)
+            val today = java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_YEAR).toString() + 
+                        java.util.Calendar.getInstance().get(java.util.Calendar.YEAR).toString()
+            
+            sharedPreferences.edit().putString("last_shown_date", today).apply()
+            
+            dialog.dismiss()
+            handleBottomTabClick(3, force = true)
+        }
+        
+        dialog.show()
+    }
+
     // companion object (기존 코드 유지)
     companion object {
         fun startMainActivity(activity: Activity) {
-            val intent = Intent(activity, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                putExtra("FROM_LOGIN", true)
-            }
+            val intent = Intent(activity, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             activity.startActivity(intent)
+            activity.finish()
         }
     }
 }

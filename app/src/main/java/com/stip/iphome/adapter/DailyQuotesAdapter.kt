@@ -1,4 +1,4 @@
-package com.stip.stip
+package com.stip.stip.iphome.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.stip.stip.R
 import com.stip.stip.databinding.ItemIpHomeQuoteDailyBinding
 import com.stip.stip.iphome.model.QuoteTickDaily
 import java.text.DecimalFormat

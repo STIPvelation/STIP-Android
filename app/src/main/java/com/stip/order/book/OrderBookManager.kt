@@ -6,7 +6,7 @@ import android.os.Looper
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.stip.stip.OrderBookAdapter
+import com.stip.stip.order.adapter.OrderBookAdapter
 import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.iphome.model.OrderBookItem // OrderBookItem import 확인
 import java.text.DecimalFormat
