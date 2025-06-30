@@ -51,11 +51,14 @@ object NewsRepository {
                     try {
                         val channel = parser.getRssChannel(url)
                         channel.items.sortedByDescending { it.pubDate }.take(limit).map {
+                            // RSS 이미지 추출 방법은 라이브러리마다 상이함
+                            // 여기서는 우선 기본 이미지 없이 구현
                             NewsItem(
                                 title = it.title.orEmpty(),
                                 date = calculateRelativeTime(it.pubDate),
                                 link = it.link.orEmpty(),
-                                pubDate = it.pubDate.orEmpty()
+                                pubDate = it.pubDate.orEmpty(),
+                                imageUrl = null // 이미지 URL은 나중에 추가
                             )
                         }
                     } catch (e: Exception) {

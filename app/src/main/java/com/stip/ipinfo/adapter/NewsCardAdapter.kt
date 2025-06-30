@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.stip.stip.R
 import com.stip.stip.ipinfo.model.NewsItem
 
@@ -13,14 +14,6 @@ class NewsCardAdapter(
     private val newsList: List<NewsItem>,
     private val onItemClick: (NewsItem) -> Unit
 ) : RecyclerView.Adapter<NewsCardAdapter.NewsViewHolder>() {
-
-    // Sample image resources to use for news items
-    private val sampleImages = arrayOf(
-        R.drawable.sample_news_1,
-        R.drawable.sample_news_2,
-        R.drawable.sample_news_3,
-        R.drawable.news_placeholder
-    )
 
     inner class NewsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val newsTitle: TextView = itemView.findViewById(R.id.news_title)
@@ -31,11 +24,20 @@ class NewsCardAdapter(
             newsTitle.text = newsItem.title
             newsDate.text = newsItem.pubDate
             
-            // Assign a random sample image based on the position (for demonstration)
-            val imageResource = sampleImages[newsItem.title.hashCode().rem(sampleImages.size).let { if (it < 0) it + sampleImages.size else it }]
-            newsImage.setImageResource(imageResource)
+            // 뉴스 제목의 해시코드에 따라 두 가지 로고 이미지 중 하나를 선택
+            val isEven = Math.abs(newsItem.title.hashCode()) % 2 == 0
+            
+            // 짝수/홀수 해시코드에 따라 다른 로고 이미지 사용
+            val logoResource = if (isEven) {
+                R.drawable.stiplogoblue
+            } else {
+                R.drawable.stiplogo
+            }
+            
+            // 이미지 설정
+            newsImage.setImageResource(logoResource)
 
-            // Set click listener
+            // 클릭 리스너 설정
             itemView.setOnClickListener {
                 onItemClick(newsItem)
             }
