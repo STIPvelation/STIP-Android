@@ -434,7 +434,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * 전화 사기 경고 다이얼로그 표시
      */
-    private fun showPhoneFraudAlertDialog() {
+    fun showPhoneFraudAlertDialog() {
         val dialogView = layoutInflater.inflate(R.layout.fragment_phone_fraud_alert_dialog, null)
         
         // BottomSheetDialog 대신 AlertDialog 사용하여 전체 내용이 한 번에 보이도록 함

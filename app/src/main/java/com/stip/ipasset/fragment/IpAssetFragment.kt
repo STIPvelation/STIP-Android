@@ -64,6 +64,9 @@ class IpAssetFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
+        // 전화 사기 경고 다이얼로그 표시
+        showPhoneFraudAlertDialog()
+        
         // USD 데이터 변경 관찰
         observeUsdData()
         
@@ -319,7 +322,27 @@ class IpAssetFragment : Fragment() {
         _binding = null
     }
     
-        companion object {
+    /**
+     * 전화 사기 경고 다이얼로그 표시
+     * MainActivity의 기존 showPhoneFraudAlertDialog 메서드 호출
+     * 앱 실행 중 한 번만 표시되도록 처리
+     */
+    private fun showPhoneFraudAlertDialog() {
+        // 이미 표시된 경우 중복 표시 방지
+        if (hasShownFraudDialog) return
+        
+        // 액티비티가 MainActivity인지 확인
+        val mainActivity = activity as? MainActivity
+        mainActivity?.showPhoneFraudAlertDialog()
+        
+        // 표시 완료 플래그 설정
+        hasShownFraudDialog = true
+    }
+    
+    companion object {
+        // 다이얼로그 표시 여부 플래그 (앱 실행 중 한 번만 표시)
+        private var hasShownFraudDialog = false
+        
         fun newInstance() = IpAssetFragment()
     }
 }
