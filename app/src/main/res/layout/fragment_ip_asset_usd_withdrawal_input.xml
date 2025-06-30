@@ -285,8 +285,8 @@
                     android:layout_marginEnd="6dp"
                     android:text="10%"
                     android:textSize="12sp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="#E8F7FC"
+                    android:textColor="@color/percentage_button_text_color"
+                    android:backgroundTint="@color/percentage_button_background_tint"
                     android:textAllCaps="false"/>
                 
                 <!-- 25% 버튼 -->
@@ -298,8 +298,8 @@
                     android:layout_marginEnd="6dp"
                     android:text="25%"
                     android:textSize="12sp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="#E8F7FC"
+                    android:textColor="@color/percentage_button_text_color"
+                    android:backgroundTint="@color/percentage_button_background_tint"
                     android:textAllCaps="false"/>
                 
                 <!-- 50% 버튼 -->
@@ -311,8 +311,8 @@
                     android:layout_marginEnd="6dp"
                     android:text="50%"
                     android:textSize="12sp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="#E8F7FC"
+                    android:textColor="@color/percentage_button_text_color"
+                    android:backgroundTint="@color/percentage_button_background_tint"
                     android:textAllCaps="false"/>
                 
                 <!-- MAX 버튼 -->
@@ -323,8 +323,8 @@
                     android:layout_weight="1"
                     android:text="최대"
                     android:textSize="12sp"
-                    android:textColor="@color/black"
-                    android:backgroundTint="#E8F7FC"
+                    android:textColor="@color/percentage_button_text_color"
+                    android:backgroundTint="@color/percentage_button_background_tint"
                     android:textAllCaps="false"/>
             </LinearLayout>
         </LinearLayout>

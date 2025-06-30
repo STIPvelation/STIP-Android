@@ -424,7 +424,8 @@ class IpTrendFragment : Fragment() {
         val dateButtons = listOf(
             binding.date1month,
             binding.date3months,
-            binding.date6months
+            binding.date6months,
+            binding.date1year
         )
 
         dateButtons.forEachIndexed { index, button ->
@@ -436,6 +437,7 @@ class IpTrendFragment : Fragment() {
                     0 -> "1M"  // 1개월
                     1 -> "3M"  // 3개월
                     2 -> "6M"  // 6개월
+                    3 -> "1Y"  // 1년
                     else -> "1M"
                 }
                 
