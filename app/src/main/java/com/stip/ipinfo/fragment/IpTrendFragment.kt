@@ -58,6 +58,9 @@ class IpTrendFragment : Fragment() {
     private var stipAngle = 0.0
     private var etipAngle = 0.0
 
+    // Current selected time period for the rising IP list
+    private var currentPeriod = "1W" // Default to 1 week
+
     // Coroutine Jobs
     private var stipUpdateJob: Job? = null
     private var etipUpdateJob: Job? = null
@@ -419,21 +422,31 @@ class IpTrendFragment : Fragment() {
      */
     private fun setupDateButtons() {
         val dateButtons = listOf(
-            binding.date1week,
             binding.date1month,
             binding.date3months,
-            binding.date6months,
-            binding.date1year
+            binding.date6months
         )
 
-        dateButtons.forEach { button ->
+        dateButtons.forEachIndexed { index, button ->
             button.setOnClickListener {
                 selectDateButton(button, dateButtons)
+                
+                // Update current period based on selected button
+                currentPeriod = when(index) {
+                    0 -> "1M"  // 1개월
+                    1 -> "3M"  // 3개월
+                    2 -> "6M"  // 6개월
+                    else -> "1M"
+                }
+                
+                // Reload IP data with new period
+                loadTopRisingIps(currentPeriod)
             }
         }
         
-        // 기본값으로 첫 번째 버튼 선택
+        // 기본값으로 첫 번째 버튼(1개월) 선택
         selectDateButton(dateButtons[0], dateButtons)
+        currentPeriod = "1M"
     }
     
     /**
@@ -454,13 +467,14 @@ class IpTrendFragment : Fragment() {
     }
     
     /**
-     * 시간 범위 버튼(오늘, 1개월, 3개월) 설정
+     * 시간 범위 버튼(1개월, 3개월, 6개월, 전체) 설정
      */
     private fun setupTimeRangeButtons() {
         val buttons = listOf(
-            binding.todayText,
             binding.monthText,
-            binding.threeMonthsText
+            binding.threeMonthsText,
+            binding.sixMonthsText,
+            binding.allText
         )
 
         buttons.forEach { button ->
@@ -774,14 +788,14 @@ class IpTrendFragment : Fragment() {
         loadTopRisingIps()
     }
     
-    private fun loadTopRisingIps() {
+    private fun loadTopRisingIps(period: String = "1W") {
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 // 실제 API 데이터를 사용하도록 변경
                 // API 직접 호출
                 val apiService = IpInfoApiService.create()
                 val response = withContext(Dispatchers.IO) {
-                    apiService.getTopRisingIps()
+                    apiService.getTopRisingIps(period)
                 }
                 
                 if (response.isSuccessful && response.body() != null) {

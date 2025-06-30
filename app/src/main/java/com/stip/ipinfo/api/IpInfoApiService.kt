@@ -12,6 +12,9 @@ interface IpInfoApiService {
     @GET("api/v1/ip/trend/top")
     suspend fun getTopRisingIps(): Response<IpTrendResponse>
     
+    @GET("api/v1/ip/trend/top")
+    suspend fun getTopRisingIps(@retrofit2.http.Query("period") period: String): Response<IpTrendResponse>
+    
     @GET("api/v1/ip/index")
     suspend fun getStipIndices(): Response<StipIndexResponse>
     

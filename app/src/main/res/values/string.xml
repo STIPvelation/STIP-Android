@@ -98,6 +98,11 @@
     <string name="empty">----</string>
 
     <string name="all_ip_filter">ALL IP</string>
+    
+    <!-- STIP 인덱스 차트 기간 선택 -->
+    <string name="stip_index_3months">3개월</string>
+    <string name="stip_index_6months">6개월</string>
+    <string name="stip_index_all">전체</string>
 
     <!-- 이익 손실 관련 문자열 -->
     <string name="label_profit_amount">수익금액</string>
