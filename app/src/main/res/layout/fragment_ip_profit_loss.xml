@@ -301,11 +301,12 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_percent="0.5" />
 
+            <!-- Removed vertical divider to fix UI issue when expanding/collapsing graph -->
             <View
                 android:id="@+id/vertical_divider_rate"
-                android:layout_width="1dp"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginBottom="24dp"
+                android:visibility="gone"
                 android:background="#DDDDDD"
                 app:layout_constraintBottom_toBottomOf="@id/profitRateText"
                 app:layout_constraintEnd_toStartOf="@id/guideline_rate_center"
