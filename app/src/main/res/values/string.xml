@@ -1202,8 +1202,8 @@
     <string name="sign_up_bank_search_hint">은행/증권사명 검색</string>
     <string name="sign_up_bank_1_won_title">1원을 입금했어요.<![CDATA[<br/><font color="#30C6E8">숫자 6자리</font>를<br/>]]>입력해 주세요.</string>
     <string name="sign_up_bank_1_won_help_1"><u>인증번호는 어떻게 확인하나요?</u></string>
-    <string name="sign_up_bank_1_won_help_2">\u2022 신청이 많은 경우, 1원 입금이 5분 이상 소요될 수 있습니다.</string>
-    <string name="sign_up_bank_1_won_help_3">\u2022 입금 내역이 없다면 계좌 정보를 다시 한번 확인해 주세요.</string>
+    <string name="sign_up_bank_1_won_help_2">\u2022 신청이 많은 경우, 1원 입금이 5분 이상 소요될수 있습니다.</string>
+    <string name="sign_up_bank_1_won_help_3">\u2022 입금 내역이 없다면 계좌 정보를 다시한번 확인해 주세요.</string>
     <string name="sign_up_bank_1_won_auth">1원 인증하기 (%s)</string>
 
     <string name="sign_up_kyc_title">KYC정보를 입력해주세요</string>

@@ -163,10 +163,6 @@ class SignUpBankDepositFragment: BaseFragment<FragmentSignUpBankDepositBinding, 
     }
 
     override fun initAfterBinding() {
-        setOnClick(binding.ivBack) {
-            findNavController().navigateUp()
-        }
-
         setOnClick(binding.tvSignUpBank1WonHelp) {
             CustomContentDialog(
                 binding.root.context

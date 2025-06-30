@@ -36,8 +36,34 @@
 
     <!-- 반응형 마진/패딩 (Responsive margin/padding) -->
 
-
-
+    <!-- 회원가입 은행 화면 반응형 치수 (Sign up bank screen responsive dimensions) -->
+    <dimen name="sign_up_top_margin">40dp</dimen>
+    <dimen name="sign_up_bottom_padding">80dp</dimen>
+    <dimen name="sign_up_card_padding">16dp</dimen>
+    <dimen name="sign_up_element_spacing_small">4dp</dimen>
+    <dimen name="sign_up_section_spacing_small">16dp</dimen>
+    <dimen name="sign_up_section_spacing_medium">24dp</dimen>
+    <dimen name="sign_up_section_spacing_large">48dp</dimen>
+    <dimen name="sign_up_input_padding_horizontal">8dp</dimen>
+    <dimen name="sign_up_input_padding_vertical">12dp</dimen>
+    <dimen name="sign_up_input_min_height">48dp</dimen>
+    <dimen name="sign_up_warning_text_margin">28dp</dimen>
+    <dimen name="sign_up_button_padding">16dp</dimen>
+    <dimen name="sign_up_keypad_padding">8dp</dimen>
+    <dimen name="sign_up_icon_size">20dp</dimen>
+    
+    <!-- 회원가입 은행 화면 텍스트 사이즈 (Sign up bank screen text sizes) -->
+    <dimen name="sign_up_title_text_size">28sp</dimen>
+    <dimen name="sign_up_subtitle_text_size">15sp</dimen>
+    <dimen name="sign_up_label_text_size">14sp</dimen>
+    <dimen name="sign_up_input_text_size">16sp</dimen>
+    <dimen name="sign_up_note_text_size">14sp</dimen>
+    <dimen name="sign_up_button_text_size">16sp</dimen>
+    
+    <!-- 회원가입 은행 화면 최대 너비 (Sign up bank screen max widths) -->
+    <dimen name="content_max_width">600dp</dimen>
+    <dimen name="button_max_width">400dp</dimen>
+    <dimen name="keypad_max_width">450dp</dimen>
 
     <!-- 로그인 이력 카드 elevation -->
     <dimen name="card_elevation_normal">4dp</dimen>

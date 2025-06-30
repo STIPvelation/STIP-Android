@@ -41,15 +41,15 @@
             android:id="@+id/tv_sign_up_kyc_search_address_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/sign_up_kyc_search_address_title"
-            android:textSize="24sp"
-            android:textColor="@color/text_black_14181B_100"
-            android:fontFamily="@font/pretendard_medium_font_family"
-            app:layout_constraintTop_toBottomOf="@+id/cl_header_section"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="@dimen/common_side_margin_20dp"
-            />
+            android:fontFamily="@font/pretendard_medium_font_family"
+            android:text="@string/sign_up_kyc_search_address_title"
+            android:textColor="@color/text_black_14181B_100"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cl_header_section" />
 
         <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/et_sign_up_kyc_search_address"
