@@ -99,23 +99,7 @@ class IpNewsFragment : Fragment(), ScrollableToTop {
         }
 
         setupDipNewsRecyclerView()
-        setupIpToonRecyclerView()
         startAutoUpdateTime()
-    }
-
-
-
-    private lateinit var ipToonAdapter: IpToonAdapter
-
-    private fun setupIpToonRecyclerView() {
-        val sampleItems = listOf(
-            IpToonItem(getString(R.string.ip_toon_title), R.drawable.ic_ip_toon),
-            IpToonItem(getString(R.string.ip_swap_title), R.drawable.ic_ip_auction),
-            IpToonItem(getString(R.string.ip_auction_title), R.drawable.ic_ip_swap)
-        )
-
-        ipToonAdapter = IpToonAdapter(sampleItems)
-        binding.recyclerViewIpToon.adapter = ipToonAdapter
     }
 
     private val switchRunnable = object : Runnable {
