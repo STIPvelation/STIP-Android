@@ -195,20 +195,49 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
         binding.iconGraphArrow.setImageResource(R.drawable.ic_arrow_up)
     }
 
+    private val ID_RECYCLERVIEW_PROFIT = View.generateViewId() // 고유한 ID 생성
+    private var cardProfitDetailContainer: ViewGroup? = null
+
     private fun setupRecyclerView() {
+        val context = context ?: return
         profitAdapter = ProfitAdapter()
-        val recyclerView = view?.findViewById<androidx.recyclerview.widget.RecyclerView>(R.id.recyclerViewProfit)
-        recyclerView?.let {
-            it.layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-            it.adapter = profitAdapter
-            it.isNestedScrollingEnabled = false
+        
+        // 기존에 추가된 RecyclerView 제거 (재설정 시)
+        cardProfitDetailContainer = view?.findViewById(R.id.card_profit_detail_container)
+        cardProfitDetailContainer?.findViewById<androidx.recyclerview.widget.RecyclerView>(ID_RECYCLERVIEW_PROFIT)?.let { oldRecyclerView ->
+            (cardProfitDetailContainer as ViewGroup).removeView(oldRecyclerView)
+        }
+        
+        // 새 RecyclerView 생성
+        val recyclerView = androidx.recyclerview.widget.RecyclerView(context).apply {
+            id = ID_RECYCLERVIEW_PROFIT
+            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+            adapter = profitAdapter
+            isNestedScrollingEnabled = false
             
-            // Add divider between items
+            // 구분선 추가
             val dividerItemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
-                recyclerView.context,
+                context,
                 androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
             )
-            it.addItemDecoration(dividerItemDecoration)
+            addItemDecoration(dividerItemDecoration)
+        }
+        
+        // 레이아웃 파라미터 설정
+        val layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        
+        // card_profit_detail_container에 RecyclerView 추가
+        cardProfitDetailContainer?.findViewById<ViewGroup>(R.id.container_trade_table_header)?.let { headerContainer ->
+            // 헤더 뒤에 RecyclerView 추가
+            val containerParent = headerContainer.parent as? ViewGroup
+            containerParent?.addView(recyclerView, containerParent.indexOfChild(headerContainer) + 1, layoutParams)
+            Log.d("IpProfitLossFragment", "RecyclerView가 카드 컨테이너에 추가되었습니다.")
+        } ?: run {
+            Log.e("IpProfitLossFragment", "container_trade_table_header를 찾을 수 없습니다.")
+            cardProfitDetailContainer?.addView(recyclerView, layoutParams) // 헤더가 없으면 그냥 추가
         }
     }
 
