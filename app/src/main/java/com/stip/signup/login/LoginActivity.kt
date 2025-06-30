@@ -3,15 +3,16 @@ package com.stip.stip.signup.login
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import com.stip.stip.R
-import com.stip.stip.signup.base.BaseActivity
-import com.stip.stip.databinding.ActivityLoginBinding
 import com.stip.stip.MainActivity
-
+import com.stip.stip.databinding.ActivityLoginBinding
+import com.stip.stip.signup.base.BaseActivity
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
@@ -120,50 +121,133 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     }
 
     override fun initAfterBinding() {
+        // 둘러보기 클릭 리스너
         setOnClick(binding.tvLookAround) {
             startActivity(Intent(this, MainActivity::class.java))
         }
 
+        // STIP 시작하기 통합 인증 버튼 클릭 리스너 (나이스 본인인증 기반)
         setOnClick(binding.btnLogin) {
-            /**
-             * PIN 번호 입력 화면으로 바로 이동
-             */
-            LoginPinNumberActivity.startLoginPinNumberActivity(this)
-        }
-
-        setOnClick(binding.btnSignup) {
-            /**
-             * 회원가입 전 탈퇴 제한 조건 확인
-             */
-            android.util.Log.d("LoginActivity", "회원가입 버튼 클릭됨, 제한 조건 확인")
+            android.util.Log.d("LoginActivity", "STIP 시작하기 버튼 클릭: 나이스 본인인증 시작")
+            // 탈퇴 제한 기간/횟수 확인
             if (checkWithdrawalRestrictions()) {
-                android.util.Log.d("LoginActivity", "제한 조건 통과, 약관 동의 화면으로 바로 이동")
-                // SignUpStartActivity 및 로딩 화면을 건너뛰고 바로 약관 화면(SignUpActivity)으로 이동
-                com.stip.stip.signup.signup.SignUpActivity.startSignUpActivity(this)
+                // 나이스 본인인증 요청
+                requestNiceIdentityVerification()
             } else {
-                android.util.Log.d("LoginActivity", "제한 조건 걸리기 때문에 회원가입 불가")
-                // 제한 조건에 걸리면 Toast 메시지를 표시하고 회원가입 프로세스 차단
-                val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                val lastWithdrawalTime = sharedPrefs.getLong(PREF_KEY_LAST_WITHDRAWAL_TIME, 0)
-                val yearlyWithdrawalCount = sharedPrefs.getInt(PREF_KEY_WITHDRAWAL_COUNT, 0)
-                
-                if (lastWithdrawalTime > 0) {
-                    val currentTime = System.currentTimeMillis()
-                    val elapsedHours = TimeUnit.MILLISECONDS.toHours(currentTime - lastWithdrawalTime)
-                    if (elapsedHours < REACTIVATION_DELAY_HOURS) {
-                        Toast.makeText(this, "탈퇴 후 ${REACTIVATION_DELAY_HOURS}시간 동안 회원가입이 불가합니다.", Toast.LENGTH_LONG).show()
-                        return@setOnClick
-                    }
-                }
-                
-                if (yearlyWithdrawalCount >= MAX_WITHDRAWALS_PER_YEAR) {
-                    Toast.makeText(this, "연간 탈퇴 횟수(${MAX_WITHDRAWALS_PER_YEAR}회)를 초과하여 회원가입이 불가합니다.", Toast.LENGTH_LONG).show()
-                    return@setOnClick
-                }
-                
-                // 나머지 경우에는 일반적인 오류 메시지 표시
-                Toast.makeText(this, "회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+                android.util.Log.d("LoginActivity", "회원가입 제한 조건 걸림")
+                // 제한 조건에 걸리면 Toast 메시지를 표시
+                showWithdrawalRestrictionMessage()
             }
         }
+    }
+    
+    /**
+     * 나이스 본인인증을 요청하는 함수
+     * 본인인증 성공 시 handleNiceAuthResult()에서 결과 처리
+     */
+    private fun requestNiceIdentityVerification() {
+        // TODO: 실제 나이스 본인인증 모듈 호출 구현 필요
+        android.util.Log.d("LoginActivity", "나이스 본인인증 요청")
+        
+        // 본인인증 성공을 시뮬레이션하기 위해 임시로 직접 결과 처리 함수 호출
+        // 실제 구현에서는 나이스 모듈의 콜백에서 호출해야 함
+        val mockDi = "mock-di-value" // 실제로는 나이스 본인인증 결과에서 받음
+        val mockCi = "mock-ci-value" // 실제로는 나이스 본인인증 결과에서 받음
+        Handler(Looper.getMainLooper()).postDelayed({
+            handleNiceAuthResult(true, mockDi, mockCi)
+        }, 1500) // 본인인증 UI 흐름을 시뮬레이션하기 위한 지연
+    }
+    
+    /**
+     * 나이스 본인인증 결과 처리 함수
+     * 본인인증 성공 시 DI 값으로 회원 여부를 판단하여 로그인 또는 회원가입 진행
+     */
+    private fun handleNiceAuthResult(success: Boolean, di: String?, ci: String?) {
+        if (!success || di.isNullOrEmpty()) {
+            android.util.Log.e("LoginActivity", "본인인증 실패 또는 DI 값이 없음")
+            Toast.makeText(this, "본인인증에 실패했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
+            return
+        }
+        
+        android.util.Log.d("LoginActivity", "본인인증 성공: DI=$di")
+        
+        // TODO: DI 값으로 서버에 회원 여부 확인 API 호출 필요
+        checkUserExistenceByDi(di, ci)
+    }
+    
+    /**
+     * DI 값으로 서버에 회원 여부 확인 요청
+     * 서버에서 DI 값을 기준으로 회원 DB 조회 결과를 받아 처리
+     */
+    private fun checkUserExistenceByDi(di: String, ci: String?) {
+        android.util.Log.d("LoginActivity", "DI 값으로 회원 여부 확인 요청")
+        
+        // TODO: 실제 서버 API 호출 구현 필요
+        // 서버 응답 예시: { "exists": true/false, "userId": "사용자ID" }
+        
+        // 임시 구현: 무작위로 기존 회원인지 신규 회원인지 결정
+        val userExists = System.currentTimeMillis() % 2 == 0L
+        
+        if (userExists) {
+            // DI 값이 DB에 존재 (기존 회원) → 로그인 프로세스
+            routeToExistingUserFlow(di)
+        } else {
+            // DI 값이 DB에 없음 (신규 회원) → 회원가입 프로세스
+            routeToNewUserFlow(di, ci)
+        }
+    }
+    
+    /**
+     * 기존 회원 처리 - 로그인 프로세스로 라우팅
+     */
+    private fun routeToExistingUserFlow(di: String) {
+        android.util.Log.d("LoginActivity", "기존 회원 확인됨: 로그인 화면(PIN 입력)으로 이동")
+        
+        // DI 값을 함께 전달하여 PIN 번호 입력 화면으로 이동
+        val intent = Intent(this, LoginPinNumberActivity::class.java).apply {
+            putExtra("di_value", di) // PIN 인증 후 서버 로그인에 필요할 수 있음
+        }
+        startActivity(intent)
+    }
+    
+    /**
+     * 신규 회원 처리 - 회원가입 프로세스로 라우팅
+     */
+    private fun routeToNewUserFlow(di: String, ci: String?) {
+        android.util.Log.d("LoginActivity", "신규 회원 확인됨: 회원가입 프로세스 시작")
+        Toast.makeText(this, "STIP 신규 회원가입을 시작합니다.", Toast.LENGTH_SHORT).show()
+        
+        // DI/CI 값을 함께 전달하여 회원가입 화면으로 이동
+        val intent = Intent(this, com.stip.stip.signup.signup.SignUpActivity::class.java).apply {
+            putExtra("di_value", di)
+            putExtra("ci_value", ci)
+        }
+        startActivity(intent)
+    }
+    
+    /**
+     * 회원 탈퇴 제한 메시지 표시 함수
+     */
+    private fun showWithdrawalRestrictionMessage() {
+        val sharedPrefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val lastWithdrawalTime = sharedPrefs.getLong(PREF_KEY_LAST_WITHDRAWAL_TIME, 0)
+        val yearlyWithdrawalCount = sharedPrefs.getInt(PREF_KEY_WITHDRAWAL_COUNT, 0)
+        
+        if (lastWithdrawalTime > 0) {
+            val currentTime = System.currentTimeMillis()
+            val elapsedHours = TimeUnit.MILLISECONDS.toHours(currentTime - lastWithdrawalTime)
+            if (elapsedHours < REACTIVATION_DELAY_HOURS) {
+                Toast.makeText(this, "탈퇴 후 ${REACTIVATION_DELAY_HOURS}시간 동안 회원가입이 불가합니다.", Toast.LENGTH_LONG).show()
+                return
+            }
+        }
+        
+        if (yearlyWithdrawalCount >= MAX_WITHDRAWALS_PER_YEAR) {
+            Toast.makeText(this, "연간 탈퇴 횟수(${MAX_WITHDRAWALS_PER_YEAR}회)를 초과하여 회원가입이 불가합니다.", Toast.LENGTH_LONG).show()
+            return
+        }
+        
+        // 나머지 경우에는 일반적인 오류 메시지 표시
+        Toast.makeText(this, "회원가입 처리 중 오류가 발생했습니다. 다시 시도해주세요.", Toast.LENGTH_LONG).show()
     }
 }
