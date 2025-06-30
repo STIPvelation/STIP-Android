@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.tabs.TabLayout
+import com.stip.common.fragment.UnderConstructionDialogFragment
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpSwapBinding
@@ -45,6 +46,9 @@ class IPSwapFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 준비중 다이얼로그 표시
+        showUnderConstructionDialog()
+        
         setupSearchBar()
         setupCategoryChips()
         // TabLayout removed from layout
@@ -292,5 +296,16 @@ class IPSwapFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    /**
+     * 준비중 안내 다이얼로그 표시
+     */
+    private fun showUnderConstructionDialog() {
+        val dialogFragment = UnderConstructionDialogFragment.newInstance(
+            "준비중",
+            "IP 스왑 서비스는 현재 준비중입니다."
+        )
+        dialogFragment.show(childFragmentManager, "under_construction_dialog")
     }
 }

@@ -21,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayout
+import com.stip.common.fragment.UnderConstructionDialogFragment
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpToonBinding
@@ -61,6 +62,9 @@ class IPToonFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         // 액티비티의 기본 액션바를 숨김
         (activity as? AppCompatActivity)?.supportActionBar?.hide()
+        
+        // 준비중 다이얼로그 표시
+        showUnderConstructionDialog()
         
         // Modern replacement for setHasOptionsMenu - using menu provider instead
         requireActivity().addMenuProvider(object : MenuProvider {
@@ -366,5 +370,16 @@ class IPToonFragment : Fragment() {
         (activity as? AppCompatActivity)?.supportActionBar?.show()
     }
     
+    /**
+     * 준비중 안내 다이얼로그 표시
+     */
+    private fun showUnderConstructionDialog() {
+        val dialogFragment = UnderConstructionDialogFragment.newInstance(
+            "준비중",
+            "IP 툰 서비스는 현재 준비중입니다."
+        )
+        dialogFragment.show(childFragmentManager, "under_construction_dialog")
+    }
+
     // Removed deprecated onCreateOptionsMenu - now using MenuProvider in onViewCreated
 }

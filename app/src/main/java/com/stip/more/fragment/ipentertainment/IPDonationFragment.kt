@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import com.stip.common.fragment.UnderConstructionDialogFragment
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpDonationBinding
@@ -36,6 +37,9 @@ class IPDonationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 준비중 다이얼로그 표시
+        showUnderConstructionDialog()
+        
         registerFilePickerLauncher()
         setupFileUploadSection()
         setupDocumentLinks()
@@ -119,6 +123,17 @@ class IPDonationFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    /**
+     * 준비중 안내 다이얼로그 표시
+     */
+    private fun showUnderConstructionDialog() {
+        val dialogFragment = UnderConstructionDialogFragment.newInstance(
+            "준비중",
+            "IP 기부 서비스는 현재 준비중입니다."
+        )
+        dialogFragment.show(childFragmentManager, "under_construction_dialog")
     }
     
     // onActivityResult는 ActivityResultLauncher로 대체되어 더 이상 필요하지 않습니다.

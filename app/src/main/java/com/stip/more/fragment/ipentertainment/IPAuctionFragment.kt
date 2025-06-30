@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.stip.common.fragment.UnderConstructionDialogFragment
 import com.stip.stip.MainViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentMoreIpAuctionBinding
@@ -45,6 +46,9 @@ class IPAuctionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        // 준비중 다이얼로그 표시
+        showUnderConstructionDialog()
+        
         setupSearchBar()
         setupCategoryCards()
         setupSortButton()
@@ -507,5 +511,16 @@ class IPAuctionFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    /**
+     * 준비중 안내 다이얼로그 표시
+     */
+    private fun showUnderConstructionDialog() {
+        val dialogFragment = UnderConstructionDialogFragment.newInstance(
+            "준비중",
+            "IP 옥션 서비스는 현재 준비중입니다."
+        )
+        dialogFragment.show(childFragmentManager, "under_construction_dialog")
     }
 }
