@@ -188,9 +188,9 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         val storedDi = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
         val storedPin = PreferenceUtil.getString(Constants.PREF_KEY_PIN_VALUE, "")
         
-        // 저장된 DI가 있고, 현재 입력한 DI와 일치하면 기존 회원
-        // 또는 PIN 값이 설정되어 있으면 이미 회원가입이 완료된 것으로 간주
-        val userExists = (storedDi.isNotBlank() && di == storedDi) || storedPin.isNotBlank()
+        // 저장된 DI가 있고, 현재 입력한 DI와 일치하면서 PIN이 설정된 경우에만 기존 회원으로 판단
+        // 회원가입이 완전히 완료된 사용자만 로그인 플로우로 진입
+        val userExists = storedDi.isNotBlank() && di == storedDi && storedPin.isNotBlank()
         
         if (userExists) {
             // DI 값이 DB에 존재 (기존 회원) → 로그인 프로세스
