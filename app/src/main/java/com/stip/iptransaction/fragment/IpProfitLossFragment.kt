@@ -199,45 +199,82 @@ class IpProfitLossFragment : Fragment(), ScrollableToTop {
     private var cardProfitDetailContainer: ViewGroup? = null
 
     private fun setupRecyclerView() {
-        val context = context ?: return
-        profitAdapter = ProfitAdapter()
-        
-        // 기존에 추가된 RecyclerView 제거 (재설정 시)
-        cardProfitDetailContainer = view?.findViewById(R.id.card_profit_detail_container)
-        cardProfitDetailContainer?.findViewById<androidx.recyclerview.widget.RecyclerView>(ID_RECYCLERVIEW_PROFIT)?.let { oldRecyclerView ->
-            (cardProfitDetailContainer as ViewGroup).removeView(oldRecyclerView)
-        }
-        
-        // 새 RecyclerView 생성
-        val recyclerView = androidx.recyclerview.widget.RecyclerView(context).apply {
-            id = ID_RECYCLERVIEW_PROFIT
-            layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
-            adapter = profitAdapter
-            isNestedScrollingEnabled = false
+        try {
+            val context = context ?: return
+            profitAdapter = ProfitAdapter()
             
-            // 구분선 추가
-            val dividerItemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
-                context,
-                androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+            // 기존에 추가된 RecyclerView 제거 (재설정 시)
+            cardProfitDetailContainer = view?.findViewById(R.id.card_profit_detail_container)
+            if (cardProfitDetailContainer == null) {
+                Log.e("IpProfitLossFragment", "card_profit_detail_container를 찾을 수 없습니다.")
+                return
+            }
+            
+            cardProfitDetailContainer?.findViewById<androidx.recyclerview.widget.RecyclerView>(ID_RECYCLERVIEW_PROFIT)?.let { oldRecyclerView ->
+                try {
+                    (cardProfitDetailContainer as? ViewGroup)?.removeView(oldRecyclerView)
+                } catch (e: Exception) {
+                    Log.e("IpProfitLossFragment", "기존 RecyclerView 제거 중 오류: ${e.message}")
+                }
+            }
+            
+            // 새 RecyclerView 생성
+            val recyclerView = androidx.recyclerview.widget.RecyclerView(context).apply {
+                id = ID_RECYCLERVIEW_PROFIT
+                layoutManager = androidx.recyclerview.widget.LinearLayoutManager(context)
+                adapter = profitAdapter
+                isNestedScrollingEnabled = false
+                
+                // 구분선 추가
+                try {
+                    val dividerItemDecoration = androidx.recyclerview.widget.DividerItemDecoration(
+                        context,
+                        androidx.recyclerview.widget.LinearLayoutManager.VERTICAL
+                    )
+                    addItemDecoration(dividerItemDecoration)
+                } catch (e: Exception) {
+                    Log.e("IpProfitLossFragment", "구분선 추가 중 오류: ${e.message}")
+                }
+            }
+            
+            // 레이아웃 파라미터 설정
+            val layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
             )
-            addItemDecoration(dividerItemDecoration)
-        }
-        
-        // 레이아웃 파라미터 설정
-        val layoutParams = ViewGroup.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        
-        // card_profit_detail_container에 RecyclerView 추가
-        cardProfitDetailContainer?.findViewById<ViewGroup>(R.id.container_trade_table_header)?.let { headerContainer ->
-            // 헤더 뒤에 RecyclerView 추가
-            val containerParent = headerContainer.parent as? ViewGroup
-            containerParent?.addView(recyclerView, containerParent.indexOfChild(headerContainer) + 1, layoutParams)
-            Log.d("IpProfitLossFragment", "RecyclerView가 카드 컨테이너에 추가되었습니다.")
-        } ?: run {
-            Log.e("IpProfitLossFragment", "container_trade_table_header를 찾을 수 없습니다.")
-            cardProfitDetailContainer?.addView(recyclerView, layoutParams) // 헤더가 없으면 그냥 추가
+            
+            // card_profit_detail_container에 RecyclerView 추가
+            try {
+                val headerContainer = cardProfitDetailContainer?.findViewById<ViewGroup>(R.id.container_trade_table_header)
+                if (headerContainer != null) {
+                    // 헤더 뒤에 RecyclerView 추가
+                    val containerParent = headerContainer.parent as? ViewGroup
+                    if (containerParent != null) {
+                        val index = containerParent.indexOfChild(headerContainer)
+                        if (index >= 0) {
+                            containerParent.addView(recyclerView, index + 1, layoutParams)
+                            Log.d("IpProfitLossFragment", "RecyclerView가 카드 컨테이너에 추가되었습니다.")
+                        } else {
+                            cardProfitDetailContainer?.addView(recyclerView, layoutParams)
+                        }
+                    } else {
+                        cardProfitDetailContainer?.addView(recyclerView, layoutParams)
+                    }
+                } else {
+                    Log.e("IpProfitLossFragment", "container_trade_table_header를 찾을 수 없습니다.")
+                    cardProfitDetailContainer?.addView(recyclerView, layoutParams) // 헤더가 없으면 그냥 추가
+                }
+            } catch (e: Exception) {
+                Log.e("IpProfitLossFragment", "RecyclerView 추가 중 오류: ${e.message}")
+                // 마지막 대안으로 직접 추가 시도
+                try {
+                    (cardProfitDetailContainer as? ViewGroup)?.addView(recyclerView, layoutParams)
+                } catch (e2: Exception) {
+                    Log.e("IpProfitLossFragment", "최종 RecyclerView 추가 시도 실패: ${e2.message}")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("IpProfitLossFragment", "setupRecyclerView에서 심각한 오류 발생: ${e.message}")
         }
     }
 

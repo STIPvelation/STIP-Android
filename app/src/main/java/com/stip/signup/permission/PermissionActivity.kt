@@ -1,6 +1,7 @@
 package com.stip.stip.signup.permission
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.text.Html
 import androidx.activity.viewModels
@@ -8,6 +9,8 @@ import com.stip.stip.R
 import com.stip.stip.signup.base.BaseActivity
 import com.stip.stip.databinding.ActivityPermissionBinding
 import com.stip.stip.signup.login.LoginActivity
+import com.stip.stip.signup.Constants
+import com.stip.stip.signup.utils.PreferenceUtil
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -44,6 +47,21 @@ class PermissionActivity: BaseActivity<ActivityPermissionBinding, PermissionView
 
     override fun initAfterBinding() {
         setOnClick(binding.btnOk) {
+            // Save that user has seen permission screen
+            PreferenceUtil.putBoolean("PREF_KEY_PERMISSION_SHOWN", true)
+            
+            // Request permissions if needed (Android M and above)
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                requestPermissions(
+                    arrayOf(
+                        android.Manifest.permission.CAMERA,
+                        android.Manifest.permission.READ_EXTERNAL_STORAGE
+                    ),
+                    100
+                )
+            }
+            
+            // Proceed to login activity
             LoginActivity.startLoginActivity(this)
         }
     }

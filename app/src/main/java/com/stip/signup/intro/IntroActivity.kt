@@ -33,9 +33,19 @@ class IntroActivity: BaseActivity<ActivityIntroBinding, IntroViewModel>() {
             delay(2000)
 
             if (di.isNotBlank() && pin.isNotBlank()) {
+                // User is logged in, go to login screen
                 LoginActivity.startLoginActivity(this@IntroActivity)
             } else {
-                PermissionActivity.startPermissionActivity(this@IntroActivity)
+                // Check if permission screen has been shown before
+                val permissionShown = PreferenceUtil.getBoolean("PREF_KEY_PERMISSION_SHOWN", false)
+                
+                if (permissionShown) {
+                    // Skip permission screen if already shown
+                    LoginActivity.startLoginActivity(this@IntroActivity)
+                } else {
+                    // Show permission screen for first time
+                    PermissionActivity.startPermissionActivity(this@IntroActivity)
+                }
             }
         }
     }

@@ -13,6 +13,8 @@ import com.stip.stip.R
 import com.stip.stip.MainActivity
 import com.stip.stip.databinding.ActivityLoginBinding
 import com.stip.stip.signup.base.BaseActivity
+import com.stip.stip.signup.Constants
+import com.stip.stip.signup.utils.PreferenceUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
 
@@ -182,17 +184,26 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
     private fun checkUserExistenceByDi(di: String, ci: String?) {
         android.util.Log.d("LoginActivity", "DI 값으로 회원 여부 확인 요청")
         
-        // TODO: 실제 서버 API 호출 구현 필요
-        // 서버 응답 예시: { "exists": true/false, "userId": "사용자ID" }
+        // 저장된 DI 값과 비교하여 기존 회원인지 확인
+        val storedDi = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
+        val storedPin = PreferenceUtil.getString(Constants.PREF_KEY_PIN_VALUE, "")
         
-        // 임시 구현: 무작위로 기존 회원인지 신규 회원인지 결정
-        val userExists = System.currentTimeMillis() % 2 == 0L
+        // 저장된 DI가 있고, 현재 입력한 DI와 일치하면 기존 회원
+        // 또는 PIN 값이 설정되어 있으면 이미 회원가입이 완료된 것으로 간주
+        val userExists = (storedDi.isNotBlank() && di == storedDi) || storedPin.isNotBlank()
         
         if (userExists) {
             // DI 값이 DB에 존재 (기존 회원) → 로그인 프로세스
+            // 새로운 DI 값을 저장 (갱신)
+            if (di != storedDi && di.isNotBlank()) {
+                PreferenceUtil.putString(Constants.PREF_KEY_DI_VALUE, di)
+            }
             routeToExistingUserFlow(di)
         } else {
             // DI 값이 DB에 없음 (신규 회원) → 회원가입 프로세스
+            if (di.isNotBlank()) {
+                PreferenceUtil.putString(Constants.PREF_KEY_DI_VALUE, di)
+            }
             routeToNewUserFlow(di, ci)
         }
     }
