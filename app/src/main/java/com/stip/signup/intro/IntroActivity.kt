@@ -32,9 +32,10 @@ class IntroActivity: BaseActivity<ActivityIntroBinding, IntroViewModel>() {
         CoroutineScope(Dispatchers.Main).launch {
             delay(2000)
 
-            if (di.isNotBlank() && pin.isNotBlank()) {
-                // User is logged in, go to login screen
-                LoginActivity.startLoginActivity(this@IntroActivity)
+            if (di.isNotBlank()) {
+                // DI가 있으면 바로 PIN 번호 입력창으로 이동
+                com.stip.stip.signup.login.LoginPinNumberActivity.startLoginPinNumberActivity(this@IntroActivity)
+                finish()
             } else {
                 // Check if permission screen has been shown before
                 val permissionShown = PreferenceUtil.getBoolean("PREF_KEY_PERMISSION_SHOWN", false)
