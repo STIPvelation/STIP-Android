@@ -130,15 +130,30 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
 
         // STIP 시작하기 통합 인증 버튼 클릭 리스너 (나이스 본인인증 기반)
         setOnClick(binding.btnLogin) {
-            android.util.Log.d("LoginActivity", "STIP 시작하기 버튼 클릭: 나이스 본인인증 시작")
-            // 탈퇴 제한 기간/횟수 확인
-            if (checkWithdrawalRestrictions()) {
-                // 나이스 본인인증 요청
-                requestNiceIdentityVerification()
+            Log.d("LoginActivity", "STIP 시작하기 버튼 클릭")
+            
+            // 저장된 DI 값 확인
+            val storedDi = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
+            
+            if (storedDi.isNotBlank()) {
+                // DI가 이미 있으면 바로 PIN 번호 입력창으로 이동
+                Log.d("LoginActivity", "저장된 DI 확인됨: PIN 입력창으로 이동")
+                val intent = Intent(this, LoginPinNumberActivity::class.java).apply {
+                    putExtra("di_value", storedDi)
+                }
+                startActivity(intent)
             } else {
-                android.util.Log.d("LoginActivity", "회원가입 제한 조건 걸림")
-                // 제한 조건에 걸리면 Toast 메시지를 표시
-                showWithdrawalRestrictionMessage()
+                // DI가 없으면 본인인증 진행
+                Log.d("LoginActivity", "DI 없음: 나이스 본인인증 시작")
+                // 탈퇴 제한 기간/횟수 확인
+                if (checkWithdrawalRestrictions()) {
+                    // 나이스 본인인증 요청
+                    requestNiceIdentityVerification()
+                } else {
+                    Log.d("LoginActivity", "회원가입 제한 조건 걸림")
+                    // 제한 조건에 걸리면 Toast 메시지를 표시
+                    showWithdrawalRestrictionMessage()
+                }
             }
         }
     }

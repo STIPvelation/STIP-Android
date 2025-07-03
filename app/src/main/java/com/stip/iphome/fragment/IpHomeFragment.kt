@@ -51,6 +51,11 @@ class IpHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        // DI 확인용 로그
+        val diValue = com.stip.stip.signup.utils.PreferenceUtil.getString(com.stip.stip.signup.Constants.PREF_KEY_DI_VALUE, "")
+        android.util.Log.d("IpHomeFragment", "로그인 완료 DI 값: $diValue")
+        
         setupRecyclerView()
         loadInitialData()
         startAutoPriceUpdate()
