@@ -143,6 +143,13 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
 
             // Setup UI Components
             uiInitializer.setupTabLayoutColors { position -> uiStateManager.handleTabSelection(position) }
+            binding.tabLayoutOrderMode.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
+                override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
+                    tab?.let { uiStateManager.handleTabSelection(it.position) }
+                }
+                override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
+                override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
+            })
 
             // Setup OrderBook
             setupOrderBook()
