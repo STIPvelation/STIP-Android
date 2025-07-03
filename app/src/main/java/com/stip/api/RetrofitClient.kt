@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit
  */
 object RetrofitClient {
     private const val BASE_URL = "https://backend.stipvelation.com/"
+    private const val ENGINE_URL = "http://34.64.197.80:5000/"
     private const val TIMEOUT = 30L // 30초 타임아웃
     
     private val okHttpClient by lazy {
@@ -70,6 +71,33 @@ object RetrofitClient {
             .build()
     }
     
+    // 엔진 서버용 OkHttpClient
+    private val engineOkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val request = original.newBuilder().apply {
+                    header("Content-Type", "application/json")
+                    header("Accept", "application/json")
+                    method(original.method, original.body)
+                }.build()
+                chain.proceed(request)
+            }
+            .build()
+    }
+    
+    // 엔진 서버용 Retrofit 인스턴스
+    private val engineRetrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(ENGINE_URL)
+            .client(engineOkHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+    
     // API 서비스 인스턴스 생성 (인증 불필요)
     fun <T> createService(serviceClass: Class<T>): T {
         return retrofit.create(serviceClass)
@@ -78,5 +106,10 @@ object RetrofitClient {
     // API 서비스 인스턴스 생성 (인증 필요)
     fun <T> createAuthService(serviceClass: Class<T>): T {
         return authRetrofit.create(serviceClass)
+    }
+    
+    // 엔진 서버 API 서비스 인스턴스 생성
+    fun <T> createEngineService(serviceClass: Class<T>): T {
+        return engineRetrofit.create(serviceClass)
     }
 }
