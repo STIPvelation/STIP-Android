@@ -21,6 +21,9 @@ class IpListingRepository {
         RetrofitClient.createEngineService(MarketPairsService::class.java)
     }
 
+    // 티커와 pairId 매핑을 캐시
+    private val tickerToPairIdMap = mutableMapOf<String, String>()
+
     /**
      * 모든 IP 리스팅 데이터 조회
      * @return IP 리스팅 아이템 목록
@@ -32,7 +35,11 @@ class IpListingRepository {
             
             if (response.success && response.data.record.isNotEmpty()) {
                 // API 응답을 IpListingItem으로 변환
-                val items = response.data.record.map { it.toIpListingItem() }
+                val items = response.data.record.map { 
+                    // 티커-pairId 매핑 저장
+                    tickerToPairIdMap[it.baseAsset] = it.id
+                    it.toIpListingItem() 
+                }
                 Log.d("IpListingRepository", "API 호출 성공: ${items.size}개 아이템 로드됨")
                 items
             } else {
@@ -45,6 +52,32 @@ class IpListingRepository {
             Log.e("IpListingRepository", "Market Pairs API 호출 실패: ${e.message}")
             emptyList()
         }
+    }
+
+    /**
+     * 티커에 해당하는 pairId를 반환
+     * @param ticker 티커 심볼
+     * @return pairId 또는 null
+     */
+    suspend fun getPairIdForTicker(ticker: String?): String? {
+        if (ticker == null) return null
+
+        // 캐시된 매핑이 있으면 반환
+        tickerToPairIdMap[ticker]?.let { return it }
+
+        // 캐시된 매핑이 없으면 API 호출하여 매핑 업데이트
+        try {
+            val response = marketPairsService.getMarketPairs(page = 1, limit = 50)
+            if (response.success) {
+                response.data.record.forEach { pair ->
+                    tickerToPairIdMap[pair.baseAsset] = pair.id
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("IpListingRepository", "Failed to update ticker-pairId mapping: ${e.message}")
+        }
+
+        return tickerToPairIdMap[ticker]
     }
 
     /**

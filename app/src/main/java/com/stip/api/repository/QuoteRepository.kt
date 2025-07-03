@@ -90,16 +90,22 @@ class QuoteRepository {
      */
     private fun QuoteDailyItem.toQuoteTickDaily(): QuoteTickDaily {
         // 문자열을 숫자로 변환
+        val openPriceValue = this.openPrice.replace(",", "").toDoubleOrNull() ?: 0.0
+        val highPriceValue = this.highPrice.replace(",", "").toDoubleOrNull() ?: 0.0
+        val lowPriceValue = this.lowPrice.replace(",", "").toDoubleOrNull() ?: 0.0
         val closePriceValue = this.closePrice.replace(",", "").toDoubleOrNull() ?: 0.0
-        val changeValue = this.change.replace(",", "").toDoubleOrNull() ?: 0.0
         val volumeValue = this.volume.replace(",", "").replace("$", "").trim().toDoubleOrNull() ?: 0.0
+        val changePercentValue = this.changePercent.replace("%", "").replace(",", "").toDoubleOrNull() ?: 0.0
         
         return QuoteTickDaily(
-            id = this.id,
             date = this.date,
+            openPrice = openPriceValue,
+            highPrice = highPriceValue,
+            lowPrice = lowPriceValue,
             closePrice = closePriceValue,
-            changeFromPrevious = changeValue,
-            volume = volumeValue
+            volume = volumeValue,
+            changeFromPrevious = closePriceValue - openPriceValue,
+            changePercent = changePercentValue
         )
     }
 }
