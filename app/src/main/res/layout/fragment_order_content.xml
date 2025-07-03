@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="#FFFFFF">
-
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_split_guideline"
@@ -555,39 +550,51 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/rowTotalAmount"
+                android:id="@+id/rowCalculatedTotal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/box_border_dddddd"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp">
+                android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/labelTotalAmount"
+                    android:id="@+id/labelCalculatedTotal"
                     style="@style/DefaultTextStyle_12"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/total_amount_label"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:paddingStart="4dp"
+                    android:text="@string/label_total_amount"
+                    app:layout_constraintBottom_toBottomOf="@+id/textCalculatedTotal"
                     app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/textCalculatedTotal" />
+
+                <TextView
+                    android:id="@+id/textCalculatedTotal"
+                    style="@style/DefaultTextStyle_12"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center_vertical|end"
+                    android:minHeight="30dp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:text="@string/initial_total_amount"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/textUnitCalculatedTotal"
+                    app:layout_constraintStart_toEndOf="@id/labelCalculatedTotal"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textViewTotalAmount"
+                    android:id="@+id/textUnitCalculatedTotal"
                     style="@style/DefaultTextStyle_12"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginEnd="4dp"
-                    android:gravity="center_vertical|end"
-                    android:text="0 USD"
-                    android:textStyle="bold"
-                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="4dp"
+                    android:text="@string/unit_usd"
+                    app:layout_constraintBottom_toBottomOf="@+id/textCalculatedTotal"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/labelTotalAmount"
-                    app:layout_constraintTop_toTopOf="parent" />
-
+                    app:layout_constraintTop_toTopOf="@+id/textCalculatedTotal" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
@@ -771,5 +778,5 @@
                 android:src="@drawable/ic_arrow_polygon" />
         </RelativeLayout>
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>

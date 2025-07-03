@@ -1,8 +1,8 @@
-package com.stip.stip.order.data
+package com.stip.order.data
 
 data class OrderRequest(
     val userId: String,
     val pairId: String,
     val quantity: Int,
-    val price: Int
+    val price: Double
 ) 

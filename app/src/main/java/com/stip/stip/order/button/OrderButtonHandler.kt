@@ -1,4 +1,4 @@
-package com.stip.stip.order
+package com.stip.stip.order.button
 
 import android.content.Context
 import android.content.Intent
@@ -14,9 +14,10 @@ import com.stip.stip.api.RetrofitClient
 import com.stip.stip.signup.login.LoginActivity
 import com.stip.stip.signup.utils.PreferenceUtil
 import com.stip.stip.signup.Constants
-import com.stip.stip.order.data.OrderRequest
+import com.stip.order.data.OrderRequest
 import com.stip.stip.order.OrderParams
-import com.stip.stip.order.api.OrderService
+import com.stip.order.api.OrderService
+import com.stip.stip.order.OrderValidator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 class OrderButtonHandler(
     private val context: Context,
     private val binding: FragmentOrderContentBinding,
-    private val validator: OrderValidator, // Validator 주입 확인
+    private val validator: OrderValidator,
     private val numberParseFormat: DecimalFormat,
     private val fixedTwoDecimalFormatter: DecimalFormat,
     private val getCurrentPrice: () -> Float,
@@ -110,15 +111,15 @@ class OrderButtonHandler(
             }
             
             // 총액 표시 업데이트
-            binding.textViewTotalAmount.text = if (totalAmount > 0) {
+            binding.textCalculatedTotal.setText(if (totalAmount > 0) {
                 "${fixedTwoDecimalFormatter.format(totalAmount)} USD"
             } else {
                 "0 USD"
-            }
+            })
             
         } catch (e: Exception) {
             Log.e(TAG, "총액 계산 중 오류 발생", e)
-            binding.textViewTotalAmount.text = "0 USD"
+            binding.textCalculatedTotal.setText("0 USD")
         }
     }
 
@@ -153,35 +154,25 @@ class OrderButtonHandler(
         val isMarketOrder = selectedOrderTypeId == R.id.radio_market_order
         val isReservedOrder = selectedOrderTypeId == R.id.radio_reserved_order
 
-        // InputHandler로부터 isInputModeTotalAmount 상태 가져오기 (생성자에서 제거했으므로 필요 없음)
-        // val isTotalMode = isInputModeTotalAmount() // 제거됨
-
-        // OrderParams 생성 (Validator에 전달하기 위함)
-        // isInputModeTotalAmount 는 Validator가 직접 알 필요 없음. 값만 전달.
         val orderParams = OrderParams(
             limitPriceStr = binding.editTextLimitPrice.text?.toString(),
             quantityOrTotalStr = binding.editTextQuantity.text?.toString(),
             triggerPriceStr = binding.editTextTriggerPrice?.text?.toString(),
             isMarketOrder = isMarketOrder,
             isReservedOrder = isReservedOrder,
-            // isInputModeTotalAmount = isTotalMode // Validator 가 상태 직접 알 필요 없음
-            // 만약 Validator가 이 상태를 알아야 한다면, InputHandler 에서 가져오는 람다를 Validator에 전달해야 함
-            isInputModeTotalAmount = false // 임시: Validator가 이 파라미터를 받는 경우 대비 (Validator에서 제거 필요)
+            isInputModeTotalAmount = false
         )
 
-        // Validator를 통해 유효성 검사 실행
         if (validator.validateOrder(orderParams, isBuyOrder)) {
-            // 유효성 검사 통과 시, 확인 다이얼로그 표시 로직 실행
             prepareAndShowConfirmationDialog(orderParams, isBuyOrder)
         }
-        // 유효성 검사 실패 시, Validator가 이미 오류 다이얼로그를 표시했으므로 여기서 추가 작업 없음
     }
 
     private fun prepareAndShowConfirmationDialog(params: OrderParams, isBuyOrder: Boolean) {
         var price: Double? = null
         var quantity: Double? = null
         var triggerPrice: Double? = null
-        var quantityOrTotalInput: Double = 0.0 // 파싱된 수량 또는 총액 입력값
+        var quantityOrTotalInput: Double = 0.0
 
         var orderTypeText: String
         var priceConfirmStr: String
@@ -191,7 +182,6 @@ class OrderButtonHandler(
         var feeConfirmStr: String
         var triggerPriceConfirmStr: String? = null
 
-        // 값 파싱 (Validator에서 이미 기본적인 null/0 체크는 통과했다고 가정)
         try {
             quantityOrTotalInput = numberParseFormat.parse(params.quantityOrTotalStr ?: "0")?.toDouble() ?: 0.0
             if (!params.isMarketOrder) {
@@ -206,27 +196,23 @@ class OrderButtonHandler(
             return
         }
 
-        // 수량 및 총액 결정 (OrderParams의 isInputModeTotalAmount 사용 제거)
-        // Validator에서 계산된 quantity/grossTotalValue를 반환받는 것이 더 효율적일 수 있음
         var grossTotalValue: Double?
         if (params.isMarketOrder && isBuyOrder) {
             grossTotalValue = quantityOrTotalInput
             quantity = null
             quantityConfirmStr = "--"
         } else {
-            // 수량 입력 모드 또는 시장가 매도 (총액 입력 모드 개념 제거됨)
             quantity = quantityOrTotalInput
             quantityConfirmStr = fixedTwoDecimalFormatter.format(quantity)
             grossTotalValue = if (!params.isMarketOrder && price != null) {
                 price * quantity
             } else if (params.isMarketOrder && !isBuyOrder) {
-                quantity * getCurrentPrice().toDouble() // 시장가 매도 예상가
+                quantity * getCurrentPrice().toDouble()
             } else {
                 null
             }
         }
 
-        // 확인 다이얼로그 표시 문자열 준비
         priceConfirmStr = if (price != null) fixedTwoDecimalFormatter.format(price) else context.getString(R.string.market_price)
         triggerPriceConfirmStr = triggerPrice?.let { fixedTwoDecimalFormatter.format(it) }
 
@@ -244,7 +230,7 @@ class OrderButtonHandler(
             calculatedFee = (grossTotalValue ?: 0.0) * feeRate / (1.0 + feeRate)
             displayTotalValueStr = fixedTwoDecimalFormatter.format(grossTotalValue ?: 0.0)
         } else if (params.isMarketOrder && !isBuyOrder) {
-            calculatedFee = (grossTotalValue ?: 0.0) * feeRate // 예상가 기준 수수료
+            calculatedFee = (grossTotalValue ?: 0.0) * feeRate
             displayTotalValueStr = context.getString(R.string.market_total)
         } else if (price != null && quantity != null){
             val calculatedGross = price * quantity
@@ -313,7 +299,7 @@ class OrderButtonHandler(
             userId = userId,
             pairId = pairId,
             quantity = quantity.toInt(),
-            price = price.toInt()
+            price = price
         )
 
         val orderType = if (isBuyOrder) "매수" else "매도"

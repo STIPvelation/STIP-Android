@@ -1,6 +1,6 @@
 package com.stip.stip.api
 
-import com.stip.stip.order.api.OrderService
+import com.stip.order.api.OrderService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

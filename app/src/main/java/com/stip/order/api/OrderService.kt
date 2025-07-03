@@ -1,6 +1,6 @@
-package com.stip.stip.order.api
+package com.stip.order.api
 
-import com.stip.stip.order.data.OrderRequest
+import com.stip.order.data.OrderRequest
 import com.stip.stip.order.data.OrderDeleteResponse
 import retrofit2.Response
 import retrofit2.http.Body
