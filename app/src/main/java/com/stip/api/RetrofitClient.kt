@@ -1,9 +1,12 @@
 package com.stip.stip.api
 
+import com.stip.stip.order.api.OrderService
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
+import com.stip.stip.signup.utils.PreferenceUtil
 
 /**
  * Retrofit 클라이언트 객체
@@ -15,19 +18,29 @@ object RetrofitClient {
     private const val TIMEOUT = 30L // 30초 타임아웃
     
     private val okHttpClient by lazy {
+        val loggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
         OkHttpClient.Builder()
             .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
             .readTimeout(TIMEOUT, TimeUnit.SECONDS)
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val original = chain.request()
-                val request = original.newBuilder().apply {
-                    header("Content-Type", "application/json")
-                    header("Accept", "application/json")
-                    method(original.method, original.body)
-                }.build()
+                val token = PreferenceUtil.getToken()
+
+                val request = if (token != null) {
+                    original.newBuilder()
+                        .header("Authorization", "Bearer $token")
+                        .build()
+                } else {
+                    original
+                }
+
                 chain.proceed(request)
             }
+            .addInterceptor(loggingInterceptor)
             .build()
     }
     
@@ -79,9 +92,13 @@ object RetrofitClient {
             .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
             .addInterceptor { chain ->
                 val original = chain.request()
+                val token = PreferenceUtil.getToken()
                 val request = original.newBuilder().apply {
                     header("Content-Type", "application/json")
                     header("Accept", "application/json")
+                    if (token != null) {
+                        header("Authorization", "Bearer $token")
+                    }
                     method(original.method, original.body)
                 }.build()
                 chain.proceed(request)
@@ -111,5 +128,9 @@ object RetrofitClient {
     // 엔진 서버 API 서비스 인스턴스 생성
     fun <T> createEngineService(serviceClass: Class<T>): T {
         return engineRetrofit.create(serviceClass)
+    }
+
+    fun createOrderService(): OrderService {
+        return engineRetrofit.create(OrderService::class.java)
     }
 }

@@ -1,6 +1,7 @@
 package com.stip.stip.model
 
 data class MemberInfo(
+    val id: String,
     val name: String,
     val englishFirstName: String,
     val englishLastName: String,
@@ -16,6 +17,5 @@ data class MemberInfo(
     val isDirectAccount: Boolean,
     val usagePurpose: String,
     val sourceOfFunds: String,
-    val job: String,
-    val id: String
+    val job: String
 )

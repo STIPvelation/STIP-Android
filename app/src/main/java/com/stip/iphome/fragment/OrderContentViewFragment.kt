@@ -17,6 +17,8 @@ import com.stip.stip.iphome.TradingDataHolder
 import com.stip.stip.iphome.adapter.UnfilledOrderAdapter
 import com.stip.stip.iphome.util.OrderUtils
 import com.stip.stip.order.adapter.FilledOrderAdapter
+import com.stip.stip.order.OrderButtonHandler
+import com.stip.stip.order.OrderValidator
 import com.stip.stip.signup.utils.PreferenceUtil
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +40,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
     private lateinit var orderBookManager: OrderBookManager
     private lateinit var filledOrderAdapter: FilledOrderAdapter
     private lateinit var unfilledOrderAdapter: UnfilledOrderAdapter
+    private lateinit var validator: OrderValidator
+    private lateinit var orderButtonHandler: OrderButtonHandler
     private var initialTicker: String? = null
 
     companion object {
@@ -93,6 +97,42 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
                 historyManager.updateCancelButtonState(hasSelection)
             }
 
+            validator = OrderValidator(
+                context = requireContext(),
+                binding = binding,
+                getCurrentPrice = { orderDataCoordinator.currentPrice },
+                getCurrentTicker = { orderDataCoordinator.currentTicker },
+                availableUsdBalance = { orderDataCoordinator.availableUsdBalance },
+                heldAssetQuantity = { orderDataCoordinator.heldAssetQuantity },
+                feeRate = 0.001,
+                minimumOrderValue = 10.0,
+                numberParseFormat = DecimalFormat("#,##0.00"),
+                fixedTwoDecimalFormatter = DecimalFormat("#,##0.00"),
+                showToast = { msg -> OrderUtils.showToast(requireContext(), msg) },
+                showErrorDialog = { titleRes, message, colorRes -> OrderUtils.showErrorDialog(parentFragmentManager, titleRes, message, colorRes) }
+            )
+
+            orderButtonHandler = OrderButtonHandler(
+                context = requireContext(),
+                binding = binding,
+                validator = validator,
+                numberParseFormat = DecimalFormat("#,##0.00"),
+                fixedTwoDecimalFormatter = DecimalFormat("#,##0.00"),
+                getCurrentPrice = { orderDataCoordinator.currentPrice },
+                getFeeRate = { 0.001 },
+                currentTicker = { orderDataCoordinator.currentTicker },
+                minimumOrderValue = 10.0,
+                availableUsdBalance = { orderDataCoordinator.availableUsdBalance },
+                heldAssetQuantity = { orderDataCoordinator.heldAssetQuantity },
+                showToast = { msg -> OrderUtils.showToast(requireContext(), msg) },
+                showErrorDialog = { titleRes, message, colorRes -> OrderUtils.showErrorDialog(parentFragmentManager, titleRes, message, colorRes) },
+                parentFragmentManager = parentFragmentManager,
+                getCurrentPairId = { 
+                    TradingDataHolder.ipListingItems
+                        .find { it.ticker == orderDataCoordinator.currentTicker }?.registrationNumber 
+                }
+            )
+
             uiStateManager = OrderUIStateManager(
                 requireContext(),
                 binding,
@@ -125,6 +165,9 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
             
             // 내역 탭이 아닌 경우 숨김
             historyManager.hide()
+
+            // 버튼 핸들러 초기화
+            orderButtonHandler.setupOrderButtonClickListeners()
 
         } catch (e: Exception) {
             Log.e(TAG, "Error initializing OrderContentViewFragment", e)
