@@ -8,6 +8,7 @@ import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.iphome.util.OrderUtils
 import com.stip.stip.order.coordinator.OrderDataCoordinator
 import com.stip.stip.signup.utils.PreferenceUtil
+import androidx.core.content.ContextCompat
 
 class OrderUIStateManager(
     private val context: Context,
@@ -39,7 +40,11 @@ class OrderUIStateManager(
     }
 
     fun handleTabSelection(position: Int, isInitialSetup: Boolean = false) {
-        // if (!isInitialSetup && position == currentTabPosition) return // isAdded 체크 추가 고려
+        // 초기 설정이 아니고 같은 탭이면 스킵 (초기 설정 시에는 항상 실행)
+        if (!isInitialSetup && position == currentTabPosition) {
+            return
+        }
+        
         currentTabPosition = position
 
         val isHistoryTab = position == 2
@@ -56,6 +61,21 @@ class OrderUIStateManager(
             Log.e(TAG, "Error calling historyManager activate/hide", e)
         }
 
+        // 매수/매도 탭에 따라 버튼 상태 업데이트
+        when (position) {
+            0 -> { // 매수 탭
+                binding.buttonBuy.text = context.getString(R.string.button_buy)
+                binding.buttonBuy.setBackgroundColor(ContextCompat.getColor(context, R.color.percentage_positive_red))
+            }
+            1 -> { // 매도 탭
+                binding.buttonBuy.text = context.getString(R.string.button_sell)
+                binding.buttonBuy.setBackgroundColor(ContextCompat.getColor(context, R.color.percentage_negative_blue))
+            }
+            2 -> { // 내역 탭
+                binding.buttonBuy.isEnabled = false
+                binding.buttonBuy.setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+            }
+        }
 
         updateTradingInfoVisibility()
         uiInitializer.updateBuySellButtonAppearance(position)
@@ -80,7 +100,7 @@ class OrderUIStateManager(
             val holds = orderDataCoordinator.userHoldsAsset
             
             // Check if user is logged in
-            val isLoggedIn = PreferenceUtil.getMemberInfo() != null
+            val isLoggedIn = PreferenceUtil.isRealLoggedIn()
             
             if (!isLoggedIn) {
                 // If not logged in, hide all trading info
@@ -114,11 +134,10 @@ class OrderUIStateManager(
             }
             
             // 로그인 상태 확인
-            val isLoggedIn = PreferenceUtil.getMemberInfo() != null
+            val isLoggedIn = PreferenceUtil.isRealLoggedIn()
             
             if (!isLoggedIn) {
-                // 로그인하지 않은 경우 숫자는 표시하지 않고 텍스트만 유지 (매수/매도 탭에서만)
-                binding.textOrderAvailableAmount.text = ""
+                binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(0.0)
                 binding.textOrderAvailableUnit.text = if (currentTabPosition == 0) {
                     context.getString(R.string.unit_usd)
                 } else {
@@ -130,16 +149,21 @@ class OrderUIStateManager(
             
             when (currentTabPosition) {
                 0 -> {
-                    // 매수 탭: 주문가능 수치를 표시하지 않음
-                    binding.textOrderAvailableAmount.text = ""
+                    val actualBuyableAmount = orderDataCoordinator.getActualBuyableAmount()
+                    binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(actualBuyableAmount.toDouble())
                     binding.textOrderAvailableUnit.text = context.getString(R.string.unit_usd)
-                    binding.rowOrderAvailable.visibility = View.VISIBLE
+                    binding.rowOrderAvailable.visibility = if (orderDataCoordinator.availableUsdBalance > 0.0) View.VISIBLE else View.GONE
                 }
                 1 -> {
-                    // 매도 탭: 주문가능 수치를 표시하지 않음
+                    val actualHeldQuantity = orderDataCoordinator.getActualSellableQuantity()
                     val tickerName = orderDataCoordinator.currentTicker ?: "--"
-                    binding.textOrderAvailableAmount.text = ""
-                    binding.textOrderAvailableUnit.text = tickerName
+                    if (actualHeldQuantity > 0) {
+                        binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(actualHeldQuantity)
+                        binding.textOrderAvailableUnit.text = tickerName
+                    } else {
+                        binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(0.0)
+                        binding.textOrderAvailableUnit.text = tickerName
+                    }
                     binding.rowOrderAvailable.visibility = View.VISIBLE
                 }
                 else -> {

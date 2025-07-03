@@ -14,6 +14,7 @@ object PreferenceUtil {
     private const val KEY_MEMBER_INFO = "member_info_json"
     private const val KEY_JWT_TOKEN = "jwt_token"
     private const val KEY_MEMBER_DI = "member_di"
+    private const val KEY_IS_GUEST_MODE = "is_guest_mode"
 
     /**
      * 사용자 정보 업데이트 되면 localStrorage 저장하듯
@@ -51,6 +52,20 @@ object PreferenceUtil {
         return preferences.getString(KEY_MEMBER_DI, null)
     }
 
+    // 게스트 모드 상태 저장
+    fun setGuestMode(isGuest: Boolean) {
+        preferences.edit().putBoolean(KEY_IS_GUEST_MODE, isGuest).apply()
+    }
+    
+    // 게스트 모드 상태 조회
+    fun isGuestMode(): Boolean {
+        return preferences.getBoolean(KEY_IS_GUEST_MODE, false)
+    }
+    
+    // 실제 로그인 상태 조회 (토큰이 있고 게스트 모드가 아닌 경우)
+    fun isRealLoggedIn(): Boolean {
+        return getToken() != null && !isGuestMode()
+    }
 
     private const val PREF_KEY_NAME = "STIP"
     private const val FIRST_PREF_KEY_NAME = "FirstRun"
