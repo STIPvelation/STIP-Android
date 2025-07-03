@@ -42,7 +42,28 @@ data class MarketPairItem(
     val status: String,
     
     @SerializedName("createdAt")
-    val createdAt: String
+    val createdAt: String,
+
+    @SerializedName("lastPrice")
+    val lastPrice: Double = 0.0,
+
+    @SerializedName("changePercent")
+    val changePercent: Double = 0.0,
+
+    @SerializedName("volume")
+    val volume: Double = 0.0,
+
+    @SerializedName("high")
+    val high: Double = 0.0,
+
+    @SerializedName("low")
+    val low: Double = 0.0,
+
+    @SerializedName("open")
+    val open: Double = 0.0,
+
+    @SerializedName("close")
+    val close: Double = 0.0
 ) {
     /**
      * MarketPairItem을 IpListingItem으로 변환
@@ -50,68 +71,22 @@ data class MarketPairItem(
     fun toIpListingItem(): IpListingItem {
         // 공백 제거 및 데이터 정리
         val cleanBaseAsset = baseAsset.trim()
-        val cleanSymbol = symbol.trim()
-        
-        // TODO: 실제 데이터 변경 예정
-        val basePrice = when(cleanBaseAsset) {
-            "MDM" -> "1.25"
-            "CDM" -> "0.95"
-            "IJECT" -> "2.10"
-            "WETALK" -> "1.80"
-            "KOKO" -> "0.75"
-            "KCOT" -> "1.50"
-            "MSK" -> "3.20"
-            "SMT" -> "0.85"
-            "AXNO" -> "1.90"
-            "KATV" -> "2.50"
-            else -> "1.00"
-        }
-        
-        // TODO: 실제 데이터 변경 예정
-        val changePercent = when(cleanBaseAsset) {
-            "MDM" -> "+5.2%"
-            "CDM" -> "-2.1%"
-            "IJECT" -> "+12.8%"
-            "WETALK" -> "+7.3%"
-            "KOKO" -> "-1.5%"
-            "KCOT" -> "+3.7%"
-            "MSK" -> "-4.2%"
-            "SMT" -> "+8.9%"
-            "AXNO" -> "+2.4%"
-            "KATV" -> "-0.8%"
-            else -> "0.0%"
-        }
-
-        // TODO: 실제 데이터 변경 예정
-        val changeAbsolute = when(cleanBaseAsset) {
-            "MDM" -> "+0.07"
-            "CDM" -> "-0.02"
-            "IJECT" -> "+0.24"
-            "WETALK" -> "+0.12"
-            "KOKO" -> "-0.01"
-            "KCOT" -> "+0.05"
-            "MSK" -> "-0.14"
-            "SMT" -> "+0.07"
-            "AXNO" -> "+0.04"
-            "KATV" -> "-0.02"
-            else -> "0.00"
-        }
         
         return IpListingItem(
             ticker = cleanBaseAsset,
-            currentPrice = basePrice,
-            changePercent = changePercent,
-            changeAbsolute = changeAbsolute,
-            volume = "${(100..999).random()}K",
+            currentPrice = String.format("%.2f", lastPrice),
+            changePercent = String.format("%+.2f%%", changePercent),
+            changeAbsolute = String.format("%+.2f", lastPrice * changePercent / 100),
+            volume = String.format("%.0f", volume),
             category = "Patent", // 기본값
             companyName = cleanBaseAsset,
-            high24h = (basePrice.toFloat() * 1.1f).toString(),
-            low24h = (basePrice.toFloat() * 0.9f).toString(),
-            volume24h = "${(1000..9999).random()}",
-            open = (basePrice.toFloat() * 0.98f).toString(),
-            high = (basePrice.toFloat() * 1.05f).toString(),
-            low = (basePrice.toFloat() * 0.95f).toString(),
-            close = basePrice,
+            high24h = String.format("%.2f", high),
+            low24h = String.format("%.2f", low),
+            volume24h = String.format("%.0f", volume),
+            open = String.format("%.2f", open),
+            high = String.format("%.2f", high),
+            low = String.format("%.2f", low),
+            close = String.format("%.2f", close),
             isTradeTriggered = false,
             isBuy = false,
             type = "",
@@ -122,7 +97,7 @@ data class MarketPairItem(
             linkRating = null,
             linkLicense = null,
             linkVideo = null,
-            currentCirculation = "${(10000..99999).random()}",
+            currentCirculation = "0",
             linkDigitalIpPlan = null,
             linkLicenseAgreement = null,
             digitalIpLink = null,

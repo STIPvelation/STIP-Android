@@ -6,6 +6,7 @@ import android.view.View
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.iphome.util.OrderUtils
+import com.stip.stip.order.coordinator.OrderDataCoordinator
 import com.stip.stip.signup.utils.PreferenceUtil
 
 class OrderUIStateManager(

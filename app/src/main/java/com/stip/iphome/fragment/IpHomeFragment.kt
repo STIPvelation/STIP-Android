@@ -342,30 +342,111 @@ class IpHomeFragment : Fragment() {
      * 더이상 임의의 가격 변동을 생성하지 않고 실제 API 데이터를 사용
      */
     private fun refreshPriceData() {
-        // API를 통해 최신 가격 데이터 가져오기
+        // IP 리스팅 API에서 pairId-ticker 정보 가져옴
         viewLifecycleOwner.lifecycleScope.launch {
             try {
                 val repository = com.stip.stip.api.repository.IpListingRepository()
-                val updatedData = repository.getIpListing()
+                val existingData = repository.getIpListing()
                 
-                if (updatedData.isNotEmpty()) {
-                    // 기존 리스트 업데이트
-                    fullList.clear()
-                    fullList.addAll(updatedData)
+                android.util.Log.d("IpHomeFragment", "기존 데이터 로드: ${existingData.size}개")
+                
+                // 이제 새로운 티커 API에서 실시간 가격 데이터를 가져옴
+                com.stip.stip.iptransaction.api.IpTransactionService.getTickers { tickerResponse, error ->
+                    if (error != null) {
+                        android.util.Log.e("IpHomeFragment", "티커 데이터 가져오기 실패: ${error.message}")
+                        // 실패 시 기존 데이터라도 표시
+                        activity?.runOnUiThread {
+                            updateUIWithExistingData(existingData)
+                        }
+                        return@getTickers
+                    }
                     
-                    // 현재 필터링된 리스트 업데이트 (카테고리 필터 유지)
-                    updateCurrentListWithFilter()
-                    
-                    // TradingDataHolder 업데이트
-                    TradingDataHolder.ipListingItems = fullList.toList()
-                    
-                    // 어댑터 업데이트
-                    ipListingAdapter.updateItems(currentList)
+                    tickerResponse?.let { response ->
+                        if (response.success && response.data.isNotEmpty()) {
+                            android.util.Log.d("IpHomeFragment", "티커 데이터 성공: ${response.data.size}개")
+                            
+                            // API 데이터를 기존 데이터와 결합하여 IpListingItem으로 변환
+                            val updatedItems = mutableListOf<IpListingItem>()
+                            
+                            // 기존 데이터를 베이스로 하여 실시간 가격 정보를 업데이트
+                            existingData.forEach { existingItem ->
+                                // pairId로 매칭
+                                val tickerData = response.data.find { it.pairId == existingItem.registrationNumber }
+                                
+                                if (tickerData != null) {
+                                    // 실시간 데이터가 있으면 가격 정보 업데이트
+                                    val changePercent = String.format("%.2f%%", tickerData.changePercent)
+                                    val changeAbsolute = String.format("%.2f", tickerData.lastPrice * tickerData.changePercent / 100)
+                                    
+                                    updatedItems.add(existingItem.copy(
+                                        currentPrice = String.format("%.2f", tickerData.lastPrice),
+                                        changePercent = if (tickerData.changePercent >= 0) "+$changePercent" else changePercent,
+                                        changeAbsolute = if (tickerData.changePercent >= 0) "+$changeAbsolute" else changeAbsolute,
+                                        volume = String.format("%.0f USD", tickerData.volume),
+                                        high = String.format("%.2f", tickerData.high),
+                                        low = String.format("%.2f", tickerData.low),
+                                        close = String.format("%.2f", tickerData.lastPrice),
+                                        open = String.format("%.2f", tickerData.lastPrice),
+                                        high24h = String.format("%.2f", tickerData.high),
+                                        low24h = String.format("%.2f", tickerData.low),
+                                        volume24h = String.format("%.0f", tickerData.volume)
+                                    ))
+                                    
+                                    android.util.Log.d("IpHomeFragment", "업데이트됨: ${existingItem.ticker} - ${tickerData.lastPrice}")
+                                } else {
+                                    // 실시간 데이터가 없으면 기존 데이터 그대로 사용
+                                    updatedItems.add(existingItem)
+                                    android.util.Log.d("IpHomeFragment", "기존 데이터 유지: ${existingItem.ticker}")
+                                }
+                            }
+                            
+                            // UI Update는 메인 스레드에서 실행
+                            activity?.runOnUiThread {
+                                if (updatedItems.isNotEmpty()) {
+                                    updateUIWithData(updatedItems)
+                                    android.util.Log.d("IpHomeFragment", "UI 업데이트 완료: ${updatedItems.size}개 아이템")
+                                } else {
+                                    android.util.Log.w("IpHomeFragment", "업데이트된 아이템이 없습니다")
+                                }
+                            }
+                        } else {
+                            android.util.Log.e("IpHomeFragment", "티커 API 응답 실패 또는 빈 데이터")
+                            // 실패 시 기존 데이터라도 표시
+                            activity?.runOnUiThread {
+                                updateUIWithExistingData(existingData)
+                            }
+                        }
+                    }
                 }
+                
             } catch (e: Exception) {
                 android.util.Log.e("IpHomeFragment", "가격 업데이트 실패: ${e.message}")
+                // 예외 발생 시 빈 상태 표시
+                activity?.runOnUiThread {
+                    loadEmptyState()
+                }
             }
         }
+    }
+
+    private fun updateUIWithData(items: List<IpListingItem>) {
+        // 기존 리스트 업데이트
+        fullList.clear()
+        fullList.addAll(items)
+        
+        // 현재 필터링된 리스트 업데이트
+        updateCurrentListWithFilter()
+        
+        // TradingDataHolder 업데이트
+        TradingDataHolder.ipListingItems = fullList.toList()
+        
+        // 어댑터 업데이트
+        ipListingAdapter.updateItems(currentList)
+    }
+
+    private fun updateUIWithExistingData(items: List<IpListingItem>) {
+        android.util.Log.d("IpHomeFragment", "기존 데이터로 UI 업데이트: ${items.size}개")
+        updateUIWithData(items)
     }
 
     /**
