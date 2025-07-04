@@ -381,4 +381,26 @@ class OrderHistoryManager(
         binding.textNoUnfilledOrders.visibility = View.GONE
         binding.buttonCancelSelectedOrders.visibility = View.GONE
     }
+    
+    /**
+     * 미체결 주문 목록을 강제로 새로고침합니다.
+     */
+    fun forceRefreshUnfilledOrders() {
+        Log.d(TAG, "미체결 주문 목록 강제 새로고침")
+        
+        // 어댑터 초기화
+        unfilledAdapter.submitList(emptyList())
+        unfilledAdapter.clearSelection()
+        
+        // 로딩 상태 표시
+        binding.textNoUnfilledOrders.text = "로딩 중..."
+        binding.textNoUnfilledOrders.visibility = View.VISIBLE
+        binding.recyclerViewUnfilledOrders.visibility = View.GONE
+        
+        // 강제로 API 재호출
+        loadUnfilledOrders()
+        
+        // 취소 버튼 상태 업데이트
+        updateCancelButtonState(false)
+    }
 }

@@ -9,12 +9,12 @@ import retrofit2.http.DELETE
 import retrofit2.http.Path
 
 interface OrderService {
-    @POST("/api/orders/buy")
+    @POST("api/orders/buy")
     suspend fun buyOrder(@Body orderRequest: OrderRequest): Response<Unit>
 
-    @POST("/api/orders/sell")
+    @POST("api/orders/sell")
     suspend fun sellOrder(@Body orderRequest: OrderRequest): Response<Unit>
     
-    @DELETE("/api/orders/{orderId}")
+    @DELETE("api/orders/{orderId}")
     suspend fun deleteOrder(@Path("orderId") orderId: String): Response<OrderDeleteResponse>
 } 
