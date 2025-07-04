@@ -13,22 +13,26 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-class RepositoryModule {
+object RepositoryModule {
 
     @Provides
+    @Singleton
     fun provideAuthRepository(
         authService: AuthService
     ): AuthRepository = AuthRepositoryImpl(authService)
 
     @Provides
+    @Singleton
     fun provideMemberRepository(
         memberService: MemberService
     ): MemberRepository = MemberRepositoryImpl(memberService)
 
     @Provides
+    @Singleton
     fun provideKakoLocationRepository(
         kakaoLocationService: KakaoLocationService
     ): KakaoLocationRepository = KakaoLocationRepositoryImpl(kakaoLocationService)

@@ -2,6 +2,7 @@ package com.stip.stip.api.repository
 
 import com.stip.stip.api.RetrofitClient
 import com.stip.stip.api.service.IpListingService
+import com.stip.stip.api.service.MarketPairsService
 import com.stip.stip.iphome.model.IpListingItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,6 +16,13 @@ class IpListingRepository {
     private val ipListingService: IpListingService by lazy {
         RetrofitClient.createService(IpListingService::class.java)
     }
+    
+    private val marketPairsService: MarketPairsService by lazy {
+        RetrofitClient.createEngineService(MarketPairsService::class.java)
+    }
+
+    // 티커와 pairId 매핑을 캐시
+    private val tickerToPairIdMap = mutableMapOf<String, String>()
 
     /**
      * 모든 IP 리스팅 데이터 조회
@@ -22,21 +30,54 @@ class IpListingRepository {
      */
     suspend fun getIpListing(): List<IpListingItem> = withContext(Dispatchers.IO) {
         try {
-            createDummyIpListingData()
-//            val response = ipListingService.getIpListing()
-//            if (response.isSuccess() && response.data != null) {
-//                // DTO 모델을 앱 내부 모델로 변환
-//                response.data.items.map { it.toIpListingItem() }
-//            } else {
-//                // API 호출 실패 시 더미 데이터 반환
-//                Log.d("IpListingRepository", "API call failed: returning dummy data")
-//                createDummyIpListingData()
-//            }
+            // Market Pairs API에서 실제 데이터 가져오기
+            val response = marketPairsService.getMarketPairs(page = 1, limit = 50)
+            
+            if (response.success && response.data.record.isNotEmpty()) {
+                // API 응답을 IpListingItem으로 변환
+                val items = response.data.record.map { 
+                    // 티커-pairId 매핑 저장
+                    tickerToPairIdMap[it.baseAsset] = it.id
+                    it.toIpListingItem() 
+                }
+                Log.d("IpListingRepository", "API 호출 성공: ${items.size}개 아이템 로드됨")
+                items
+            } else {
+                // API 응답이 성공하지 않거나 데이터가 비어있을 경우
+                Log.w("IpListingRepository", "API 응답이 비어있음")
+                emptyList()
+            }
         } catch (e: Exception) {
-            // 예외 발생 시 더미 데이터 반환
-            Log.e("IpListingRepository", "Exception during API call: ${e.message}")
-            createDummyIpListingData()
+            // 예외 발생 시 빈 리스트 반환
+            Log.e("IpListingRepository", "Market Pairs API 호출 실패: ${e.message}")
+            emptyList()
         }
+    }
+
+    /**
+     * 티커에 해당하는 pairId를 반환
+     * @param ticker 티커 심볼
+     * @return pairId 또는 null
+     */
+    suspend fun getPairIdForTicker(ticker: String?): String? {
+        if (ticker == null) return null
+
+        // 캐시된 매핑이 있으면 반환
+        tickerToPairIdMap[ticker]?.let { return it }
+
+        // 캐시된 매핑이 없으면 API 호출하여 매핑 업데이트
+        try {
+            val response = marketPairsService.getMarketPairs(page = 1, limit = 50)
+            if (response.success) {
+                response.data.record.forEach { pair ->
+                    tickerToPairIdMap[pair.baseAsset] = pair.id
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("IpListingRepository", "Failed to update ticker-pairId mapping: ${e.message}")
+        }
+
+        return tickerToPairIdMap[ticker]
     }
 
     /**
@@ -74,388 +115,5 @@ class IpListingRepository {
         } catch (e: Exception) {
             null
         }
-    }
-
-    /**
-     * 더미 IP 리스팅 데이터 생성
-     * API 호출 실패 시 사용
-     */
-    private fun createDummyIpListingData(): List<IpListingItem> {
-        return listOf(
-            IpListingItem(
-                logoResId = null,
-                ticker = "JWV",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            ),
-            IpListingItem(
-                logoResId = null,
-                ticker = "MDM",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            ),
-            IpListingItem(
-                logoResId = null,
-                ticker = "CDM",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            ),
-            IpListingItem(
-                logoResId = null,
-                ticker = "IJECT",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "WETALK",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "SLEEP",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "KCOT",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "MSK",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "SMT",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "Patent",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "AXNO",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "BM",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-            ,IpListingItem(
-                logoResId = null,
-                ticker = "KATV",
-                currentPrice = "0",
-                changePercent = "0",
-                changeAbsolute = "0",
-                volume = "0",
-                category = "BM",
-                companyName = "",
-                high24h = "0",
-                low24h = "0",
-                volume24h = "0",
-                open = "0",
-                high = "0",
-                low = "0",
-                close = "0",
-                isTradeTriggered = false,
-                isBuy = false,
-                type = "",
-                registrationNumber = "0",
-                firstIssuanceDate = "0",
-                totalIssuanceLimit = "0",
-                linkBlock = "0",
-                linkRating = "0",
-                linkLicense = "0",
-                linkVideo = "0",
-                currentCirculation = "0",
-                linkDigitalIpPlan = "0",
-                linkLicenseAgreement = "0",
-                digitalIpLink = "0",
-                businessPlanLink = "0",
-                relatedVideoLink = "0",
-                homepageLink = "0"
-            )
-        )
     }
 }

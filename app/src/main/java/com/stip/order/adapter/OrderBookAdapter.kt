@@ -155,7 +155,6 @@ class OrderBookAdapter(
         }
     }
 
-
     private fun calculateMaxValue(list: List<OrderBookItem>, isTotalAmountMode: Boolean): Float {
         val maxValue = list.mapNotNull { item ->
             if (item.isGap || item.price.isBlank() || item.price == "--" || item.quantity.isBlank()) return@mapNotNull null
@@ -238,7 +237,6 @@ class OrderBookAdapter(
             }
         }
     }
-
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         try {
@@ -400,74 +398,56 @@ class OrderBookAdapter(
                 0f
             }
 
-            // 총액 계산 (가격 * 수량)
-            val totalAmount = priceFloat * quantityFloat
-            val displayValue = if (displayModeIsTotalAmount) totalAmount else quantityFloat
-
-            // 시각화할 값과 최댓값 비율에 따른 진행률
-            val progressRatio = if (maxValueForScale > 0f) displayValue / maxValueForScale else 0f
-            val progressPercent = (progressRatio * 100).toInt()
-
-            // 표시 텍스트
             priceText?.text = formatter.format(priceFloat)
-            quantityOrTotalText?.text = formatter.format(
-                if (displayModeIsTotalAmount) totalAmount else quantityFloat
-            )
 
-            try {
-                // 전일 대비 변동률 계산 및 표시
-                val percentValue = if (currentPrice <= 0f) {
-                    0f
-                } else {
-                    ((priceFloat - currentPrice) / currentPrice) * 100f
-                }
+            val percentValue = if (currentPrice > 0f)
+                ((priceFloat - currentPrice) / currentPrice) * 100
+            else 0f
+            percentText?.text = String.format(Locale.US, "%+.2f%%", percentValue)
 
-                val percentStr = String.format(Locale.US, "%+.2f%%", percentValue)
-                percentText?.text = percentStr
-
-                // 색상 강제 지정 (상위 컴포넌트에서 제공)
-                val textColor = ContextCompat.getColor(itemView.context, fixedTextColorResId)
-                priceText?.setTextColor(textColor)
-                percentText?.setTextColor(textColor)
-
-            } catch (e: Exception) {
-                Log.e(TAG, "Error calculating percentage", e)
-                percentText?.text = ""
+            val valueForProgressBar = if (displayModeIsTotalAmount) {
+                val total = priceFloat * quantityFloat
+                quantityOrTotalText?.text = formatter.format(total)
+                total
+            } else {
+                quantityOrTotalText?.text = formatter.format(quantityFloat)
+                quantityFloat
             }
 
-            itemView.background = defaultBackground
+            val textColor = ContextCompat.getColor(itemView.context, fixedTextColorResId)
+            priceText?.setTextColor(textColor)
+            percentText?.setTextColor(textColor)
 
-            // 프로그레스바 업데이트
-            progressBar?.let {
-                val currentProgressAnim = it.progress
-                if (abs(currentProgressAnim - progressPercent) > 3) {
-                    ObjectAnimator.ofInt(it, "progress", currentProgressAnim, progressPercent).apply {
+            val priceDifference = abs(priceFloat - currentPrice)
+            val threshold = currentPrice * PRICE_THRESHOLD_FACTOR
+            itemView.background = if (priceFloat > 0 && priceDifference < threshold)
+                borderDrawable else defaultBackground
+
+            val progressDrawableRes = when {
+                item.isCurrentPrice -> R.drawable.progress_bar_current
+                item.isBuy -> R.drawable.progress_bar_buy
+                else -> R.drawable.progress_bar_sell
+            }
+            progressBar?.progressDrawable =
+                ContextCompat.getDrawable(itemView.context, progressDrawableRes)
+
+            progressBar?.apply {
+                val progressPercent = if (maxValueForScale > 0f)
+                    ((valueForProgressBar / maxValueForScale) * 100).toInt().coerceIn(0, 100)
+                else 0
+
+                progressTintList = null
+                indeterminateTintList = null
+
+                val currentProgressAnim = this.progress
+                if (isAttachedToWindow && currentProgressAnim != progressPercent) {
+                    ObjectAnimator.ofInt(this, "progress", currentProgressAnim, progressPercent).apply {
                         duration = 300
                         interpolator = DecelerateInterpolator()
                     }.start()
                 } else {
-                    it.progress = progressPercent
+                    this.progress = progressPercent
                 }
-            }
-        }
-
-
-        private class OrderBookDiffCallback : DiffUtil.ItemCallback<OrderBookItem>() {
-            override fun areItemsTheSame(oldItem: OrderBookItem, newItem: OrderBookItem): Boolean {
-                return if (oldItem.isGap != newItem.isGap) {
-                    false
-                } else if (oldItem.isGap) {
-                    true
-                } else {
-                    oldItem.price == newItem.price && oldItem.isBuy == newItem.isBuy
-                }
-            }
-
-            override fun areContentsTheSame(
-                oldItem: OrderBookItem,
-                newItem: OrderBookItem
-            ): Boolean {
-                return if (oldItem.isGap) newItem.isGap else oldItem == newItem
             }
         }
     }

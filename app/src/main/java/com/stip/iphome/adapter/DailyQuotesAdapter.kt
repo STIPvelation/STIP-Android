@@ -11,40 +11,48 @@ import com.stip.stip.R
 import com.stip.stip.databinding.ItemIpHomeQuoteDailyBinding
 import com.stip.stip.iphome.model.QuoteTickDaily
 import java.text.DecimalFormat
+import java.text.SimpleDateFormat
+import java.util.Locale
 import kotlin.math.abs
 
 class DailyQuotesAdapter(private val context: Context) :
     ListAdapter<QuoteTickDaily, DailyQuotesAdapter.DailyQuoteViewHolder>(DailyQuoteDiffCallback()) {
 
     private val numberFormat = DecimalFormat("#,##0.00")
+    private val volumeFormat = DecimalFormat("#,##0.####")
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     inner class DailyQuoteViewHolder(private val binding: ItemIpHomeQuoteDailyBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: QuoteTickDaily) {
+            // 날짜 표시
             binding.itemDateTextView.text = item.date
+
+            // 종가 표시
             binding.itemClosePriceTextView.text = numberFormat.format(item.closePrice)
-            binding.itemVolumeTextView.text = numberFormat.format(item.volume)
 
-            val change = item.changeFromPrevious
-            val sign = when {
-                change > 0 -> "+"
-                change < 0 -> "-"
-                else -> ""
+            // 전일 대비 변동률 계산 및 표시
+            val changePercent = item.changePercent
+            val changeText = when {
+                changePercent > 0 -> "+${numberFormat.format(changePercent)}%"
+                changePercent < 0 -> "${numberFormat.format(changePercent)}%"
+                else -> "0.00%"
             }
+            binding.itemChangeTextView.text = changeText
 
-            // 전일대비 텍스트
-            binding.itemChangeTextView.text = "$sign${numberFormat.format(abs(change))}"
+            // 거래량 표시
+            binding.itemVolumeTextView.text = volumeFormat.format(item.volume)
 
-            // 색상 처리
+            // 가격 변동에 따른 색상 처리
             val color = when {
-                change > 0 -> ContextCompat.getColor(context, R.color.color_rise)
-                change < 0 -> ContextCompat.getColor(context, R.color.color_fall)
+                changePercent > 0 -> ContextCompat.getColor(context, R.color.color_rise)
+                changePercent < 0 -> ContextCompat.getColor(context, R.color.color_fall)
                 else -> ContextCompat.getColor(context, R.color.price_same_color)
             }
 
-            binding.itemClosePriceTextView.setTextColor(color)
             binding.itemChangeTextView.setTextColor(color)
+            binding.itemClosePriceTextView.setTextColor(color)
         }
     }
 
@@ -64,7 +72,7 @@ class DailyQuotesAdapter(private val context: Context) :
 
 class DailyQuoteDiffCallback : DiffUtil.ItemCallback<QuoteTickDaily>() {
     override fun areItemsTheSame(oldItem: QuoteTickDaily, newItem: QuoteTickDaily): Boolean {
-        return oldItem.id == newItem.id
+        return oldItem.date == newItem.date
     }
 
     override fun areContentsTheSame(oldItem: QuoteTickDaily, newItem: QuoteTickDaily): Boolean {

@@ -5,6 +5,7 @@ import com.stip.stip.R
 import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.iphome.util.OrderUtils
 import com.stip.stip.signup.utils.PreferenceUtil
+import android.view.View
 
 // 이 코드는 OrderUIInitializer 클래스 내부에 있다고 가정합니다.
 class OrderUIInitializer(
@@ -39,17 +40,13 @@ class OrderUIInitializer(
 
         resetOrderInputsToZero() // 입력값 초기화 콜백 호출
 
-        // 기존 updateUiForOrderType 로직에서 UI 요소 가시성/텍스트 설정 부분만 남김
-        // isInputModeTotalAmount 상태 관리 및 updateInputModeUI 호출 부분 제거
         when (selectedOrderTypeId) {
             R.id.radio_limit_order -> {
                 binding.rowLimitPrice.visibility = android.view.View.VISIBLE
                 binding.rowTriggerPrice?.visibility = android.view.View.GONE
                 binding.rowQuantity.visibility = android.view.View.VISIBLE
                 binding.rowCalculatedTotal.visibility = android.view.View.VISIBLE
-                binding.labelLimitPrice.text = context.getString(R.string.label_price) // context 사용
-                // 라벨/단위 설정은 OrderInputHandler의 updateInputModeUI 가 담당하므로 여기서 중복 설정 불필요
-                // if (isBuyTabSelected) { ... } else { ... } 부분 제거 또는 단순화
+                binding.labelLimitPrice.text = context.getString(R.string.label_price)
             }
             R.id.radio_market_order -> {
                 binding.rowLimitPrice.visibility = android.view.View.GONE
@@ -81,7 +78,6 @@ class OrderUIInitializer(
         // EditText 의 hint/unit 등은 inputHandler 내부 로직 + 필요 시 외부에서 inputHandler.updateInputModeUI() 호출로 관리
     }
 
-
     // --- 다른 OrderUIInitializer 메서드들 ---
     // 예: setupTabLayoutColors, updateBuySellButtonAppearance 등
     fun setupTabLayoutColors(onTabSelectedAction: (Int) -> Unit) {
@@ -104,12 +100,39 @@ class OrderUIInitializer(
                     val position = it.position
                     val color = when (position) { 0 -> activeBuy; 1 -> activeSell; 2 -> activeHist; else -> inactive }
                     OrderUtils.setTabTextColor(context, it, color)
-                    onTabSelectedAction(position) // Fragment의 handleTabSelection 호출
+                    
+                    // 탭 선택에 따른 UI 즉시 업데이트
+                    when (position) {
+                        0 -> { // 매수 탭
+                            binding.orderInputContainer.visibility = View.VISIBLE
+                            binding.unfilledFilledBoxRoot.visibility = View.GONE
+                            binding.buttonBuy.text = context.getString(R.string.button_buy)
+                            binding.buttonBuy.setBackgroundColor(ContextCompat.getColor(context, R.color.percentage_positive_red))
+                            binding.buttonBuy.isEnabled = true
+                        }
+                        1 -> { // 매도 탭
+                            binding.orderInputContainer.visibility = View.VISIBLE
+                            binding.unfilledFilledBoxRoot.visibility = View.GONE
+                            binding.buttonBuy.text = context.getString(R.string.button_sell)
+                            binding.buttonBuy.setBackgroundColor(ContextCompat.getColor(context, R.color.percentage_negative_blue))
+                            binding.buttonBuy.isEnabled = true
+                        }
+                        2 -> { // 내역 탭
+                            binding.orderInputContainer.visibility = View.GONE
+                            binding.unfilledFilledBoxRoot.visibility = View.VISIBLE
+                            binding.buttonBuy.isEnabled = false
+                            binding.buttonBuy.setBackgroundColor(ContextCompat.getColor(context, android.R.color.darker_gray))
+                        }
+                    }
+                    
+                    onTabSelectedAction(position)
                 }
             }
+            
             override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
                 OrderUtils.setTabTextColor(context, tab, inactive)
             }
+            
             override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
         })
     }
@@ -118,7 +141,7 @@ class OrderUIInitializer(
         val button = binding.buttonBuy ?: return
         
         // 로그인 상태 확인
-        val isLoggedIn = PreferenceUtil.getMemberInfo() != null
+        val isLoggedIn = PreferenceUtil.isRealLoggedIn()
         
         if (!isLoggedIn) {
             // 비로그인 상태일 때 로그인 버튼으로 표시

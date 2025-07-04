@@ -74,8 +74,8 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
 
     private fun loadUnfilledOrders() {
         // 로그인 여부 확인
-        val token = PreferenceUtil.getToken()
-        if (token == null || token.isEmpty()) {
+        val memberId = PreferenceUtil.getMemberInfo()?.id
+        if (memberId == null) {
             binding.nodatatext.text = "로그인이 필요합니다."
             binding.nodatatext.visibility = View.VISIBLE
             binding.recyclerViewUnfilled.visibility = View.GONE
@@ -89,7 +89,11 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
         binding.recyclerViewUnfilled.visibility = View.GONE
 
         // API 호출
-        IpTransactionService.getUnfilledOrders { data, error ->
+        IpTransactionService.getApiUnfilledOrders(
+            memberId = memberId,
+            page = 1,
+            limit = 50
+        ) { data, error ->
             requireActivity().runOnUiThread {
                 // binding.progressBar.visibility = View.GONE // 프로그레스바 없음
 
@@ -101,7 +105,21 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
 
                 // 데이터 표시
                 if (data != null && data.isNotEmpty()) {
-                    setupUnfilledOrderList(data)
+                    // ApiOrderResponse를 UnfilledOrder로 변환
+                    val unfilledOrders = data.map { apiOrder ->
+                        UnfilledOrder(
+                            orderId = apiOrder.id,
+                            memberNumber = apiOrder.userId,
+                            ticker = apiOrder.pairId,
+                            tradeType = if (apiOrder.type == "buy") "매수" else "매도",
+                            watchPrice = apiOrder.price.toString(),
+                            orderPrice = apiOrder.price.toString(),
+                            orderQuantity = apiOrder.quantity.toString(),
+                            unfilledQuantity = (apiOrder.quantity - apiOrder.filledQuantity).toString(),
+                            orderTime = apiOrder.createdAt
+                        )
+                    }
+                    setupUnfilledOrderList(unfilledOrders)
                 } else {
                     showEmptyState()
                 }

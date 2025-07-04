@@ -1,4 +1,4 @@
-package com.stip.stip.order
+package com.stip.stip.order.coordinator
 
 import com.stip.stip.iphome.TradingDataHolder
 import android.util.Log // Log import for debugging output
@@ -55,20 +55,21 @@ class OrderDataCoordinator(
             return
         }
 
+        val orderValue = quantity * executionPrice
+        val fee = orderValue * feeRate
+
         if (isBuy) {
-            val totalCost = executionPrice * quantity
-            val fee = totalCost * feeRate
-            val finalCost = totalCost + fee
-
-            availableUsdBalance = (availableUsdBalance - finalCost).coerceAtLeast(0.0)
-            heldAssetQuantity += quantity
+            val totalCost = orderValue + fee
+            if (totalCost <= availableUsdBalance) {
+                availableUsdBalance -= totalCost
+                heldAssetQuantity += quantity
+            }
         } else {
-            val totalGain = executionPrice * quantity
-            val fee = totalGain * feeRate
-            val finalGain = totalGain - fee
-
-            availableUsdBalance += finalGain
-            heldAssetQuantity = (heldAssetQuantity - quantity).coerceAtLeast(0.0)
+            if (quantity <= heldAssetQuantity) {
+                val totalReceived = orderValue - fee
+                availableUsdBalance += totalReceived
+                heldAssetQuantity -= quantity
+            }
         }
         Log.d("DataCoordinator","adjustHoldingsAfterOrder: After - Balance=$availableUsdBalance, Holdings=$heldAssetQuantity")
     }
@@ -82,6 +83,6 @@ class OrderDataCoordinator(
     }
 
     fun getAverageBuyPrice(): Double {
-        return if (heldAssetQuantity > 0 && currentPrice > 0) (currentPrice * 0.98f).coerceAtLeast(0.01f).toDouble() else 0.0
+        return currentPrice.toDouble()
     }
 }
