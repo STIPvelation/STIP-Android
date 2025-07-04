@@ -29,9 +29,13 @@ import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetBinding
 import com.stip.stip.databinding.ItemTickerAssetBinding
 import com.stip.stip.databinding.ItemUsdAssetBinding
+import com.stip.api.repository.PortfolioRepository
+import com.stip.api.model.PortfolioAsset
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
+import com.stip.stip.signup.utils.PreferenceUtil
+import com.stip.stip.signup.Constants
 
 @AndroidEntryPoint
 class IpAssetFragment : Fragment() {
@@ -41,6 +45,9 @@ class IpAssetFragment : Fragment() {
     
     // USD 자산 매니저
     private val assetManager = USDAssetManager.getInstance()
+    
+    // 포트폴리오 Repository
+    private val portfolioRepository = PortfolioRepository()
     
     private lateinit var adapter: IpAssetsAdapter
     private val assetsList = mutableListOf<IpAssetItem>()
@@ -75,8 +82,8 @@ class IpAssetFragment : Fragment() {
         // USD 데이터 변경 관찰
         observeUsdData()
         
-        // 티커 데이터 로드 - 11개 티커 데이터 로드 (adapter 초기화 후 호출)
-        loadTickerData()
+        // 포트폴리오 API 데이터 로드
+        loadPortfolioData()
         
         // KRW 입금 버튼 클릭 시 USDDepositFragment로 이동
         binding.buttonKrwDeposit.setOnClickListener {
@@ -168,33 +175,52 @@ class IpAssetFragment : Fragment() {
     }
     
     /**
-     * 티커 데이터 로드
-     * AssetDummyData에서 11개 티커 정보를 가져와 표시
+     * 포트폴리오 API 데이터 로드
+     * 실제 API에서 포트폴리오 데이터를 가져와 표시
      */
-    private fun loadTickerData() {
-        // 기존 티커 데이터 찾아서 제거 (업데이트 시)
-        val existingTickerIndices = assetsList.indices.filter { !assetsList[it].isUsd }
-        for (i in existingTickerIndices.reversed()) {
-            assetsList.removeAt(i)
+    private fun loadPortfolioData() {
+        lifecycleScope.launch {
+            try {
+                // 사용자 ID 가져오기
+                val memberId = PreferenceUtil.getUserId()
+                if (memberId.isNullOrBlank()) {
+                    Toast.makeText(requireContext(), "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+                // 기존 티커 데이터 찾아서 제거 (업데이트 시)
+                val existingTickerIndices = assetsList.indices.filter { !assetsList[it].isUsd }
+                for (i in existingTickerIndices.reversed()) {
+                    assetsList.removeAt(i)
+                }
+                // API에서 포트폴리오 데이터 가져오기
+                val portfolioAssets = portfolioRepository.getPortfolio(memberId)
+                if (portfolioAssets.isNotEmpty()) {
+                    // 심볼별로 balance 합산하여 중복 없이 추가
+                    val mergedAssets = portfolioAssets
+                        .groupBy { it.symbol }
+                        .map { (symbol, items) ->
+                            val totalBalance = items.sumOf { it.balance }
+                            IpAssetItem(
+                                currencyCode = symbol,
+                                amount = totalBalance,
+                                usdEquivalent = totalBalance, // 실제 환율 적용 필요시 수정
+                                krwEquivalent = totalBalance * 1300.0,
+                                isUsd = false
+                            )
+                        }
+                    assetsList.addAll(mergedAssets)
+                    // 데이터 변경 알림 및 필터링 적용
+                    applyFiltering()
+                } else {
+                    // API 데이터가 없는 경우 빈 상태로 표시
+                    applyFiltering()
+                }
+            } catch (e: Exception) {
+                // 오류 발생 시 로그 출력
+                android.util.Log.e("IpAssetFragment", "포트폴리오 데이터 로드 오류: ${e.message}", e)
+                applyFiltering()
+            }
         }
-        
-        // AssetDummyData에서 기본 자산 리스트 가져오기
-        val dummyAssets = AssetDummyData.getDefaultAssets()
-        
-        // USD를 제외한 티커만 가져와서 추가
-        dummyAssets.filter { it.ticker != "USD" }.forEach { asset ->
-            val tickerItem = IpAssetItem(
-                currencyCode = asset.ticker,
-                amount = asset.balance,
-                usdEquivalent = asset.value,
-                krwEquivalent = asset.value * 1300.0, // 예시 환율
-                isUsd = false
-            )
-            assetsList.add(tickerItem)
-        }
-        
-        // 데이터 변경 알림 및 필터링 적용
-        applyFiltering()
     }
     
     private fun setupSearchAndFilter() {
@@ -281,9 +307,8 @@ class IpAssetFragment : Fragment() {
     private fun setupSwipeRefresh() {
         // 스와이프 리프레시 설정
         binding.swipeRefreshLayout.setOnRefreshListener {
-            // 데이터 새로고침 시뮬레이션
-            // 실제로는 API 호출을 통해 데이터를 불러오면 됩니다
-            // Removed dummy data refresh
+            // 포트폴리오 데이터 새로고침
+            loadPortfolioData()
             
             // 2초 후 리프레시 종료
             Handler(Looper.getMainLooper()).postDelayed({
