@@ -343,6 +343,22 @@ class TickerTransactionFragment : Fragment() {
             val history = walletHistoryRepository.getWalletHistory(memberId)
             Log.d("TickerTransactionFragment", "API history size: ${history.size}")
             history.forEach { Log.d("TickerTransactionFragment", "API symbol: ${it.symbol}") }
+            // 심볼별 잔고 계산 (입금-출금)
+            val symbolBalances = history.groupBy { it.symbol }
+                .mapValues { (_, txs) ->
+                    txs.sumOf { if (it.type == "deposit") it.amount else -it.amount }
+                }
+            symbolBalances.forEach { (symbol, balance) ->
+                Log.d("TickerTransactionFragment", "잔고 계산 결과: $symbol = $balance")
+            }
+            // 총 보유(잔고) UI에 표시
+            tickerCode?.let { code ->
+                val balance = symbolBalances[code] ?: 0.0
+                val formatter = NumberFormat.getNumberInstance(Locale.US)
+                formatter.minimumFractionDigits = 2
+                formatter.maximumFractionDigits = 2
+                binding.tickerHoldings.text = "${formatter.format(balance)} $code"
+            }
             allTransactions = history.mapNotNull { it.toTickerTransaction() }
             Log.d("TickerTransactionFragment", "allTransactions size: ${allTransactions.size}")
             updateTransactionList()

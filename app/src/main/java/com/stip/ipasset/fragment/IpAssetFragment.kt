@@ -36,6 +36,8 @@ import java.text.NumberFormat
 import java.util.Locale
 import com.stip.stip.signup.utils.PreferenceUtil
 import com.stip.stip.signup.Constants
+import com.stip.api.repository.WalletHistoryRepository
+import com.stip.api.model.WalletHistoryRecord
 
 @AndroidEntryPoint
 class IpAssetFragment : Fragment() {
@@ -48,6 +50,9 @@ class IpAssetFragment : Fragment() {
     
     // 포트폴리오 Repository
     private val portfolioRepository = PortfolioRepository()
+    
+    // 입출금 내역 Repository
+    private val walletHistoryRepository = WalletHistoryRepository()
     
     private lateinit var adapter: IpAssetsAdapter
     private val assetsList = mutableListOf<IpAssetItem>()
@@ -82,8 +87,8 @@ class IpAssetFragment : Fragment() {
         // USD 데이터 변경 관찰
         observeUsdData()
         
-        // 포트폴리오 API 데이터 로드
-        loadPortfolioData()
+        // 포트폴리오 API 데이터 로드 → 입출금 내역 기반 잔고 계산으로 대체
+        loadBalancesFromHistory()
         
         // KRW 입금 버튼 클릭 시 USDDepositFragment로 이동
         binding.buttonKrwDeposit.setOnClickListener {
@@ -175,57 +180,51 @@ class IpAssetFragment : Fragment() {
     }
     
     /**
-     * 포트폴리오 API 데이터 로드
-     * 실제 API에서 포트폴리오 데이터를 가져와 표시
+     * 입출금 내역 기반 잔고 계산 및 UI 반영
      */
-    private fun loadPortfolioData() {
+    private fun loadBalancesFromHistory() {
         lifecycleScope.launch {
-            try {
-                // 사용자 ID 가져오기
-                val memberId = PreferenceUtil.getUserId()
-                if (memberId.isNullOrBlank()) {
-                    Toast.makeText(requireContext(), "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show()
-                    return@launch
-                }
-                // 기존 티커 데이터 찾아서 제거 (업데이트 시)
-                val existingTickerIndices = assetsList.indices.filter { !assetsList[it].isUsd }
-                for (i in existingTickerIndices.reversed()) {
-                    assetsList.removeAt(i)
-                }
-                // API에서 포트폴리오 데이터 가져오기
-                val portfolioAssets = portfolioRepository.getPortfolio(memberId)
-                if (portfolioAssets.isNotEmpty()) {
-                    // 심볼별로 balance 합산하여 중복 없이 추가
-                    val mergedAssets = portfolioAssets
-                        .groupBy { it.symbol }
-                        .map { (symbol, items) ->
-                            val totalBalance = items.sumOf { it.balance }
-                            IpAssetItem(
-                                currencyCode = symbol,
-                                amount = totalBalance,
-                                usdEquivalent = totalBalance, // 실제 환율 적용 필요시 수정
-                                krwEquivalent = totalBalance * 1300.0,
-                                isUsd = false
-                            )
-                        }
-                    assetsList.addAll(mergedAssets)
-                    // 총 보유자산(USD) 계산 및 표시
-                    val totalAssets = assetsList.sumOf { it.usdEquivalent }
-                    val formatter = java.text.DecimalFormat("#,##0.00")
-                    binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
-                    // 데이터 변경 알림 및 필터링 적용
-                    applyFiltering()
-                } else {
-                    // API 데이터가 없는 경우 빈 상태로 표시
-                    binding.totalIpAssets.text = "$0.00 USD"
-                    applyFiltering()
-                }
-            } catch (e: Exception) {
-                // 오류 발생 시 로그 출력
-                android.util.Log.e("IpAssetFragment", "포트폴리오 데이터 로드 오류: ${e.message}", e)
-                binding.totalIpAssets.text = "$0.00 USD"
-                applyFiltering()
+            val memberId = PreferenceUtil.getUserId()
+            if (memberId.isNullOrBlank()) {
+                Toast.makeText(requireContext(), "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+                return@launch
             }
+            val history = walletHistoryRepository.getWalletHistory(memberId, 1, 1000)
+            // 심볼별 잔고 계산 (입금-출금)
+            val symbolBalances = history.groupBy { it.symbol }
+                .mapValues { (_, txs) ->
+                    txs.sumOf { if (it.type == "deposit") it.amount else -it.amount }
+                }
+                .filterValues { it > 0.0 }
+            // 자산 리스트 생성
+            assetsList.clear()
+            symbolBalances.forEach { (symbol, balance) ->
+                assetsList.add(
+                    IpAssetItem(
+                        currencyCode = symbol,
+                        amount = balance,
+                        usdEquivalent = balance, // 환율 적용 필요시 수정
+                        krwEquivalent = balance * 1300.0, // 환율 적용 필요시 수정
+                        isUsd = symbol == "USD"
+                    )
+                )
+            }
+            // USD 항목이 없으면 0.0으로 추가
+            if (!symbolBalances.containsKey("USD")) {
+                assetsList.add(0, IpAssetItem(
+                    currencyCode = "USD",
+                    amount = 0.0,
+                    usdEquivalent = 0.0,
+                    krwEquivalent = 0.0,
+                    isUsd = true
+                ))
+            }
+            // 총 보유자산 계산 및 표시
+            val totalAssets = assetsList.sumOf { it.usdEquivalent }
+            val formatter = java.text.DecimalFormat("#,##0.00")
+            binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
+            // 리스트 갱신
+            applyFiltering()
         }
     }
     
@@ -314,7 +313,7 @@ class IpAssetFragment : Fragment() {
         // 스와이프 리프레시 설정
         binding.swipeRefreshLayout.setOnRefreshListener {
             // 포트폴리오 데이터 새로고침
-            loadPortfolioData()
+            loadBalancesFromHistory()
             
             // 2초 후 리프레시 종료
             Handler(Looper.getMainLooper()).postDelayed({
