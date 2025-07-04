@@ -209,15 +209,21 @@ class IpAssetFragment : Fragment() {
                             )
                         }
                     assetsList.addAll(mergedAssets)
+                    // 총 보유자산(USD) 계산 및 표시
+                    val totalAssets = assetsList.sumOf { it.usdEquivalent }
+                    val formatter = java.text.DecimalFormat("#,##0.00")
+                    binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
                     // 데이터 변경 알림 및 필터링 적용
                     applyFiltering()
                 } else {
                     // API 데이터가 없는 경우 빈 상태로 표시
+                    binding.totalIpAssets.text = "$0.00 USD"
                     applyFiltering()
                 }
             } catch (e: Exception) {
                 // 오류 발생 시 로그 출력
                 android.util.Log.e("IpAssetFragment", "포트폴리오 데이터 로드 오류: ${e.message}", e)
+                binding.totalIpAssets.text = "$0.00 USD"
                 applyFiltering()
             }
         }
