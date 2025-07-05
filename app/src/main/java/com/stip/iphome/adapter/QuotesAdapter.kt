@@ -16,8 +16,8 @@ import java.text.DecimalFormat
 class QuotesAdapter(private val context: Context) : ListAdapter<QuoteTick, QuotesAdapter.QuoteViewHolder>(QuoteDiffCallback()) {
 
     // DecimalFormat 인스턴스 (재사용 가능)
-    private val volumeFormatter = DecimalFormat("#,##0.00") // 소수점 두 자리 포맷터
-    private val priceFormatter = DecimalFormat("#,##0.00") // 가격 포맷터 (필요 시 수정)
+    private val amountFormatter = DecimalFormat("#,##0.00") // 체결금액 포맷팅
+    private val priceFormatter = DecimalFormat("#,##0.00") // 가격 포맷터
 
 
     inner class QuoteViewHolder(private val binding: ItemIpHomeQuoteBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -26,8 +26,9 @@ class QuotesAdapter(private val context: Context) : ListAdapter<QuoteTick, Quote
             // 가격 포맷팅 적용
             binding.itemPriceTextView.text = priceFormatter.format(quote.price)
 
-            // !!! 체결량 포맷팅 변경 !!!
-            binding.itemVolumeTextView.text = volumeFormatter.format(quote.volume) // 소수점 두 자리로 포맷팅
+            // 체결금액 계산: 수량 × 가격
+            val amount = quote.volume * quote.price
+            binding.itemVolumeTextView.text = amountFormatter.format(amount)
 
             // 가격 변동 상태에 따라 텍스트 색상 변경
             val priceColor = when (quote.priceChangeStatus) {
