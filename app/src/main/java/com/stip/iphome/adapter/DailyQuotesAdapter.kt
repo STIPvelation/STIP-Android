@@ -8,60 +8,48 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.stip.stip.R
-import com.stip.stip.databinding.ItemIpHomeQuoteDailyBinding
-import com.stip.stip.iphome.model.QuoteTickDaily
+import com.stip.stip.databinding.ItemIpHomeDailyQuoteBinding
+import com.stip.stip.iphome.model.DailyQuote
 import java.text.DecimalFormat
-import java.text.SimpleDateFormat
-import java.util.Locale
-import kotlin.math.abs
 
-class DailyQuotesAdapter(private val context: Context) :
-    ListAdapter<QuoteTickDaily, DailyQuotesAdapter.DailyQuoteViewHolder>(DailyQuoteDiffCallback()) {
+class DailyQuotesAdapter(private val context: Context) : ListAdapter<DailyQuote, DailyQuotesAdapter.DailyQuoteViewHolder>(DailyQuoteDiffCallback()) {
 
-    private val numberFormat = DecimalFormat("#,##0.00")
-    private val volumeFormat = DecimalFormat("#,##0.####")
-    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    // DecimalFormat 인스턴스
+    private val priceFormatter = DecimalFormat("#,##0.00") // 가격 포맷터
+    private val percentFormatter = DecimalFormat("#,##0.00") // 퍼센트 포맷터
+    private val volumeFormatter = DecimalFormat("#,##0") // 거래량 포맷터
 
-    inner class DailyQuoteViewHolder(private val binding: ItemIpHomeQuoteDailyBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-
-        fun bind(item: QuoteTickDaily) {
-            // 날짜 표시
-            binding.itemDateTextView.text = item.date
-
+    inner class DailyQuoteViewHolder(private val binding: ItemIpHomeDailyQuoteBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(dailyQuote: DailyQuote) {
+            // 일자 표시
+            binding.itemDateTextView.text = dailyQuote.date
+            
             // 종가 표시
-            binding.itemClosePriceTextView.text = numberFormat.format(item.closePrice)
-
-            // 전일 대비 변동률 계산 및 표시
-            val changePercent = item.changePercent
-            val changeText = when {
-                changePercent > 0 -> "+${numberFormat.format(changePercent)}%"
-                changePercent < 0 -> "${numberFormat.format(changePercent)}%"
-                else -> "0.00%"
+            binding.itemLastPriceTextView.text = priceFormatter.format(dailyQuote.lastPrice)
+            
+            // 변동률 표시 (양수면 +, 음수면 - 표시)
+            val changePercentText = if (dailyQuote.changePercent >= 0) {
+                "+${percentFormatter.format(dailyQuote.changePercent)}%"
+            } else {
+                "${percentFormatter.format(dailyQuote.changePercent)}%"
             }
-            binding.itemChangeTextView.text = changeText
-
+            binding.itemChangePercentTextView.text = changePercentText
+            
             // 거래량 표시
-            binding.itemVolumeTextView.text = volumeFormat.format(item.volume)
-
-            // 가격 변동에 따른 색상 처리
-            val color = when {
-                changePercent > 0 -> ContextCompat.getColor(context, R.color.color_rise)
-                changePercent < 0 -> ContextCompat.getColor(context, R.color.color_fall)
+            binding.itemVolumeTextView.text = volumeFormatter.format(dailyQuote.volume)
+            
+            // 변동률에 따라 색상 변경
+            val textColor = when {
+                dailyQuote.changePercent > 0 -> ContextCompat.getColor(context, R.color.color_rise)
+                dailyQuote.changePercent < 0 -> ContextCompat.getColor(context, R.color.color_fall)
                 else -> ContextCompat.getColor(context, R.color.price_same_color)
             }
-
-            binding.itemChangeTextView.setTextColor(color)
-            binding.itemClosePriceTextView.setTextColor(color)
+            binding.itemChangePercentTextView.setTextColor(textColor)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DailyQuoteViewHolder {
-        val binding = ItemIpHomeQuoteDailyBinding.inflate(
-            LayoutInflater.from(parent.context),
-            parent,
-            false
-        )
+        val binding = ItemIpHomeDailyQuoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return DailyQuoteViewHolder(binding)
     }
 
@@ -70,12 +58,12 @@ class DailyQuotesAdapter(private val context: Context) :
     }
 }
 
-class DailyQuoteDiffCallback : DiffUtil.ItemCallback<QuoteTickDaily>() {
-    override fun areItemsTheSame(oldItem: QuoteTickDaily, newItem: QuoteTickDaily): Boolean {
-        return oldItem.date == newItem.date
+class DailyQuoteDiffCallback : DiffUtil.ItemCallback<DailyQuote>() {
+    override fun areItemsTheSame(oldItem: DailyQuote, newItem: DailyQuote): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: QuoteTickDaily, newItem: QuoteTickDaily): Boolean {
+    override fun areContentsTheSame(oldItem: DailyQuote, newItem: DailyQuote): Boolean {
         return oldItem == newItem
     }
 }
