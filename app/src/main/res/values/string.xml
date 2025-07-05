@@ -994,7 +994,7 @@
 
     <string name="filter_label_text">1주일 • 내역보기</string>
     <string name="filter_icon_desc">IP내역 필터</string>
-    <string name="ip_search_text">IP검색</string>+
+    <string name="ip_search_text">IP검색</string>
 
 
     <string name="title_transaction_filter">IP투자 내역검색</string>
