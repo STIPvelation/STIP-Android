@@ -73,7 +73,7 @@ class IpHomeQuotesFragment : Fragment() {
         setupTabs()
         updateHeadersForTab(selectedTabId == R.id.button_time)
         if (selectedTabId == R.id.button_time) {
-            loadTimeQuotes()
+            loadTimeQuotes(true)
         } else {
             loadDailyQuotes()
         }
@@ -97,7 +97,7 @@ class IpHomeQuotesFragment : Fragment() {
                     R.id.button_time -> {
                         binding.quotesRecyclerView.adapter = quotesAdapter
                         updateHeadersForTab(true)
-                        loadTimeQuotes()
+                        loadTimeQuotes(true)
                         startDataUpdates()
                     }
                     R.id.button_daily -> {
@@ -116,7 +116,7 @@ class IpHomeQuotesFragment : Fragment() {
         timeQuotesList.clear()
         dailyQuotesList.clear()
         if (selectedTabId == R.id.button_time) {
-            loadTimeQuotes()
+            loadTimeQuotes(true)
         } else {
             loadDailyQuotes()
         }
@@ -126,15 +126,15 @@ class IpHomeQuotesFragment : Fragment() {
         handler.postDelayed(object : Runnable {
             override fun run() {
                 if (isAdded && selectedTabId == R.id.button_time) {
-                    loadTimeQuotes()
+                    loadTimeQuotes(false)
                     handler.postDelayed(this, updateInterval)
                 }
             }
         }, updateInterval)
     }
 
-    private fun loadTimeQuotes() {
-        showLoading(true)
+    private fun loadTimeQuotes(isFirstLoad: Boolean = false) {
+        showLoading(isFirstLoad)
         Log.d(TAG, "시간별 시세 로드 시작 - currentTicker: $currentTicker")
         
         viewLifecycleOwner.lifecycleScope.launch {
@@ -303,7 +303,7 @@ class IpHomeQuotesFragment : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.isVisible = isLoading
-        binding.quotesRecyclerView.isVisible = !isLoading
+        binding.quotesRecyclerView.isVisible = true
         binding.errorTextView.isVisible = false
     }
 
