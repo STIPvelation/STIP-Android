@@ -24,6 +24,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.stip.stip.signup.utils.PreferenceUtil
 
 /**
  * 티커 입금을 처리하는 Fragment
@@ -32,7 +33,7 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class TickerDepositFragment : Fragment() {
     private var ipAsset: IpAsset? = null
-    private val currencyCode: String get() = ipAsset?.currencyCode ?: ""
+    private val currencyCode: String get() = ipAsset?.currencyCode?.uppercase() ?: ""
 
 
     private val viewModel by viewModels<DepositViewModel>()
@@ -99,23 +100,42 @@ class TickerDepositFragment : Fragment() {
     }
 
     private fun setupTickerDeposit() {
-        val address = tickerAddressMap[currencyCode] ?: ""
-        
+        // API에서 주소 조회
+        viewModel.fetchWalletAddress(currencyCode)
+
         // 티커 심볼 표시
         val tvTickerCode = view?.findViewById<TextView>(R.id.tv_ticker_code)
         tvTickerCode?.text = currencyCode
-        
-        // 입금 주소 표시
-        val tvDepositAddress = view?.findViewById<TextView>(R.id.tv_deposit_address)
-        tvDepositAddress?.text = address
-        
-        // QR 코드 생성 (비동기로 처리)
-        generateQRCode(address)
-        
+
+        // 주소 및 QR코드
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.depositUrl.collect { address ->
+                val tvDepositAddress = view?.findViewById<TextView>(R.id.tv_deposit_address)
+                tvDepositAddress?.text = address ?: "-"
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.qrCode.collect { bitmap ->
+                val ivQrCode = view?.findViewById<ImageView>(R.id.iv_qr_code)
+                if (bitmap != null) {
+                    ivQrCode?.setImageBitmap(bitmap)
+                }
+            }
+        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.errorMessage.collect { msg ->
+                if (!msg.isNullOrBlank()) {
+                    Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
         // 주소 복사 버튼 설정
         val ivCopy = view?.findViewById<ImageView>(R.id.iv_copy)
         ivCopy?.setOnClickListener {
-            copyAddressToClipboard(address)
+            viewModel.depositUrl.value?.let { address ->
+                copyAddressToClipboard(address)
+            }
         }
     }
     
