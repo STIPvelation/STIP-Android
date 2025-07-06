@@ -4,19 +4,24 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.asLiveData
 import com.stip.ipasset.fragment.BaseFragment
 import com.stip.ipasset.model.IpAsset
 import com.stip.stip.MainActivity
 import com.stip.ipasset.ticker.viewmodel.WithdrawalConfirmViewModel
+import com.stip.ipasset.WithdrawViewModel
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetTickerWithdrawalConfirmBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
 /**
@@ -39,6 +44,9 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
     
     // ViewModel 생성
     private val viewModel by viewModels<WithdrawalConfirmViewModel>()
+    
+    // 실제 API 연동을 위한 WithdrawViewModel 추가
+    private val withdrawViewModel by viewModels<WithdrawViewModel>()
     
     override fun onResume() {
         super.onResume()
@@ -65,6 +73,106 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
             fee = args.getFloat(ARG_FEE, 0.0f)
             address = args.getString(ARG_ADDRESS, "")
         }
+    }
+    
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        bind()
+        observeViewModel()
+    }
+    
+    /**
+     * ViewModel 상태 관찰
+     */
+    private fun observeViewModel() {
+        // 로딩 상태 관찰
+        withdrawViewModel.isLoading.asLiveData().observe(viewLifecycleOwner) { isLoading ->
+            updateLoadingState(isLoading)
+        }
+        
+        // 성공 메시지 관찰
+        withdrawViewModel.successMessage.asLiveData().observe(viewLifecycleOwner) { message ->
+            if (!message.isNullOrEmpty()) {
+                onWithdrawalSuccess()
+            }
+        }
+        
+        // 에러 메시지 관찰
+        withdrawViewModel.errorMessage.asLiveData().observe(viewLifecycleOwner) { message ->
+            if (!message.isNullOrEmpty()) {
+                onWithdrawalError(message)
+            }
+        }
+    }
+    
+    /**
+     * 로딩 상태 업데이트
+     */
+    private fun updateLoadingState(isLoading: Boolean) {
+        val binding = binding ?: return
+        with(binding) {
+            btnConfirmWithdrawal.isEnabled = !isLoading
+            if (isLoading) {
+                btnConfirmWithdrawal.text = "출금 처리 중..."
+            } else {
+                btnConfirmWithdrawal.text = "출금하기"
+            }
+        }
+    }
+    
+    /**
+     * 출금 성공 시 처리
+     */
+    private fun onWithdrawalSuccess() {
+        Log.d("WithdrawalConfirmCompat", "출금 성공")
+        showTransactionDialog()
+        withdrawViewModel.clearMessages()
+    }
+    
+    /**
+     * 출금 실패 시 처리
+     */
+    private fun onWithdrawalError(errorMessage: String?) {
+        val safeErrorMessage = errorMessage ?: "알 수 없는 오류가 발생했습니다"
+        Log.e("WithdrawalConfirmCompat", "출금 실패: $safeErrorMessage")
+        Toast.makeText(requireContext(), "출금 실패: $safeErrorMessage", Toast.LENGTH_LONG).show()
+        
+        // 에러 메시지 초기화
+        withdrawViewModel.clearMessages()
+    }
+    
+    /**
+     * 실제 API 출금 처리
+     */
+    private fun performWithdrawal() {
+        Log.d("WithdrawalConfirmCompat", "출금 API 호출 시작")
+        logDebugInfo()
+        
+        val actualAmount = amount + fee
+        lifecycleScope.launch {
+            try {
+                withdrawViewModel.withdrawCrypto(
+                    symbol = currencyCode,
+                    amount = actualAmount.toDouble(),
+                    address = address
+                )
+            } catch (e: Exception) {
+                Log.e("WithdrawalConfirmCompat", "출금 요청 중 예외 발생", e)
+                Toast.makeText(requireContext(), "출금 요청 중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    /**
+     * 디버깅 정보 로그
+     */
+    private fun logDebugInfo() {
+        Log.d("WithdrawalConfirmCompat", "출금 요청 정보:")
+        Log.d("WithdrawalConfirmCompat", "  - 티커: $currencyCode")
+        Log.d("WithdrawalConfirmCompat", "  - 금액: $amount")
+        Log.d("WithdrawalConfirmCompat", "  - 주소: $address")
+        Log.d("WithdrawalConfirmCompat", "  - 수수료: $fee")
+        Log.d("WithdrawalConfirmCompat", "  - 총 금액: ${amount + fee}")
     }
     
     private fun bind() {
@@ -97,13 +205,13 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
             
             // 출금 신청 버튼 (XML의 btnConfirmWithdrawal와 일치)
             btnConfirmWithdrawal.setOnClickListener {
-                processWithdrawal()
+                performWithdrawal()
             }
         }
     }
     
     private fun processWithdrawal() {
-        // 출금 처리 로직
+        // 기존 더미 처리 로직 - 이제 사용하지 않음
         showLoadingIndicator(true)
         
         // 출금 진행 로직 (실제로는 API 호출 등이 여기에 구현됨)
@@ -167,11 +275,6 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
             confirmListener = { navigateToWithdrawalDetail() }
         )
         dialog.show(parentFragmentManager, "transaction_dialog")
-    }
-    
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        bind()
     }
     
     companion object {
