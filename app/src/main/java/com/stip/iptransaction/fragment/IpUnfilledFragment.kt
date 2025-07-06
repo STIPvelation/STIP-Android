@@ -74,7 +74,7 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
 
     private fun loadUnfilledOrders() {
         // 로그인 여부 확인
-        val memberId = PreferenceUtil.getMemberInfo()?.id
+        val memberId = PreferenceUtil.getUserId()
         if (memberId == null) {
             binding.nodatatext.text = "로그인이 필요합니다."
             binding.nodatatext.visibility = View.VISIBLE
@@ -107,16 +107,19 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
                 if (data != null && data.isNotEmpty()) {
                     // ApiOrderResponse를 UnfilledOrder로 변환
                     val unfilledOrders = data.map { apiOrder ->
+                        val tickerName = com.stip.stip.iphome.TradingDataHolder.ipListingItems
+                            .find { it.registrationNumber == apiOrder.pairId }
+                            ?.ticker ?: apiOrder.pairId
                         UnfilledOrder(
                             orderId = apiOrder.id,
                             memberNumber = apiOrder.userId,
-                            ticker = apiOrder.pairId,
+                            ticker = tickerName,
                             tradeType = if (apiOrder.type == "buy") "매수" else "매도",
-                            watchPrice = apiOrder.price.toString(),
+                            watchPrice = "--",
                             orderPrice = apiOrder.price.toString(),
                             orderQuantity = apiOrder.quantity.toString(),
                             unfilledQuantity = (apiOrder.quantity - apiOrder.filledQuantity).toString(),
-                            orderTime = apiOrder.createdAt
+                            orderTime = formatOrderTime(apiOrder.createdAt)
                         )
                     }
                     setupUnfilledOrderList(unfilledOrders)
@@ -244,6 +247,22 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
     override fun scrollToTop() {
         if (_binding != null) {
             binding.recyclerViewUnfilled.scrollToPosition(0)
+        }
+    }
+
+    private fun formatOrderTime(dateString: String): String {
+        return try {
+            val inputFormats = listOf(
+                java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", java.util.Locale.getDefault()),
+                java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+            )
+            val outputFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+            val date = inputFormats.firstNotNullOfOrNull { format ->
+                try { format.parse(dateString) } catch (e: Exception) { null }
+            }
+            if (date != null) outputFormat.format(date) else dateString
+        } catch (e: Exception) {
+            dateString
         }
     }
 

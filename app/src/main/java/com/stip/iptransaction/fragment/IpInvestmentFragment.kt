@@ -368,24 +368,6 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
             "00:00:00"
         }
     }
-    
-    private fun getPairSymbol(pairId: String): String {
-        // pairId를 실제 심볼로 매핑 (실제 구현에서는 API에서 받은 데이터 사용)
-        return when (pairId) {
-            "1" -> "JWV/USD"
-            "2" -> "MDM/USD"
-            "3" -> "CDM/USD"
-            "4" -> "IJECT/USD"
-            "5" -> "WETALK/USD"
-            "6" -> "SLEEP/USD"
-            "7" -> "KCOT/USD"
-            "8" -> "MSK/USD"
-            "9" -> "SMT/USD"
-            "10" -> "AXNO/USD"
-            "11" -> "KATV/USD"
-            else -> "$pairId/USD"
-        }
-    }
 
     // 마켓 페어 매핑 불러오기
     private suspend fun fetchMarketPairs(): Map<String, String> {
