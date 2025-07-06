@@ -16,6 +16,7 @@ data class TickerDepositTransaction(
     val tickerSymbol: String,
     val usdAmount: Double,
     val timestamp: Long,
+    val timestampIso: String,
     val status: String = "입금 완료",
     val txHash: String? = null
 ) : Parcelable {
@@ -23,14 +24,21 @@ data class TickerDepositTransaction(
     fun getFormattedUsdAmount(): String = String.format("%.2f USD", usdAmount)
     
     fun getFormattedDate(): String {
-        val date = Date(timestamp * 1000)
-        val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
-        return dateFormat.format(date)
+        return try {
+            val year = timestampIso.substring(0, 4)
+            val month = timestampIso.substring(5, 7)
+            val day = timestampIso.substring(8, 10)
+            "$year.$month.$day"
+        } catch (e: Exception) {
+            "----.--.--"
+        }
     }
     
     fun getFormattedTime(): String {
-        val date = Date(timestamp * 1000)
-        val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
-        return timeFormat.format(date)
+        return try {
+            timestampIso.substring(11, 16)
+        } catch (e: Exception) {
+            "--:--"
+        }
     }
 }

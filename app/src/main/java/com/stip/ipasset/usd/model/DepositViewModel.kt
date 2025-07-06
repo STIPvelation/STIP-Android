@@ -2,18 +2,28 @@ package com.stip.ipasset.usd.model
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import com.stip.ipasset.model.AccountInfoItem
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
+import com.stip.ipasset.api.WalletAddressService
+import com.stip.ipasset.model.WalletAddressResponse
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import androidx.lifecycle.viewModelScope
 
 @HiltViewModel
 class DepositViewModel @Inject constructor(
-    application: Application
+    application: Application,
+    private val walletAddressService: com.stip.ipasset.api.WalletAddressService
 ) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
@@ -26,6 +36,11 @@ class DepositViewModel @Inject constructor(
 
     private val _depositAccountInfoList = MutableStateFlow<List<AccountInfoItem>>(emptyList())
     val depositAccountInfoList = _depositAccountInfoList.asStateFlow()
+
+    private val _isLoading = MutableStateFlow(false)
+    val isLoading = _isLoading.asStateFlow()
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage = _errorMessage.asStateFlow()
 
     fun generateQrCodeFromUrl() {
         // TODO: 실제 API에서 입금 주소 가져오기
@@ -81,5 +96,52 @@ class DepositViewModel @Inject constructor(
         //    )
         // }
         // _depositAccountInfoList.value = accountList
+    }
+
+    fun fetchWalletAddress(symbol: String) {
+        viewModelScope.launch {
+            try {
+                _isLoading.value = true
+                _errorMessage.value = null
+                val memberId = com.stip.stip.signup.utils.PreferenceUtil.getUserId()
+                Log.d("DepositViewModel", "API 요청: memberId=$memberId, symbol=$symbol")
+                if (memberId.isNullOrBlank()) {
+                    _errorMessage.value = "로그인 정보가 없습니다."
+                    return@launch
+                }
+                val response = walletAddressService.getWalletAddress(memberId, symbol)
+                if (response.success && response.data?.walletAddress != null) {
+                    val address = response.data.walletAddress
+                    _depositUrl.value = address
+                    try {
+                        val qrCodeWriter = com.google.zxing.qrcode.QRCodeWriter()
+                        val bitMatrix = qrCodeWriter.encode(address, com.google.zxing.BarcodeFormat.QR_CODE, 512, 512)
+                        val width = bitMatrix.width
+                        val height = bitMatrix.height
+                        val bitmap = android.graphics.Bitmap.createBitmap(width, height, android.graphics.Bitmap.Config.RGB_565)
+                        for (x in 0 until width) {
+                            for (y in 0 until height) {
+                                bitmap.setPixel(x, y, if (bitMatrix[x, y]) android.graphics.Color.BLACK else android.graphics.Color.WHITE)
+                            }
+                        }
+                        _qrCode.value = bitmap
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                        _qrCode.value = null
+                    }
+                } else {
+                    _depositUrl.value = null
+                    _qrCode.value = null
+                    _errorMessage.value = response.message
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                _depositUrl.value = null
+                _qrCode.value = null
+                _errorMessage.value = "네트워크 오류: ${e.message}"
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }

@@ -13,8 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stip.stip.R
 import com.stip.stip.iphome.adapter.QuotesAdapter
+import com.stip.stip.iphome.adapter.DailyQuotesAdapter
 import com.stip.stip.databinding.FragmentIpHomeQuotesBinding
 import com.stip.stip.iphome.model.QuoteTick
+import com.stip.stip.iphome.model.DailyQuote
 import com.stip.stip.iphome.model.PriceChangeStatus
 import com.stip.stip.api.repository.IpListingRepository
 import com.stip.stip.iptransaction.api.IpTransactionService
@@ -29,12 +31,14 @@ class IpHomeQuotesFragment : Fragment() {
     private var _binding: FragmentIpHomeQuotesBinding? = null
     private val binding get() = _binding!!
     private lateinit var quotesAdapter: QuotesAdapter
+    private lateinit var dailyQuotesAdapter: DailyQuotesAdapter
     private var currentTicker: String? = null
     private var selectedTabId: Int = R.id.button_time // 기본값 시간 탭
     
     private val handler = Handler(Looper.getMainLooper())
     private val updateInterval = 5000L // 5초마다 업데이트
     private val timeQuotesList = mutableListOf<QuoteTick>()
+    private val dailyQuotesList = mutableListOf<DailyQuote>()
     private var lastPrice: Double = 0.0
 
     companion object {
@@ -69,13 +73,16 @@ class IpHomeQuotesFragment : Fragment() {
         setupTabs()
         updateHeadersForTab(selectedTabId == R.id.button_time)
         if (selectedTabId == R.id.button_time) {
-            loadTimeQuotes()
+            loadTimeQuotes(true)
+        } else {
+            loadDailyQuotes()
         }
         startDataUpdates()
     }
 
     private fun setupRecyclerView() {
         quotesAdapter = QuotesAdapter(requireContext())
+        dailyQuotesAdapter = DailyQuotesAdapter(requireContext())
         binding.quotesRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.quotesRecyclerView.adapter = quotesAdapter
     }
@@ -90,12 +97,14 @@ class IpHomeQuotesFragment : Fragment() {
                     R.id.button_time -> {
                         binding.quotesRecyclerView.adapter = quotesAdapter
                         updateHeadersForTab(true)
-                        loadTimeQuotes()
+                        loadTimeQuotes(true)
+                        startDataUpdates()
                     }
                     R.id.button_daily -> {
+                        binding.quotesRecyclerView.adapter = dailyQuotesAdapter
                         updateHeadersForTab(false)
-                        binding.quotesRecyclerView.adapter = null
-                        binding.quotesRecyclerView.isVisible = false
+                        loadDailyQuotes()
+                        handler.removeCallbacksAndMessages(null)
                     }
                 }
             }
@@ -105,8 +114,11 @@ class IpHomeQuotesFragment : Fragment() {
     fun updateTicker(ticker: String?) {
         currentTicker = ticker
         timeQuotesList.clear()
+        dailyQuotesList.clear()
         if (selectedTabId == R.id.button_time) {
-            loadTimeQuotes()
+            loadTimeQuotes(true)
+        } else {
+            loadDailyQuotes()
         }
     }
 
@@ -114,15 +126,15 @@ class IpHomeQuotesFragment : Fragment() {
         handler.postDelayed(object : Runnable {
             override fun run() {
                 if (isAdded && selectedTabId == R.id.button_time) {
-                    loadTimeQuotes()
+                    loadTimeQuotes(false)
+                    handler.postDelayed(this, updateInterval)
                 }
-                handler.postDelayed(this, updateInterval)
             }
         }, updateInterval)
     }
 
-    private fun loadTimeQuotes() {
-        showLoading(true)
+    private fun loadTimeQuotes(isFirstLoad: Boolean = false) {
+        showLoading(isFirstLoad)
         Log.d(TAG, "시간별 시세 로드 시작 - currentTicker: $currentTicker")
         
         viewLifecycleOwner.lifecycleScope.launch {
@@ -202,6 +214,79 @@ class IpHomeQuotesFragment : Fragment() {
         }
     }
 
+    private fun loadDailyQuotes() {
+        showLoading(true)
+        Log.d(TAG, "일별 시세 로드 시작 - currentTicker: $currentTicker")
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // 먼저 pairId 가져오기
+                val repository = IpListingRepository()
+                val pairId = withContext(Dispatchers.IO) {
+                    repository.getPairIdForTicker(currentTicker)
+                }
+                Log.d(TAG, "pairId 조회 결과: $pairId")
+
+                if (pairId == null) {
+                    Log.e(TAG, "pairId를 찾을 수 없음 - currentTicker: $currentTicker")
+                    showError(getString(R.string.error_no_matching_data))
+                    return@launch
+                }
+
+                // trades/tickers API 호출
+                IpTransactionService.getTickers { response, error ->
+                    if (error != null) {
+                        Log.e(TAG, "일별 시세 데이터 로드 실패: ${error.message}")
+                        showError(getString(R.string.error_loading_data))
+                        return@getTickers
+                    }
+
+                    response?.let { tickerResponse ->
+                        Log.d(TAG, "티커 응답 - success: ${tickerResponse.success}, dataSize: ${tickerResponse.data.size}")
+                        
+                        if (!tickerResponse.success || tickerResponse.data.isEmpty()) {
+                            showError(getString(R.string.error_no_data))
+                            return@getTickers
+                        }
+
+                        // 현재 ticker에 해당하는 데이터 찾기
+                        val tickerData = tickerResponse.data.find { it.pairId == pairId }
+                        Log.d(TAG, "찾은 티커 데이터: ${tickerData?.lastPrice ?: "없음"}")
+
+                        if (tickerData == null) {
+                            showError(getString(R.string.error_no_matching_data))
+                            return@getTickers
+                        }
+
+                        // 일별 데이터 생성 (현재는 현재 데이터를 일별로 표시)
+                        val dailyQuote = DailyQuote.fromTickerData(tickerData)
+                        
+                        // 기존 데이터가 있으면 업데이트, 없으면 추가
+                        val existingIndex = dailyQuotesList.indexOfFirst { it.id == dailyQuote.id }
+                        if (existingIndex >= 0) {
+                            dailyQuotesList[existingIndex] = dailyQuote
+                        } else {
+                            dailyQuotesList.add(0, dailyQuote)
+                            if (dailyQuotesList.size > 20) { // 일별 데이터는 20개까지만
+                                dailyQuotesList.removeAt(dailyQuotesList.size - 1)
+                            }
+                        }
+
+                        Log.d(TAG, "일별 시세 업데이트 - 가격: ${tickerData.lastPrice}, 변동률: ${tickerData.changePercent}%")
+                        
+                        activity?.runOnUiThread {
+                            dailyQuotesAdapter.submitList(dailyQuotesList.toList())
+                            showData()
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "일별 시세 데이터 로드 실패: ${e.message}")
+                showError(getString(R.string.error_loading_data))
+            }
+        }
+    }
+
     private fun updateHeadersForTab(isTimeTab: Boolean) {
         if (isTimeTab) {
             binding.headerTime.text = getString(R.string.quote_header_time)
@@ -218,21 +303,21 @@ class IpHomeQuotesFragment : Fragment() {
 
     private fun showLoading(isLoading: Boolean) {
         binding.progressBar.isVisible = isLoading
-        binding.quotesRecyclerView.isVisible = !isLoading && selectedTabId == R.id.button_time
+        binding.quotesRecyclerView.isVisible = true
         binding.errorTextView.isVisible = false
     }
 
     private fun showData() {
         showLoading(false)
         binding.errorTextView.isVisible = false
-        binding.quotesRecyclerView.isVisible = selectedTabId == R.id.button_time
+        binding.quotesRecyclerView.isVisible = true
     }
 
     private fun showError(message: String?) {
         showLoading(false)
         binding.quotesRecyclerView.isVisible = false
         binding.errorTextView.text = message ?: getString(R.string.error_loading_data)
-        binding.errorTextView.isVisible = selectedTabId == R.id.button_time
+        binding.errorTextView.isVisible = true
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

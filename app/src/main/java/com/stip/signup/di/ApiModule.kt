@@ -18,6 +18,8 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import com.stip.ipasset.api.WalletAddressService
+import com.stip.stip.api.RetrofitClient
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -115,6 +117,12 @@ object ApiModule {
             .addCallAdapterFactory(CoroutinesResponseCallAdapterFactory.create())
             .build()
             .create(KakaoLocationService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideWalletAddressService(): WalletAddressService {
+        return RetrofitClient.createEngineService(WalletAddressService::class.java)
     }
 
 }

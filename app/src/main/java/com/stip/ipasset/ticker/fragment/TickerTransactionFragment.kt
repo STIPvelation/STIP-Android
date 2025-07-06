@@ -1,5 +1,6 @@
 package com.stip.ipasset.ticker.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 // Removed dummy data imports
 import com.stip.ipasset.model.IpAsset
@@ -22,6 +24,16 @@ import com.stip.stip.databinding.FragmentIpAssetTickerTransactionBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
+import com.stip.api.repository.WalletHistoryRepository
+import com.stip.api.model.WalletHistoryRecord
+import com.stip.stip.signup.utils.PreferenceUtil
+import kotlinx.coroutines.launch
+import java.time.OffsetDateTime
+import java.time.format.DateTimeFormatter
+import android.util.Log
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 @AndroidEntryPoint
 class TickerTransactionFragment : Fragment() {
@@ -35,6 +47,10 @@ class TickerTransactionFragment : Fragment() {
     
     private lateinit var transactionAdapter: TickerTransactionAdapter
     private var currentFilter: TransactionFilter = TransactionFilter.ALL
+    
+    private val walletHistoryRepository = WalletHistoryRepository()
+    
+    private var allTransactions: List<Any> = emptyList()
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +90,9 @@ class TickerTransactionFragment : Fragment() {
         
         // 버튼 리스너 설정
         setupButtonListeners()
+        
+        // 입출금 내역 로드
+        loadWalletHistory()
     }
     
     override fun onResume() {
@@ -258,9 +277,6 @@ class TickerTransactionFragment : Fragment() {
             adapter = transactionAdapter
             addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         }
-
-        // 초기 데이터 로드
-        loadTransactionData()
     }
 
     // 필터 탭 설정
@@ -269,21 +285,21 @@ class TickerTransactionFragment : Fragment() {
         binding.tabAll.setOnClickListener {
             currentFilter = TransactionFilter.ALL
             updateTabSelection()
-            loadTransactionData()
+            updateTransactionList()
         }
 
         // 입금 탭
         binding.tabDeposit.setOnClickListener {
             currentFilter = TransactionFilter.DEPOSIT
             updateTabSelection()
-            loadTransactionData()
+            updateTransactionList()
         }
 
         // 출금 탭
         binding.tabWithdrawal.setOnClickListener {
             currentFilter = TransactionFilter.WITHDRAWAL
             updateTabSelection()
-            loadTransactionData()
+            updateTransactionList()
         }
 
         // 초기 탭 선택 상태 설정
@@ -320,37 +336,47 @@ class TickerTransactionFragment : Fragment() {
     }
 
     // 트랜잭션 데이터 로드 및 필터링
-    private fun loadTransactionData() {
-        // 티커코드가 없으면 빈 리스트 표시
-        val tickerCode = this.tickerCode ?: return
-        
-        // API 호출로 대체 예정
-        val transactions: List<Any> = when (currentFilter) {
-            TransactionFilter.ALL -> {
-                listOf<Any>() // 명시적 타입 지정
-                // API 호출: getAllTransactions(tickerCode)
+    private fun loadWalletHistory() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val memberId = PreferenceUtil.getUserId()
+            if (memberId.isNullOrBlank() || tickerCode.isNullOrBlank()) return@launch
+            val history = walletHistoryRepository.getWalletHistory(memberId)
+            Log.d("TickerTransactionFragment", "API history size: ${history.size}")
+            history.forEach { Log.d("TickerTransactionFragment", "API symbol: ${it.symbol}") }
+            // 심볼별 잔고 계산 (입금-출금)
+            val symbolBalances = history.groupBy { it.symbol }
+                .mapValues { (_, txs) ->
+                    txs.sumOf { if (it.type == "deposit") it.amount else -it.amount }
+                }
+            symbolBalances.forEach { (symbol, balance) ->
+                Log.d("TickerTransactionFragment", "잔고 계산 결과: $symbol = $balance")
             }
-            TransactionFilter.DEPOSIT -> {
-                listOf<TickerDepositTransaction>() // 명시적 타입 지정
-                // API 호출: getDepositTransactions(tickerCode)
+            // 총 보유(잔고) UI에 표시
+            tickerCode?.let { code ->
+                val balance = symbolBalances[code] ?: 0.0
+                val formatter = NumberFormat.getNumberInstance(Locale.US)
+                formatter.minimumFractionDigits = 2
+                formatter.maximumFractionDigits = 2
+                binding.tickerHoldings.text = "${formatter.format(balance)} $code"
             }
-            TransactionFilter.WITHDRAWAL -> {
-                listOf<TickerWithdrawalTransaction>() // 명시적 타입 지정
-                // API 호출: getWithdrawalTransactions(tickerCode)
-            }
+            allTransactions = history.mapNotNull { it.toTickerTransaction() }
+            Log.d("TickerTransactionFragment", "allTransactions size: ${allTransactions.size}")
+            updateTransactionList()
         }
+    }
 
-        // 어댑터에 데이터 설정
-        transactionAdapter.submitList(transactions)
-        
-        // 빈 상태 처리
-        if (transactions.isEmpty()) { // 명시적 타입 지정으로 오버로드 해결
-            binding.emptyStateContainer.visibility = View.VISIBLE
-            binding.recyclerViewTransactions.visibility = View.GONE
-        } else {
-            binding.emptyStateContainer.visibility = View.GONE
-            binding.recyclerViewTransactions.visibility = View.VISIBLE
+    private fun updateTransactionList() {
+        val filtered = when (currentFilter) {
+            TransactionFilter.ALL -> allTransactions
+            TransactionFilter.DEPOSIT -> allTransactions.filterIsInstance<TickerDepositTransaction>()
+            TransactionFilter.WITHDRAWAL -> allTransactions.filterIsInstance<TickerWithdrawalTransaction>()
+        }.filter {
+            (it as? TickerDepositTransaction)?.tickerSymbol.equals(tickerCode, ignoreCase = true) ||
+            (it as? TickerWithdrawalTransaction)?.tickerSymbol.equals(tickerCode, ignoreCase = true)
         }
+        transactionAdapter.submitList(filtered)
+        binding.emptyStateContainer.visibility = if (filtered.isEmpty()) View.VISIBLE else View.GONE
+        binding.recyclerViewTransactions.visibility = if (filtered.isEmpty()) View.GONE else View.VISIBLE
     }
     
     override fun onDestroyView() {
@@ -363,6 +389,48 @@ class TickerTransactionFragment : Fragment() {
         ALL,       // 전체
         DEPOSIT,   // 입금
         WITHDRAWAL  // 출금
+    }
+    
+    private fun WalletHistoryRecord.toTickerTransaction(): Any? {
+        val txId = this.id.hashCode().toLong()
+        val ts = parseIsoTimestampToMillis(this.timestamp)
+        return when (this.type) {
+            "deposit" -> TickerDepositTransaction(
+                id = txId,
+                tickerAmount = this.amount,
+                tickerSymbol = this.symbol,
+                usdAmount = this.amount, // 실제 환율 적용 필요시 수정
+                timestamp = ts,
+                timestampIso = this.timestamp,
+                status = "입금 완료",
+                txHash = null
+            )
+            "withdraw" -> TickerWithdrawalTransaction(
+                id = txId,
+                tickerAmount = this.amount,
+                tickerSymbol = this.symbol,
+                usdAmount = this.amount, // 실제 환율 적용 필요시 수정
+                timestamp = ts,
+                timestampIso = this.timestamp,
+                status = "출금 완료",
+                txHash = null,
+                recipientAddress = null,
+                fee = 0.0
+            )
+            else -> null
+        }
+    }
+    
+    private fun parseIsoTimestampToMillis(iso: String): Long {
+        return try {
+            val fixedIso = iso.replace(Regex("\\.(\\d{3})\\d{3}"), ".$1")
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.getDefault())
+            dateFormat.timeZone = java.util.TimeZone.getDefault()
+            dateFormat.parse(fixedIso)?.time ?: System.currentTimeMillis()
+        } catch (e: Exception) {
+            Log.e("TickerTransactionFragment", "timestamp 파싱 실패: $iso", e)
+            System.currentTimeMillis()
+        }
     }
     
     companion object {

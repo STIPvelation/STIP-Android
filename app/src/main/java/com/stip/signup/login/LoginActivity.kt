@@ -163,16 +163,9 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
      * 본인인증 성공 시 handleNiceAuthResult()에서 결과 처리
      */
     private fun requestNiceIdentityVerification() {
-        // TODO: 실제 나이스 본인인증 모듈 호출 구현 필요
         android.util.Log.d("LoginActivity", "나이스 본인인증 요청")
-        
-        // 본인인증 성공을 시뮬레이션하기 위해 임시로 직접 결과 처리 함수 호출
-        // 실제 구현에서는 나이스 모듈의 콜백에서 호출해야 함
-        val mockDi = "mock-di-value" // 실제로는 나이스 본인인증 결과에서 받음
-        val mockCi = "mock-ci-value" // 실제로는 나이스 본인인증 결과에서 받음
-        Handler(Looper.getMainLooper()).postDelayed({
-            handleNiceAuthResult(true, mockDi, mockCi)
-        }, 1500) // 본인인증 UI 흐름을 시뮬레이션하기 위한 지연
+        val intent = Intent(this, com.stip.stip.signup.signup.SignUpActivity::class.java)
+        startActivity(intent)
     }
     
     /**

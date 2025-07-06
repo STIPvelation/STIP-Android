@@ -20,10 +20,15 @@ import com.stip.stip.iphome.adapter.UnfilledOrderAdapter
 import com.stip.stip.iptransaction.api.IpTransactionService
 import com.stip.stip.iptransaction.model.UnfilledOrder
 import com.stip.stip.signup.utils.PreferenceUtil
+import com.stip.stip.iptransaction.viewmodel.IpTransactionViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import androidx.fragment.app.viewModels
 
+@AndroidEntryPoint
 class IpUnfilledFragment : Fragment(), ScrollableToTop {
 
     private lateinit var mainViewModel: com.stip.stip.MainViewModel
+    private val viewModel: com.stip.stip.iptransaction.viewmodel.IpTransactionViewModel by viewModels()
 
     private var _binding: FragmentIpUnfilledBinding? = null
     private val binding get() = _binding!!
@@ -57,13 +62,31 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
         binding.cancelOrderButton.setOnClickListener {
             if (::adapter.isInitialized && adapter.hasCheckedItems()) {
                 val selectedIds = adapter.getSelectedOrderIds()
-
-                Log.d("CancelOrder", "Cancelling ${selectedIds.size} items: ${selectedIds.joinToString()}")
-
-                // Order cancellation message would show here
-                adapter.clearSelection()
+                if (selectedIds.isEmpty()) return@setOnClickListener
+                // 주문취소 확인 팝업 띄우기
+                val message = if (selectedIds.size == 1) {
+                    getString(R.string.dialog_message_cancel_order_confirm)
+                } else {
+                    getString(R.string.dialog_message_cancel_order_confirm_count, selectedIds.size)
+                }
+                val dialog = com.stip.stip.iphome.fragment.CancelConfirmDialogFragment.newInstance(
+                    R.string.dialog_title_cancel_order_confirm,
+                    message
+                )
+                dialog.show(parentFragmentManager, com.stip.stip.iphome.fragment.CancelConfirmDialogFragment.TAG)
+                // 결과 리스너 등록
+                parentFragmentManager.setFragmentResultListener(
+                    com.stip.stip.iphome.fragment.CancelConfirmDialogFragment.REQUEST_KEY,
+                    viewLifecycleOwner
+                ) { _, bundle ->
+                    val confirmed = bundle.getBoolean(com.stip.stip.iphome.fragment.CancelConfirmDialogFragment.RESULT_KEY_CONFIRMED, false)
+                    if (confirmed) {
+                        binding.cancelOrderButton.isEnabled = false
+                        cancelOrdersSequentially(selectedIds)
+                    }
+                }
             } else {
-                // No orders selected message would show here
+                android.widget.Toast.makeText(requireContext(), "주문을 선택하세요.", android.widget.Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -74,7 +97,7 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
 
     private fun loadUnfilledOrders() {
         // 로그인 여부 확인
-        val memberId = PreferenceUtil.getMemberInfo()?.id
+        val memberId = PreferenceUtil.getUserId()
         if (memberId == null) {
             binding.nodatatext.text = "로그인이 필요합니다."
             binding.nodatatext.visibility = View.VISIBLE
@@ -107,16 +130,19 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
                 if (data != null && data.isNotEmpty()) {
                     // ApiOrderResponse를 UnfilledOrder로 변환
                     val unfilledOrders = data.map { apiOrder ->
+                        val tickerName = com.stip.stip.iphome.TradingDataHolder.ipListingItems
+                            .find { it.registrationNumber == apiOrder.pairId }
+                            ?.ticker ?: apiOrder.pairId
                         UnfilledOrder(
                             orderId = apiOrder.id,
                             memberNumber = apiOrder.userId,
-                            ticker = apiOrder.pairId,
+                            ticker = tickerName,
                             tradeType = if (apiOrder.type == "buy") "매수" else "매도",
-                            watchPrice = apiOrder.price.toString(),
+                            watchPrice = "--",
                             orderPrice = apiOrder.price.toString(),
                             orderQuantity = apiOrder.quantity.toString(),
                             unfilledQuantity = (apiOrder.quantity - apiOrder.filledQuantity).toString(),
-                            orderTime = apiOrder.createdAt
+                            orderTime = formatOrderTime(apiOrder.createdAt)
                         )
                     }
                     setupUnfilledOrderList(unfilledOrders)
@@ -245,6 +271,51 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
         if (_binding != null) {
             binding.recyclerViewUnfilled.scrollToPosition(0)
         }
+    }
+
+    private fun formatOrderTime(dateString: String): String {
+        return try {
+            val inputFormats = listOf(
+                java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSS", java.util.Locale.getDefault()),
+                java.text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", java.util.Locale.getDefault())
+            )
+            val outputFormat = java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss", java.util.Locale.getDefault())
+            val date = inputFormats.firstNotNullOfOrNull { format ->
+                try { format.parse(dateString) } catch (e: Exception) { null }
+            }
+            if (date != null) outputFormat.format(date) else dateString
+        } catch (e: Exception) {
+            dateString
+        }
+    }
+
+    // 주문취소 순차 실행 함수
+    private fun cancelOrdersSequentially(orderIds: List<String>) {
+        if (orderIds.isEmpty()) return
+        var successCount = 0
+        var failCount = 0
+        fun finishAll() {
+            binding.cancelOrderButton.isEnabled = true
+            if (successCount > 0) loadUnfilledOrders()
+            val msg = when {
+                failCount == 0 -> "${orderIds.size}개 주문이 취소되었습니다."
+                successCount == 0 -> "모든 주문 취소에 실패했습니다."
+                else -> "${successCount}개 성공, ${failCount}개 실패"
+            }
+            android.widget.Toast.makeText(requireContext(), msg, android.widget.Toast.LENGTH_LONG).show()
+            adapter.clearSelection()
+        }
+        fun cancelNext(index: Int) {
+            if (index >= orderIds.size) { finishAll(); return }
+            val orderId = orderIds[index]
+            viewModel.cancelOrder(orderId)
+            viewModel.cancelOrderResult.observe(viewLifecycleOwner) { result ->
+                if (result.isSuccess) successCount++ else failCount++
+                viewModel.cancelOrderResult.removeObservers(viewLifecycleOwner)
+                cancelNext(index + 1)
+            }
+        }
+        cancelNext(0)
     }
 
     companion object {
