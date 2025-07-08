@@ -15,6 +15,7 @@ import com.stip.stip.signup.utils.PreferenceUtil
 object RetrofitClient {
     private const val BASE_URL = "https://backend.stipvelation.com/"
     private const val ENGINE_URL = "http://34.64.197.80:5000/"
+    private const val TAPI_URL = "https://tapi.sharetheip.com/"
     private const val TIMEOUT = 30L // 30초 타임아웃
     
     private val okHttpClient by lazy {
@@ -106,11 +107,42 @@ object RetrofitClient {
             .build()
     }
     
+    // TAPI 서버용 OkHttpClient
+    private val tapiOkHttpClient by lazy {
+        OkHttpClient.Builder()
+            .connectTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(TIMEOUT, TimeUnit.SECONDS)
+            .addInterceptor { chain ->
+                val original = chain.request()
+                val token = PreferenceUtil.getToken()
+                val request = original.newBuilder().apply {
+                    header("Content-Type", "application/json")
+                    header("Accept", "application/json")
+                    if (token != null) {
+                        header("Authorization", "Bearer $token")
+                    }
+                    method(original.method, original.body)
+                }.build()
+                chain.proceed(request)
+            }
+            .build()
+    }
+    
     // 엔진 서버용 Retrofit 인스턴스
     private val engineRetrofit: Retrofit by lazy {
         Retrofit.Builder()
             .baseUrl(ENGINE_URL)
             .client(engineOkHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+    
+    // TAPI 서버용 Retrofit 인스턴스
+    private val tapiRetrofit: Retrofit by lazy {
+        Retrofit.Builder()
+            .baseUrl(TAPI_URL)
+            .client(tapiOkHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -128,6 +160,11 @@ object RetrofitClient {
     // 엔진 서버 API 서비스 인스턴스 생성
     fun <T> createEngineService(serviceClass: Class<T>): T {
         return engineRetrofit.create(serviceClass)
+    }
+    
+    // TAPI 서버 API 서비스 인스턴스 생성
+    fun <T> createTapiService(serviceClass: Class<T>): T {
+        return tapiRetrofit.create(serviceClass)
     }
 
     fun createOrderService(): OrderService {

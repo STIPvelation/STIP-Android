@@ -3,6 +3,7 @@ package com.stip.stip.api.repository
 import com.stip.stip.api.RetrofitClient
 import com.stip.stip.api.service.IpListingService
 import com.stip.stip.api.service.MarketPairsService
+import com.stip.stip.api.service.TapiMarketPairsService
 import com.stip.stip.iphome.model.IpListingItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -20,6 +21,10 @@ class IpListingRepository {
     private val marketPairsService: MarketPairsService by lazy {
         RetrofitClient.createEngineService(MarketPairsService::class.java)
     }
+    
+    private val tapiMarketPairsService: TapiMarketPairsService by lazy {
+        RetrofitClient.createTapiService(TapiMarketPairsService::class.java)
+    }
 
     // 티커와 pairId 매핑을 캐시
     private val tickerToPairIdMap = mutableMapOf<String, String>()
@@ -30,26 +35,26 @@ class IpListingRepository {
      */
     suspend fun getIpListing(): List<IpListingItem> = withContext(Dispatchers.IO) {
         try {
-            // Market Pairs API에서 실제 데이터 가져오기
-            val response = marketPairsService.getMarketPairs(page = 1, limit = 50)
+            // TAPI Market Pairs API에서 실제 데이터 가져오기
+            val response = tapiMarketPairsService.getMarketPairs(page = 1, limit = 50)
             
-            if (response.success && response.data.record.isNotEmpty()) {
+            if (response.isNotEmpty()) {
                 // API 응답을 IpListingItem으로 변환
-                val items = response.data.record.map { 
+                val items = response.map { 
                     // 티커-pairId 매핑 저장
                     tickerToPairIdMap[it.baseAsset] = it.id
                     it.toIpListingItem() 
                 }
-                Log.d("IpListingRepository", "API 호출 성공: ${items.size}개 아이템 로드됨")
+                Log.d("IpListingRepository", "TAPI API 호출 성공: ${items.size}개 아이템 로드됨")
                 items
             } else {
-                // API 응답이 성공하지 않거나 데이터가 비어있을 경우
-                Log.w("IpListingRepository", "API 응답이 비어있음")
+                // API 응답이 비어있을 경우
+                Log.w("IpListingRepository", "TAPI API 응답이 비어있음")
                 emptyList()
             }
         } catch (e: Exception) {
             // 예외 발생 시 빈 리스트 반환
-            Log.e("IpListingRepository", "Market Pairs API 호출 실패: ${e.message}")
+            Log.e("IpListingRepository", "TAPI Market Pairs API 호출 실패: ${e.message}")
             emptyList()
         }
     }
@@ -67,9 +72,9 @@ class IpListingRepository {
 
         // 캐시된 매핑이 없으면 API 호출하여 매핑 업데이트
         try {
-            val response = marketPairsService.getMarketPairs(page = 1, limit = 50)
-            if (response.success) {
-                response.data.record.forEach { pair ->
+            val response = tapiMarketPairsService.getMarketPairs(page = 1, limit = 50)
+            if (response.isNotEmpty()) {
+                response.forEach { pair ->
                     tickerToPairIdMap[pair.baseAsset] = pair.id
                 }
             }
