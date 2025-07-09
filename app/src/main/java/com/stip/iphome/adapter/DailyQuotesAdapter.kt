@@ -21,11 +21,12 @@ class DailyQuotesAdapter(private val context: Context) : ListAdapter<DailyQuote,
 
     inner class DailyQuoteViewHolder(private val binding: ItemIpHomeDailyQuoteBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(dailyQuote: DailyQuote) {
-            // 일자 표시
-            binding.itemDateTextView.text = dailyQuote.date
+            // 일자 표시 (2025-01-01 -> 2025.01.01 형식으로 변환)
+            val displayDate = dailyQuote.date.replace("-", ".")
+            binding.itemDateTextView.text = displayDate
             
             // 종가 표시
-            binding.itemLastPriceTextView.text = priceFormatter.format(dailyQuote.lastPrice)
+            binding.itemLastPriceTextView.text = priceFormatter.format(dailyQuote.close)
             
             // 변동률 표시 (양수면 +, 음수면 - 표시)
             val changePercentText = if (dailyQuote.changePercent >= 0) {
