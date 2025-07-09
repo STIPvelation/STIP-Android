@@ -20,7 +20,9 @@ import com.stip.stip.iphome.model.DailyQuote
 import com.stip.stip.iphome.model.PriceChangeStatus
 import com.stip.stip.api.repository.IpListingRepository
 import com.stip.stip.api.repository.TapiHourlyDataRepository
+import com.stip.stip.api.repository.TapiDailyDataRepository
 import com.stip.stip.api.model.TapiHourlyDataResponse
+import com.stip.stip.api.model.TapiDailyDataResponse
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -153,13 +155,13 @@ class IpHomeQuotesFragment : Fragment() {
                     return@launch
                 }
 
-                // TAPI 시간별 데이터 API 호출
+                // 시간별 데이터 API 호출
                 val tapiRepository = TapiHourlyDataRepository()
                 val hourlyData = withContext(Dispatchers.IO) {
                     tapiRepository.getTodayHourlyData(pairId)
                 }
                 
-                Log.d(TAG, "TAPI 시간별 데이터 응답 - dataSize: ${hourlyData.size}")
+                Log.d(TAG, "시간별 데이터 응답 - dataSize: ${hourlyData.size}")
                 
                 if (hourlyData.isEmpty()) {
                     showError(getString(R.string.error_no_data))
@@ -244,74 +246,37 @@ class IpHomeQuotesFragment : Fragment() {
                     return@launch
                 }
 
-                // TAPI 시간별 데이터 API 호출 (최근 7일간의 데이터)
-                val tapiRepository = TapiHourlyDataRepository()
-                val calendar = Calendar.getInstance()
-                val endDate = calendar.time
-                
-                // 7일 전부터 오늘까지
-                calendar.add(Calendar.DAY_OF_MONTH, -7)
-                val startDate = calendar.time
-                
-                val hourlyData = withContext(Dispatchers.IO) {
-                    tapiRepository.getHourlyDataByRange(pairId, startDate, endDate)
+                // 일별 데이터 API 호출
+                val tapiRepository = TapiDailyDataRepository()
+                val dailyData = withContext(Dispatchers.IO) {
+                    tapiRepository.getRecentDailyData(pairId)
                 }
                 
-                Log.d(TAG, "TAPI 일별 데이터 응답 - dataSize: ${hourlyData.size}")
+                Log.d(TAG, "일별 데이터 응답 - dataSize: ${dailyData.size}")
                 
-                if (hourlyData.isEmpty()) {
+                if (dailyData.isEmpty()) {
                     showError(getString(R.string.error_no_data))
                     return@launch
                 }
 
-                // 일별 데이터로 그룹화
-                val dailyDataMap = mutableMapOf<String, MutableList<TapiHourlyDataResponse>>()
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                // 일별 데이터를 날짜 순으로 정렬 (최신순)
+                val sortedData = dailyData.sortedByDescending { it.date }
                 
-                hourlyData.forEach { hourlyItem ->
-                    try {
-                        val timeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-                        val timestamp = timeFormat.parse(hourlyItem.timestamp)
-                        val dateKey = dateFormat.format(timestamp)
-                        
-                        if (!dailyDataMap.containsKey(dateKey)) {
-                            dailyDataMap[dateKey] = mutableListOf()
-                        }
-                        dailyDataMap[dateKey]?.add(hourlyItem)
-                    } catch (e: Exception) {
-                        Log.e(TAG, "시간 파싱 오류: ${e.message}")
-                    }
-                }
-
                 // 일별 데이터 생성
                 dailyQuotesList.clear()
-                dailyDataMap.entries.sortedByDescending { it.key }.forEach { (dateKey, hourlyItems) ->
-                    if (hourlyItems.isNotEmpty()) {
-                        val latestItem = hourlyItems.maxByOrNull { it.timestamp }
-                        val earliestItem = hourlyItems.minByOrNull { it.timestamp }
-                        
-                        if (latestItem != null && earliestItem != null) {
-                            val openPrice = earliestItem.price
-                            val closePrice = latestItem.price
-                            val totalVolume = hourlyItems.sumOf { it.volume }
-                            val changePercent = if (openPrice > 0) {
-                                ((closePrice - openPrice) / openPrice) * 100
-                            } else 0.0
-                            
-                            val dailyQuote = DailyQuote(
-                                id = dateKey,
-                                date = dateKey,
-                                open = openPrice,
-                                high = hourlyItems.maxOf { it.price },
-                                low = hourlyItems.minOf { it.price },
-                                close = closePrice,
-                                volume = totalVolume,
-                                changePercent = changePercent
-                            )
-                            
-                            dailyQuotesList.add(dailyQuote)
-                        }
-                    }
+                sortedData.forEach { dailyItem ->
+                    val dailyQuote = DailyQuote(
+                        id = dailyItem.date,
+                        date = dailyItem.date,
+                        open = dailyItem.close,
+                        high = dailyItem.close,
+                        low = dailyItem.close,
+                        close = dailyItem.close,
+                        volume = dailyItem.volume,
+                        changePercent = dailyItem.changePercent
+                    )
+                    
+                    dailyQuotesList.add(dailyQuote)
                 }
 
                 // 최대 20개까지만 표시

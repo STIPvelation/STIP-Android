@@ -17,5 +17,5 @@ data class TapiHourlyDataResponse(
     val volume: Double, // 체결 금액
     
     @SerializedName("marketPairId")
-    val marketPairId: String? = null // 마켓 페어 ID (선택적)
+    val marketPairId: String? = null // 마켓 페어 ID
 ) 
