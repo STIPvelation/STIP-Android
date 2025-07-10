@@ -19,7 +19,10 @@ import com.stip.stip.iphome.model.QuoteTick
 import com.stip.stip.iphome.model.DailyQuote
 import com.stip.stip.iphome.model.PriceChangeStatus
 import com.stip.stip.api.repository.IpListingRepository
-import com.stip.stip.iptransaction.api.IpTransactionService
+import com.stip.stip.api.repository.TapiHourlyDataRepository
+import com.stip.stip.api.repository.TapiDailyDataRepository
+import com.stip.stip.api.model.TapiHourlyDataResponse
+import com.stip.stip.api.model.TapiDailyDataResponse
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -152,61 +155,71 @@ class IpHomeQuotesFragment : Fragment() {
                     return@launch
                 }
 
-                // trades/tickers API 호출
-                IpTransactionService.getTickers { response, error ->
-                    if (error != null) {
-                        Log.e(TAG, "실시간 시세 데이터 로드 실패: ${error.message}")
-                        showError(getString(R.string.error_loading_data))
-                        return@getTickers
-                    }
+                // 시간별 데이터 API 호출
+                val tapiRepository = TapiHourlyDataRepository()
+                val hourlyData = withContext(Dispatchers.IO) {
+                    tapiRepository.getTodayHourlyData(pairId)
+                }
+                
+                Log.d(TAG, "시간별 데이터 응답 - dataSize: ${hourlyData.size}")
+                
+                if (hourlyData.isEmpty()) {
+                    showError(getString(R.string.error_no_data))
+                    return@launch
+                }
 
-                    response?.let { tickerResponse ->
-                        Log.d(TAG, "티커 응답 - success: ${tickerResponse.success}, dataSize: ${tickerResponse.data.size}")
+                // 시간별 데이터를 시간 순으로 정렬 (최신순)
+                val sortedData = hourlyData.sortedByDescending { it.timestamp }
+                
+                // 기존 데이터 초기화 (첫 로드시에만)
+                if (isFirstLoad) {
+                    timeQuotesList.clear()
+                }
+
+                // 새로운 데이터 추가
+                sortedData.forEach { hourlyItem ->
+                    val timeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+                    val displayFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                    
+                    try {
+                        val timestamp = timeFormat.parse(hourlyItem.timestamp)
+                        val displayTime = displayFormat.format(timestamp)
                         
-                        if (!tickerResponse.success || tickerResponse.data.isEmpty()) {
-                            showError(getString(R.string.error_no_data))
-                            return@getTickers
-                        }
-
-                        // 현재 ticker에 해당하는 데이터 찾기
-                        val tickerData = tickerResponse.data.find { it.pairId == pairId }
-                        Log.d(TAG, "찾은 티커 데이터: ${tickerData?.lastPrice ?: "없음"}")
-
-                        if (tickerData == null) {
-                            showError(getString(R.string.error_no_matching_data))
-                            return@getTickers
-                        }
-
-                        // 새로운 데이터 추가
-                        val currentTime = System.currentTimeMillis()
                         val priceChangeStatus = when {
-                            tickerData.lastPrice > lastPrice -> PriceChangeStatus.UP
-                            tickerData.lastPrice < lastPrice -> PriceChangeStatus.DOWN
+                            hourlyItem.price > lastPrice -> PriceChangeStatus.UP
+                            hourlyItem.price < lastPrice -> PriceChangeStatus.DOWN
                             else -> PriceChangeStatus.SAME
                         }
 
                         val newQuote = QuoteTick(
-                            id = UUID.randomUUID().toString(),
-                            time = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date(currentTime)),
-                            price = tickerData.lastPrice,
-                            volume = tickerData.volume,
+                            id = hourlyItem.timestamp, // timestamp를 ID로 사용
+                            time = displayTime,
+                            price = hourlyItem.price,
+                            volume = hourlyItem.volume,
                             priceChangeStatus = priceChangeStatus
                         )
 
-                        timeQuotesList.add(0, newQuote)
-                        if (timeQuotesList.size > 30) {
-                            timeQuotesList.removeAt(timeQuotesList.size - 1)
+                        // 중복 방지
+                        val existingIndex = timeQuotesList.indexOfFirst { it.id == newQuote.id }
+                        if (existingIndex == -1) {
+                            timeQuotesList.add(0, newQuote)
+                            if (timeQuotesList.size > 30) {
+                                timeQuotesList.removeAt(timeQuotesList.size - 1)
+                            }
                         }
 
-                        lastPrice = tickerData.lastPrice
-                        Log.d(TAG, "시간별 시세 업데이트 - 가격: ${tickerData.lastPrice}, 상태: $priceChangeStatus")
-                        
-                        activity?.runOnUiThread {
-                            quotesAdapter.submitList(timeQuotesList.toList())
-                            showData()
-                        }
+                        lastPrice = hourlyItem.price
+                        Log.d(TAG, "시간별 시세 업데이트 - 시간: $displayTime, 가격: ${hourlyItem.price}, 체결량: ${hourlyItem.volume}")
+                    } catch (e: Exception) {
+                        Log.e(TAG, "시간 파싱 오류: ${e.message}")
                     }
                 }
+                
+                activity?.runOnUiThread {
+                    quotesAdapter.submitList(timeQuotesList.toList())
+                    showData()
+                }
+                
             } catch (e: Exception) {
                 Log.e(TAG, "시간별 시세 데이터 로드 실패: ${e.message}")
                 showError(getString(R.string.error_loading_data))
@@ -233,53 +246,51 @@ class IpHomeQuotesFragment : Fragment() {
                     return@launch
                 }
 
-                // trades/tickers API 호출
-                IpTransactionService.getTickers { response, error ->
-                    if (error != null) {
-                        Log.e(TAG, "일별 시세 데이터 로드 실패: ${error.message}")
-                        showError(getString(R.string.error_loading_data))
-                        return@getTickers
-                    }
-
-                    response?.let { tickerResponse ->
-                        Log.d(TAG, "티커 응답 - success: ${tickerResponse.success}, dataSize: ${tickerResponse.data.size}")
-                        
-                        if (!tickerResponse.success || tickerResponse.data.isEmpty()) {
-                            showError(getString(R.string.error_no_data))
-                            return@getTickers
-                        }
-
-                        // 현재 ticker에 해당하는 데이터 찾기
-                        val tickerData = tickerResponse.data.find { it.pairId == pairId }
-                        Log.d(TAG, "찾은 티커 데이터: ${tickerData?.lastPrice ?: "없음"}")
-
-                        if (tickerData == null) {
-                            showError(getString(R.string.error_no_matching_data))
-                            return@getTickers
-                        }
-
-                        // 일별 데이터 생성 (현재는 현재 데이터를 일별로 표시)
-                        val dailyQuote = DailyQuote.fromTickerData(tickerData)
-                        
-                        // 기존 데이터가 있으면 업데이트, 없으면 추가
-                        val existingIndex = dailyQuotesList.indexOfFirst { it.id == dailyQuote.id }
-                        if (existingIndex >= 0) {
-                            dailyQuotesList[existingIndex] = dailyQuote
-                        } else {
-                            dailyQuotesList.add(0, dailyQuote)
-                            if (dailyQuotesList.size > 20) { // 일별 데이터는 20개까지만
-                                dailyQuotesList.removeAt(dailyQuotesList.size - 1)
-                            }
-                        }
-
-                        Log.d(TAG, "일별 시세 업데이트 - 가격: ${tickerData.lastPrice}, 변동률: ${tickerData.changePercent}%")
-                        
-                        activity?.runOnUiThread {
-                            dailyQuotesAdapter.submitList(dailyQuotesList.toList())
-                            showData()
-                        }
-                    }
+                // 일별 데이터 API 호출
+                val tapiRepository = TapiDailyDataRepository()
+                val dailyData = withContext(Dispatchers.IO) {
+                    tapiRepository.getRecentDailyData(pairId)
                 }
+                
+                Log.d(TAG, "일별 데이터 응답 - dataSize: ${dailyData.size}")
+                
+                if (dailyData.isEmpty()) {
+                    showError(getString(R.string.error_no_data))
+                    return@launch
+                }
+
+                // 일별 데이터를 날짜 순으로 정렬 (최신순)
+                val sortedData = dailyData.sortedByDescending { it.date }
+                
+                // 일별 데이터 생성
+                dailyQuotesList.clear()
+                sortedData.forEach { dailyItem ->
+                    val dailyQuote = DailyQuote(
+                        id = dailyItem.date,
+                        date = dailyItem.date,
+                        open = dailyItem.close,
+                        high = dailyItem.close,
+                        low = dailyItem.close,
+                        close = dailyItem.close,
+                        volume = dailyItem.volume,
+                        changePercent = dailyItem.changePercent
+                    )
+                    
+                    dailyQuotesList.add(dailyQuote)
+                }
+
+                // 최대 20개까지만 표시
+                while (dailyQuotesList.size > 20) {
+                    dailyQuotesList.removeAt(dailyQuotesList.size - 1)
+                }
+
+                Log.d(TAG, "일별 시세 업데이트 - 데이터 개수: ${dailyQuotesList.size}")
+                
+                activity?.runOnUiThread {
+                    dailyQuotesAdapter.submitList(dailyQuotesList.toList())
+                    showData()
+                }
+                
             } catch (e: Exception) {
                 Log.e(TAG, "일별 시세 데이터 로드 실패: ${e.message}")
                 showError(getString(R.string.error_loading_data))
