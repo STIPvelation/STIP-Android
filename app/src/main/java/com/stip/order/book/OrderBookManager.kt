@@ -32,7 +32,7 @@ class OrderBookManager(
     private val handler = Handler(Looper.getMainLooper())
 
     companion object {
-        private const val ORDER_BOOK_UPDATE_INTERVAL_MS = 2000L
+        private const val ORDER_BOOK_UPDATE_INTERVAL_MS = 5000L
         private val AGGREGATION_LEVEL_NAMES = mapOf(0.0 to "기본", 0.05 to "0.05", 0.1 to "0.1", 0.2 to "0.2")
         private val AGGREGATION_CYCLE_LEVELS = listOf(0.0, 0.05, 0.1, 0.2)
         private const val TAG = "OrderBookManager"
@@ -168,9 +168,7 @@ class OrderBookManager(
             radioMarket.isEnabled = sortedBuys.isNotEmpty()
         }
 
-        val gapItem = OrderBookItem(price = "", quantity = "", isBuy = false, percent = "", isGap = true)
-
-        // 매도/매수 각각 30개로 고정 패딩, isBuy 명확히
+        // 간격 아이템 제거 - 매도와 매수를 직접 연결
         val FIXED_SELL_SIZE = 30
         val FIXED_BUY_SIZE = 30
 
@@ -186,14 +184,13 @@ class OrderBookManager(
         val paddedSells = topPad(sortedSells, FIXED_SELL_SIZE, false)
         val paddedBuys = bottomPad(sortedBuys, FIXED_BUY_SIZE, true)
 
-        val listWithGap = mutableListOf<OrderBookItem>().apply {
+        // 간격 없이 매도와 매수를 직접 연결
+        val listWithoutGap = mutableListOf<OrderBookItem>().apply {
             addAll(paddedSells)
-            add(gapItem)
             addAll(paddedBuys)
         }
 
-        Log.d(TAG, "Final order book size: ${listWithGap.size} (Sells: ${paddedSells.size}, Buys: ${paddedBuys.size})")
-        orderBookAdapter.updateData(listWithGap, currentPrice)
+        orderBookAdapter.updateData(listWithoutGap, currentPrice)
     }
 
     private fun scrollToCenter() {

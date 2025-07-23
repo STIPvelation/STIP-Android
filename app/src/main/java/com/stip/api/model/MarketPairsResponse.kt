@@ -64,6 +64,7 @@ data class MarketPairsResponse(
         
         return IpListingItem(
             ticker = cleanBaseAsset,
+            countryImage = countryImage,
             currentPrice = String.format("%.2f", lastPrice?.toDouble() ?: 0.0),
             changePercent = String.format("%+.2f%%", changeRate ?: 0.0),
             changeAbsolute = String.format("%+.2f", priceChange?.toDouble() ?: 0.0),

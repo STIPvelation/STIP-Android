@@ -131,6 +131,43 @@ class OrderButtonHandler(
         }
     }
     
+    /**
+     * 주문 버튼 상태 업데이트
+     */
+    fun updateOrderButtonStates() {
+        try {
+            val selectedTab = binding.tabLayoutOrderMode.selectedTabPosition
+            val isLoggedIn = PreferenceUtil.isRealLoggedIn()
+            
+            if (!isLoggedIn) {
+                // 로그인하지 않은 경우 버튼 비활성화
+                binding.buttonBuy.isEnabled = false
+                return
+            }
+            
+            // 로그인한 경우 버튼 활성화
+            binding.buttonBuy.isEnabled = true
+            
+            // 탭에 따라 버튼 텍스트와 색상 설정
+            when (selectedTab) {
+                0 -> { // 매수 탭
+                    binding.buttonBuy.text = context.getString(R.string.button_buy)
+                    binding.buttonBuy.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.percentage_positive_red))
+                }
+                1 -> { // 매도 탭
+                    binding.buttonBuy.text = context.getString(R.string.button_sell)
+                    binding.buttonBuy.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, R.color.percentage_negative_blue))
+                }
+                2 -> { // 내역 탭
+                    binding.buttonBuy.isEnabled = false
+                    binding.buttonBuy.setBackgroundColor(androidx.core.content.ContextCompat.getColor(context, android.R.color.darker_gray))
+                }
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "탭 업데이트 에러", e)
+        }
+    }
+
     private fun handleButtonClick(isBuyOrder: Boolean) {
         // 로그인 상태 확인
         val isLoggedIn = PreferenceUtil.isRealLoggedIn()

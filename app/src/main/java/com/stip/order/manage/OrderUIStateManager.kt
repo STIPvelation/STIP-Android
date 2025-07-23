@@ -79,7 +79,6 @@ class OrderUIStateManager(
 
         updateTradingInfoVisibility()
         uiInitializer.updateBuySellButtonAppearance(position)
-        updateOrderAvailableDisplay()
     }
 
     private fun setOrderEntryViewsVisibility(visibility: Int) {
@@ -149,22 +148,21 @@ class OrderUIStateManager(
             
             when (currentTabPosition) {
                 0 -> {
-                    val actualBuyableAmount = orderDataCoordinator.getActualBuyableAmount()
-                    binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(actualBuyableAmount.toDouble())
+                    // USD 잔액 표시 - 주문가능 (수수료 제외하지 않음)
+                    val availableBalance = orderDataCoordinator.availableUsdBalance
+                    binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(availableBalance)
                     binding.textOrderAvailableUnit.text = context.getString(R.string.unit_usd)
-                    binding.rowOrderAvailable.visibility = if (orderDataCoordinator.availableUsdBalance > 0.0) View.VISIBLE else View.GONE
+                    binding.rowOrderAvailable.visibility = if (availableBalance > 0.0) View.VISIBLE else View.GONE
+                    Log.d("OrderUIStateManager", "매수 탭 - 주문가능 금액: $availableBalance")
                 }
                 1 -> {
-                    val actualHeldQuantity = orderDataCoordinator.getActualSellableQuantity()
+                    // 매도 탭에서는 해당 티커의 보유 자산 수량 표시
+                    val heldQuantity = orderDataCoordinator.heldAssetQuantity
                     val tickerName = orderDataCoordinator.currentTicker ?: "--"
-                    if (actualHeldQuantity > 0) {
-                        binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(actualHeldQuantity)
-                        binding.textOrderAvailableUnit.text = tickerName
-                    } else {
-                        binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(0.0)
-                        binding.textOrderAvailableUnit.text = tickerName
-                    }
-                    binding.rowOrderAvailable.visibility = View.VISIBLE
+                    binding.textOrderAvailableAmount.text = OrderUtils.fixedTwoDecimalFormatter.format(heldQuantity)
+                    binding.textOrderAvailableUnit.text = tickerName
+                    binding.rowOrderAvailable.visibility = if (heldQuantity > 0.0) View.VISIBLE else View.GONE
+                    Log.d("OrderUIStateManager", "매도 탭 - 주문가능 수량: $heldQuantity $tickerName")
                 }
                 else -> {
                     binding.rowOrderAvailable.visibility = View.GONE

@@ -125,7 +125,8 @@
                 android:gravity="center"
                 android:paddingStart="16dp"
                 android:paddingEnd="8dp"
-                android:text="@string/order_type_reserved_simple" />
+                android:text="@string/order_type_reserved_simple"
+                android:visibility="invisible" />
         </RadioGroup>
 
         <androidx.constraintlayout.widget.ConstraintLayout

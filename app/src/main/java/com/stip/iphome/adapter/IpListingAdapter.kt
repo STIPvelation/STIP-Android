@@ -2,11 +2,14 @@ package com.stip.stip.iphome.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.stip.stip.R
 import com.stip.stip.databinding.ItemIpListingBinding
 import com.stip.stip.iphome.fragment.TradingFragment
@@ -69,9 +72,20 @@ class IpListingAdapter(var items: List<IpListingItem>) :
 
             binding.viewOhlc.setOhlc(open, high, low, close, isRise)
 
-            // 카테고리 텍스트 설정 (enum 적용)
-            val category = IpCategory.fromRaw(item.category)
-            binding.itemCategoryText.text = category.toDisplayString(context)
+            // 카테고리 텍스트 설정
+            binding.itemCategoryText.text = item.category
+
+            // 국가 이미지 로드 및 표시
+            if (!item.countryImage.isNullOrEmpty()) {
+                binding.itemCountryImage.visibility = View.VISIBLE
+                Glide.with(context)
+                    .load(item.countryImage)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .error(R.drawable.ic_launcher_foreground) // 에러 시 기본 이미지
+                    .into(binding.itemCountryImage)
+            } else {
+                binding.itemCountryImage.visibility = View.GONE
+            }
 
             // 텍스트 깜빡임
             if (item.isTradeTriggered) {

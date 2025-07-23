@@ -88,7 +88,7 @@ class IpAssetFragment : Fragment() {
         // USD 데이터 변경 관찰
         observeUsdData()
         
-        // 포트폴리오 API 데이터 로드 → 입출금 내역 기반 잔고 계산으로 대체
+        // 포트폴리오 API 데이터 로드
         loadBalancesFromHistory()
         
         // KRW 입금 버튼 클릭 시 USDDepositFragment로 이동
@@ -187,13 +187,14 @@ class IpAssetFragment : Fragment() {
                 if (portfolioResponse != null) {
                     // 상단 총 보유자산 표시
                     val formatter = java.text.DecimalFormat("#,##0.00")
-                    val totalEval = portfolioResponse.evalAmount?.toDouble() ?: 0.0
-                    binding.totalIpAssets.text = "$${formatter.format(totalEval)} USD"
+                    val usdBalance = portfolioResponse.usdBalance?.toDouble() ?: 0.0
+                    val totalAssets = usdBalance
+                    binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
                     
                     // KRW 환산액 표시 (API 기반 환율 변환)
                     lifecycleScope.launch {
                         try {
-                            val krwAmount = com.stip.utils.ExchangeRateManager.convertUsdToKrwWithApi(totalEval)
+                            val krwAmount = com.stip.utils.ExchangeRateManager.convertUsdToKrwWithApi(totalAssets)
                             if (isAdded && _binding != null) {
                                 binding.totalIpAssetsKrw.text = "≈ ${NumberFormat.getNumberInstance(Locale.US).format(krwAmount.toInt())} KRW"
                             }
@@ -206,7 +207,6 @@ class IpAssetFragment : Fragment() {
                     assetsList.clear()
                     
                     // USD 항목
-                    val usdBalance = portfolioResponse.usdBalance?.toDouble() ?: 0.0
                     assetsList.add(
                         IpAssetItem(
                             currencyCode = "USD",

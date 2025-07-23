@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 data class IpListingItem(
     val logoResId: Int? = null,               // DIP 로고 (nullable)
     val ticker: String,                       // DIP 티커명 (예: AXNO)
+    val countryImage: String? = null,         // 국가 이미지 URL (nullable)
     val currentPrice: String,                 // 현재가
     val changePercent: String,                // 전일 대비 퍼센트
     val changeAbsolute: String,               // 전일 대비 절대값

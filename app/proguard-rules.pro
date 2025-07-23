@@ -37,6 +37,28 @@
   @com.google.gson.annotations.SerializedName <fields>;
 }
 
+# ============================= 추상 클래스 관련 Gson 에러 해결 =============================
+# 추상 클래스나 인터페이스가 Gson에 의해 인스턴스화되는 것을 방지
+-keep class * {
+    @com.google.gson.annotations.SerializedName *;
+}
+
+# 모든 데이터 클래스의 기본 생성자 보호 (추상 클래스 문제 해결)
+-keepclassmembers class * {
+    public <init>();
+}
+
+# Gson이 사용하는 모든 클래스의 필드 보호
+-keepclassmembers class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# 특정 패키지의 모든 클래스 보호 (v1.a 같은 축소된 클래스명 방지)
+-keep class com.stip.** { *; }
+-keep class com.stip.**.model.** { *; }
+-keep class com.stip.**.data.** { *; }
+-keep class com.stip.api.** { *; }
+
 # ============================= Retrofit 관련 규칙 =============================
 # Retrofit 인터페이스와 관련 클래스 보호
 -keep,allowobfuscation,allowshrinking interface retrofit2.Call

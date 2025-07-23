@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.stip.stip.R
 import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.order.coordinator.OrderDataCoordinator
 import com.stip.stip.order.OrderUIInitializer
@@ -84,6 +85,23 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
         try {
             // Initialize Core Logic
             orderDataCoordinator = OrderDataCoordinator(initialTicker)
+            
+            // 잔액 업데이트 콜백 설정
+            orderDataCoordinator.setOnBalanceUpdated {
+                // UI 업데이트를 메인 스레드에서 실행
+                requireActivity().runOnUiThread {
+                    try {
+                        // 주문 가능 금액 업데이트
+                        orderInputHandler.updateOrderAvailableDisplay()
+                        // 거래 정보 업데이트
+                        orderInputHandler.updateTradingInfoContent()
+                        // 주문 버튼 상태 업데이트
+                        orderButtonHandler.updateOrderButtonStates()
+                    } catch (e: Exception) {
+                        Log.e(TAG, "잔액 업데이트 중 UI 오류", e)
+                    }
+                }
+            }
 
             // Initialize Adapters
             filledOrderAdapter = FilledOrderAdapter()
@@ -132,7 +150,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
                 availableUsdBalance = { orderDataCoordinator.availableUsdBalance },
                 heldAssetQuantity = { orderDataCoordinator.heldAssetQuantity },
                 getCurrentTicker = { orderDataCoordinator.currentTicker },
-                getCurrentOrderType = { binding.radioGroupOrderType.checkedRadioButtonId }
+                getCurrentOrderType = { binding.radioGroupOrderType.checkedRadioButtonId },
+                getHeldAssetEvalAmount = { orderDataCoordinator.getActualSellableEvalAmount() }
             )
 
             orderButtonHandler = OrderButtonHandler(
@@ -171,6 +190,7 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
             orderInputHandler.setupInputListeners()
             orderInputHandler.setupPriceAdjustmentButtons()
             orderInputHandler.setupQuantitySpinner()
+            orderInputHandler.setupResetButton()
             
             // 초기 UI 상태 설정
             orderInputHandler.updateUiForOrderTypeChange()
@@ -192,9 +212,18 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
             binding.tabLayoutOrderMode.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
                     tab?.let { 
+                        // 탭 변경 시 주문 유형을 지정가로 초기화
+                        binding.radioGroupOrderType.check(R.id.radio_limit_order)
+                        
+                        // 입력값 초기화
+                        binding.editTextLimitPrice.setText("")
+                        binding.editTextQuantity.setText("")
+                        binding.editTextTriggerPrice?.setText("")
+                        
                         uiStateManager.handleTabSelection(it.position)
                         // 탭 변경 시 OrderInputHandler UI 업데이트
                         orderInputHandler.updateUiForOrderTypeChange()
+                        orderInputHandler.updateOrderAvailableDisplay()
                     }
                 }
                 override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
@@ -326,6 +355,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
     override fun onPriceClicked(price: String) {
         try {
             Log.d(TAG, "Price clicked: $price")
+            // 주문창에 가격 자동 반영
+            orderInputHandler.handleOrderBookPriceClick(price)
         } catch (e: Exception) {
             Log.e(TAG, "Error in onPriceClicked", e)
         }

@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.Toast
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentOrderContentBinding
 import com.stip.stip.signup.utils.PreferenceUtil
@@ -26,7 +27,8 @@ class OrderInputHandler(
     private val availableUsdBalance: () -> Double,
     private val heldAssetQuantity: () -> Double,
     private val getCurrentTicker: () -> String?,
-    private val getCurrentOrderType: () -> Int
+    private val getCurrentOrderType: () -> Int,
+    private val getHeldAssetEvalAmount: () -> Double = { 0.0 }
 ) {
 
     private var calculatedMaxQty: Double = 0.0
@@ -198,17 +200,107 @@ class OrderInputHandler(
                     1 -> 1.0; 2 -> 0.75; 3 -> 0.5; 4 -> 0.25; 5 -> 0.10; else -> 0.0
                 }
 
-                val maxQty = calculateMaxQuantity()
-                val targetQty = maxQty * factor
+                val selectedTab = binding.tabLayoutOrderMode.selectedTabPosition
+                
+                if (selectedTab == 0) { // 매수 탭
+                    val isMarketOrder = getCurrentOrderType() == R.id.radio_market_order
+                    
+                    if (isMarketOrder) {
+                        // 시장가 매수: 주문가능 금액의 퍼센트만큼 총액 필드에 입력
+                        val availableBalance = availableUsdBalance()
+                        val targetAmount = availableBalance * factor
+                        
+                        val watcher = quantityTextWatcher
+                        binding.editTextQuantity.removeTextChangedListener(watcher)
+                        binding.editTextQuantity.setText(fixedTwoDecimalFormatter.format(targetAmount.coerceAtLeast(0.0)))
+                        binding.editTextQuantity.addTextChangedListener(watcher)
+                        
+                        lastEditedFocus = LastEdited.TOTAL_AMOUNT
+                    } else {
+                        val priceStr = binding.editTextLimitPrice.text?.toString()
+                        val currentPrice = parseDouble(priceStr)
+                        
+                        if (currentPrice <= 0) {
+                            // 가격이 입력되지 않은 경우 토스트 메시지 표시
+                            Toast.makeText(context, "가격을 먼저 입력해주세요", Toast.LENGTH_SHORT).show()
+                            binding.spinnerAvailableQuantity.setSelection(0, false)
+                            return
+                        }
+                        
+                        // 가격이 입력된 경우 주문가능 금액의 퍼센트만큼 수량 필드에 입력 (수수료 고려)
+                        val availableBalance = availableUsdBalance()
+                        val targetAmount = availableBalance * factor
+                        val fee = getFeeRate()
+                        
+                        // 수수료를 고려한 수량 계산: (주문가능금액 * 퍼센트) / (가격 * (1 + 수수료))
+                        // 이렇게 하면 수량 * 가격 * (1 + 수수료) = 주문가능금액 * 퍼센트가 됨
+                        val targetQty = floor((targetAmount / (currentPrice * (1 + fee))) * 100_000_000) / 100_000_000
+                        
+                        val watcher = quantityTextWatcher
+                        binding.editTextQuantity.removeTextChangedListener(watcher)
+                        // 수량 표시 소수점 8자리까지 표시
+                        val preciseFormatter = DecimalFormat("#,##0.########")
+                        binding.editTextQuantity.setText(preciseFormatter.format(targetQty.coerceAtLeast(0.0)))
+                        binding.editTextQuantity.addTextChangedListener(watcher)
+                        
+                        lastEditedFocus = LastEdited.QUANTITY
+                    }
+                } else { // 매도 탭
+                    val isMarketOrder = getCurrentOrderType() == R.id.radio_market_order
+                    
+                    if (isMarketOrder) {
+                        // 시장가 매도: 보유 자산 수량의 퍼센트만큼 수량 필드에 입력
+                        val heldQty = heldAssetQuantity()
+                        
+                        if (heldQty <= 0) {
+                            Toast.makeText(context, "보유 자산이 없습니다", Toast.LENGTH_SHORT).show()
+                            binding.spinnerAvailableQuantity.setSelection(0, false)
+                            return
+                        }
+                        
+                        val targetQty = heldQty * factor
+                        
+                        val watcher = quantityTextWatcher
+                        binding.editTextQuantity.removeTextChangedListener(watcher)
+                        binding.editTextQuantity.setText(fixedTwoDecimalFormatter.format(targetQty.coerceAtLeast(0.0)))
+                        binding.editTextQuantity.addTextChangedListener(watcher)
+                        
+                        lastEditedFocus = LastEdited.QUANTITY
+                        Log.d("OrderInputHandler", "시장가 매도 - heldQty: $heldQty, targetQty: $targetQty, factor: $factor")
+                    } else {
+                        // 지정가/예약 매도: 가격이 입력되지 않은 경우 메시지 표시
+                        val priceStr = binding.editTextLimitPrice.text?.toString()
+                        val currentPrice = parseDouble(priceStr)
+                        
+                        if (currentPrice <= 0) {
+                            // 가격이 입력되지 않은 경우 토스트 메시지 표시
+                            Toast.makeText(context, "가격을 먼저 입력해주세요", Toast.LENGTH_SHORT).show()
+                            binding.spinnerAvailableQuantity.setSelection(0, false)
+                            return
+                        }
+                        
+                        // 가격이 입력된 경우 보유 자산 수량의 퍼센트만큼 수량 필드에 입력
+                        val heldQty = heldAssetQuantity()
+                        
+                        if (heldQty <= 0) {
+                            Toast.makeText(context, "보유 자산이 없습니다", Toast.LENGTH_SHORT).show()
+                            binding.spinnerAvailableQuantity.setSelection(0, false)
+                            return
+                        }
+                        
+                        val targetQty = heldQty * factor
+                        
+                        val watcher = quantityTextWatcher
+                        binding.editTextQuantity.removeTextChangedListener(watcher)
+                        binding.editTextQuantity.setText(fixedTwoDecimalFormatter.format(targetQty.coerceAtLeast(0.0)))
+                        binding.editTextQuantity.addTextChangedListener(watcher)
+                        
+                        lastEditedFocus = LastEdited.QUANTITY
+                        Log.d("OrderInputHandler", "지정가 매도 - heldQty: $heldQty, targetQty: $targetQty, factor: $factor, price: $currentPrice")
+                    }
+                }
 
-                val watcher = quantityTextWatcher
-                binding.editTextQuantity.removeTextChangedListener(watcher)
-                binding.editTextQuantity.setText(fixedTwoDecimalFormatter.format(targetQty.coerceAtLeast(0.0)))
-                binding.editTextQuantity.addTextChangedListener(watcher)
-
-                lastEditedFocus = LastEdited.QUANTITY
                 updateCalculatedTotal()
-                binding.spinnerAvailableQuantity.setSelection(0, false)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>) {}
@@ -285,6 +377,7 @@ class OrderInputHandler(
 
         binding.editTextQuantity.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         updateCalculatedTotal() // 주문 유형 변경 시 총액 재계산 및 표시
+        updateOrderAvailableDisplay() // 주문가능 금액 표시 업데이트
     }
 
 
@@ -331,29 +424,78 @@ class OrderInputHandler(
         var maxQty = 0.0
         val isMarketOrder = getCurrentOrderType() == R.id.radio_market_order
 
-        try {
-            if (selectedTab == 1) {
-                maxQty = heldAssetQuantity()
+        if (selectedTab == 0) { // 매수 탭
+            if (isMarketOrder) {
+                // 시장가 매수: 총액 기준으로 계산
+                maxQty = availableUsdBalance()
             } else {
-                val priceToUse: Double?
-                if (isMarketOrder) {
-                    priceToUse = getCurrentPrice()
-                } else {
-                    val limitPriceText = binding.editTextLimitPrice.text?.toString()
-                    priceToUse = parseDouble(limitPriceText).takeIf { it > 0.0 } ?: getCurrentPrice()
+                // 지정가/예약 매수: 수량 기준으로 계산
+                val availableBalance = availableUsdBalance()
+                val currentPrice = getCurrentPrice()
+                if (currentPrice > 0) {
+                    maxQty = availableBalance / currentPrice
                 }
+            }
+        } else { // 매도 탭
+            maxQty = heldAssetQuantity()
+        }
 
-                // Price is guaranteed to be positive at this point
-                val balance = availableUsdBalance()
-                val fee = getFeeRate()
-                val baseAmount = balance / (1 + fee)
-                maxQty = floor((baseAmount / priceToUse) * 100_000_000) / 100_000_000
+        return maxQty.coerceAtLeast(0.0)
+    }
+
+    /**
+     * 주문 가능 금액 표시 업데이트
+     */
+    fun updateOrderAvailableDisplay() {
+        try {
+            val selectedTab = binding.tabLayoutOrderMode.selectedTabPosition
+            
+            when (selectedTab) {
+                0 -> { // 매수 탭
+                    // USD 잔액 표시 - 주문가능 (수수료 제외하지 않음)
+                    val availableBalance = availableUsdBalance()
+                    binding.textOrderAvailableAmount.text = fixedTwoDecimalFormatter.format(availableBalance)
+                    binding.textOrderAvailableUnit.text = context.getString(R.string.unit_usd)
+                    binding.rowOrderAvailable.visibility = if (availableBalance > 0.0) View.VISIBLE else View.GONE
+                    Log.d("OrderInputHandler", "매수 탭 - 주문가능 금액: $availableBalance USD")
+                }
+                1 -> { // 매도 탭
+                    // 매도 탭에서는 해당 티커의 보유 자산 수량 표시
+                    val heldQuantity = heldAssetQuantity()
+                    val tickerName = getCurrentTicker() ?: "--"
+                    binding.textOrderAvailableAmount.text = fixedTwoDecimalFormatter.format(heldQuantity)
+                    binding.textOrderAvailableUnit.text = tickerName
+                    binding.rowOrderAvailable.visibility = if (heldQuantity > 0.0) View.VISIBLE else View.GONE
+                    Log.d("OrderInputHandler", "매도 탭 - 주문가능 수량: $heldQuantity $tickerName")
+                }
+                else -> {
+                    binding.rowOrderAvailable.visibility = View.GONE
+                }
             }
         } catch (e: Exception) {
-            Log.e("OrderInputHandler", "Error calculating max quantity", e)
-            maxQty = 0.0
+            Log.e("OrderInputHandler", " 주문가능 디스플레이 에러", e)
         }
-        return maxQty.coerceAtLeast(0.0)
+    }
+
+    /**
+     * 거래 정보 내용 업데이트
+     */
+    fun updateTradingInfoContent() {
+        try {
+            // OrderInfoManager를 사용하여 거래 정보 업데이트
+            val orderInfoManager = OrderInfoManager(
+                context = context,
+                binding = binding,
+                getCurrentPrice = { getCurrentPrice().toFloat() },
+                getHeldAssetQuantity = { heldAssetQuantity() },
+                getAverageBuyPrice = { getCurrentPrice() }, // 현재는 현재 가격을 평균 매수가로 사용
+                getCurrentTicker = { getCurrentTicker() },
+                userHoldsAsset = { heldAssetQuantity() > 0.0 }
+            )
+            orderInfoManager.updateTradingInfoViewContent()
+        } catch (e: Exception) {
+            Log.e("OrderInputHandler", "거래 정보 업데이트 에러", e)
+        }
     }
 
     private fun parseDouble(value: String?): Double {
