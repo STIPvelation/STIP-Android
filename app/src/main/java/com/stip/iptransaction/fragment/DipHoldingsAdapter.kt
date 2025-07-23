@@ -28,14 +28,14 @@ class DipHoldingsAdapter(private var holdings: List<DipHoldingitem>) :
             assetName.text = holding.name
             // ▲▲▲ 이 라인의 주석을 제거하세요 ▲▲▲
 
-            quantityValue.text = "${holding.quantity}"
-            avgPriceValue.text = "$%,.2f".format(holding.buyPrice)
+            quantityValue.text = "${holding.balance.toInt()}"
+            avgPriceValue.text = "$%,.2f".format(holding.buyAvgPrice.toDouble())
             valuationValue.text = "$%,.2f".format(holding.totalValuation)
             purchaseAmountValue.text = "$%,.2f".format(holding.totalBuyAmount)
 
-            val profitFormatted = if (holding.profit >= 0) "+$%,.2f".format(holding.profit) else "-$%,.2f".format(-holding.profit)
-            val profitRateFormatted = "%.2f%%".format(holding.profitRate)
-            val colorRes = if (holding.profit >= 0) R.color.color_rise else R.color.color_fall
+            val profitFormatted = if (holding.profit.toDouble() >= 0) "+$%,.2f".format(holding.profit.toDouble()) else "-$%,.2f".format(-holding.profit.toDouble())
+            val profitRateFormatted = "%.2f%%".format(holding.profitRate.toDouble())
+            val colorRes = if (holding.profit.toDouble() >= 0) R.color.color_rise else R.color.color_fall
             val color = ContextCompat.getColor(itemView.context, colorRes)
 
             plValue.apply {

@@ -115,30 +115,7 @@
                         android:textAlignment="center"
                         app:chipBackgroundColor="@color/filter_chip_background_selector"
                         android:textColor="@color/filter_chip_text_selector"/>
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_type_deposit"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:text="@string/chip_type_deposit"
-                        android:textAlignment="center"
-                        app:chipBackgroundColor="@color/filter_chip_background_selector"
-                        android:textColor="@color/filter_chip_text_selector"/>
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_type_withdraw"
-                        style="@style/Widget.MaterialComponents.Chip.Choice"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:layout_weight="1"
-                        android:text="@string/chip_type_withdraw"
-                        android:textAlignment="center"
-                        app:chipBackgroundColor="@color/filter_chip_background_selector"
-                        android:textColor="@color/filter_chip_text_selector"/>
+
                     <com.google.android.material.chip.Chip
                         android:id="@+id/chip_type_all"
                         style="@style/Widget.MaterialComponents.Chip.Choice"

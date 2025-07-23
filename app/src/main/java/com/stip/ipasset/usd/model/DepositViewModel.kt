@@ -14,19 +14,18 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
-import com.stip.ipasset.api.WalletAddressService
-import com.stip.ipasset.model.WalletAddressResponse
+import com.stip.api.repository.PortfolioRepository
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import androidx.lifecycle.viewModelScope
 
 @HiltViewModel
 class DepositViewModel @Inject constructor(
-    application: Application,
-    private val walletAddressService: com.stip.ipasset.api.WalletAddressService
+    application: Application
 ) : AndroidViewModel(application) {
 
     private val context = getApplication<Application>().applicationContext
+    private val portfolioRepository = PortfolioRepository()
 
     private val _depositUrl = MutableStateFlow<String?>(null)
     val depositUrl = _depositUrl.asStateFlow()
@@ -104,14 +103,17 @@ class DepositViewModel @Inject constructor(
                 _isLoading.value = true
                 _errorMessage.value = null
                 val memberId = com.stip.stip.signup.utils.PreferenceUtil.getUserId()
-                Log.d("DepositViewModel", "API 요청: memberId=$memberId, symbol=$symbol")
+                Log.d("DepositViewModel", "지갑 주소 조회: memberId=$memberId, symbol=$symbol")
+                
                 if (memberId.isNullOrBlank()) {
                     _errorMessage.value = "로그인 정보가 없습니다."
                     return@launch
                 }
-                val response = walletAddressService.getWalletAddress(memberId, symbol)
-                if (response.success && response.data?.walletAddress != null) {
-                    val address = response.data.walletAddress
+                
+                // 포트폴리오 API에서 지갑 주소 가져오기
+                val address = portfolioRepository.getWalletAddress(memberId, symbol)
+                
+                if (address != null) {
                     _depositUrl.value = address
                     try {
                         val qrCodeWriter = com.google.zxing.qrcode.QRCodeWriter()
@@ -132,7 +134,7 @@ class DepositViewModel @Inject constructor(
                 } else {
                     _depositUrl.value = null
                     _qrCode.value = null
-                    _errorMessage.value = response.message
+                    _errorMessage.value = "지갑 주소를 찾을 수 없습니다."
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

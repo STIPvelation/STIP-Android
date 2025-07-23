@@ -317,8 +317,18 @@ class OrderButtonHandler(
                 
                 CoroutineScope(Dispatchers.Main).launch {
                     if (response.isSuccessful) {
-                        Log.d(TAG, "$orderType 주문 성공")
-                        showToast("${orderType} 주문이 성공적으로 실행되었습니다.")
+                        val orderResponse = response.body()
+                        if (orderResponse?.success == true) {
+                            Log.d(TAG, "$orderType 주문 성공: ${orderResponse.message}")
+                            showToast("${orderType} 주문이 성공적으로 실행되었습니다.")
+                        } else {
+                            Log.e(TAG, "$orderType 주문 실패: ${orderResponse?.message}")
+                            showErrorDialog(
+                                R.string.dialog_title_error_order,
+                                "${orderType} 주문 실패: ${orderResponse?.message}",
+                                R.color.red
+                            )
+                        }
                     } else {
                         Log.e(TAG, "$orderType 주문 실패: ${response.code()} - ${response.errorBody()?.string()}")
                         showErrorDialog(

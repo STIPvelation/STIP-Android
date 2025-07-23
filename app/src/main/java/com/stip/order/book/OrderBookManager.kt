@@ -11,6 +11,7 @@ import com.stip.stip.iphome.model.OrderBookItem // OrderBookItem import 확인
 import com.stip.stip.order.adapter.OrderBookAdapter
 import com.stip.stip.R
 import com.stip.stip.iptransaction.api.IpTransactionService
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.util.*
 import kotlin.math.floor
@@ -95,97 +96,55 @@ class OrderBookManager(
         }
     }
 
-    // --- ▼▼▼ 수정된 메서드 (Gap 아이템 추가 로직 포함) ▼▼▼ ---
+    // --- ▼▼▼ 수정된 메서드 (호가창 API) ▼▼▼ ---
     private fun updateOrderBook() {
         try {
             val currentPrice = getCurrentPrice()
-            Log.d(TAG, "Updating order book with currentPrice: $currentPrice, aggregation: $currentAggregationLevel")
+            val currentPairId = getCurrentPairId()
             
-            // 새로운 티커 API에서 실제 호가 데이터 가져오기
-            IpTransactionService.getTickers { tickerResponse, error ->
-                if (error != null) {
-                    Log.e(TAG, "호가 데이터 가져오기 실패: ${error.message}")
-                    // 실패 시 더미 데이터 사용
-                    val rawList = generateDummyOrderBook(currentPrice, this.fixedTwoDecimalFormatter, this.numberParseFormat)
-                    updateOrderBookUI(rawList, currentPrice)
-                    return@getTickers
-                }
-                
-                tickerResponse?.let { response ->
-                    if (response.success && response.data.isNotEmpty()) {
-                        Log.d(TAG, "호가 데이터 성공: ${response.data.size}개")
+            Log.d(TAG, "Updating order book with currentPrice: $currentPrice, pairId: $currentPairId, aggregation: $currentAggregationLevel")
+            
+            if (currentPairId == null) {
+                Log.w(TAG, "현재 pairId가 null 빈 호가창 표시")
+                updateOrderBookUI(emptyList(), currentPrice)
+                return
+            }
+            
+            // 새로운 호가창 API 사용
+            val orderBookRepository = com.stip.stip.api.repository.OrderBookRepository()
+            
+            // 코루틴 스코프에서 API 호출
+            kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.IO).launch {
+                try {
+                    val orderBookItems = orderBookRepository.getOrderBook(currentPairId, currentPrice)
+                    
+                    if (orderBookItems.isNotEmpty()) {
+                        Log.d(TAG, "호가창 API 호출 성공: ${orderBookItems.size}개 아이템")
                         
-                        // 현재 선택된 pairId와 일치하는 티커 데이터 찾기
-                        val currentPairId = getCurrentPairId()
-                        val tickerData = if (currentPairId != null) {
-                            response.data.find { it.pairId == currentPairId }
-                                ?: response.data.firstOrNull()
-                        } else {
-                            response.data.firstOrNull()
+                        // UI 업데이트는 메인 스레드에서 실행
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            updateOrderBookUI(orderBookItems, currentPrice)
                         }
-                        
-                        if (tickerData == null) {
-                            Log.e(TAG, "현재 pairId($currentPairId)에 맞는 티커 데이터를 찾을 수 없음")
-                            val rawList = generateDummyOrderBook(currentPrice, this.fixedTwoDecimalFormatter, this.numberParseFormat)
-                            updateOrderBookUI(rawList, currentPrice)
-                            return@getTickers
-                        }
-                        
-                        Log.d(TAG, "사용할 티커 데이터: pairId=${tickerData.pairId}, lastPrice=${tickerData.lastPrice}")
-                        
-                        // API 데이터로 OrderBookItem 생성
-                        val sellOrders = mutableListOf<OrderBookItem>()
-                        val buyOrders = mutableListOf<OrderBookItem>()
-                        
-                        // Asks (매도 호가) 처리
-                        tickerData.asks.forEach { ask ->
-                            val price = ask[0]
-                            val quantity = ask[1]
-                            val percent = if (currentPrice > 0) ((price - currentPrice) / currentPrice) * 100 else 0.0
-                            
-                            sellOrders.add(
-                                OrderBookItem(
-                                    price = fixedTwoDecimalFormatter.format(price),
-                                    percent = String.format("%.2f%%", percent),
-                                    quantity = fixedTwoDecimalFormatter.format(quantity),
-                                    isBuy = false
-                                )
-                            )
-                        }
-                        
-                        // Bids (매수 호가) 처리
-                        tickerData.bids.forEach { bid ->
-                            val price = bid[0]
-                            val quantity = bid[1]
-                            val percent = if (currentPrice > 0) ((price - currentPrice) / currentPrice) * 100 else 0.0
-                            
-                            buyOrders.add(
-                                OrderBookItem(
-                                    price = fixedTwoDecimalFormatter.format(price),
-                                    percent = String.format("%.2f%%", percent),
-                                    quantity = fixedTwoDecimalFormatter.format(quantity),
-                                    isBuy = true
-                                )
-                            )
-                        }
-                        
-                        val rawList = sellOrders + buyOrders
-                        updateOrderBookUI(rawList, currentPrice)
-                        
                     } else {
-                        Log.e(TAG, "API 응답 실패 또는 빈 데이터")
-                        // 실패 시 더미 데이터 사용
-                        val rawList = generateDummyOrderBook(currentPrice, this.fixedTwoDecimalFormatter, this.numberParseFormat)
-                        updateOrderBookUI(rawList, currentPrice)
+                        Log.w(TAG, "호가창 API 응답이 비어잇음 빈 호가창 표시")
+                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                            updateOrderBookUI(emptyList(), currentPrice)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e(TAG, "호가창 API 호출 실패", e)
+                    // 실패 시 빈 호가창 표시
+                    kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Main) {
+                        updateOrderBookUI(emptyList(), currentPrice)
                     }
                 }
             }
+            
         } catch (e: Exception) {
             Log.e(TAG, "Error updating order book", e)
-            // 예외 발생 시 더미 데이터 사용
+            // 예외 발생 시 빈 호가창 표시
             val currentPrice = getCurrentPrice()
-            val rawList = generateDummyOrderBook(currentPrice, this.fixedTwoDecimalFormatter, this.numberParseFormat)
-            updateOrderBookUI(rawList, currentPrice)
+            updateOrderBookUI(emptyList(), currentPrice)
         }
     }
 
@@ -198,6 +157,16 @@ class OrderBookManager(
 
         val sortedSells = aggregatedList.filter { !it.isBuy && !it.isGap }.sortedByDescending { parseDouble(it.price) }
         val sortedBuys = aggregatedList.filter { it.isBuy && !it.isGap }.sortedByDescending { parseDouble(it.price) }
+
+        // 시장가 주문 Radio 비활성화 로직
+        // 매수 탭: 매도(asks)가 0개면 비활성화, 매도 탭: 매수(bids)가 0개면 비활성화 (터치해도 시장 주문으로 변하지 않음)
+        val tabPosition = binding.tabLayoutOrderMode.selectedTabPosition
+        val radioMarket = binding.radioMarketOrder
+        if (tabPosition == 0) { // 매수 탭
+            radioMarket.isEnabled = sortedSells.isNotEmpty()
+        } else if (tabPosition == 1) { // 매도 탭
+            radioMarket.isEnabled = sortedBuys.isNotEmpty()
+        }
 
         val gapItem = OrderBookItem(price = "", quantity = "", isBuy = false, percent = "", isGap = true)
 
@@ -296,6 +265,8 @@ class OrderBookManager(
         }
     }
 
+    // 더미 데이터 생성 함수 - 사용하지 않음
+    /*
     fun generateDummyOrderBook(
         currentPrice: Float,
         fixedTwoDecimalFormatter: DecimalFormat,
@@ -341,6 +312,7 @@ class OrderBookManager(
         }
         return sellOrders + buyOrders
     }
+    */
 
     fun generateAggregatedOrderBook(
         baseData: List<OrderBookItem>,

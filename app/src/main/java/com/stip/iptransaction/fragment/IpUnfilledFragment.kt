@@ -130,19 +130,18 @@ class IpUnfilledFragment : Fragment(), ScrollableToTop {
                 if (data != null && data.isNotEmpty()) {
                     // ApiOrderResponse를 UnfilledOrder로 변환
                     val unfilledOrders = data.map { apiOrder ->
-                        val tickerName = com.stip.stip.iphome.TradingDataHolder.ipListingItems
-                            .find { it.registrationNumber == apiOrder.pairId }
-                            ?.ticker ?: apiOrder.pairId
+                        val tickerName = apiOrder.marketPair.symbol
                         UnfilledOrder(
                             orderId = apiOrder.id,
-                            memberNumber = apiOrder.userId,
+                            memberNumber = apiOrder.member.id,
                             ticker = tickerName,
                             tradeType = if (apiOrder.type == "buy") "매수" else "매도",
                             watchPrice = "--",
                             orderPrice = apiOrder.price.toString(),
                             orderQuantity = apiOrder.quantity.toString(),
                             unfilledQuantity = (apiOrder.quantity - apiOrder.filledQuantity).toString(),
-                            orderTime = formatOrderTime(apiOrder.createdAt)
+                            orderTime = formatOrderTime(apiOrder.createdAt),
+                            status = "미체결"
                         )
                     }
                     setupUnfilledOrderList(unfilledOrders)

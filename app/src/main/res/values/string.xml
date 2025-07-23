@@ -1004,8 +1004,9 @@
     <string name="chip_type_all">전체</string>
     <string name="chip_type_buy">매수</string>
     <string name="chip_type_sell">매도</string>
-    <string name="chip_type_deposit">입금</string>
-    <string name="chip_type_withdraw">출금</string>
+    <string name="chip_type_deposit">Deposit</string>
+    <string name="chip_type_withdraw">Withdraw</string>
+
 
     <string name="chip_period_1w">1주일</string>
     <string name="chip_period_1m">1개월</string>

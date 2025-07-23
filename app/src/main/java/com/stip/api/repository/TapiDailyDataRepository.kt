@@ -7,38 +7,31 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 /**
- * TAPI 일별 데이터 Repository
- * TAPI 서버에서 일별 거래 데이터를 조회하는 기능을 제공
+ * ip 일별 데이터 Repository
  */
 class TapiDailyDataRepository {
-    
     private val tapiService: TapiDailyDataService by lazy {
-        RetrofitClient.createTapiService(TapiDailyDataService::class.java)
+        RetrofitClient.createService(TapiDailyDataService::class.java)
     }
-    
+
     /**
-     * 최근 일별 거래 데이터 조회 (기본 30일)
+     * 일별 거래 데이터 조회 (기본 30일)
      * @param marketPairId 마켓 페어 ID
      * @return 일별 거래 데이터 리스트
      */
     suspend fun getRecentDailyData(marketPairId: String): List<TapiDailyDataResponse> {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val calendar = Calendar.getInstance()
-        
-        // 오늘 날짜
         val to = dateFormat.format(calendar.time)
-        
-        // 30일 전
         calendar.add(Calendar.DAY_OF_MONTH, -30)
         val from = dateFormat.format(calendar.time)
-        
         return try {
             tapiService.getDailyData(marketPairId, from, to)
         } catch (e: Exception) {
             emptyList()
         }
     }
-    
+
     /**
      * 특정 기간의 일별 거래 데이터 조회
      * @param marketPairId 마켓 페어 ID
@@ -47,21 +40,20 @@ class TapiDailyDataRepository {
      * @return 일별 거래 데이터 리스트
      */
     suspend fun getDailyDataByRange(
-        marketPairId: String, 
-        from: Date, 
+        marketPairId: String,
+        from: Date,
         to: Date
     ): List<TapiDailyDataResponse> {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val fromStr = dateFormat.format(from)
         val toStr = dateFormat.format(to)
-        
         return try {
             tapiService.getDailyData(marketPairId, fromStr, toStr)
         } catch (e: Exception) {
             emptyList()
         }
     }
-    
+
     /**
      * 특정 날짜의 일별 거래 데이터 조회
      * @param marketPairId 마켓 페어 ID
@@ -71,7 +63,6 @@ class TapiDailyDataRepository {
     suspend fun getDailyDataByDate(marketPairId: String, date: Date): List<TapiDailyDataResponse> {
         val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
         val dateStr = dateFormat.format(date)
-        
         return try {
             tapiService.getDailyData(marketPairId, dateStr, dateStr)
         } catch (e: Exception) {

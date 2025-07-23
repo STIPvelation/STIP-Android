@@ -256,23 +256,32 @@ class OrderInputHandler(
         binding.labelCalculatedTotal.text = context.getString(R.string.label_total_amount)
         binding.textUnitCalculatedTotal.text = context.getString(R.string.unit_usd)
 
-        // --- ▼▼▼ 매수 & 시장가 조건에 따른 수량 라벨/힌트/단위 변경 ▼▼▼ ---
-        if (isMarketOrder && isBuyTab) {
-            // --- 시장가 매수 ---
-            binding.labelQuantity.text = context.getString(R.string.label_total_amount) // 라벨: "총액"으로 변경!
-            binding.editTextQuantity.hint = context.getString(R.string.hint_enter_total_amount) // 힌트: "총액 입력"
-            binding.textUnitQuantity.text = context.getString(R.string.unit_usd) // 단위: "USD"
-            binding.textOrderAvailableUnit.visibility = View.VISIBLE // 최대 가능 수량 표시
-            calculateAndDisplayMaxQuantity()
+        // --- ▼▼▼ 시장가 주문에 따른 UI 변경 ▼▼▼ ---
+        if (isMarketOrder) {
+            if (isBuyTab) {
+                // --- 시장가 매수: 총액 입력 모드 ---
+                binding.labelQuantity.text = context.getString(R.string.label_total_amount) // 라벨: "총액"
+                binding.editTextQuantity.hint = context.getString(R.string.hint_enter_total_amount) // 힌트: "총액 입력"
+                binding.textUnitQuantity.text = context.getString(R.string.unit_usd) // 단위: "USD"
+                binding.textOrderAvailableUnit.visibility = View.VISIBLE
+                calculateAndDisplayMaxQuantity()
+            } else {
+                // --- 시장가 매도: 수량 입력 모드 ---
+                binding.labelQuantity.text = context.getString(R.string.label_quantity) // 라벨: "수량"
+                binding.editTextQuantity.hint = context.getString(R.string.hint_enter_quantity) // 힌트: "수량 입력"
+                binding.textUnitQuantity.text = getCurrentTicker() ?: "" // 단위: 티커
+                binding.textOrderAvailableUnit.visibility = View.VISIBLE
+                calculateAndDisplayMaxQuantity()
+            }
         } else {
-            // --- 그 외 모든 경우 (수량 입력 모드) ---
-            binding.labelQuantity.text = context.getString(R.string.label_quantity) // 라벨: "수량"으로 복원/유지
+            // --- 지정가/예약 주문: 수량 입력 모드 ---
+            binding.labelQuantity.text = context.getString(R.string.label_quantity) // 라벨: "수량"
             binding.editTextQuantity.hint = context.getString(R.string.hint_enter_quantity) // 힌트: "수량 입력"
             binding.textUnitQuantity.text = getCurrentTicker() ?: "" // 단위: 티커
-            binding.textOrderAvailableUnit.visibility = View.VISIBLE // 최대 가능 수량 표시
+            binding.textOrderAvailableUnit.visibility = View.VISIBLE
             calculateAndDisplayMaxQuantity()
         }
-        // --- ▲▲▲ 매수 & 시장가 조건에 따른 수량 라벨/힌트/단위 변경 ▲▲▲ ---
+        // --- ▲▲▲ 시장가 주문에 따른 UI 변경 ▲▲▲ ---
 
         binding.editTextQuantity.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         updateCalculatedTotal() // 주문 유형 변경 시 총액 재계산 및 표시

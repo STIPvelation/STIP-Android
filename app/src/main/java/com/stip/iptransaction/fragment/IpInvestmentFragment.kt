@@ -69,10 +69,19 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
         setupScrollSync()
-        // 마켓 페어 매핑 먼저 불러온 후 거래내역 로드
+        // 마켓 페어 매핑 먼저 불러온 후 거래내역 로드 (1개월 기간으로 초기 로드)
         viewLifecycleOwner.lifecycleScope.launch {
             marketPairMap = fetchMarketPairs()
-            loadAllData()
+            // 1개월 기간으로 초기 데이터 로드
+            val endDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(java.util.Date())
+            val startDate = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).format(
+                java.util.Calendar.getInstance().apply { add(java.util.Calendar.MONTH, -1) }.time
+            )
+            currentStartDate = startDate
+            currentEndDate = endDate
+            // 필터 라벨을 1개월로 설정
+            binding.textViewFilterLabel.text = "1개월 내역보기"
+            loadAllData(null, startDate, endDate)
         }
 
         binding.imageViewFilterIcon.setOnClickListener {
@@ -143,17 +152,29 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
                     return@launch
                 }
                 
-                // 입출금 내역 로드
-                val depositWithdrawItems = loadDepositWithdrawData(memberId)
-                
                 // 매수/매도 내역 로드
                 val buySellItems = loadBuySellData(memberId)
                 
-                // 모든 데이터 합치기
-                val allItems = depositWithdrawItems + buySellItems
+                // 필터 타입에 따른 데이터 필터링
+                val filteredItems = if (!filterTypes.isNullOrEmpty()) {
+                    val allItems = mutableListOf<IpInvestmentItem>()
+                    
+                    // 필터 타입에 따라 데이터 추가
+                    filterTypes.forEach { filterType ->
+                        when (filterType) {
+                            "매수", "매도" -> {
+                                allItems.addAll(buySellItems.filter { it.type == filterType })
+                            }
+                        }
+                    }
+                    allItems
+                } else {
+                    // 필터가 없는 경우 모든 데이터 합치기
+                    buySellItems
+                }
                 
                 // 날짜순으로 정렬 (최신순)
-                val sortedItems = allItems.sortedByDescending { item ->
+                val sortedItems = filteredItems.sortedByDescending { item ->
                     try {
                         val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
                         dateFormat.parse(item.orderTime)?.time ?: 0L
@@ -181,36 +202,38 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
         }
     }
     
-    private suspend fun loadDepositWithdrawData(memberId: String): List<IpInvestmentItem> {
-        return try {
-            val history = walletHistoryRepository.getWalletHistory(memberId)
-            Log.d("IpInvestmentFragment", "입출금 내역 API 응답: ${history.size}개")
-            
-            // API 응답을 IpInvestmentItem으로 변환
-            history.mapNotNull { record ->
-                record.toIpInvestmentItem()
-            }
-        } catch (e: Exception) {
-            Log.e("IpInvestmentFragment", "입출금 내역 로드 실패", e)
-            emptyList()
-        }
-    }
+
     
     private suspend fun loadBuySellData(memberId: String): List<IpInvestmentItem> {
         return try {
-            // 매수/매도 내역 API 호출 (동기적으로 처리)
+            // 기간 필터가 있는 경우 기간별 주문 내역 조회 API 사용
             val apiOrders = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
                 val orders = mutableListOf<com.stip.stip.iptransaction.model.ApiOrderResponse>()
                 val latch = java.util.concurrent.CountDownLatch(1)
                 var error: Throwable? = null
                 
-                IpTransactionService.getApiFilledOrders(memberId) { apiOrders, err ->
-                    if (err != null) {
-                        error = err
-                    } else {
-                        apiOrders?.let { orders.addAll(it) }
+                if (currentStartDate.isNotEmpty() && currentEndDate.isNotEmpty()) {
+                    // 기간별 주문 내역 조회 API 호출
+                    Log.d("IpInvestmentFragment", "기간별 주문 내역 조회: $currentStartDate ~ $currentEndDate")
+                    IpTransactionService.getOrdersByDateRange(currentStartDate, currentEndDate) { orderListResponse, err ->
+                        if (err != null) {
+                            error = err
+                        } else {
+                            orderListResponse?.data?.let { orders.addAll(it) }
+                        }
+                        latch.countDown()
                     }
-                    latch.countDown()
+                } else {
+                    // 기간 필터가 없는 경우 기존 API 사용
+                    Log.d("IpInvestmentFragment", "전체 주문 내역 조회")
+                    IpTransactionService.getApiFilledOrders(memberId) { apiOrders, err ->
+                        if (err != null) {
+                            error = err
+                        } else {
+                            apiOrders?.let { orders.addAll(it) }
+                        }
+                        latch.countDown()
+                    }
                 }
                 
                 latch.await()
@@ -220,12 +243,12 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
             
             Log.d("IpInvestmentFragment", "매수/매도 내역 API 응답: ${apiOrders.size}개")
             
-            // API 응답을 IpInvestmentItem으로 변환 (pairId -> symbol 변환 적용)
+            // API 응답을 IpInvestmentItem으로 변환
             apiOrders.map { apiOrder ->
                 val type = if (apiOrder.type == "buy") "매수" else "매도"
                 val orderTime = formatDateTime(apiOrder.createdAt)
                 val executionTime = formatDateTime(apiOrder.updatedAt)
-                val symbol = marketPairMap[apiOrder.pairId] ?: apiOrder.pairId
+                val symbol = apiOrder.marketPair.symbol
                 val baseAsset = symbol.substringBefore("/")
                 
                 IpInvestmentItem(
@@ -315,35 +338,7 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
         }
     }
     
-    // WalletHistoryRecord를 IpInvestmentItem으로 변환하는 확장 함수
-    private fun WalletHistoryRecord.toIpInvestmentItem(): IpInvestmentItem? {
-        return try {
-            val type = when (this.type.lowercase()) {
-                "deposit" -> "입금"
-                "withdraw" -> "출금"
-                else -> return null
-            }
-            
-            val timestamp = parseIsoTimestampToMillis(this.timestamp)
-            val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-            val timeString = dateFormat.format(java.util.Date(timestamp))
-            
-            IpInvestmentItem(
-                type = type,
-                name = this.symbol,
-                quantity = String.format("%.2f", this.amount),
-                unitPrice = "1.00",
-                amount = String.format("%.2f", this.amount),
-                fee = "0.00",
-                settlement = String.format("%.2f", this.amount),
-                orderTime = timeString,
-                executionTime = timeString
-            )
-        } catch (e: Exception) {
-            Log.e("IpInvestmentFragment", "WalletHistoryRecord 변환 실패", e)
-            null
-        }
-    }
+
     
     private fun parseIsoTimestampToMillis(iso: String): Long {
         return try {
@@ -372,9 +367,9 @@ class IpInvestmentFragment : Fragment(), ScrollableToTop, TickerSelectionDialogF
     // 마켓 페어 매핑 불러오기
     private suspend fun fetchMarketPairs(): Map<String, String> {
         return try {
-            val api = RetrofitClient.createEngineService(MarketPairsService::class.java)
-            val response = api.getMarketPairs(page = 1, limit = 1000)
-            response.data.record.associate { it.id to it.symbol }
+            val api = RetrofitClient.createTapiService(MarketPairsService::class.java)
+            val response = api.getMarketPairs()
+            response.associate { it.id to it.symbol }
         } catch (e: Exception) {
             Log.e("IpInvestmentFragment", "마켓 페어 매핑 불러오기 실패", e)
             emptyMap()

@@ -40,6 +40,10 @@ class IpHomeFragment : Fragment() {
     private var fullList = mutableListOf<IpListingItem>()
     private var isTickerAsc = true
 
+    private var categoryOptions: List<String> = listOf("ALL IP")
+    private var categoryIdMap: Map<String, Int> = emptyMap()
+    private var selectedCategoryId: Int? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,7 +65,7 @@ class IpHomeFragment : Fragment() {
         startAutoPriceUpdate()
         setupSortListeners()
         setupSearchListener()
-        setupCategoryDropdown() // 필요 시 이 함수 내부에서 드롭다운 초기화 가능
+        loadCategoriesAndSetupDropdown() // 기존 setupCategoryDropdown() 대신
         setupHeaderTickerSort()
         setLocalizedWatermark()
 
@@ -184,14 +188,14 @@ class IpHomeFragment : Fragment() {
 
                 setOnClickListener {
                     binding.allIp.text = category
-                    currentList = if (category == "ALL IP") {
-                        fullList.toMutableList()
+                    if (category == "ALL IP") {
+                        selectedCategoryId = null
+                        loadInitialData()
                     } else {
-                        fullList.filter {
-                            it.category.equals(category, ignoreCase = true)
-                        }.toMutableList()
+                        // 카테고리 ID로 필터링
+                        selectedCategoryId = categoryIdMap[category]
+                        loadFilteredDataByCategory(selectedCategoryId)
                     }
-                    ipListingAdapter.updateItems(currentList)
                     collapseDropdown()
                 }
             }
@@ -229,14 +233,14 @@ class IpHomeFragment : Fragment() {
                     binding.allIp.text = option
                     dropdown.visibility = View.GONE
 
-                    currentList = if (option == "ALL IP") {
-                        fullList.toMutableList()
+                    if (option == "ALL IP") {
+                        selectedCategoryId = null
+                        loadInitialData()
                     } else {
-                        fullList.filter { it.category.equals(option, ignoreCase = true) }
-                            .toMutableList()
+                        // 카테고리 ID로 필터링
+                        selectedCategoryId = categoryIdMap[option]
+                        loadFilteredDataByCategory(selectedCategoryId)
                     }
-
-                    ipListingAdapter.updateItems(currentList)
                     scrollToTop()
                 }
             }
@@ -320,10 +324,82 @@ class IpHomeFragment : Fragment() {
 
 
 
-    private val categoryOptions = listOf(
-        "ALL IP", "Patent", "Trademark", "Franchise",
-        "Music", "Art", "Movie", "Drama", "BM", "Dance", "Game", "Comics", "Character"
-    )
+
+    //    private val categoryOptions = listOf(
+//        "ALL IP", "Patent", "Trademark", "Franchise",
+//        "Music", "Art", "Movie", "Drama", "BM", "Dance", "Game", "Comics", "Character"
+//    )
+    private fun loadCategoriesAndSetupDropdown() {
+        val repository = com.stip.stip.api.repository.IpListingRepository()
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // 카테고리 목록 가져오기
+                val categories = repository.getMarketCategories()
+                val categoryNames = categories.map { it.name }
+                categoryOptions = listOf("ALL IP") + categoryNames
+                
+                // 카테고리 ID 매핑 생성
+                categoryIdMap = categories.associate { it.name to it.categoryId }
+                
+                setupCategoryDropdown()
+                android.util.Log.d("IpHomeFragment", "카테고리 로드 완료: ${categories.size}개 - ${categoryNames.joinToString(", ")}")
+            } catch (e: Exception) {
+                android.util.Log.e("IpHomeFragment", "카테고리 로드 실패: ${e.message}")
+                // 실패 시 기본값 사용
+                categoryOptions = listOf("ALL IP")
+                setupCategoryDropdown()
+            }
+        }
+    }
+
+    private fun loadCategoryData(categoryId: Int) {
+        val repository = com.stip.stip.api.repository.IpListingRepository()
+        viewLifecycleOwner.lifecycleScope.launch {
+            val apiItems = repository.getMarketPairsByCategory(categoryId)
+            fullList = apiItems.toMutableList()
+            currentList = fullList.toMutableList()
+            com.stip.stip.iphome.TradingDataHolder.ipListingItems = fullList
+            ipListingAdapter.updateItems(currentList)
+        }
+    }
+
+    /**
+     * 선택된 카테고리 ID로 필터링된 데이터 로드
+     * @param categoryId 선택된 카테고리 ID
+     */
+    private fun loadFilteredDataByCategory(categoryId: Int?) {
+        if (categoryId == null) {
+            loadInitialData()
+            return
+        }
+        
+        val repository = com.stip.stip.api.repository.IpListingRepository()
+        
+        // 로딩 중 표시
+        fullList = emptyList<IpListingItem>().toMutableList()
+        currentList = emptyList<IpListingItem>().toMutableList()
+        ipListingAdapter.updateItems(currentList)
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // 카테고리 ID로 필터링된 데이터 가져오기
+                val apiItems = repository.getMarketPairsByCategory(categoryId)
+                
+                if (apiItems.isNotEmpty()) {
+                    fullList = apiItems.toMutableList()
+                    currentList = fullList.toMutableList()
+                    TradingDataHolder.ipListingItems = fullList
+                    ipListingAdapter.updateItems(currentList)
+                    android.util.Log.d("IpHomeFragment", "카테고리 필터링 완료: ${apiItems.size}개 아이템 (카테고리 ID: $categoryId)")
+                } else {
+                    loadEmptyState()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("IpHomeFragment", "카테고리 필터링 데이터 로드 실패: ${e.message}")
+                loadEmptyState()
+            }
+        }
+    }
 
 
     private fun startAutoPriceUpdate() {
@@ -478,16 +554,17 @@ class IpHomeFragment : Fragment() {
         val selectedCategory = binding.allIp.text.toString()
         val searchQuery = binding.ipSearch.text.toString().trim()
         
-        currentList = if (selectedCategory == "ALL IP") {
+        currentList = if (selectedCategory == "ALL IP" || selectedCategoryId == null) {
             fullList.toMutableList()
         } else {
-            fullList.filter { it.category == selectedCategory }.toMutableList()
+            // 카테고리 ID로 필터링 (API에서 이미 필터링된 데이터이므로 전체 리스트 사용)
+            fullList.toMutableList()
         }
         
         if (searchQuery.isNotEmpty()) {
             currentList = currentList.filter {
                 it.ticker.contains(searchQuery, ignoreCase = true) ||
-                it.companyName.contains(searchQuery, ignoreCase = true)
+                        it.companyName.contains(searchQuery, ignoreCase = true)
             }.toMutableList()
         }
     }

@@ -21,7 +21,7 @@ class FilledFilterDialogFragment : DialogFragment() {
     private var _binding: FragmentIpHomeFilledFilterBinding? = null
     private val binding get() = _binding!!
 
-    private val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private var selectedStartDate: Calendar? = null
     private var selectedEndDate: Calendar? = null
 

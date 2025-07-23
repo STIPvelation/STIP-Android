@@ -2,6 +2,7 @@ package com.stip.stip.signup.intro
 
 import android.util.Log
 import androidx.activity.viewModels
+import com.skydoves.sandwich.onSuccess
 import com.stip.stip.signup.Constants
 import com.stip.stip.signup.Constants.TAG
 import com.stip.stip.R
@@ -33,13 +34,25 @@ class IntroActivity: BaseActivity<ActivityIntroBinding, IntroViewModel>() {
             delay(2000)
 
             if (di.isNotBlank()) {
-                // DI가 있으면 바로 PIN 번호 입력창으로 이동
-                com.stip.stip.signup.login.LoginPinNumberActivity.startLoginPinNumberActivity(this@IntroActivity)
-                finish()
+                // 회원 정보 조회
+                val memberInfoResponse = viewModel.getMemberInfo()
+                var isMember = false
+                memberInfoResponse.onSuccess {
+                    isMember = true
+                }
+                if (isMember) {
+                    // 회원가입이 완전히 끝난 회원 → PIN 로그인 화면 이동
+                    com.stip.stip.signup.login.LoginPinNumberActivity.startLoginPinNumberActivity(this@IntroActivity)
+                    finish()
+                } else {
+                    // 회원가입 미완료 → 로그인 화면으로 이동
+                    LoginActivity.startLoginActivity(this@IntroActivity)
+                    finish()
+                }
             } else {
                 // Check if permission screen has been shown before
                 val permissionShown = PreferenceUtil.getBoolean("PREF_KEY_PERMISSION_SHOWN", false)
-                
+
                 if (permissionShown) {
                     // Skip permission screen if already shown
                     LoginActivity.startLoginActivity(this@IntroActivity)
@@ -51,9 +64,11 @@ class IntroActivity: BaseActivity<ActivityIntroBinding, IntroViewModel>() {
         }
     }
 
+
     override fun initDataBinding() {
     }
 
+    // 이 부분 추가!
     override fun initAfterBinding() {
     }
 }

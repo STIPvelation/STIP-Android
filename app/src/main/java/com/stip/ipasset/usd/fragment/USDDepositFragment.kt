@@ -18,6 +18,7 @@ import com.stip.ipasset.extension.dpToPx
 import com.stip.ipasset.fragment.BaseFragment
 import com.stip.ipasset.model.IpAsset
 import com.stip.stip.MainActivity
+import com.stip.stip.signup.utils.PreferenceUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -105,8 +106,39 @@ class USDDepositFragment : BaseFragment<FragmentIpAssetUsdDepositBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        // USD 계좌 정보 가져오기
-        viewModel.fetchAccountInfo(currencyCode)
+        // 헤더 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
+        
+        // USD 잔고 정보 로드 (새로운 포트폴리오 DTO 구조 사용)
+        loadUsdBalance()
+        
+        // 뒤로가기 버튼 설정
+        binding.backButton.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+    }
+
+    /**
+     * USD 잔고 정보 로드
+     */
+    private fun loadUsdBalance() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val memberId = PreferenceUtil.getUserId()
+                if (memberId.isNullOrBlank()) {
+                    android.util.Log.w("USDDepositFragment", "사용자 ID가 없습니다.")
+                    return@launch
+                }
+                
+                val portfolioRepository = com.stip.api.repository.PortfolioRepository()
+                val usdBalance = portfolioRepository.getUsdBalance(memberId)
+
+                val formatter = java.text.DecimalFormat("#,##0.00")
+                android.util.Log.d("USDDepositFragment", "USD 잔고 로드 완료: $${formatter.format(usdBalance)}")
+            } catch (e: Exception) {
+                android.util.Log.e("USDDepositFragment", "USD 잔고 로드 실패: ${e.message}", e)
+            }
+        }
     }
 
     // Removed duplicate inflate method

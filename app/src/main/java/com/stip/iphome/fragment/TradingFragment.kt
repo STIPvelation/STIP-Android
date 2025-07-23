@@ -7,6 +7,7 @@ import android.os.Looper
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,6 +25,8 @@ import com.stip.stip.iphome.model.IpListingItem
 import java.text.DecimalFormat
 import androidx.appcompat.app.AppCompatActivity
 import java.util.Locale
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 // --- ✅ 1. InfoTabListener 인터페이스 구현 추가 ---
 class TradingFragment : Fragment(), InfoTabListener {
@@ -197,12 +200,74 @@ class TradingFragment : Fragment(), InfoTabListener {
 
         if (currentItemData != null) {
             displayPriceInfo(currentItemData)
+            // 개별 마켓 정보도 가져와서 업데이트
+            loadMarketDetailInfo(currentTicker)
         } else {
             setDefaultPriceInfo()
         }
 
         binding.prevItemIndicator.setOnClickListener { navigateToSiblingTicker(-1) }
         binding.nextItemIndicator.setOnClickListener { navigateToSiblingTicker(1) }
+    }
+
+    /**
+     * 개별 마켓 상세 정보를 가져와서 UI 업데이트
+     */
+    private fun loadMarketDetailInfo(ticker: String?) {
+        if (ticker == null) return
+        
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                // 티커로부터 marketPairId 가져오기
+                val ipListingRepository = com.stip.stip.api.repository.IpListingRepository()
+                val marketPairId = ipListingRepository.getPairIdForTicker(ticker)
+                
+                if (marketPairId != null) {
+                    Log.d("TradingFragment", "티커 상세 정보 조회 로딩: $ticker, marketPairId: $marketPairId")
+                    
+                    // Market API 호출
+                    val marketRepository = com.stip.stip.api.repository.MarketRepository()
+                    val marketResponse = marketRepository.getMarket(marketPairId)
+                    
+                    if (marketResponse != null) {
+                        Log.d("TradingFragment", "티커 상세 조회: volume=${marketResponse.volume}, highTicker=${marketResponse.highTicker}, lowTicker=${marketResponse.lowTicker}")
+                        
+                        // UI 업데이트
+                        updateMarketDetailInfo(marketResponse)
+                    } else {
+                        Log.e("TradingFragment", "상세 조회 NULL")
+                    }
+                } else { Log.e("TradingFragment", "티커 id 못찾음: $ticker")
+                }
+            } catch (e: Exception) {
+                Log.e("TradingFragment", "Failed to load market detail", e)
+            }
+        }
+    }
+
+    /**
+     * 마켓 상세 정보로 UI 업데이트
+     */
+    private fun updateMarketDetailInfo(marketResponse: com.stip.stip.api.model.MarketResponse) {
+        if (_binding == null || !isAdded) return
+        
+        try {
+            // Volume 업데이트
+            val volumeFormatted = formatVolume(marketResponse.volume?.toString() ?: "0")
+            binding.textVolumeValue24h.text = volumeFormatted
+            
+            // High/Low 업데이트
+            val highFormatted = formatPrice(marketResponse.highTicker?.toString() ?: "0")
+            val lowFormatted = formatPrice(marketResponse.lowTicker?.toString() ?: "0")
+            
+            binding.textHighValue24h.text = highFormatted
+            binding.textLowValue24h.text = lowFormatted
+            
+            Log.d("TradingFragment", "티커 상세 정보: volume=$volumeFormatted, high=$highFormatted, low=$lowFormatted")
+            
+        } catch (e: Exception) {
+            Log.e("TradingFragment", "티커 상세 정보 에러", e)
+        }
     }
 
     private fun displayPriceInfo(item: IpListingItem) {
@@ -255,6 +320,7 @@ class TradingFragment : Fragment(), InfoTabListener {
             } else View.GONE
 
         } catch (e: Exception) {
+            Log.e("TradingFragment", "상세 정보 디스플레이 에러", e)
             setDefaultPriceInfo()
         }
     }
@@ -294,9 +360,11 @@ class TradingFragment : Fragment(), InfoTabListener {
     private fun formatVolume(volumeString: String?): String {
         return try {
             if (volumeString.isNullOrBlank()) return "0"
-            val numberPart = volumeString.replace(Regex("[^\\d]"), "")
-            val number = numberPart.toLongOrNull() ?: 0L
-            DecimalFormat("#,###").format(number)
+            // 소수점을 포함한 숫자 처리
+            val numberPart = volumeString.replace(Regex("[^\\d.]"), "")
+            val number = numberPart.toDoubleOrNull() ?: 0.0
+            // 소수점 이하를 제거하고 정수로 포맷팅
+            DecimalFormat("#,###").format(number.toLong())
         } catch (e: Exception) {
             "0"
         }

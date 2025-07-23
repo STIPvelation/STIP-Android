@@ -104,7 +104,6 @@ class MoreLoginHistoryFragment : Fragment() {
             
             recyclerView.layoutManager = LinearLayoutManager(requireContext())
             recyclerView.adapter = adapter
-            recyclerView.setHasFixedSize(true) // 성능 향상
             
             Log.d(TAG, "Adapter setup completed successfully")
             

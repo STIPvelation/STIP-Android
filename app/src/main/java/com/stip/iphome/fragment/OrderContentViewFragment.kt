@@ -28,6 +28,7 @@ import android.widget.Toast
 import com.stip.order.api.OrderService
 import com.stip.stip.api.RetrofitClient
 import com.stip.stip.iphome.fragment.CancelConfirmDialogFragment
+import com.stip.stip.order.OrderInputHandler
 
 interface OnOrderBookItemClickListener {
     fun onPriceClicked(price: String)
@@ -47,6 +48,7 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
     private lateinit var unfilledOrderAdapter: UnfilledOrderAdapter
     private lateinit var validator: OrderValidator
     private lateinit var orderButtonHandler: OrderButtonHandler
+    private lateinit var orderInputHandler: OrderInputHandler
     private var initialTicker: String? = null
     private val orderService: OrderService = RetrofitClient.createOrderService()
 
@@ -95,7 +97,8 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
                 unfilledAdapter = unfilledOrderAdapter,
                 filledAdapter = filledOrderAdapter,
                 fragmentManager = parentFragmentManager,
-                coroutineScope = CoroutineScope(Dispatchers.Main)
+                coroutineScope = CoroutineScope(Dispatchers.Main),
+                orderDataCoordinator = orderDataCoordinator
             )
 
             // Setup adapter callbacks
@@ -116,6 +119,20 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
                 fixedTwoDecimalFormatter = DecimalFormat("#,##0.00"),
                 showToast = { msg -> OrderUtils.showToast(requireContext(), msg) },
                 showErrorDialog = { titleRes, message, colorRes -> OrderUtils.showErrorDialog(parentFragmentManager, titleRes, message, colorRes) }
+            )
+
+            // OrderInputHandler 초기화
+            orderInputHandler = OrderInputHandler(
+                context = requireContext(),
+                binding = binding,
+                numberParseFormat = DecimalFormat("#,##0.00"),
+                fixedTwoDecimalFormatter = DecimalFormat("#,##0.00"),
+                getCurrentPrice = { orderDataCoordinator.currentPrice.toDouble() },
+                getFeeRate = { 0.001 },
+                availableUsdBalance = { orderDataCoordinator.availableUsdBalance },
+                heldAssetQuantity = { orderDataCoordinator.heldAssetQuantity },
+                getCurrentTicker = { orderDataCoordinator.currentTicker },
+                getCurrentOrderType = { binding.radioGroupOrderType.checkedRadioButtonId }
             )
 
             orderButtonHandler = OrderButtonHandler(
@@ -149,9 +166,36 @@ class OrderContentViewFragment : Fragment(), OnOrderBookItemClickListener {
 
             // Setup UI Components
             uiInitializer.setupTabLayoutColors { position -> uiStateManager.handleTabSelection(position) }
+            
+            // OrderInputHandler 설정
+            orderInputHandler.setupInputListeners()
+            orderInputHandler.setupPriceAdjustmentButtons()
+            orderInputHandler.setupQuantitySpinner()
+            
+            // 초기 UI 상태 설정
+            orderInputHandler.updateUiForOrderTypeChange()
+            
+            // 주문 유형 라디오 버튼 리스너 설정 (시장 주문 시 가격 필드 비활성화 등)
+            uiInitializer.setupRadioGroupListener(
+                currentTicker = orderDataCoordinator.currentTicker,
+                resetOrderInputsToZero = {
+                    // 입력값 초기화 로직
+                    binding.editTextLimitPrice.setText("")
+                    binding.editTextQuantity.setText("")
+                    binding.editTextTriggerPrice?.setText("")
+                },
+                updateInputHandlerUI = {
+                    // OrderInputHandler의 UI 업데이트 메서드 호출
+                    orderInputHandler.updateUiForOrderTypeChange()
+                }
+            )
             binding.tabLayoutOrderMode.addOnTabSelectedListener(object : com.google.android.material.tabs.TabLayout.OnTabSelectedListener {
                 override fun onTabSelected(tab: com.google.android.material.tabs.TabLayout.Tab?) {
-                    tab?.let { uiStateManager.handleTabSelection(it.position) }
+                    tab?.let { 
+                        uiStateManager.handleTabSelection(it.position)
+                        // 탭 변경 시 OrderInputHandler UI 업데이트
+                        orderInputHandler.updateUiForOrderTypeChange()
+                    }
                 }
                 override fun onTabUnselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}
                 override fun onTabReselected(tab: com.google.android.material.tabs.TabLayout.Tab?) {}

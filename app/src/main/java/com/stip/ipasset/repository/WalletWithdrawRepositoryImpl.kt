@@ -4,8 +4,8 @@ import android.util.Log
 import com.stip.ipasset.api.WalletWithdrawService
 import com.stip.ipasset.model.WithdrawRequest
 import com.stip.ipasset.model.WithdrawResponse
-import com.stip.stip.signup.utils.PreferenceUtil
 import retrofit2.HttpException
+import retrofit2.Response
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
@@ -26,35 +26,39 @@ class WalletWithdrawRepositoryImpl @Inject constructor(
 
     override suspend fun withdrawCrypto(withdrawRequest: WithdrawRequest): Result<WithdrawResponse> {
         return try {
-            Log.d(TAG, "🚀 출금 API 호출 시작")
-            Log.d(TAG, "📤 요청 데이터: $withdrawRequest")
-            
-            // 토큰 정보 확인
-            val token = PreferenceUtil.getToken()
-            Log.d(TAG, "🔐 사용할 토큰: ${if (token != null) "존재" else "없음"}")
             
             val response = walletWithdrawService.withdrawCrypto(withdrawRequest)
             
-            Log.d(TAG, "📥 응답 수신: $response")
+            Log.d(TAG, "응답 수신: ${response.code()}")
             
-            if (response.success) {
-                Log.d(TAG, "✅ 출금 요청 성공: ${response.message}")
-                Result.success(response)
+            // HTTP 상태 코드 확인
+            if (response.isSuccessful) {
+                // 성공 응답 (빈 응답이어도 성공)
+                Log.d(TAG, "출금 요청 성공 (빈 응답)")
+                val successResponse = WithdrawResponse(
+                    success = true,
+                    message = "출금이 성공적으로 처리되었습니다."
+                )
+                Result.success(successResponse)
             } else {
-                Log.e(TAG, "❌ 출금 요청 실패 (서버 응답): ${response.message}")
-                Result.failure(Exception("서버 응답 실패: ${response.message}"))
+                // HTTP 에러
+                val errorCode = response.code()
+                Log.e(TAG, "❌ HTTP 에러 발생: $errorCode")
+
+                val errorMessage = when (errorCode) {
+                    400 -> "잘못된 요청입니다."
+                    401 -> "인증이 필요합니다."
+                    403 -> "권한이 없습니다."
+                    404 -> "Not Found"
+                    500 -> "서버 에러입니다."
+                    else -> "알 수 없는 서버 오류가 발생했습니다. (코드: $errorCode)"
+                }
+
+                Result.failure(Exception(errorMessage))
             }
         } catch (e: HttpException) {
             val errorCode = e.code()
-            val errorBody = try {
-                e.response()?.errorBody()?.string()
-            } catch (ex: Exception) {
-                "에러 본문 읽기 실패"
-            }
-            
-            Log.e(TAG, "❌ HTTP 에러 발생")
-            Log.e(TAG, "   📍 상태 코드: $errorCode")
-            Log.e(TAG, "   📄 에러 본문: $errorBody")
+            Log.e(TAG, "HTTP 에러 발생: $errorCode")
             
             val errorMessage = when (errorCode) {
                 400 -> "잘못된 요청입니다. 입력 정보를 확인해주세요."
@@ -68,19 +72,16 @@ class WalletWithdrawRepositoryImpl @Inject constructor(
             
             Result.failure(Exception(errorMessage))
         } catch (e: ConnectException) {
-            Log.e(TAG, "❌ 네트워크 연결 실패", e)
+            Log.e(TAG, "네트워크 연결 실패", e)
             Result.failure(Exception("서버에 연결할 수 없습니다. 네트워크 연결을 확인해주세요."))
         } catch (e: SocketTimeoutException) {
-            Log.e(TAG, "❌ 연결 시간 초과", e)
+            Log.e(TAG, "연결 시간 초과", e)
             Result.failure(Exception("연결 시간이 초과되었습니다. 잠시 후 다시 시도해주세요."))
         } catch (e: UnknownHostException) {
-            Log.e(TAG, "❌ 호스트를 찾을 수 없음", e)
+            Log.e(TAG, "호스트를 찾을 수 없음", e)
             Result.failure(Exception("서버 주소를 찾을 수 없습니다. 네트워크 연결을 확인해주세요."))
         } catch (e: Exception) {
-            Log.e(TAG, "❌ 알 수 없는 오류 발생", e)
-            Log.e(TAG, "   🔍 오류 유형: ${e.javaClass.simpleName}")
-            Log.e(TAG, "   💬 오류 메시지: ${e.message}")
-            
+            Log.e(TAG, "알 수 없는 오류 발생: ${e.message}", e)
             Result.failure(Exception("출금 요청 중 오류가 발생했습니다: ${e.message}"))
         }
     }

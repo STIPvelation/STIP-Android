@@ -2,7 +2,10 @@ package com.stip.stip.signup.utils
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Base64
+import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import java.lang.reflect.Type
 import com.google.gson.reflect.TypeToken
 
@@ -18,6 +21,64 @@ object PreferenceUtil {
     private const val KEY_USER_ID = "user_id"
 
     /**
+     * JWT 토큰에서 userId를 추출하는 함수
+     * JWT 토큰은 header.payload.signature 형태로 되어있음
+     */
+    fun extractUserIdFromToken(token: String): String? {
+        return try {
+            // JWT 토큰을 .으로 분리
+            val parts = token.split(".")
+            if (parts.size != 3) {
+                Log.e("PreferenceUtil", "잘못된 JWT 토큰 형식")
+                return null
+            }
+            
+            // payload 부분 (두 번째 부분) 디코딩
+            val payload = parts[1]
+            
+            // Base64 디코딩 (패딩 추가)
+            val decodedBytes = Base64.decode(payload, Base64.URL_SAFE or Base64.NO_PADDING)
+            val decodedPayload = String(decodedBytes)
+            
+            Log.d("PreferenceUtil", "JWT Payload: $decodedPayload")
+            
+            // JSON 파싱
+            val jsonObject = Gson().fromJson(decodedPayload, JsonObject::class.java)
+            
+            // memberId 또는 userId 필드에서 값 추출
+            val userId = when {
+                jsonObject.has("memberId") -> jsonObject.get("memberId").asString
+                jsonObject.has("userId") -> jsonObject.get("userId").asString
+                jsonObject.has("sub") -> jsonObject.get("sub").asString
+                else -> null
+            }
+            
+            if (userId != null) {
+                Log.d("PreferenceUtil", "토큰에서 추출된 userId: $userId")
+                // userId 저장
+                saveUserId(userId)
+            } else {
+                Log.w("PreferenceUtil", "토큰에서 userId를 찾을 수 없음")
+            }
+            
+            userId
+        } catch (e: Exception) {
+            Log.e("PreferenceUtil", "토큰에서 userId 추출 실패", e)
+            null
+        }
+    }
+
+    /**
+     * 토큰 저장 시 자동으로 userId도 추출하여 저장
+     */
+    fun saveToken(token: String) {
+        preferences.edit().putString(KEY_JWT_TOKEN, token).apply()
+        
+        // 토큰에서 userId 추출하여 저장
+        extractUserIdFromToken(token)
+    }
+
+    /**
      * 사용자 정보 업데이트 되면 localStrorage 저장하듯
      * SharedPreferences에 저장
      */
@@ -31,11 +92,6 @@ object PreferenceUtil {
     fun getMemberInfo(): com.stip.stip.model.MemberInfo? {
         val json = preferences.getString(KEY_MEMBER_INFO, null)
         return if (json.isNullOrEmpty()) null else Gson().fromJson(json, com.stip.stip.model.MemberInfo::class.java)
-    }
-
-    // TODO: 토큰 관리
-    fun saveToken(token: String) {
-        preferences.edit().putString(KEY_JWT_TOKEN, token).apply()
     }
 
     // TODO: 토큰 관리

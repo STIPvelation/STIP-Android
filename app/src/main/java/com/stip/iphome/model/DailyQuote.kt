@@ -18,7 +18,6 @@ data class DailyQuote(
             // 현재 날짜를 2025-01-01 형식으로 포맷팅
             val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
             val currentDate = dateFormat.format(Date())
-            
             return DailyQuote(
                 id = tickerData.pairId,
                 date = currentDate,

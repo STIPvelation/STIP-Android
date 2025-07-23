@@ -2,32 +2,19 @@ package com.stip.stip.api.model
 
 import com.google.gson.annotations.SerializedName
 import com.stip.stip.iphome.model.IpListingItem
+import java.math.BigDecimal
+import java.time.LocalDateTime
+import java.util.UUID
 
 /**
  * Market Pairs API 응답 모델
  */
 data class MarketPairsResponse(
-    @SerializedName("success")
-    val success: Boolean,
-    
-    @SerializedName("message")
-    val message: String,
-    
-    @SerializedName("data")
-    val data: MarketPairsData
-)
-
-data class MarketPairsData(
-    @SerializedName("record")
-    val record: List<MarketPairItem>,
-    
-    @SerializedName("pagination")
-    val pagination: Pagination
-)
-
-data class MarketPairItem(
     @SerializedName("id")
     val id: String,
+    
+    @SerializedName("countryImage")
+    val countryImage: String? = null,
     
     @SerializedName("symbol")
     val symbol: String,
@@ -43,30 +30,33 @@ data class MarketPairItem(
     
     @SerializedName("createdAt")
     val createdAt: String,
-
+    
+    @SerializedName("categoryId")
+    val categoryId: Int? = null,
+    
+    @SerializedName("categoryName")
+    val categoryName: String? = null,
+    
     @SerializedName("lastPrice")
-    val lastPrice: Double = 0.0,
-
-    @SerializedName("changePercent")
-    val changePercent: Double = 0.0,
-
+    val lastPrice: BigDecimal? = null, // 현재가
+    
+    @SerializedName("priceChange")
+    val priceChange: BigDecimal? = null, // 전일대비 금액
+    
+    @SerializedName("changeRate")
+    val changeRate: Double? = null, // 등락률 (%)
+    
     @SerializedName("volume")
-    val volume: Double = 0.0,
-
-    @SerializedName("high")
-    val high: Double = 0.0,
-
-    @SerializedName("low")
-    val low: Double = 0.0,
-
-    @SerializedName("open")
-    val open: Double = 0.0,
-
-    @SerializedName("close")
-    val close: Double = 0.0
+    val volume: BigDecimal? = null, // 거래금액(일간)
+    
+    @SerializedName("highTicker")
+    val highTicker: BigDecimal? = null, // 최고가 (일간)
+    
+    @SerializedName("lowTicker")
+    val lowTicker: BigDecimal? = null // 최저가 (일간)
 ) {
     /**
-     * MarketPairItem을 IpListingItem으로 변환
+     * MarketPairsResponse를 IpListingItem으로 변환
      */
     fun toIpListingItem(): IpListingItem {
         // 공백 제거 및 데이터 정리
@@ -74,19 +64,19 @@ data class MarketPairItem(
         
         return IpListingItem(
             ticker = cleanBaseAsset,
-            currentPrice = String.format("%.2f", lastPrice),
-            changePercent = String.format("%+.2f%%", changePercent),
-            changeAbsolute = String.format("%+.2f", lastPrice * changePercent / 100),
-            volume = String.format("%.0f", volume),
-            category = "Patent", // 기본값
+            currentPrice = String.format("%.2f", lastPrice?.toDouble() ?: 0.0),
+            changePercent = String.format("%+.2f%%", changeRate ?: 0.0),
+            changeAbsolute = String.format("%+.2f", priceChange?.toDouble() ?: 0.0),
+            volume = String.format("%.0f", volume?.toDouble() ?: 0.0),
+            category = categoryName ?: "IP",
             companyName = cleanBaseAsset,
-            high24h = String.format("%.2f", high),
-            low24h = String.format("%.2f", low),
-            volume24h = String.format("%.0f", volume),
-            open = String.format("%.2f", open),
-            high = String.format("%.2f", high),
-            low = String.format("%.2f", low),
-            close = String.format("%.2f", close),
+            high24h = String.format("%.2f", highTicker?.toDouble() ?: 0.0),
+            low24h = String.format("%.2f", lowTicker?.toDouble() ?: 0.0),
+            volume24h = String.format("%.0f", volume?.toDouble() ?: 0.0),
+            open = String.format("%.2f", lastPrice?.toDouble() ?: 0.0),
+            high = String.format("%.2f", highTicker?.toDouble() ?: 0.0),
+            low = String.format("%.2f", lowTicker?.toDouble() ?: 0.0),
+            close = String.format("%.2f", lastPrice?.toDouble() ?: 0.0),
             isTradeTriggered = false,
             isBuy = false,
             type = "",
@@ -120,18 +110,4 @@ data class MarketPairItem(
             snsWeChat = null
         )
     }
-}
-
-data class Pagination(
-    @SerializedName("currentPage")
-    val currentPage: Int,
-    
-    @SerializedName("limit")
-    val limit: Int,
-    
-    @SerializedName("totalRecords")
-    val totalRecords: Int,
-    
-    @SerializedName("totalPages")
-    val totalPages: Int
-) 
+} 

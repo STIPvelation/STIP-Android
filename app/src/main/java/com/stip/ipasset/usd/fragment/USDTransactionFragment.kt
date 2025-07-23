@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.stip.stip.NavGraphIpAssetDirections
@@ -24,11 +25,14 @@ import com.stip.ipasset.usd.model.TransactionType
 import com.stip.ipasset.usd.model.USDDepositTransaction
 import com.stip.ipasset.usd.model.USDTransaction
 import com.stip.ipasset.usd.model.USDWithdrawalTransaction
+import com.stip.api.repository.PortfolioRepository
+import com.stip.stip.signup.utils.PreferenceUtil
 import com.stip.stip.R
 import com.stip.stip.databinding.FragmentIpAssetUsdTransactionBinding
 import java.text.NumberFormat
 import java.text.DecimalFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 class USDTransactionFragment : Fragment() {
     
@@ -39,8 +43,11 @@ class USDTransactionFragment : Fragment() {
     private var _binding: FragmentIpAssetUsdTransactionBinding? = null
     private val binding get() = _binding!!
     
-    // USD 자산 매니저
+    // USD 자산 매니저 (트랜잭션용)
     private val assetManager = USDAssetManager.getInstance()
+    
+    // 포트폴리오 API
+    private val portfolioRepository = PortfolioRepository()
     
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -73,16 +80,8 @@ class USDTransactionFragment : Fragment() {
         binding.currencyIconText.text = "$" // 항상 $ 기호 표시
         binding.currencyIconText.visibility = View.VISIBLE
         
-        // USDAssetManager로부터 잔액 데이터 관찰
-        assetManager.balance.observe(viewLifecycleOwner, Observer { balance ->
-            // 상단 카드에 USD 정보 표시 - 소수점 2자리 고정
-            val formatter = DecimalFormat("#,##0.00")
-            binding.totalHoldings.text = "${formatter.format(balance)} USD"
-            
-            // KRW 환산액 표시 (1 USD = 약 1,300 KRW 기준)
-            val krwAmount = balance * 1300
-            binding.equivalentAmount.text = "≈ ${NumberFormat.getNumberInstance(Locale.US).format(krwAmount.toInt())} KRW"
-        })
+        // 포트폴리오 API에서 USD 잔고 로드
+        loadUsdBalanceFromPortfolio()
         
         // USD 로고 표시 설정 - 파란색 배경
         binding.currencyIconBackground.backgroundTintList = resources.getColorStateList(R.color.token_usd, null)
@@ -247,6 +246,57 @@ class USDTransactionFragment : Fragment() {
                 else -> loadAllTransactions()
             }
         })
+    }
+    
+    /**
+     * 포트폴리오 API에서 USD 잔고 로드
+     */
+    private fun loadUsdBalanceFromPortfolio() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val memberId = PreferenceUtil.getUserId()
+                if (memberId.isNullOrBlank()) {
+                    if (isAdded && _binding != null) {
+                        Toast.makeText(requireContext(), "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show()
+                    }
+                    return@launch
+                }
+                
+                // 포트폴리오 API에서 USD 잔고 조회
+                val portfolioResponse = portfolioRepository.getPortfolioResponse(memberId)
+                
+                if (portfolioResponse != null) {
+                    // usd 잔고
+                    val usdBalance = portfolioResponse.usdBalance.toDouble()
+                    
+                    // UI 업데이트는 메인 스레드에서 안전하게
+                    if (isAdded && _binding != null && view != null) {
+                        val formatter = DecimalFormat("#,##0.00")
+                        binding.totalHoldings.text = "${formatter.format(usdBalance)} USD"
+                        
+                        // KRW 환산액 표시 (API 기반 환율 변환)
+                        val krwAmount = com.stip.utils.ExchangeRateManager.convertUsdToKrwWithApi(usdBalance)
+                        binding.equivalentAmount.text = "≈ ${NumberFormat.getNumberInstance(Locale.US).format(krwAmount.toInt())} KRW"
+                        
+                        android.util.Log.d("USDTransactionFragment", "USD 잔고 로드 완료: $usdBalance USD")
+                    }
+                } else {
+                    // API 응답이 null인 경우 0으로 표시
+                    if (isAdded && _binding != null && view != null) {
+                        binding.totalHoldings.text = "0.00 USD"
+                        binding.equivalentAmount.text = "≈ 0 KRW"
+                    }
+                    android.util.Log.w("USDTransactionFragment", "포트폴리오 API 응답이 null")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("USDTransactionFragment", "USD 잔고 로드 실패: ${e.message}", e)
+                // 오류 시 0으로 표시
+                if (isAdded && _binding != null && view != null) {
+                    binding.totalHoldings.text = "0.00 USD"
+                    binding.equivalentAmount.text = "≈ 0 KRW"
+                }
+            }
+        }
     }
     
     /**

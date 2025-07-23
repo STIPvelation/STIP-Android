@@ -137,7 +137,7 @@ class IpHomeQuotesFragment : Fragment() {
     }
 
     private fun loadTimeQuotes(isFirstLoad: Boolean = false) {
-        showLoading(isFirstLoad)
+        showLoading(true)
         Log.d(TAG, "시간별 시세 로드 시작 - currentTicker: $currentTicker")
         
         viewLifecycleOwner.lifecycleScope.launch {
@@ -192,7 +192,7 @@ class IpHomeQuotesFragment : Fragment() {
                         }
 
                         val newQuote = QuoteTick(
-                            id = hourlyItem.timestamp, // timestamp를 ID로 사용
+                            id = hourlyItem.timestamp,
                             time = displayTime,
                             price = hourlyItem.price,
                             volume = hourlyItem.volume,

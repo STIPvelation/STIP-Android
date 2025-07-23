@@ -1,5 +1,6 @@
 package com.stip.stip.api
 
+import android.util.Log
 import com.stip.order.api.OrderService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -13,7 +14,6 @@ import com.stip.stip.signup.utils.PreferenceUtil
  * API 서버와의 통신을 담당하는 인스턴스를 생성하고 관리
  */
 object RetrofitClient {
-    private const val BASE_URL = "https://backend.stipvelation.com/"
     private const val ENGINE_URL = "http://34.64.197.80:5000/"
     private const val TAPI_URL = "https://tapi.sharetheip.com/"
     private const val TIMEOUT = 30L // 30초 타임아웃
@@ -31,7 +31,7 @@ object RetrofitClient {
                 val original = chain.request()
                 val token = PreferenceUtil.getToken()
 
-                val request = if (token != null) {
+                val request = if (!token.isNullOrBlank()) {
                     original.newBuilder()
                         .header("Authorization", "Bearer $token")
                         .build()
@@ -56,7 +56,7 @@ object RetrofitClient {
                 val request = original.newBuilder().apply {
                     header("Content-Type", "application/json")
                     header("Accept", "application/json")
-                    if (token.isNotBlank()) {
+                    if (!token.isNullOrBlank()) {
                         header("Authorization", "Bearer $token")
                     }
                     android.util.Log.d("APII", "${original.method} : ${original.url} ${original.body} Token : ${token}")
@@ -70,7 +70,7 @@ object RetrofitClient {
     // 인증이 필요없는 API 서비스용 Retrofit 인스턴스
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(TAPI_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -79,7 +79,7 @@ object RetrofitClient {
     // 인증이 필요한 API 서비스용 Retrofit 인스턴스
     private val authRetrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(TAPI_URL)
             .client(authOkHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -97,7 +97,7 @@ object RetrofitClient {
                 val request = original.newBuilder().apply {
                     header("Content-Type", "application/json")
                     header("Accept", "application/json")
-                    if (token != null) {
+                    if (!token.isNullOrBlank()) {
                         header("Authorization", "Bearer $token")
                     }
                     method(original.method, original.body)
@@ -119,12 +119,37 @@ object RetrofitClient {
                 val request = original.newBuilder().apply {
                     header("Content-Type", "application/json")
                     header("Accept", "application/json")
-                    if (token != null) {
+                    if (!token.isNullOrBlank()) {
                         header("Authorization", "Bearer $token")
                     }
                     method(original.method, original.body)
                 }.build()
-                chain.proceed(request)
+                
+                Log.d("RetrofitClient", "출금 요청: ${request.method} ${request.url}")
+                
+                val response = chain.proceed(request)
+                
+                Log.d("RetrofitClient", "출금 응답 상태 코드: ${response.code}")
+                
+                // 응답 본문이 비어있는지 확인
+                val responseBody = response.body
+                if (responseBody != null) {
+                    val responseBodyString = responseBody.string()
+                    Log.d("RetrofitClient", "응답 본문: $responseBodyString")
+                    
+                    // 응답 본문을 다시 생성
+                    val newResponseBody = okhttp3.ResponseBody.create(
+                        responseBody.contentType(),
+                        responseBodyString
+                    )
+                    
+                    response.newBuilder()
+                        .body(newResponseBody)
+                        .build()
+                } else {
+                    Log.d("RetrofitClient", "출금 응답: 비어있음")
+                    response
+                }
             }
             .build()
     }
@@ -168,6 +193,6 @@ object RetrofitClient {
     }
 
     fun createOrderService(): OrderService {
-        return engineRetrofit.create(OrderService::class.java)
+        return tapiRetrofit.create(OrderService::class.java)
     }
 }

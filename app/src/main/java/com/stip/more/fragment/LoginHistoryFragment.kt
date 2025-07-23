@@ -38,7 +38,7 @@ class LoginHistoryFragment : Fragment() {
     
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl("https://backend.stipvelation.com/")
+            .baseUrl("https://tapi.sharetheip.com/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

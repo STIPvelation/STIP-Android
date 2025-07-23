@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,6 +61,15 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     // 출금 가능한 최대 금액 (저장소에서 가져옴)
     private val repository: IpAssetRepository by lazy { IpAssetRepository.getInstance(requireContext()) }
     
+    // Market API 관련
+    private val marketRepository: com.stip.stip.api.repository.MarketRepository by lazy { 
+        com.stip.stip.api.repository.MarketRepository() 
+    }
+    
+    // API에서 가져온 수수료와 출금한도
+    private var apiFee: Double = 0.0
+    private var apiMaxValue: Double = 0.0
+    
     // 항상 최신 데이터를 가져오도록 수정
     private fun getLatestAvailableAmount(): Double {
         // 저장소에서 최신 데이터를 강제로 조회
@@ -71,9 +81,9 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
     private val availableAmount: Double
         get() = getLatestAvailableAmount()
     private val maxAmount: Double
-        get() = 1000000.0  // API로 대체 예정 - 기본값 설정
+        get() = apiMaxValue
     private val fee: Double
-        get() = 1.0  // API로 대체 예정 - 기본값 설정
+        get() = apiFee
     
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,11 +93,51 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
         }
     }
     
+    /**
+     * Market API에서 수수료와 출금한도 정보를 가져옴
+     */
+    private fun loadMarketInfo() {    
+        lifecycleScope.launch {
+            try {
+                // 티커로부터 marketPairId 가져오기
+                val ipListingRepository = com.stip.stip.api.repository.IpListingRepository()
+                val marketPairId = ipListingRepository.getPairIdForTicker(currencyCode)
+                
+                if (marketPairId != null) {
+                    Log.d("TickerWithdrawal", "Market API 호출 시작: marketPairId=$marketPairId")
+                    
+                    // Market API 호출
+                    val marketResponse = marketRepository.getMarket(marketPairId)
+                    
+                    Log.d("TickerWithdrawal", "Market API 응답: $marketResponse")
+                    
+                    if (marketResponse != null) {
+                        // API에서 가져온 값으로 업데이트
+                        apiFee = marketResponse.fee
+                        apiMaxValue = marketResponse.maxValue
+                        Log.d("TickerWithdrawal", "한도 및 수수료 응답 fee: ${marketResponse.fee}, maxValue: ${marketResponse.maxValue}")
+                        // UI 업데이트
+                        updateUI()
+                    } else {
+                        Log.d("TickerWithdrawal", "Market API 응답이 null")
+                    }
+                } else {
+                    Log.d("TickerWithdrawal", "marketPairId를 찾을 수 없음: $currencyCode")
+                }
+            } catch (e: Exception) {
+                Log.e("TickerWithdrawal", "Market API 호출 실패: ${e.message}", e)
+            }
+        }
+    }
+    
     // 화면에 돌아올 때마다 최신 데이터로 새로고침
     override fun onResume() {
         super.onResume()
-        
+
         try {
+            // Market API에서 최신 수수료와 출금한도 가져오기
+            loadMarketInfo()
+            
             // 리포지토리에서 최신 데이터를 강제로 다시 가져옴
             val repository = IpAssetRepository.getInstance(requireContext())
             val assetId = args.ipAsset.id
@@ -356,6 +406,11 @@ class TickerWithdrawalInputFragment : BaseFragment<FragmentIpAssetTickerWithdraw
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        
+        // Market API에서 수수료와 출금한도 가져오기
+        loadMarketInfo()
+        
         bind()
         
         // 전체 앱 데이터 새로고침 이벤트 구독

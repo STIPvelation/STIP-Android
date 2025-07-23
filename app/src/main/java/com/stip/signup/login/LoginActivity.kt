@@ -9,6 +9,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.skydoves.sandwich.onSuccess
 import com.stip.stip.R
 import com.stip.stip.MainActivity
 import com.stip.stip.databinding.ActivityLoginBinding
@@ -17,6 +18,11 @@ import com.stip.stip.signup.Constants
 import com.stip.stip.signup.utils.PreferenceUtil
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import com.stip.stip.signup.signup.SignUpActivity
+import com.stip.stip.signup.login.LoginPinNumberActivity
 
 @AndroidEntryPoint
 class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
@@ -131,17 +137,28 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
         // STIP 시작하기 통합 인증 버튼 클릭 리스너 (나이스 본인인증 기반)
         setOnClick(binding.btnLogin) {
             Log.d("LoginActivity", "STIP 시작하기 버튼 클릭")
-            
             // 저장된 DI 값 확인
             val storedDi = PreferenceUtil.getString(Constants.PREF_KEY_DI_VALUE, "")
-            
             if (storedDi.isNotBlank()) {
-                // DI가 이미 있으면 바로 PIN 번호 입력창으로 이동
-                Log.d("LoginActivity", "저장된 DI 확인됨: PIN 입력창으로 이동")
-                val intent = Intent(this, LoginPinNumberActivity::class.java).apply {
-                    putExtra("di_value", storedDi)
+                // DI가 있으면 회원 정보 조회
+                CoroutineScope(Dispatchers.Main).launch {
+                    val memberInfoResponse = viewModel.getMemberInfo()
+                    var isMember = false
+                    memberInfoResponse.onSuccess {
+                        isMember = true
+                    }
+                    if (isMember) {
+                        // 회원가입이 완전히 끝난 회원 → PIN 로그인 화면 이동
+                        val intent = Intent(this@LoginActivity, LoginPinNumberActivity::class.java).apply {
+                            putExtra("di_value", storedDi)
+                        }
+                        startActivity(intent)
+                    } else {
+                        // 회원가입 미완료 → 회원가입 화면 이동
+                        val intent = Intent(this@LoginActivity, SignUpActivity::class.java)
+                        startActivity(intent)
+                    }
                 }
-                startActivity(intent)
             } else {
                 // DI가 없으면 본인인증 진행
                 Log.d("LoginActivity", "DI 없음: 나이스 본인인증 시작")
@@ -156,6 +173,8 @@ class LoginActivity: BaseActivity<ActivityLoginBinding, LoginViewModel>() {
                 }
             }
         }
+
+
     }
     
     /**

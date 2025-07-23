@@ -8,6 +8,9 @@ import com.stip.stip.iptransaction.model.UnfilledOrder
 import com.stip.stip.iptransaction.model.TickerResponse
 import com.stip.stip.iptransaction.model.OrderListResponse
 import com.stip.stip.iptransaction.model.ApiOrderResponse
+import com.stip.stip.iptransaction.model.PortfolioIPResponseDto
+import com.stip.stip.iptransaction.model.TradeListResponse
+import com.stip.stip.iptransaction.model.TradeResponse
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -34,11 +37,28 @@ interface IpTransactionApi {
     
     @GET("api/orders")
     fun getOrders(
-        @Query("memberId") memberId: String,
+        @Query("userId") userId: String,
         @Query("status") status: String,
         @Query("page") page: Int = 1,
         @Query("limit") limit: Int = 10
     ): Call<OrderListResponse>
+    
+    @GET("api/orders")
+    fun getOrdersByDateRange(
+        @Query("startDate") startDate: String,
+        @Query("endDate") endDate: String
+    ): Call<OrderListResponse>
+    
+    @GET("api/orders")
+    fun getOrdersByMarketPair(
+        @Query("marketPairId") marketPairId: String,
+        @Query("status") status: String? = null
+    ): Call<OrderListResponse>
+    
+    @GET("api/trades")
+    fun getTrades(
+        @Query("marketPairId") marketPairId: String
+    ): Call<TradeListResponse>
     
     // 손익 정보 API
     @GET("api/ip/profit/detail")
@@ -64,10 +84,14 @@ interface IpTransactionApi {
 
     @GET("api/trades/tickers")
     fun getTickers(): Call<TickerResponse>
+    
+    // 포트폴리오 API
+    @GET("api/portfolio")
+    fun getPortfolio(@Query("userId") userId: String): Call<PortfolioIPResponseDto>
 }
 
 object IpTransactionService {
-    private const val BASE_URL = "https://backend.stipvelation.com/"
+    private const val TAPI_URL = "https://tapi.sharetheip.com/"
     private const val ENGINE_URL = "http://34.64.197.80:5000/"
     private const val X_API_KEY: String = "AIzaSyAM4J1XFF6SAkXeY78ONDyRtgo3mhk78kE"
     
@@ -93,7 +117,7 @@ object IpTransactionService {
         .build()
 
     private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(TAPI_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .client(okHttpClient)
         .build()
@@ -193,9 +217,9 @@ object IpTransactionService {
         callback: (List<ApiOrderResponse>?, Throwable?) -> Unit
     ) {
         Log.d("IpTransactionService", "미체결 주문 조회 호출: $memberId, page: $page, limit: $limit")
-        Log.d("IpTransactionService", "API URL: ${ENGINE_URL}api/orders?memberId=$memberId&status=open&page=$page&limit=$limit")
+        Log.d("IpTransactionService", "API URL: ${TAPI_URL}api/orders?userId=$memberId&status=open&page=$page&limit=$limit")
         
-        engineApi.getOrders(memberId, "open", page, limit).enqueue(
+        ipTransactionApi.getOrders(memberId, "open", page, limit).enqueue(
             object : retrofit2.Callback<OrderListResponse> {
                 override fun onResponse(
                     call: Call<OrderListResponse>,
@@ -208,19 +232,20 @@ object IpTransactionService {
                         Log.d("IpTransactionService", "Response body: $body")
                         
                         if (body?.success == true) {
-                            Log.d("IpTransactionService", "API success: true, records count: ${body.data.record.size}")
-                            val apiOrders = body.data.record.map { record ->
+                            Log.d("IpTransactionService", "API success: true, records count: ${body.data.size}")
+                            val apiOrders = body.data.map { record ->
                                 ApiOrderResponse(
                                     id = record.id,
-                                    userId = record.userId,
-                                    pairId = record.pairId,
                                     type = record.type,
                                     quantity = record.quantity,
                                     price = record.price,
-                                    status = record.status,
                                     filledQuantity = record.filledQuantity,
+                                    status = record.status,
+                                    member = record.member,
+                                    marketPair = record.marketPair,
                                     createdAt = record.createdAt,
-                                    updatedAt = record.updatedAt
+                                    updatedAt = record.updatedAt,
+                                    deletedAt = record.deletedAt
                                 )
                             }
                             callback(apiOrders, null)
@@ -250,9 +275,9 @@ object IpTransactionService {
         callback: (List<ApiOrderResponse>?, Throwable?) -> Unit
     ) {
         Log.d("IpTransactionService", "체결 주문 조회 호출: $memberId, page: $page, limit: $limit")
-        Log.d("IpTransactionService", "API URL: ${ENGINE_URL}api/orders?memberId=$memberId&status=filled&page=$page&limit=$limit")
+        Log.d("IpTransactionService", "API URL: ${TAPI_URL}api/orders?userId=$memberId&status=filled&page=$page&limit=$limit")
         
-        engineApi.getOrders(memberId, "filled", page, limit).enqueue(
+        ipTransactionApi.getOrders(memberId, "filled", page, limit).enqueue(
             object : retrofit2.Callback<OrderListResponse> {
                 override fun onResponse(
                     call: Call<OrderListResponse>,
@@ -265,19 +290,20 @@ object IpTransactionService {
                         Log.d("IpTransactionService", "Response body: $body")
                         
                         if (body?.success == true) {
-                            Log.d("IpTransactionService", "API success: true, records count: ${body.data.record.size}")
-                            val apiOrders = body.data.record.map { record ->
+                            Log.d("IpTransactionService", "API success: true, records count: ${body.data.size}")
+                            val apiOrders = body.data.map { record ->
                                 ApiOrderResponse(
                                     id = record.id,
-                                    userId = record.userId,
-                                    pairId = record.pairId,
                                     type = record.type,
                                     quantity = record.quantity,
                                     price = record.price,
-                                    status = record.status,
                                     filledQuantity = record.filledQuantity,
+                                    status = record.status,
+                                    member = record.member,
+                                    marketPair = record.marketPair,
                                     createdAt = record.createdAt,
-                                    updatedAt = record.updatedAt
+                                    updatedAt = record.updatedAt,
+                                    deletedAt = record.deletedAt
                                 )
                             }
                             callback(apiOrders, null)
@@ -292,6 +318,159 @@ object IpTransactionService {
                 }
 
                 override fun onFailure(call: Call<OrderListResponse>, t: Throwable) {
+                    Log.e("IpTransactionService", "API 호출 실패", t)
+                    callback(null, t)
+                }
+            }
+        )
+    }
+    
+    // 미체결 주문 조회
+    fun getApiUnfilledOrdersByMarketPair(
+        marketPairId: String,
+        callback: (List<ApiOrderResponse>?, Throwable?) -> Unit
+    ) {
+        Log.d("IpTransactionService", "미체결 주문 조회 호출: marketPairId=$marketPairId, status=open")
+        Log.d("IpTransactionService", "API URL: ${TAPI_URL}api/orders?marketPairId=$marketPairId&status=open")
+        
+        ipTransactionApi.getOrdersByMarketPair(marketPairId, "open").enqueue(
+            object : retrofit2.Callback<OrderListResponse> {
+                override fun onResponse(
+                    call: Call<OrderListResponse>,
+                    response: retrofit2.Response<OrderListResponse>
+                ) {
+                    Log.d("IpTransactionService", "API response received - code: ${response.code()}, isSuccessful: ${response.isSuccessful()}")
+                    
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        Log.d("IpTransactionService", "Response body: $body")
+                        
+                        if (body?.success == true) {
+                            Log.d("IpTransactionService", "API success: true, open orders count: ${body.data.size}")
+                            val apiOrders = body.data.map { record ->
+                                ApiOrderResponse(
+                                    id = record.id,
+                                    type = record.type,
+                                    quantity = record.quantity,
+                                    price = record.price,
+                                    filledQuantity = record.filledQuantity,
+                                    status = record.status,
+                                    member = record.member,
+                                    marketPair = record.marketPair,
+                                    createdAt = record.createdAt,
+                                    updatedAt = record.updatedAt,
+                                    deletedAt = record.deletedAt
+                                )
+                            }
+                            callback(apiOrders, null)
+                        } else {
+                            Log.e("IpTransactionService", "API success: false, message: ${body?.message}")
+                            callback(null, Exception("API 응답 실패: ${body?.message}"))
+                        }
+                    } else {
+                        Log.e("IpTransactionService", "HTTP 오류: ${response.code()}, ${response.message()}")
+                        callback(null, Exception("API 호출 실패: ${response.code()}"))
+                    }
+                }
+
+                override fun onFailure(call: Call<OrderListResponse>, t: Throwable) {
+                    Log.e("IpTransactionService", "API 호출 실패", t)
+                    callback(null, t)
+                }
+            }
+        )
+    }
+    
+    // 체결된 주문 조회
+    fun getApiFilledOrdersByMarketPair(
+        marketPairId: String,
+        callback: (List<ApiOrderResponse>?, Throwable?) -> Unit
+    ) {
+        Log.d("IpTransactionService", "체결된 주문 조회 호출: marketPairId=$marketPairId, status=filled")
+        Log.d("IpTransactionService", "API URL: ${TAPI_URL}api/orders?marketPairId=$marketPairId&status=filled")
+        
+        ipTransactionApi.getOrdersByMarketPair(marketPairId, "filled").enqueue(
+            object : retrofit2.Callback<OrderListResponse> {
+                override fun onResponse(
+                    call: Call<OrderListResponse>,
+                    response: retrofit2.Response<OrderListResponse>
+                ) {
+                    Log.d("IpTransactionService", "API response received - code: ${response.code()}, isSuccessful: ${response.isSuccessful()}")
+                    
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        Log.d("IpTransactionService", "Response body: $body")
+                        
+                        if (body?.success == true) {
+                            Log.d("IpTransactionService", "API success: true, filled orders count: ${body.data.size}")
+                            val apiOrders = body.data.map { record ->
+                                ApiOrderResponse(
+                                    id = record.id,
+                                    type = record.type,
+                                    quantity = record.quantity,
+                                    price = record.price,
+                                    filledQuantity = record.filledQuantity,
+                                    status = record.status,
+                                    member = record.member,
+                                    marketPair = record.marketPair,
+                                    createdAt = record.createdAt,
+                                    updatedAt = record.updatedAt,
+                                    deletedAt = record.deletedAt
+                                )
+                            }
+                            callback(apiOrders, null)
+                        } else {
+                            Log.e("IpTransactionService", "API success: false, message: ${body?.message}")
+                            callback(null, Exception("API 응답 실패: ${body?.message}"))
+                        }
+                    } else {
+                        Log.e("IpTransactionService", "HTTP 오류: ${response.code()}, ${response.message()}")
+                        callback(null, Exception("API 호출 실패: ${response.code()}"))
+                    }
+                }
+
+                override fun onFailure(call: Call<OrderListResponse>, t: Throwable) {
+                    Log.e("IpTransactionService", "API 호출 실패", t)
+                    callback(null, t)
+                }
+            }
+        )
+    }
+    
+    // 체결 내역 조회
+    fun getApiTradesByMarketPair(
+        marketPairId: String,
+        callback: (List<TradeResponse>?, Throwable?) -> Unit
+    ) {
+        Log.d("IpTransactionService", "체결 내역 조회 호출: marketPairId=$marketPairId")
+        Log.d("IpTransactionService", "API URL: ${TAPI_URL}api/trades?marketPairId=$marketPairId")
+        
+        ipTransactionApi.getTrades(marketPairId).enqueue(
+            object : retrofit2.Callback<TradeListResponse> {
+                override fun onResponse(
+                    call: Call<TradeListResponse>,
+                    response: retrofit2.Response<TradeListResponse>
+                ) {
+                    Log.d("IpTransactionService", "API response received - code: ${response.code()}, isSuccessful: ${response.isSuccessful()}")
+                    
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        Log.d("IpTransactionService", "Response body: $body")
+                        
+                        if (body?.success == true) {
+                            Log.d("IpTransactionService", "API success: true, trades count: ${body.data.size}")
+                            callback(body.data, null)
+                        } else {
+                            Log.e("IpTransactionService", "API success: false, message: ${body?.message}")
+                            callback(null, Exception("API 응답 실패: ${body?.message}"))
+                        }
+                    } else {
+                        Log.e("IpTransactionService", "HTTP 오류: ${response.code()}, ${response.message()}")
+                        callback(null, Exception("API 호출 실패: ${response.code()}"))
+                    }
+                }
+
+                override fun onFailure(call: Call<TradeListResponse>, t: Throwable) {
                     Log.e("IpTransactionService", "API 호출 실패", t)
                     callback(null, t)
                 }
@@ -384,9 +563,8 @@ object IpTransactionService {
     fun getTickers(
         callback: (TickerResponse?, Throwable?) -> Unit
     ) {
-        Log.d("IpTransactionService", "티커 데이터 조회 시작: ${ENGINE_URL}api/trades/tickers")
         
-        engineApi.getTickers().enqueue(object : retrofit2.Callback<TickerResponse> {
+        ipTransactionApi.getTickers().enqueue(object : retrofit2.Callback<TickerResponse> {
             override fun onResponse(
                 call: Call<TickerResponse>,
                 response: retrofit2.Response<TickerResponse>
@@ -413,9 +591,9 @@ object IpTransactionService {
         limit: Int = 10,
         callback: (OrderListResponse?, Throwable?) -> Unit
     ) {
-        Log.d("IpTransactionService", "주문 내역 조회 시작: ${ENGINE_URL}api/orders?memberId=$memberId&status=$status&page=$page&limit=$limit")
+        Log.d("IpTransactionService", "주문 내역 조회 시작: ${TAPI_URL}api/orders?userId=$memberId&status=$status&page=$page&limit=$limit")
         
-        engineApi.getOrders(memberId, status, page, limit).enqueue(
+        ipTransactionApi.getOrders(memberId, status, page, limit).enqueue(
             object : retrofit2.Callback<OrderListResponse> {
                 override fun onResponse(
                     call: Call<OrderListResponse>,
@@ -428,7 +606,7 @@ object IpTransactionService {
                         Log.d("IpTransactionService", "Response body: $body")
                         
                         if (body?.success == true) {
-                            Log.d("IpTransactionService", "API success: true, records count: ${body.data.record.size}")
+                            Log.d("IpTransactionService", "API success: true, records count: ${body.data.size}")
                             callback(body, null)
                         } else {
                             Log.e("IpTransactionService", "API success: false, message: ${body?.message}")
@@ -442,6 +620,81 @@ object IpTransactionService {
 
                 override fun onFailure(call: Call<OrderListResponse>, t: Throwable) {
                     Log.e("IpTransactionService", "API 호출 실패", t)
+                    callback(null, t)
+                }
+            }
+        )
+    }
+    
+    // 기간별 주문 내역 조회 (IP 투자 내역용)
+    fun getOrdersByDateRange(
+        startDate: String,
+        endDate: String,
+        callback: (OrderListResponse?, Throwable?) -> Unit
+    ) {
+        Log.d("IpTransactionService", "기간별 주문 내역 조회 시작: ${TAPI_URL}api/orders?startDate=$startDate&endDate=$endDate")
+        
+        ipTransactionApi.getOrdersByDateRange(startDate, endDate).enqueue(
+            object : retrofit2.Callback<OrderListResponse> {
+                override fun onResponse(
+                    call: Call<OrderListResponse>,
+                    response: retrofit2.Response<OrderListResponse>
+                ) {
+                    Log.d("IpTransactionService", "기간별 주문 내역 API 응답 - code: ${response.code()}, isSuccessful: ${response.isSuccessful()}")
+                    
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        Log.d("IpTransactionService", "기간별 주문 내역 응답: $body")
+                        
+                        if (body?.success == true) {
+                            Log.d("IpTransactionService", "기간별 주문 내역 API 성공, 레코드 수: ${body.data.size}")
+                            callback(body, null)
+                        } else {
+                            Log.e("IpTransactionService", "기간별 주문 내역 API 실패, 메시지: ${body?.message}")
+                            callback(null, Exception("기간별 주문 내역 API 응답 실패: ${body?.message}"))
+                        }
+                    } else {
+                        Log.e("IpTransactionService", "기간별 주문 내역 HTTP 오류: ${response.code()}, ${response.message()}")
+                        callback(null, Exception("기간별 주문 내역 API 호출 실패: ${response.code()}"))
+                    }
+                }
+
+                override fun onFailure(call: Call<OrderListResponse>, t: Throwable) {
+                    Log.e("IpTransactionService", "기간별 주문 내역 API 호출 실패", t)
+                    callback(null, t)
+                }
+            }
+        )
+    }
+    
+    // 포트폴리오 조회
+    fun getPortfolio(
+        userId: String,
+        callback: (PortfolioIPResponseDto?, Throwable?) -> Unit
+    ) {
+        Log.d("IpTransactionService", "포트폴리오 조회 호출: $userId")
+        Log.d("IpTransactionService", "API URL: ${TAPI_URL}api/portfolio?userId=$userId")
+        
+        ipTransactionApi.getPortfolio(userId).enqueue(
+            object : retrofit2.Callback<PortfolioIPResponseDto> {
+                override fun onResponse(
+                    call: Call<PortfolioIPResponseDto>,
+                    response: retrofit2.Response<PortfolioIPResponseDto>
+                ) {
+                    Log.d("IpTransactionService", "포트폴리오 API 응답 - code: ${response.code()}, isSuccessful: ${response.isSuccessful()}")
+                    
+                    if (response.isSuccessful) {
+                        val body = response.body()
+                        Log.d("IpTransactionService", "포트폴리오 응답: $body")
+                        callback(body, null)
+                    } else {
+                        Log.e("IpTransactionService", "포트폴리오 API HTTP 오류: ${response.code()}, ${response.message()}")
+                        callback(null, Exception("포트폴리오 API 호출 실패: ${response.code()}"))
+                    }
+                }
+
+                override fun onFailure(call: Call<PortfolioIPResponseDto>, t: Throwable) {
+                    Log.e("IpTransactionService", "포트폴리오 API 호출 실패", t)
                     callback(null, t)
                 }
             }

@@ -34,6 +34,7 @@ import com.stip.api.model.PortfolioAsset
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.NumberFormat
 import java.util.Locale
+import kotlinx.coroutines.launch
 import com.stip.stip.signup.utils.PreferenceUtil
 import com.stip.stip.signup.Constants
 import com.stip.api.repository.WalletHistoryRepository
@@ -137,13 +138,6 @@ class IpAssetFragment : Fragment() {
         assetManager.balance.observe(viewLifecycleOwner) { balance ->
             // USD 자산 아이템 업데이트
             updateUsdAssetItem(balance)
-            
-            // 직접 총 보유자산 표시 업데이트 (소수점 2자리 고정)
-            val totalAssets = assetsList.sumOf { it.usdEquivalent }
-            val formatter = java.text.DecimalFormat("#,##0.00")
-            binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
-            
-            android.util.Log.d("IpAssetFragment", "Updated total assets display: ${formatter.format(totalAssets)} USD")
         }
     }
     
@@ -153,15 +147,15 @@ class IpAssetFragment : Fragment() {
     private fun updateUsdAssetItem(balance: Double) {
         // USD 데이터 업데이트
         val existingUsdIndex = assetsList.indexOfFirst { it.isUsd }
-        
+
         val usdAssetItem = IpAssetItem(
             currencyCode = "USD",
             amount = balance,
             usdEquivalent = balance,
-            krwEquivalent = balance * 1300.0,
+            krwEquivalent = com.stip.utils.ExchangeRateManager.convertUsdToKrw(balance),
             isUsd = true
         )
-        
+
         if (existingUsdIndex >= 0) {
             // 기존 USD 항목 업데이트
             assetsList[existingUsdIndex] = usdAssetItem
@@ -169,18 +163,14 @@ class IpAssetFragment : Fragment() {
             // 없으면 추가 (리스트 맨 앞에)
             assetsList.add(0, usdAssetItem)
         }
-        
-        // 총 자산 계산 및 표시 - 소수점 2자리 고정 포맷
-        val totalAssets = assetsList.sumOf { it.usdEquivalent }
-        val formatter = java.text.DecimalFormat("#,##0.00")
-        binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
-        
+
+
         // 데이터 변경 알림
         applyFiltering()
     }
     
     /**
-     * 입출금 내역 기반 잔고 계산 및 UI 반영
+     * 포트폴리오 API에서 잔고 데이터 로드
      */
     private fun loadBalancesFromHistory() {
         lifecycleScope.launch {
@@ -189,43 +179,86 @@ class IpAssetFragment : Fragment() {
                 Toast.makeText(requireContext(), "로그인 정보가 없습니다.", Toast.LENGTH_SHORT).show()
                 return@launch
             }
-            val history = walletHistoryRepository.getWalletHistory(memberId, 1, 1000)
-            // 심볼별 잔고 계산 (입금-출금)
-            val symbolBalances = history.groupBy { it.symbol }
-                .mapValues { (_, txs) ->
-                    txs.sumOf { if (it.type == "deposit") it.amount else -it.amount }
-                }
-                .filterValues { it > 0.0 }
-            // 자산 리스트 생성
-            assetsList.clear()
-            symbolBalances.forEach { (symbol, balance) ->
-                assetsList.add(
-                    IpAssetItem(
-                        currencyCode = symbol,
-                        amount = balance,
-                        usdEquivalent = balance, // 환율 적용 필요시 수정
-                        krwEquivalent = balance * 1300.0, // 환율 적용 필요시 수정
-                        isUsd = symbol == "USD"
+            
+            try {
+                // 포트폴리오 전체 응답 조회
+                val portfolioResponse = portfolioRepository.getPortfolioResponse(memberId)
+                
+                if (portfolioResponse != null) {
+                    // 상단 총 보유자산 표시
+                    val formatter = java.text.DecimalFormat("#,##0.00")
+                    val totalEval = portfolioResponse.evalAmount?.toDouble() ?: 0.0
+                    binding.totalIpAssets.text = "$${formatter.format(totalEval)} USD"
+                    
+                    // KRW 환산액 표시 (API 기반 환율 변환)
+                    lifecycleScope.launch {
+                        try {
+                            val krwAmount = com.stip.utils.ExchangeRateManager.convertUsdToKrwWithApi(totalEval)
+                            if (isAdded && _binding != null) {
+                                binding.totalIpAssetsKrw.text = "≈ ${NumberFormat.getNumberInstance(Locale.US).format(krwAmount.toInt())} KRW"
+                            }
+                        } catch (e: Exception) {
+                            android.util.Log.e("IpAssetFragment", "KRW 환산액 계산 실패: ${e.message}", e)
+                        }
+                    }
+                    
+                    // 자산 리스트 생성 (wallets 사용)
+                    assetsList.clear()
+                    
+                    // USD 항목
+                    val usdBalance = portfolioResponse.usdBalance?.toDouble() ?: 0.0
+                    assetsList.add(
+                        IpAssetItem(
+                            currencyCode = "USD",
+                            amount = usdBalance,
+                            usdEquivalent = usdBalance,
+                            krwEquivalent = com.stip.utils.ExchangeRateManager.convertUsdToKrw(usdBalance),
+                            isUsd = true
+                        )
                     )
-                )
+                    
+                    // USDAssetManager에 USD 잔액 설정
+                    assetManager.setUsdBalance(usdBalance)
+                    
+                    // 다른 자산들 추가 (USD 제외)
+                    portfolioResponse.wallets
+                        .filter { it.symbol != "USD" }
+                        .forEach { wallet ->
+                            assetsList.add(
+                                IpAssetItem(
+                                    currencyCode = wallet.symbol,
+                                    amount = wallet.balance?.toDouble() ?: 0.0,
+                                    usdEquivalent = wallet.evalAmount?.toDouble() ?: 0.0,
+                                    krwEquivalent = com.stip.utils.ExchangeRateManager.convertUsdToKrw(wallet.evalAmount?.toDouble() ?: 0.0),
+                                    isUsd = false
+                                )
+                            )
+                        }
+                    
+                    // 리스트 갱신
+                    applyFiltering()
+                    
+                    android.util.Log.d("IpAssetFragment", "새로운 DTO 구조로 자산 로드 완료: ${portfolioResponse.wallets.size}개 자산")
+                } else {
+                    // API 응답이 null인 경우 빈 상태 표시
+                    showEmptyState()
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("IpAssetFragment", "포트폴리오 API 호출 실패: ${e.message}", e)
+                showEmptyState()
             }
-            // USD 항목이 없으면 0.0으로 추가
-            if (!symbolBalances.containsKey("USD")) {
-                assetsList.add(0, IpAssetItem(
-                    currencyCode = "USD",
-                    amount = 0.0,
-                    usdEquivalent = 0.0,
-                    krwEquivalent = 0.0,
-                    isUsd = true
-                ))
-            }
-            // 총 보유자산 계산 및 표시
-            val totalAssets = assetsList.sumOf { it.usdEquivalent }
-            val formatter = java.text.DecimalFormat("#,##0.00")
-            binding.totalIpAssets.text = "$${formatter.format(totalAssets)} USD"
-            // 리스트 갱신
-            applyFiltering()
         }
+    }
+
+    /**
+     * 빈 상태 표시
+     */
+    private fun showEmptyState() {
+        if (_binding == null) return
+        assetsList.clear()
+        applyFiltering()
+        binding.totalIpAssets.text = "$0.00 USD"
+        android.util.Log.d("IpAssetFragment", "빈 상태로 자산 표시")
     }
     
     private fun setupSearchAndFilter() {
@@ -259,6 +292,9 @@ class IpAssetFragment : Fragment() {
             updateFilterButtonUI()
             applyFiltering(binding.searchEditText.text.toString())
         }
+        
+        // 초기 필터 UI 상태 설정 (전체 필터가 기본값)
+        updateFilterButtonUI()
     }
     
     private fun updateFilterButtonUI() {

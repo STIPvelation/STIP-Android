@@ -4,70 +4,142 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.appbar.MaterialToolbar
+import com.stip.stip.R
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 /**
- * 출금 Activity 예제
- * 실제 사용 시에는 UI 레이아웃과 함께 구현하세요
+ * 출금 Activity
+ * API: https://tapi.sharetheip.com/api/wallet/withdraw
  */
 @AndroidEntryPoint
 class WithdrawActivity : AppCompatActivity() {
 
     private val withdrawViewModel: WithdrawViewModel by viewModels()
+    
+    // UI 요소들
+    private lateinit var toolbar: MaterialToolbar
+    private lateinit var etAmount: EditText
+    private lateinit var etAddress: EditText
+    private lateinit var btnContinue: Button
+    private lateinit var btnPercent10: Button
+    private lateinit var btnPercent25: Button
+    private lateinit var btnPercent50: Button
+    private lateinit var btnPercent100: Button
+    private lateinit var tvAvailableAmount: TextView
+    private lateinit var tvMaxAmount: TextView
+    private lateinit var tvFeeAmount: TextView
+    private lateinit var tvTotalFeeAmount: TextView
+    
+    // 현재 암호화폐 심볼 (예: WETALK)
+    private var currentSymbol: String = "WETALK"
+    private var availableAmount: Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.fragment_ip_asset_ticker_withdrawal_input)
         
-        // 실제 사용 시에는 setContentView(R.layout.activity_withdraw) 와 같이 레이아웃을 설정하세요
-        
+        initViews()
         setupObservers()
+        setupClickListeners()
+    }
+
+    /**
+     * UI 요소들 초기화
+     */
+    private fun initViews() {
+        toolbar = findViewById(R.id.material_toolbar)
+        etAmount = findViewById(R.id.et_amount)
+        etAddress = findViewById(R.id.et_address)
+        btnContinue = findViewById(R.id.btn_continue)
+        btnPercent10 = findViewById(R.id.btn_percent_10)
+        btnPercent25 = findViewById(R.id.btn_percent_25)
+        btnPercent50 = findViewById(R.id.btn_percent_50)
+        btnPercent100 = findViewById(R.id.btn_percent_100)
+        tvAvailableAmount = findViewById(R.id.tv_available_amount)
+        tvMaxAmount = findViewById(R.id.tv_max_amount)
+        tvFeeAmount = findViewById(R.id.tv_fee_amount)
+        tvTotalFeeAmount = findViewById(R.id.tv_total_fee_amount)
         
-        // 예제 출금 요청은 제거하고, 실제 버튼 클릭 시에만 실행되도록 변경
-        // exampleWithdrawRequest() // 이 부분은 제거
+        // 초기 데이터 설정
+        availableAmount = 40.0 // 예시 값
+        updateAvailableAmount()
+    }
+
+    /**
+     * 클릭 리스너 설정
+     */
+    private fun setupClickListeners() {
+        // 툴바 뒤로가기 버튼
+        toolbar.setNavigationOnClickListener {
+            finish()
+        }
         
-        // 실제 사용 시에는 아래와 같이 버튼 클릭 리스너를 설정하세요
-        setupWithdrawButton()
+        // 퍼센트 버튼들
+        btnPercent10.setOnClickListener { setPercentAmount(10) }
+        btnPercent25.setOnClickListener { setPercentAmount(25) }
+        btnPercent50.setOnClickListener { setPercentAmount(50) }
+        btnPercent100.setOnClickListener { setPercentAmount(100) }
+        
+        // 출금 신청 버튼
+        btnContinue.setOnClickListener {
+            val amount = etAmount.text.toString().trim()
+            val address = etAddress.text.toString().trim()
+            
+            if (validateInput(currentSymbol, amount, address)) {
+                val amountDouble = amount.toDouble()
+                performWithdraw(currentSymbol, amountDouble, address)
+            }
+        }
+    }
+
+    /**
+     * 퍼센트 금액 설정
+     */
+    private fun setPercentAmount(percent: Int) {
+        val amount = availableAmount * percent / 100.0
+        etAmount.setText(String.format("%.2f", amount))
+    }
+
+    /**
+     * 사용 가능한 금액 표시 업데이트
+     */
+    private fun updateAvailableAmount() {
+        tvAvailableAmount.text = String.format("%.2f %s", availableAmount, currentSymbol)
     }
 
     /**
      * ViewModel 옵저버 설정
      */
     private fun setupObservers() {
-        // 로딩 상태 관찰
         lifecycleScope.launch {
             withdrawViewModel.isLoading.collect { isLoading ->
+                btnContinue.isEnabled = !isLoading
                 if (isLoading) {
                     Log.d("WithdrawActivity", "출금 요청 중...")
-                    // 실제 사용 시에는 프로그레스 바를 표시하세요
-                    // progressBar.visibility = View.VISIBLE
-                    // withdrawButton.isEnabled = false
                 } else {
                     Log.d("WithdrawActivity", "출금 요청 완료")
-                    // 실제 사용 시에는 프로그레스 바를 숨기세요
-                    // progressBar.visibility = View.GONE
-                    // withdrawButton.isEnabled = true
                 }
             }
         }
 
-        // 성공 메시지 관찰
         lifecycleScope.launch {
             withdrawViewModel.successMessage.collect { message ->
                 message?.let {
                     Log.d("WithdrawActivity", "출금 성공: $it")
                     Toast.makeText(this@WithdrawActivity, "출금 성공: $it", Toast.LENGTH_LONG).show()
-                    // 성공 후 입력 필드 초기화
-                    // clearInputFields()
+                    // 성공 시 화면 종료
+                    finish()
                 }
             }
         }
 
-        // 에러 메시지 관찰
         lifecycleScope.launch {
             withdrawViewModel.errorMessage.collect { message ->
                 message?.let {
@@ -76,34 +148,6 @@ class WithdrawActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    /**
-     * 출금 버튼 설정
-     * 실제 사용 시에는 레이아웃의 버튼에 클릭 리스너를 설정하세요
-     */
-    private fun setupWithdrawButton() {
-        // 실제 사용 시에는 아래와 같이 구현하세요:
-        /*
-        val withdrawButton = findViewById<Button>(R.id.btn_withdraw)
-        val etSymbol = findViewById<EditText>(R.id.et_symbol)
-        val etAmount = findViewById<EditText>(R.id.et_amount)
-        val etAddress = findViewById<EditText>(R.id.et_address)
-        
-        withdrawButton.setOnClickListener {
-            val symbol = etSymbol.text.toString().trim()
-            val amountText = etAmount.text.toString().trim()
-            val address = etAddress.text.toString().trim()
-            
-            if (validateInput(symbol, amountText, address)) {
-                val amount = amountText.toDoubleOrNull() ?: 0.0
-                performWithdraw(symbol, amount, address)
-            }
-        }
-        */
-        
-        // 현재는 예제용으로 Toast 메시지만 표시
-        Toast.makeText(this, "출금 버튼 클릭 리스너가 설정되었습니다. 실제 레이아웃에서 버튼을 누르세요.", Toast.LENGTH_LONG).show()
     }
 
     /**
@@ -119,18 +163,30 @@ class WithdrawActivity : AppCompatActivity() {
             Toast.makeText(this, "출금 금액을 입력하세요", Toast.LENGTH_SHORT).show()
             return false
         }
-        
+
         val amount = amountText.toDoubleOrNull()
         if (amount == null || amount <= 0) {
             Toast.makeText(this, "올바른 금액을 입력하세요", Toast.LENGTH_SHORT).show()
             return false
         }
-        
+
+        // 최소 출금 금액 체크
+        if (amount < 1.0) {
+            Toast.makeText(this, "최소 출금 금액은 1.00 입니다", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
+        // 사용 가능한 금액 체크
+        if (amount > availableAmount) {
+            Toast.makeText(this, "출금 가능한 금액을 초과했습니다", Toast.LENGTH_SHORT).show()
+            return false
+        }
+
         if (address.isEmpty()) {
             Toast.makeText(this, "출금 주소를 입력하세요", Toast.LENGTH_SHORT).show()
             return false
         }
-        
+
         return true
     }
 
@@ -138,23 +194,37 @@ class WithdrawActivity : AppCompatActivity() {
      * 출금 요청 실행
      */
     private fun performWithdraw(symbol: String, amount: Double, address: String) {
-        // 메시지 초기화
-        withdrawViewModel.clearMessages()
+        Log.d("WithdrawActivity", "출금 요청: symbol=$symbol, amount=$amount, address=$address")
         
-        // 출금 요청
-        withdrawViewModel.withdrawCrypto(symbol, amount, address)
+        lifecycleScope.launch {
+            try {
+                // 티커로부터 marketPairId 동적으로 가져오기
+                val marketPairId = getMarketPairIdForTicker(symbol)
+                if (marketPairId != null) {
+                    withdrawViewModel.clearMessages()
+                    withdrawViewModel.withdrawCrypto(marketPairId, amount, address)
+                } else {
+                    Log.e("WithdrawActivity", "marketPairId를 찾을 수 없음: $symbol")
+                    Toast.makeText(this@WithdrawActivity, "티커 정보를 찾을 수 없습니다: $symbol", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("WithdrawActivity", "marketPairId 조회 실패: ${e.message}", e)
+                Toast.makeText(this@WithdrawActivity, "티커 정보 조회 중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
-
+    
     /**
-     * 예제 출금 요청 (테스트용)
-     * 실제 사용 시에는 이 함수를 호출하지 마세요
+     * 티커로부터 marketPairId 가져오기
      */
-    fun exampleWithdrawRequest() {
-        // 예제 데이터
-        val symbol = "BNB"
-        val amount = 5.0
-        val address = "d60c8468-6fec-4298-bb20-fa7b9e80ce5b"
-        
-        performWithdraw(symbol, amount, address)
+    private suspend fun getMarketPairIdForTicker(ticker: String): String? {
+        return try {
+            val ipListingRepository = com.stip.stip.api.repository.IpListingRepository()
+            val marketPairId = ipListingRepository.getPairIdForTicker(ticker)
+            marketPairId
+        } catch (e: Exception) {
+            Log.e("WithdrawActivity", "marketPairId 조회 실패: ${e.message}", e)
+            null
+        }
     }
-} 
+}

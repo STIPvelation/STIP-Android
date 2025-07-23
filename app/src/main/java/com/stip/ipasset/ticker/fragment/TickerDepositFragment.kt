@@ -20,6 +20,7 @@ import com.stip.ipasset.usd.model.DepositViewModel
 import com.stip.ipasset.extension.copyToClipboard
 import com.stip.stip.MainActivity
 import com.stip.ipasset.model.IpAsset
+import com.stip.stip.databinding.FragmentIpAssetTickerDepositBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,9 +33,11 @@ import com.stip.stip.signup.utils.PreferenceUtil
  */
 @AndroidEntryPoint
 class TickerDepositFragment : Fragment() {
+    private var _binding: FragmentIpAssetTickerDepositBinding? = null
+    private val binding get() = _binding!!
+    
     private var ipAsset: IpAsset? = null
     private val currencyCode: String get() = ipAsset?.currencyCode?.uppercase() ?: ""
-
 
     private val viewModel by viewModels<DepositViewModel>()
     
@@ -64,8 +67,9 @@ class TickerDepositFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_ip_asset_ticker_deposit, container, false)
+    ): View {
+        _binding = FragmentIpAssetTickerDepositBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onResume() {
@@ -75,8 +79,14 @@ class TickerDepositFragment : Fragment() {
         (activity as? MainActivity)?.setHeaderVisibility(false)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
         // 번들에서 데이터 추출 - API 레벨 33+ 호환성 수정
         ipAsset = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             arguments?.getParcelable("ipAsset", com.stip.ipasset.model.IpAsset::class.java)
@@ -84,13 +94,59 @@ class TickerDepositFragment : Fragment() {
             @Suppress("DEPRECATION")
             arguments?.getParcelable("ipAsset")
         }
+        
+        // 헤더 숨기기
+        (activity as? MainActivity)?.setHeaderVisibility(false)
+        
+        // 티커 잔고 정보 로드 (새로운 포트폴리오 DTO 구조 사용)
+        loadTickerBalance()
+        
+        // 뒤로가기 버튼은 toolbar의 navigation icon을 사용
+        binding.toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+        
+        // 뷰 설정
         setupViews()
     }
 
+    /**
+     * 티커 잔고 정보 로드
+     */
+    private fun loadTickerBalance() {
+        lifecycleScope.launch {
+            try {
+                val memberId = PreferenceUtil.getUserId()
+                if (memberId.isNullOrBlank()) {
+                    android.util.Log.w("TickerDepositFragment", "사용자 ID가 없습니다.")
+                    return@launch
+                }
+                
+                val portfolioRepository = com.stip.api.repository.PortfolioRepository()
+                val portfolioResponse = portfolioRepository.getPortfolioResponse(memberId)
+                
+                if (portfolioResponse != null) {
+                    // 현재 티커의 지갑 찾기
+                    val tickerWallet = portfolioResponse.wallets.find { it.symbol == currencyCode }
+                    
+                    if (tickerWallet != null) {
+                        android.util.Log.d("TickerDepositFragment", "${currencyCode} 잔고 로드 완료: ${tickerWallet.balance} ${currencyCode} (≈ $${tickerWallet.evalAmount} USD)")
+                    } else {
+                        android.util.Log.w("TickerDepositFragment", "${currencyCode} 지갑을 찾을 수 없습니다.")
+                    }
+                } else {
+                    android.util.Log.w("TickerDepositFragment", "포트폴리오 응답이 null입니다.")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("TickerDepositFragment", "${currencyCode} 잔고 로드 실패: ${e.message}", e)
+            }
+        }
+    }
+
     private fun setupViews() {
-        val toolbar = view?.findViewById<Toolbar>(R.id.toolbar)
-        toolbar?.title = "$currencyCode 입금"
-        toolbar?.setNavigationOnClickListener {
+        val toolbar = binding.toolbar
+        toolbar.title = "$currencyCode 입금"
+        toolbar.setNavigationOnClickListener {
             // 프래그먼트 매니저를 사용하여 이전 화면으로 돌아감
             requireActivity().supportFragmentManager.popBackStack()
         }
@@ -104,21 +160,18 @@ class TickerDepositFragment : Fragment() {
         viewModel.fetchWalletAddress(currencyCode)
 
         // 티커 심볼 표시
-        val tvTickerCode = view?.findViewById<TextView>(R.id.tv_ticker_code)
-        tvTickerCode?.text = currencyCode
+        binding.tvTickerCode.text = currencyCode
 
         // 주소 및 QR코드
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.depositUrl.collect { address ->
-                val tvDepositAddress = view?.findViewById<TextView>(R.id.tv_deposit_address)
-                tvDepositAddress?.text = address ?: "-"
+                binding.tvDepositAddress.text = address ?: "-"
             }
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.qrCode.collect { bitmap ->
-                val ivQrCode = view?.findViewById<ImageView>(R.id.iv_qr_code)
                 if (bitmap != null) {
-                    ivQrCode?.setImageBitmap(bitmap)
+                    binding.ivQrCode.setImageBitmap(bitmap)
                 }
             }
         }
@@ -131,8 +184,7 @@ class TickerDepositFragment : Fragment() {
         }
 
         // 주소 복사 버튼 설정
-        val ivCopy = view?.findViewById<ImageView>(R.id.iv_copy)
-        ivCopy?.setOnClickListener {
+        binding.ivCopy.setOnClickListener {
             viewModel.depositUrl.value?.let { address ->
                 copyAddressToClipboard(address)
             }

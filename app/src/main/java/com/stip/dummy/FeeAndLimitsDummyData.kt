@@ -8,24 +8,6 @@ package com.stip.dummy
 object FeeAndLimitsDummyData {
     
     /**
-     * 티커별 출금 수수료 정보
-     */
-    private val withdrawalFees = mapOf(
-        "USD" to 1.0,
-        "JWV" to 1.0,
-        "MDM" to 1.0,
-        "CDM" to 1.0,
-        "IJECT" to 1.0,
-        "WETALK" to 1.0,
-        "SLEEP" to 1.0,
-        "KCOT" to 1.0,
-        "MSK" to 1.0,
-        "SMT" to 1.0,
-        "AXNO" to 1.0,
-        "KATV" to 1.0
-    )
-    
-    /**
      * 티커별 최소 출금 한도
      */
     private val minWithdrawalAmounts = mapOf(
@@ -63,23 +45,9 @@ object FeeAndLimitsDummyData {
     )
     
     /**
-     * 특정 티커의 출금 수수료 조회
-     */
-    fun getWithdrawalFee(currencyCode: String): Double {
-        return withdrawalFees[currencyCode] ?: 1.0 // 기본 수수료 1.0
-    }
-    
-    /**
      * 특정 티커의 최소 출금 한도 조회
      */
     fun getMinWithdrawalAmount(currencyCode: String): Double {
         return minWithdrawalAmounts[currencyCode] ?: 1.0 // 기본 최소 1.0
-    }
-    
-    /**
-     * 특정 티커의 최대 출금 한도 조회
-     */
-    fun getMaxWithdrawalAmount(currencyCode: String): Double {
-        return maxWithdrawalAmounts[currencyCode] ?: 10000.0 // 기본 최대 10000.0
     }
 }

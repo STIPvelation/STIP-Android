@@ -73,6 +73,8 @@ class LoginViewModel @Inject constructor(
         return false
     }
 
+    suspend fun getMemberInfo() = memberRepository.getMembers()
+
     /** 로그인 처리 */
     fun requestPostAuthLogin(requestAuthLogin: RequestAuthLogin) {
         showProgress()
@@ -84,23 +86,31 @@ class LoginViewModel @Inject constructor(
                     Log.d("LoginViewModel", "로그인 성공, 토큰 저장: ${loginResponse.accessToken}")
                     PreferenceUtil.saveToken(loginResponse.accessToken)
                     
-                    // 토큰 저장이 완료된 후 약간의 딜레이를 준 후 회원정보 조회
-                    delay(500)
-                    
-                    val success = fetchMemberInfo()
-                    if (!success) {
-                        // 모든 시도 실패 후 기존 정보 확인
-                        try {
-                            val existingMemberInfo = PreferenceUtil.getMemberInfo()
-                            if (existingMemberInfo != null) {
-                                Log.d("LoginViewModel", "기존 저장된 회원정보 사용: ${existingMemberInfo.name}")
-                                PreferenceUtil.saveUserId(existingMemberInfo.id)
-                                Log.d("LoginViewModel", "기존 userId 활용: ${existingMemberInfo.id}")
-                            } else {
-                                Log.w("LoginViewModel", "기존 저장된 회원정보도 없음")
+                    // 토큰에서 userId 추출 시도
+                    val extractedUserId = PreferenceUtil.extractUserIdFromToken(loginResponse.accessToken)
+                    if (extractedUserId != null) {
+                        Log.d("LoginViewModel", "토큰에서 userId 추출 성공: $extractedUserId")
+                    } else {
+                        Log.w("LoginViewModel", "토큰에서 userId 추출 실패, API에서 조회 시도")
+                        
+                        // 토큰 저장이 완료된 후 약간의 딜레이를 준 후 회원정보 조회
+                        delay(500)
+                        
+                        val success = fetchMemberInfo()
+                        if (!success) {
+                            // 모든 시도 실패 후 기존 정보 확인
+                            try {
+                                val existingMemberInfo = PreferenceUtil.getMemberInfo()
+                                if (existingMemberInfo != null) {
+                                    Log.d("LoginViewModel", "기존 저장된 회원정보 사용: ${existingMemberInfo.name}")
+                                    PreferenceUtil.saveUserId(existingMemberInfo.id)
+                                    Log.d("LoginViewModel", "기존 userId 활용: ${existingMemberInfo.id}")
+                                } else {
+                                    Log.w("LoginViewModel", "기존 저장된 회원정보도 없음")
+                                }
+                            } catch (e: Exception) {
+                                Log.e("LoginViewModel", "기존 회원정보 조회 중 오류: ${e.message}")
                             }
-                        } catch (e: Exception) {
-                            Log.e("LoginViewModel", "기존 회원정보 조회 중 오류: ${e.message}")
                         }
                     }
                     

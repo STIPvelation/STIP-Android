@@ -22,7 +22,6 @@
     <string name="menu_chart">图表</string>
     <string name="menu_quotes">行情</string>
     <string name="menu_info">信息</string>
-    <string name="menu_price_alert_zh_hans">价格提醒</string>
     <string name="patent_title">KATV Patent</string>
 
     <string name="usage_plan_title">数字 IP 使用计划</string>

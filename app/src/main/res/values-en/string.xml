@@ -425,13 +425,6 @@
     <string name="ip_refresh_title">Refresh IP Information</string>
     <string name="ip_refresh_desc">Updates IP information.</string>
     <string name="ip_refresh_button">Refresh</string>
-    <string name="execution_effect_title">Execution Effect</string>
-    <string name="execution_effect_desc">Blinking effect upon buy/sell execution.</string>
-    <string name="order_section_title">Order Screen</string>
-    <string name="new_quote_effect_title">New Quote Effect</string>
-    <string name="new_quote_effect_desc">Highlight effect for new quotes.</string>
-    <string name="quote_depth_range_title">Order Book Depth Range Effect</string>
-    <string name="quote_depth_range_desc">Reactive effect based on the increase or decrease in the number of orders in the order book.</string>
     <string name="display_mode_section_title">Display Mode</string>
     <string name="display_mode_normal_title">Normal Mode</string>
     <string name="display_mode_normal_desc">Standard display mode provided by STIP.</string>
@@ -1266,7 +1259,6 @@ Furthermore, as part of our suspicious transaction review process, we may reques
         <string name="no_business_plan_link">No business plan link available.</string>
         <string name="no_related_video_link">No related video link available.</string>
         <string name="error_loading_details">Failed to load details.</string>
-    <string name="menu_price_alert_en">Price Alert</string>
 
 
 
@@ -1331,7 +1323,6 @@ Furthermore, as part of our suspicious transaction review process, we may reques
     <string name="more_version">Version %s</string>
     <string name="more_inquiries">Inquiries</string>
     <string name="more_mode_settings">Mode Settings</string>
-    <string name="more_price_alerts">Price Alerts</string>
     <string name="more_notification_settings">Notification Settings</string>
     <string name="more_language_settings">Language Settings</string>
     <string name="more_account_settings">Account Settings</string>

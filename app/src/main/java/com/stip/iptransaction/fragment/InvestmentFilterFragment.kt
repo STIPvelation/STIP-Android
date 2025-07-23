@@ -25,7 +25,7 @@ class InvestmentFilterFragment : Fragment() {
     private var _binding: FragmentInvestmentFilterBinding? = null
     private val binding get() = _binding!!
 
-    private val dateFormat = SimpleDateFormat("yyyy.MM.dd", Locale.getDefault())
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
     private var selectedStartDate: Calendar? = null
     private var selectedEndDate: Calendar? = null
@@ -172,8 +172,6 @@ class InvestmentFilterFragment : Fragment() {
         val selectedTypes = mutableListOf<String>()
         if (binding.chipTypeBuy.isChecked) selectedTypes.add("\uB9E4\uC218")
         if (binding.chipTypeSell.isChecked) selectedTypes.add("\uB9E4\uB3C4")
-        if (binding.chipTypeDeposit.isChecked) selectedTypes.add("\uC785\uAE08")
-        if (binding.chipTypeWithdraw.isChecked) selectedTypes.add("\uCD9C\uAE08")
 
         val startDateString = selectedStartDate?.let { dateFormat.format(it.time) }
         val endDateString = selectedEndDate?.let { dateFormat.format(it.time) }

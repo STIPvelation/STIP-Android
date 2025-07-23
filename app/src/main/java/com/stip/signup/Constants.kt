@@ -50,5 +50,5 @@ object Constants {
     const val NETWORK_LOGIN_FAIL_CODE = 888
 
     /** 나이스페이 */
-    const val NICE_PAY_AUTH_URL = "https://backend.stipvelation.com/web/pass"
+    const val NICE_PAY_AUTH_URL = "https://tapi.sharetheip.com/web/pass"
 }

@@ -434,8 +434,6 @@ class RadarChartDialogFragment : DialogFragment() {
 
         ): RadarChartDialogFragment {
 
-            // ❌ 티커 기반 더미 데이터 조회 로직 제거
-
             // val model = dummyRadarData[ticker] ?: ... (제거)
 
 
@@ -460,7 +458,7 @@ class RadarChartDialogFragment : DialogFragment() {
         }
 
 
-        // ❌ dummyRadarData, RadarDataModel 제거
+        // dummyRadarData, RadarDataModel 제거
 
 
         // 타입 캐스팅 및 API 레벨 호환성 처리 함수 (기존 유지)

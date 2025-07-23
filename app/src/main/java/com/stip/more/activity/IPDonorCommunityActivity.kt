@@ -178,7 +178,6 @@ class IPDonorCommunityActivity : AppCompatActivity() {
         val layoutManager = LinearLayoutManager(this)
         layoutManager.isItemPrefetchEnabled = true
         recyclerView.layoutManager = layoutManager
-        recyclerView.setHasFixedSize(true)
         recyclerView.itemAnimator = null // 애니메이션 제거로 렌더링 최소화
         
         // 새로운 어댑터 사용

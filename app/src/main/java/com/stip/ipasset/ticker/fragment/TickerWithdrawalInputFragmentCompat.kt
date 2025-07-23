@@ -11,7 +11,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.viewModels
-// Removed dummy data import
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import com.stip.ipasset.fragment.BaseFragment
 import com.stip.ipasset.model.IpAsset
 import com.stip.ipasset.ticker.repository.IpAssetRepository
@@ -44,12 +45,22 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
     
     // 출금 가능한 최대 금액 (저장소에서 가져옴)
     private val repository: IpAssetRepository by lazy { IpAssetRepository.getInstance(requireContext()) }
+    
+    // Market API 관련
+    private val marketRepository: com.stip.stip.api.repository.MarketRepository by lazy { 
+        com.stip.stip.api.repository.MarketRepository() 
+    }
+    
+    // API에서 가져온 수수료와 출금한도
+    private var apiFee: Double = 0.0
+    private var apiMaxValue: Double = 0.0
+    
     private val availableAmount: Double
         get() = (repository.getAsset(ipAsset.id)?.amount ?: ipAsset.amount).toDouble()
     private val maxAmount: Double
-        get() = 1000000.0  // API로 대체 예정 - 기본값 설정
+        get() = apiMaxValue
     private val fee: Double
-        get() = 1.0  // API로 대체 예정 - 기본값 설정
+        get() = apiFee
     
     override fun onResume() {
         super.onResume()
@@ -63,7 +74,6 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
         
         // Bundle에서 인자 추출
         arguments?.let { args ->
-            // API 레벨 33+ 호환성 수정
             (if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 args.getParcelable(ARG_IP_ASSET, IpAsset::class.java)
             } else {
@@ -78,6 +88,33 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
         if (repository.getAsset(ipAsset.id) == null) {
             IpAssetRepository.setTestData(requireContext(), listOf(ipAsset))
         }
+    }
+    
+    /**
+     * Market API에서 수수료와 출금한도 정보를 가져옴
+     */
+    private fun loadMarketInfo() {
+        lifecycleScope.launch {
+            try {
+                val ipListingRepository = com.stip.stip.api.repository.IpListingRepository()
+                val marketPairId = ipListingRepository.getPairIdForTicker(currencyCode)
+                if (marketPairId != null) {
+                    val marketResponse = marketRepository.getMarket(marketPairId)
+                    if (marketResponse != null) {
+                        apiFee = marketResponse.fee
+                        apiMaxValue = marketResponse.maxValue
+                        updateUI()
+                    }
+                }
+            } catch (_: Exception) {}
+        }
+    }
+    
+    private fun updateUI() {
+        val binding = binding ?: return
+        
+        binding.tvMaxAmount.text = "최대 ${String.format("%,.2f", maxAmount)} ${currencyCode}"
+        binding.tvFeeAmount.text = "${String.format("%,.2f", fee)} ${currencyCode}"
     }
     
     // 숫자 포맷터 설정
@@ -276,6 +313,9 @@ class TickerWithdrawalInputFragmentCompat : BaseFragment<FragmentIpAssetTickerWi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        loadMarketInfo()
+        
         bind()
     }
 

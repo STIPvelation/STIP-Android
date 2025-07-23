@@ -14,6 +14,7 @@ import com.stip.stip.iphome.TradingDataHolder
 import com.stip.stip.iptransaction.model.IpInvestmentItem
 import com.stip.stip.iptransaction.model.UnfilledOrder
 import com.stip.stip.iptransaction.model.ApiOrderResponse
+import com.stip.stip.iptransaction.model.TradeResponse
 import com.stip.stip.iptransaction.api.IpTransactionService
 import com.stip.stip.iphome.adapter.UnfilledOrderAdapter
 import com.stip.stip.order.adapter.FilledOrderAdapter
@@ -30,13 +31,15 @@ class OrderHistoryManager(
     private val unfilledAdapter: UnfilledOrderAdapter,
     private val filledAdapter: FilledOrderAdapter,
     private val fragmentManager: FragmentManager,
-    private val coroutineScope: CoroutineScope
+    private val coroutineScope: CoroutineScope,
+    private val orderDataCoordinator: com.stip.stip.order.coordinator.OrderDataCoordinator? = null
 ) {
 
     var isUnfilledTabSelected: Boolean = true
         private set
 
     private var isVisible: Boolean = false
+    private var orderCache: Map<String, ApiOrderResponse> = emptyMap()
     companion object { private const val TAG = "OrderHistoryManager" }
 
     init {
@@ -144,18 +147,22 @@ class OrderHistoryManager(
     private fun loadUnfilledOrders() {
         Log.d(TAG, "loadUnfilledOrders() called")
         
-        val memberId = PreferenceUtil.getUserId()
-        Log.d(TAG, "Real Member ID from preferences: $memberId")
+        // 현재 선택된 티커에 해당하는 marketPairId를 가져오기
+        val currentTicker = orderDataCoordinator?.currentTicker
+        val marketPairId = TradingDataHolder.ipListingItems
+            .find { it.ticker == currentTicker }?.registrationNumber
         
-        if (memberId.isNullOrEmpty()) {
-            Log.e(TAG, "Member ID is null or empty - cannot load orders")
+        Log.d(TAG, "Current ticker: $currentTicker, marketPairId: $marketPairId")
+        
+        if (marketPairId.isNullOrEmpty()) {
+            Log.e(TAG, "Market Pair ID is null or empty - cannot load orders")
             showEmptyUnfilledState()
             return
         }
 
-        Log.d(TAG, "Calling API for unfilled orders with real memberId: $memberId")
+        Log.d(TAG, "Calling API for unfilled orders with marketPairId: $marketPairId")
         
-        IpTransactionService.getApiUnfilledOrders(memberId) { apiOrders, error ->
+        IpTransactionService.getApiUnfilledOrdersByMarketPair(marketPairId) { apiOrders, error ->
             Log.d(TAG, "API response received - error: $error, orders count: ${apiOrders?.size}")
             
             binding.root.post {
@@ -174,25 +181,86 @@ class OrderHistoryManager(
     private fun loadFilledOrders() {
         Log.d(TAG, "loadFilledOrders() called")
         
-        val memberId = PreferenceUtil.getUserId()
-        Log.d(TAG, "Real Member ID from preferences: $memberId")
+        // 현재 선택된 티커에 해당하는 marketPairId를 가져오기
+        val currentTicker = orderDataCoordinator?.currentTicker
+        val marketPairId = TradingDataHolder.ipListingItems
+            .find { it.ticker == currentTicker }?.registrationNumber
         
-        if (memberId.isNullOrEmpty()) {
-            Log.e(TAG, "Member ID is null or empty - cannot load orders")
+        Log.d(TAG, "Current ticker: $currentTicker, marketPairId: $marketPairId")
+        
+        if (marketPairId.isNullOrEmpty()) {
+            Log.e(TAG, "Market Pair ID is null or empty - cannot load orders")
             showEmptyFilledState()
             return
         }
 
-        Log.d(TAG, "Calling API for filled orders with real memberId: $memberId")
+        Log.d(TAG, "Calling API for filled orders with marketPairId: $marketPairId")
         
-        IpTransactionService.getApiFilledOrders(memberId) { apiOrders, error ->
-            Log.d(TAG, "API response received - error: $error, orders count: ${apiOrders?.size}")
+        // 먼저 모든 주문 정보를 가져와서 캐시 (미체결 + 체결)
+        val allOrders = mutableListOf<ApiOrderResponse>()
+        
+        // 미체결 주문 가져오기
+        IpTransactionService.getApiUnfilledOrdersByMarketPair(marketPairId) { unfilledOrders, unfilledError ->
+            if (unfilledError == null && unfilledOrders != null) {
+                // 현재 사용자의 주문만 필터링
+                val currentUserId = PreferenceUtil.getUserId()
+                val userUnfilledOrders = if (!currentUserId.isNullOrEmpty()) {
+                    unfilledOrders.filter { it.member.id == currentUserId }
+                } else {
+                    emptyList()
+                }
+                allOrders.addAll(userUnfilledOrders)
+            }
+            
+            // 체결된 주문도 가져오기
+            IpTransactionService.getApiFilledOrdersByMarketPair(marketPairId) { filledOrders, filledError ->
+                if (filledError == null && filledOrders != null) {
+                    // 현재 사용자의 주문만 필터링
+                    val currentUserId = PreferenceUtil.getUserId()
+                    val userFilledOrders = if (!currentUserId.isNullOrEmpty()) {
+                        filledOrders.filter { it.member.id == currentUserId }
+                    } else {
+                        emptyList()
+                    }
+                    allOrders.addAll(userFilledOrders)
+                }
+                
+                // 주문 정보를 캐시
+                orderCache = allOrders.associateBy { it.id }
+                Log.d(TAG, "Order cache updated with ${orderCache.size} orders")
+                
+                // 체결 정보 가져오기
+                loadTradesData(marketPairId)
+            }
+        }
+            
+    }
+    
+    /**
+     * 체결 정보를 가져오는 별도 메서드
+     */
+    private fun loadTradesData(marketPairId: String) {
+        IpTransactionService.getApiTradesByMarketPair(marketPairId) { trades, error ->
+            Log.d(TAG, "API response received - error: $error, trades count: ${trades?.size}")
             
             binding.root.post {
                 if (error != null) {
                     showEmptyFilledState()
-                } else if (apiOrders != null) {
-                    val filledOrders = convertApiOrdersToFilledOrders(apiOrders)
+                } else if (trades != null) {
+                    // 현재 사용자의 체결 내역만 필터링
+                    val currentUserId = PreferenceUtil.getUserId()
+                    val userTrades = if (!currentUserId.isNullOrEmpty()) {
+                        trades.filter { trade ->
+                            // buyOrderId나 sellOrderId가 현재 사용자의 주문인지 확인
+                            val buyOrder = orderCache[trade.buyOrderId]
+                            val sellOrder = orderCache[trade.sellOrderId]
+                            (buyOrder?.member?.id == currentUserId) || (sellOrder?.member?.id == currentUserId)
+                        }
+                    } else {
+                        emptyList()
+                    }
+                    
+                    val filledOrders = convertTradeResponseToFilledOrders(userTrades, marketPairId)
                     displayFilledOrders(filledOrders)
                 } else {
                     showEmptyFilledState()
@@ -209,14 +277,15 @@ class OrderHistoryManager(
             
             UnfilledOrder(
                 orderId = apiOrder.id,
-                memberNumber = apiOrder.userId,
-                ticker = getPairSymbol(apiOrder.pairId),
+                memberNumber = apiOrder.member.id,
+                ticker = apiOrder.marketPair.symbol,
                 tradeType = tradeType,
                 watchPrice = "--",
                 orderPrice = String.format("%.2f", apiOrder.price),
                 orderQuantity = apiOrder.quantity.toString(),
                 unfilledQuantity = unfilledQuantity,
-                orderTime = orderTime
+                orderTime = orderTime,
+                status = "미체결"
             )
         }
     }
@@ -230,7 +299,7 @@ class OrderHistoryManager(
             
             IpInvestmentItem(
                 type = type,
-                name = getPairSymbol(apiOrder.pairId),
+                name = apiOrder.marketPair.symbol,
                 quantity = apiOrder.filledQuantity.toString(),
                 unitPrice = String.format("%.2f", apiOrder.price),
                 amount = String.format("%.2f", apiOrder.price * apiOrder.filledQuantity),
@@ -240,6 +309,57 @@ class OrderHistoryManager(
                 executionTime = executionTime
             )
         }
+    }
+    
+    private fun convertTradeResponseToFilledOrders(trades: List<TradeResponse>, marketPairId: String): List<IpInvestmentItem> {
+        val currentUserId = PreferenceUtil.getUserId()
+        
+        return trades.map { trade ->
+            // marketPairId를 사용하여 심볼 정보 가져오기
+            val symbol = getPairSymbol(marketPairId)
+            val baseAsset = symbol.substringBefore("/")
+            
+            // 체결 시간을 주문 시간과 실행 시간으로 사용
+            val orderTime = formatDateTime(trade.timestamp)
+            val executionTime = formatDateTime(trade.timestamp)
+            
+            // 매수/매도 구분 - 캐시된 주문 정보를 사용하여 매수/매도 구분
+            val type = getOrderTypeFromCache(trade.buyOrderId, trade.sellOrderId)
+            
+            IpInvestmentItem(
+                type = type,
+                name = baseAsset,
+                quantity = trade.quantity.toString(),
+                unitPrice = String.format("%.2f", trade.price),
+                amount = String.format("%.2f", trade.price * trade.quantity),
+                fee = "0.00",
+                settlement = String.format("%.2f", trade.price * trade.quantity),
+                orderTime = orderTime,
+                executionTime = executionTime
+            )
+        }
+    }
+    
+    /**
+     * 캐시된 주문 정보를 사용하여 매수/매도 구분을 확인하는 메서드
+     */
+    private fun getOrderTypeFromCache(buyOrderId: String, sellOrderId: String): String {
+        val currentUserId = PreferenceUtil.getUserId()
+        
+        // buyOrderId로 주문 정보 확인
+        val buyOrder = orderCache[buyOrderId]
+        if (buyOrder?.member?.id == currentUserId) {
+            return if (buyOrder?.type == "buy") "매수" else "매도"
+        }
+        
+        // sellOrderId로 주문 정보 확인
+        val sellOrder = orderCache[sellOrderId]
+        if (sellOrder?.member?.id == currentUserId) {
+            return if (sellOrder?.type == "buy") "매수" else "매도"
+        }
+        
+        // 기본값으로 "매수" 반환
+        return "매수"
     }
 
     private fun formatDateTime(dateString: String): String {

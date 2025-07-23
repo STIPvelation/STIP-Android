@@ -18,14 +18,13 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import com.stip.ipasset.api.WalletAddressService
 import com.stip.stip.api.RetrofitClient
 
 @Module
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-    private const val BASE_URL: String = "https://backend.stipvelation.com/"
+    private const val TAPI_URL: String = "https://tapi.sharetheip.com/"
     const val KAKAO_BASE_URL: String = "https://dapi.kakao.com/"
     private const val X_API_Key: String = "AIzaSyAM4J1XFF6SAkXeY78ONDyRtgo3mhk78kE"
     private const val Authorization: String = ""
@@ -67,7 +66,11 @@ object ApiModule {
                 requestBuilder.addHeader("Authorization", "Bearer $currentToken")
             }
 
-            chain.proceed(requestBuilder.build())
+            val request = requestBuilder.build()
+            android.util.Log.d("ApiModule", "API 요청 URL: ${request.url}")
+            android.util.Log.d("ApiModule", "API 요청 메서드: ${request.method}")
+            
+            chain.proceed(request)
         }
     }
 
@@ -88,7 +91,7 @@ object ApiModule {
     fun provideAuthService(): AuthService {
         return Retrofit.Builder()
             .client(provideOkhttpClient())
-            .baseUrl(BASE_URL)
+            .baseUrl(TAPI_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutinesResponseCallAdapterFactory.create())
             .build()
@@ -100,7 +103,7 @@ object ApiModule {
     fun provideMemberService(): MemberService {
         return Retrofit.Builder()
             .client(provideOkhttpClient())
-            .baseUrl(BASE_URL)
+            .baseUrl(TAPI_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutinesResponseCallAdapterFactory.create())
             .build()
@@ -119,10 +122,6 @@ object ApiModule {
             .create(KakaoLocationService::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideWalletAddressService(): WalletAddressService {
-        return RetrofitClient.createEngineService(WalletAddressService::class.java)
-    }
+
 
 }

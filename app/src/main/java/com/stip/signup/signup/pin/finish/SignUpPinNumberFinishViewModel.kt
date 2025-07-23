@@ -36,9 +36,19 @@ class SignUpPinNumberFinishViewModel @Inject constructor(
         viewModelScope.launch {
             val response = authRepository.postAuthLogin(requestAuthLogin)
             response.suspendOnSuccess {
-                this.response.body()?.let {
-                    PreferenceUtil.saveToken(it.accessToken)
-                    _authLoginLiveData.value = it
+                this.response.body()?.let { loginResponse ->
+                    Log.d("SignUpPinNumberFinishViewModel", "로그인 성공, 토큰 저장: ${loginResponse.accessToken}")
+                    PreferenceUtil.saveToken(loginResponse.accessToken)
+                    
+                    // 토큰에서 userId 추출 시도
+                    val extractedUserId = PreferenceUtil.extractUserIdFromToken(loginResponse.accessToken)
+                    if (extractedUserId != null) {
+                        Log.d("SignUpPinNumberFinishViewModel", "토큰에서 userId 추출 성공: $extractedUserId")
+                    } else {
+                        Log.w("SignUpPinNumberFinishViewModel", "토큰에서 userId 추출 실패")
+                    }
+                    
+                    _authLoginLiveData.value = loginResponse
                 }
             }.suspendOnError {
                 Log.e("Error",this.errorBody?.string() ?: "error")

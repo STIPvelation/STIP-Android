@@ -130,6 +130,7 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
             SignUpActivity.startSignUpActivityPinNumberChange(this@LoginPinNumberActivity, true, true)
         }
 
+
         // 생체인증으로 로그인 버튼 클릭 리스너 설정 - 현재 화면에서 바로 생체인증 처리
         setOnClick(binding.btnBiometricLogin) {
             // 바로 생체인증 다이얼로그 실행
@@ -289,4 +290,6 @@ class LoginPinNumberActivity : BaseActivity<ActivityLoginPinNumberBinding, Login
             }
         }
     }
+
+
 }

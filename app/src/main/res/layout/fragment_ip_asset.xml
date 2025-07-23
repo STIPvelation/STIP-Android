@@ -55,6 +55,19 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/total_ip_assets_krw"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/pretendard_medium_font_family"
+                android:gravity="center"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="≈ 0 KRW"
+                android:textColor="#646478"
+                android:textSize="14sp" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/button_krw_deposit"
                 android:layout_width="match_parent"

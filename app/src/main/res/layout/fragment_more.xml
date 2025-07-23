@@ -108,7 +108,7 @@
                     android:textStyle="bold"
                     android:fontFamily="@font/pretendard_medium"
                     app:layout_constraintBottom_toTopOf="@+id/textViewIdContainer"
-                    app:layout_constraintEnd_toStartOf="@+id/imageViewArrow"
+                    app:layout_constraintEnd_toStartOf="@+id/cardArrowContainer"
                     app:layout_constraintStart_toEndOf="@+id/profile_image_container"
                     app:layout_constraintTop_toTopOf="@+id/profile_image_container"
                     app:layout_constraintVertical_chainStyle="packed" />

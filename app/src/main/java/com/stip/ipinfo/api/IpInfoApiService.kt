@@ -22,11 +22,11 @@ interface IpInfoApiService {
     suspend fun getFxRates(): Response<FxRateResponse>
     
     companion object {
-        private const val BASE_URL = "https://backend.stipvelation.com/"
+        private const val TAPI_URL = "https://tapi.sharetheip.com/"
         
         fun create(): IpInfoApiService {
             return Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(TAPI_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(IpInfoApiService::class.java)

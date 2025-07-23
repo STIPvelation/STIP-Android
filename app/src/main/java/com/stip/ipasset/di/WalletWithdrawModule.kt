@@ -30,22 +30,15 @@ abstract class WalletWithdrawModule {
 
     companion object {
         /**
-         * 출금 API 서비스 제공 (엔진 서버 + 토큰 포함)
+         * 출금 API
          */
         @Provides
         @Singleton
         fun provideWalletWithdrawService(): WalletWithdrawService {
             return try {
-                Log.d("WalletWithdrawModule", "🔧 엔진 서버 WalletWithdrawService 생성 시작")
-                Log.d("WalletWithdrawModule", "🌐 엔진 서버 URL: http://34.64.197.80:5000/")
-                
-                // 엔진 서버 서비스 사용 (토큰 자동 포함됨)
-                val service = RetrofitClient.createEngineService(WalletWithdrawService::class.java)
-                
-                Log.d("WalletWithdrawModule", "✅ 엔진 서버 WalletWithdrawService 생성 성공")
+                val service = RetrofitClient.createTapiService(WalletWithdrawService::class.java)
                 service
             } catch (e: Exception) {
-                Log.e("WalletWithdrawModule", "❌ 엔진 서버 WalletWithdrawService 생성 실패", e)
                 throw e
             }
         }

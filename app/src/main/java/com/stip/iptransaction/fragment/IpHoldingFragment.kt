@@ -25,6 +25,10 @@ import com.stip.stip.databinding.FragmentIpHoldingBinding
 import com.stip.stip.iptransaction.api.IpTransactionService
 import com.stip.stip.iptransaction.model.DipHoldingitem
 import com.stip.stip.iptransaction.model.MyIpHoldingsSummaryItem
+import com.stip.stip.iptransaction.model.PortfolioIPResponseDto
+import com.stip.stip.iptransaction.model.PortfolioIPSummaryDto
+import com.stip.stip.iptransaction.model.PortfolioIPChartItemDto
+import com.stip.stip.iptransaction.model.PortfolioIPHoldingDto
 import com.stip.stip.signup.utils.PreferenceUtil
 import com.github.mikephil.charting.components.Legend // 범례 설정 위해 추가
 import com.github.mikephil.charting.data.PieData
@@ -33,6 +37,8 @@ import com.github.mikephil.charting.data.PieEntry
 // import com.github.mikephil.charting.formatter.PercentFormatter // 사용 안 함
 import com.github.mikephil.charting.utils.ColorTemplate
 import java.util.ArrayList
+import java.math.BigDecimal
+import com.stip.stip.iptransaction.fragment.PortfolioHoldingsAdapter
 
 class IpHoldingFragment : Fragment(), ScrollableToTop {
 
@@ -76,76 +82,130 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
         updateChartVisibilityState() // 초기 차트 가시성 상태 설정
     }
 
+    /**
+     * 보유 내역 데이터 로드
+     */
     private fun loadHoldingData() {
-        // 로그인 여부 확인
-        val token = PreferenceUtil.getToken()
-        if (token == null || token.isEmpty()) {
-            binding.noipMessageText.text = "로그인이 필요합니다."
-            binding.noipcurrently.visibility = View.VISIBLE
-            binding.holdingsRecyclerView.visibility = View.GONE
-            binding.summarySection.visibility = View.GONE
-            return
-        }
-        
-        // 로딩 표시
-        // 프로그레스바 구현 필요 (현재 레이아웃에 없음)
-        binding.noipMessageText.visibility = View.GONE
-        binding.holdingsRecyclerView.visibility = View.GONE
-        
-        // 보유 요약 정보 API 호출
-        IpTransactionService.getIpHoldingsSummary { summaryData, summaryError ->
-            requireActivity().runOnUiThread {
-                if (summaryError != null) {
-                    // 오류 처리
-                    // 프로그레스바 없음
+        lifecycleScope.launch {
+            val memberId = PreferenceUtil.getUserId()
+            if (memberId.isNullOrBlank()) {
+                requireActivity().runOnUiThread {
                     binding.noipMessageText.visibility = View.VISIBLE
-                    binding.noipMessageText.text = "데이터를 불러오는 중 오류가 발생했습니다."
-                    return@runOnUiThread
+                    binding.noipMessageText.text = "로그인 정보가 없습니다."
                 }
+                return@launch
+            }
+
+            try {
+                // 포트폴리오 API 호출
+                val portfolioRepository = com.stip.api.repository.PortfolioRepository()
+                val portfolioResponse = portfolioRepository.getPortfolioResponse(memberId)
                 
-                // 요약 데이터 표시
-                if (summaryData != null) {
-                    // 요약 정보 표시 - setupSummaryInfo 메소드 호출
-                    setupSummaryInfo(summaryData)
-                    binding.summarySection.visibility = View.VISIBLE
-                } else {
-                    binding.summarySection.visibility = View.GONE
-                }
-                
-                // 보유 상세 내역 API 호출
-                IpTransactionService.getIpHoldings { holdingsData, holdingsError ->
-                    requireActivity().runOnUiThread {
-                        // 프로그레스바 없음
-                        
-                        if (holdingsError != null) {
-                            // 오류 처리
-                            binding.noipcurrently.visibility = View.VISIBLE
-                            binding.noipMessageText.visibility = View.VISIBLE
-                            binding.noipMessageText.text = "데이터를 불러오는 중 오류가 발생했습니다."
-                            binding.holdingsRecyclerView.visibility = View.GONE
-                            return@runOnUiThread
-                        }
+                requireActivity().runOnUiThread {
+                    if (portfolioResponse != null) {
+                        // 요약 정보 표시
+                        setupPortfolioSummaryInfo(portfolioResponse)
+                        binding.summarySection.visibility = View.VISIBLE
                         
                         // 보유 내역 표시
-                        if (holdingsData != null && holdingsData.isNotEmpty()) {
-                            val dipAdapter = DipHoldingsAdapter(holdingsData)
+                        if (portfolioResponse.wallets.isNotEmpty()) {
+                            val portfolioAdapter = PortfolioHoldingsAdapter(portfolioResponse.wallets.map { wallet ->
+                                // PortfolioWalletItemDto를 PortfolioIPHoldingDto로 변환
+                                com.stip.stip.iptransaction.model.PortfolioIPHoldingDto(
+                                    marketPairId = wallet.marketPairId,
+                                    symbol = wallet.symbol,
+                                    walletId = wallet.walletId,
+                                    balance = wallet.balance,
+                                    address = wallet.address,
+                                    price = wallet.price,
+                                    evalAmount = wallet.evalAmount,
+                                    buyAmount = wallet.buyAmount,
+                                    buyAvgPrice = wallet.buyAvgPrice,
+                                    profit = wallet.profit,
+                                    profitRate = wallet.profitRate,
+                                    name = wallet.symbol,
+                                    amount = wallet.balance
+                                )
+                            })
+                            
                             binding.holdingsRecyclerView.apply {
                                 layoutManager = LinearLayoutManager(requireContext())
-                                adapter = dipAdapter
-                                // 아이템 간 구분선 제거
+                                adapter = portfolioAdapter
                             }
                             binding.holdingsRecyclerView.visibility = View.VISIBLE
                             binding.noipcurrently.visibility = View.GONE
-                            loadPieChartData(holdingsData) // 수정된 라벨 생성 및 데이터 로드
+                            
+                            // 포트폴리오 차트 데이터 로드
+                            loadPortfolioPieChartDataFromApi(portfolioResponse.portfolioChart, portfolioResponse.evalAmount ?: BigDecimal.ZERO)
                         } else {
                             binding.noipcurrently.visibility = View.VISIBLE
                             binding.noipMessageText.visibility = View.VISIBLE
                             binding.noipMessageText.text = "보유 중인 IP가 없습니다."
                             binding.holdingsRecyclerView.visibility = View.GONE
                         }
+                    } else {
+                        // API 응답이 null인 경우
+                        binding.noipMessageText.visibility = View.VISIBLE
+                        binding.noipMessageText.text = "데이터를 불러오는 중 오류가 발생했습니다."
                     }
                 }
+            } catch (e: Exception) {
+                android.util.Log.e("IpHoldingFragment", "보유 내역 로드 실패: ${e.message}", e)
+                requireActivity().runOnUiThread {
+                    binding.noipMessageText.visibility = View.VISIBLE
+                    binding.noipMessageText.text = "데이터를 불러오는 중 오류가 발생했습니다."
+                }
             }
+        }
+    }
+
+    /**
+     * 포트폴리오 요약 정보 설정
+     */
+    private fun setupPortfolioSummaryInfo(portfolioResponse: com.stip.api.model.PortfolioResponse) {
+        val formatter = java.text.DecimalFormat("#,##0.00")
+        
+        // USD 잔고
+        binding.holdingUsdText.text = "$${formatter.format(portfolioResponse.usdBalance?.toDouble() ?: 0.0)}"
+        
+        // 총 보유자산
+        binding.totalAssetText.text = "$${formatter.format(portfolioResponse.evalAmount?.toDouble() ?: 0.0)}"
+        
+        // 총 매수금액
+        binding.totalBuyText.text = "$${formatter.format(portfolioResponse.buyAmount?.toDouble() ?: 0.0)}"
+        
+        // 평가손익
+        binding.valuationProfitText.text = "$${formatter.format(portfolioResponse.profit?.toDouble() ?: 0.0)}"
+        
+        // 총 평가금액 (IP 자산만)
+        binding.totalValuationText.text = "$${formatter.format(portfolioResponse.evalAmount?.toDouble() ?: 0.0)}"
+        
+        // 수익률
+        binding.profitRateText.text = "${formatter.format(portfolioResponse.profitRate?.toDouble() ?: 0.0)}%"
+        
+        // 주문 가능
+        binding.availableOrderText.text = "$${formatter.format(portfolioResponse.usdAvailableBalance?.toDouble() ?: 0.0)}"
+    }
+
+    /**
+     * 포트폴리오 차트 데이터 로드
+     */
+    private fun loadPortfolioPieChartDataFromApi(
+        portfolioChart: List<com.stip.api.model.PortfolioChartItemDto>,
+        totalEval: java.math.BigDecimal?
+    ) {
+        if (portfolioChart.isNotEmpty()) {
+            // 차트 데이터 설정
+            val chartData = portfolioChart.map { chartItem ->
+                com.stip.stip.iptransaction.model.PortfolioIPChartItemDto(
+                    symbol = chartItem.symbol ?: "",
+                    name = chartItem.name ?: "",
+                    percent = chartItem.percent ?: BigDecimal.ZERO
+                )
+            }
+            
+            // 기존 차트 설정 로직 사용
+            loadPortfolioPieChartData(chartData, totalEval)
         }
     }
 
@@ -171,15 +231,15 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
     private fun setupSummaryInfo(summary: MyIpHoldingsSummaryItem) {
         // ... (기존 코드 유지) ...
         with(binding) {
-            holdingUsdText.text = formatUsd(summary.holdingUsd)
-            totalBuyText.text = formatUsd(summary.totalBuy)
-            totalValuationText.text = formatUsd(summary.totalValuation)
-            totalAssetText.text = formatUsd(summary.totalValuation)
-            valuationProfitText.text = formatUsd(summary.valuationProfit)
-            profitRateText.text = formatPercent(summary.profitRate)
-            availableOrderText.text = formatUsd(summary.availableOrder)
+            holdingUsdText.text = formatUsd(summary.usdBalance.toDouble())
+            totalBuyText.text = formatUsd(summary.buyAmount.toDouble())
+            totalValuationText.text = formatUsd(summary.evalAmount.toDouble())
+            totalAssetText.text = formatUsd(summary.evalAmount.toDouble())
+            valuationProfitText.text = formatUsd(summary.profit.toDouble())
+            profitRateText.text = formatPercent(summary.profitRate.toDouble())
+            availableOrderText.text = formatUsd(summary.usdAvailableBalance.toDouble())
 
-            val isLoss = summary.valuationProfit < 0
+            val isLoss = summary.profit.toDouble() < 0
             val colorRes = if (isLoss) R.color.color_fall else R.color.color_rise
             val color = ContextCompat.getColor(requireContext(), colorRes)
             valuationProfitText.setTextColor(color)
@@ -215,19 +275,20 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
     private fun loadPieChartData(holdings: List<DipHoldingitem>) {
         val entries = ArrayList<PieEntry>()
         // 퍼센트 계산을 위한 전체 합계 계산
-        val totalSum = holdings.sumOf { it.totalValuation }
+        val totalSum = holdings.sumOf { it.evalAmount?.toDouble() ?: 0.0 }
 
         for (item in holdings) {
-            if (item.totalValuation > 0) {
+            val evalAmount = item.evalAmount?.toDouble() ?: 0.0
+            if (evalAmount > 0) {
                 // 해당 항목의 퍼센티지 계산
-                val percentage = if (totalSum > 0) (item.totalValuation / totalSum) * 100 else 0.0
+                val percentage = if (totalSum > 0) (evalAmount / totalSum) * 100 else 0.0
                 // 퍼센티지 문자열 포맷 (소수점 첫째 자리까지)
                 val percentageString = String.format("%.1f%%", percentage)
                 // 범례에 표시될 최종 라벨 생성 ("이름  00.0%")
-                val label = "${item.name}  ${percentageString}" // 이름과 퍼센트 사이에 공백 추가
+                val label = "${item.name ?: ""}  ${percentageString}" // 이름과 퍼센트 사이에 공백 추가
 
                 // PieEntry 생성 시 값과 *수정된 라벨* 사용
-                entries.add(PieEntry(item.totalValuation.toFloat(), label))
+                entries.add(PieEntry(evalAmount.toFloat(), label))
             }
         }
 
@@ -258,6 +319,50 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
             isChartExpanded = false
         }
         updateChartVisibilityState() // 차트 데이터 로드 후 가시성 업데이트
+    }
+
+    // 포트폴리오 차트 데이터 로드
+    private fun loadPortfolioPieChartData(chartItems: List<PortfolioIPChartItemDto>, totalValue: BigDecimal?) {
+        val entries = ArrayList<PieEntry>()
+
+        for (item in chartItems) {
+            val percent = item.percent ?: BigDecimal.ZERO
+            if (percent > BigDecimal.ZERO) {
+                // 범례에 표시될 최종 라벨 생성 ("이름  00.0%")
+                val percentageString = String.format("%.1f%%", percent.toDouble())
+                val label = "${item.name ?: ""}  $percentageString"
+
+                // PieEntry 생성 시 값과 라벨 사용
+                entries.add(PieEntry(percent.toFloat(), label))
+            }
+        }
+
+        var shouldShowChart = false
+
+        if (entries.isNotEmpty()) {
+            shouldShowChart = true
+            val dataSet = PieDataSet(entries, "")
+            dataSet.setColors(*ColorTemplate.MATERIAL_COLORS)
+            dataSet.setDrawValues(false)
+
+            val data = PieData(dataSet)
+
+            binding.portfolioPieChart.data = data
+            // 가운데 텍스트는 총 평가금액을 표시
+            binding.portfolioPieChart.centerText = generateCenterSpannableText(totalValue?.toDouble() ?: 0.0)
+            binding.portfolioPieChart.invalidate()
+
+        } else {
+            shouldShowChart = false
+            binding.portfolioPieChart.clear()
+            binding.portfolioPieChart.invalidate()
+        }
+
+        // 최종 차트 가시성 결정
+        if (!shouldShowChart) {
+            isChartExpanded = false
+        }
+        updateChartVisibilityState()
     }
 
     // 가운데 텍스트 생성 함수 (총 평가금액 표시)
@@ -311,24 +416,60 @@ class IpHoldingFragment : Fragment(), ScrollableToTop {
     private fun simulateDipHoldings(): Pair<List<DipHoldingitem>, MyIpHoldingsSummaryItem> {
         // ... (기존 코드 유지) ...
         val holdings = listOf(
-            DipHoldingitem("WETALK", 10, 5.0, 52.5, 50.0, 2.5, 5.0),
-            DipHoldingitem("MDM", 20, 2.5, 49.0, 50.0, -1.0, -2.0),
-            DipHoldingitem("CDM", 5, 10.0, 55.0, 50.0, 5.0, 10.0),
-            DipHoldingitem("", 5, 10.0, 55.0, 50.0, 5.0, 10.0)
+            DipHoldingitem(
+                symbol = "WETALK",
+                balance = BigDecimal("10"),
+                price = BigDecimal("5.25"),
+                evalAmount = BigDecimal("52.5"),
+                buyAmount = BigDecimal("50.0"),
+                buyAvgPrice = BigDecimal("5.0"),
+                profit = BigDecimal("2.5"),
+                profitRate = BigDecimal("5.0")
+            ),
+            DipHoldingitem(
+                symbol = "MDM",
+                balance = BigDecimal("20"),
+                price = BigDecimal("2.45"),
+                evalAmount = BigDecimal("49.0"),
+                buyAmount = BigDecimal("50.0"),
+                buyAvgPrice = BigDecimal("2.5"),
+                profit = BigDecimal("-1.0"),
+                profitRate = BigDecimal("-2.0")
+            ),
+            DipHoldingitem(
+                symbol = "CDM",
+                balance = BigDecimal("5"),
+                price = BigDecimal("11.0"),
+                evalAmount = BigDecimal("55.0"),
+                buyAmount = BigDecimal("50.0"),
+                buyAvgPrice = BigDecimal("10.0"),
+                profit = BigDecimal("5.0"),
+                profitRate = BigDecimal("10.0")
+            ),
+            DipHoldingitem(
+                symbol = "TEST",
+                balance = BigDecimal("5"),
+                price = BigDecimal("11.0"),
+                evalAmount = BigDecimal("55.0"),
+                buyAmount = BigDecimal("50.0"),
+                buyAvgPrice = BigDecimal("10.0"),
+                profit = BigDecimal("5.0"),
+                profitRate = BigDecimal("10.0")
+            )
 
         )
-        val totalBuy = holdings.sumOf { it.totalBuyAmount }
-        val totalValuation = holdings.sumOf { it.totalValuation }
+        val totalBuy = holdings.sumOf { it.buyAmount.toDouble() }
+        val totalValuation = holdings.sumOf { it.evalAmount.toDouble() }
         val valuationProfit = totalValuation - totalBuy
         val profitRate = if (totalBuy > 0) (valuationProfit / totalBuy) * 100 else 0.0
 
         val summary = MyIpHoldingsSummaryItem(
-            holdingUsd = 100_000.0,
-            totalBuy = totalBuy,
-            totalValuation = totalValuation,
-            valuationProfit = valuationProfit,
-            profitRate = profitRate,
-            availableOrder = 98_500.0
+            usdBalance = BigDecimal("100000.0"),
+            usdAvailableBalance = BigDecimal("98500.0"),
+            evalAmount = BigDecimal(totalValuation.toString()),
+            buyAmount = BigDecimal(totalBuy.toString()),
+            profit = BigDecimal(valuationProfit.toString()),
+            profitRate = BigDecimal(profitRate.toString())
         )
         return holdings to summary
     }

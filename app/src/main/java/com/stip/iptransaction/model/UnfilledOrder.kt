@@ -9,28 +9,45 @@ data class UnfilledOrder(
     val orderPrice: String,       // 주문가
     val orderQuantity: String,    // 주문 수량
     val unfilledQuantity: String, // 미체결 수량
-    val orderTime: String         // 주문 시간
+    val orderTime: String,        // 주문 시간
+    val status: String            // 주문 상태
 )
 
 // API 응답에서 받는 데이터
 data class ApiOrderResponse(
     val id: String,
-    val userId: String,
-    val pairId: String,
     val type: String,
     val quantity: Int,
     val price: Double,
-    val status: String,
     val filledQuantity: Int,
+    val status: String,
+    val member: MemberInfo,
+    val marketPair: MarketPairInfo,
     val createdAt: String,
-    val updatedAt: String
+    val updatedAt: String,
+    val deletedAt: String?
+)
+
+data class MemberInfo(
+    val id: String,
+    val email: String,
+    val name: String
+)
+
+data class MarketPairInfo(
+    val id: String,
+    val symbol: String,
+    val baseAsset: String,
+    val quoteAsset: String,
+    val type: String,
+    val status: String
 )
 
 // API 응답
 data class OrderListResponse(
     val success: Boolean,
     val message: String,
-    val data: OrderData
+    val data: List<ApiOrderResponse>
 )
 
 data class OrderData(

@@ -9,13 +9,10 @@ import com.google.gson.annotations.SerializedName
 data class TapiHourlyDataResponse(
     @SerializedName("timestamp")
     val timestamp: String, // 체결 시각 (ISO 8601 형식)
-    
     @SerializedName("price")
     val price: Double, // 체결 가격 (USD)
-    
-    @SerializedName("volume")
+    @SerializedName("amount")
     val volume: Double, // 체결 금액
-    
     @SerializedName("marketPairId")
     val marketPairId: String? = null // 마켓 페어 ID
 ) 

@@ -9,19 +9,14 @@ import com.google.gson.annotations.SerializedName
 data class TapiDailyDataResponse(
     @SerializedName("date")
     val date: String, // 일자 (YYYY-MM-DD 형식)
-    
     @SerializedName("close")
     val close: Double, // 종가 (USD)
-    
     @SerializedName("change")
     val change: Double, // 전일 대비 가격 변동
-    
     @SerializedName("changePercent")
     val changePercent: Double, // 전일 대비 변동률 (%)
-    
     @SerializedName("volume")
     val volume: Double, // 총 거래량
-    
     @SerializedName("marketPairId")
     val marketPairId: String? = null // 마켓 페어 ID
 ) 

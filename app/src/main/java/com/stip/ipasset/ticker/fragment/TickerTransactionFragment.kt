@@ -34,6 +34,8 @@ import android.util.Log
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
+import com.stip.api.repository.PortfolioRepository
+import java.math.BigDecimal
 
 @AndroidEntryPoint
 class TickerTransactionFragment : Fragment() {
@@ -91,8 +93,11 @@ class TickerTransactionFragment : Fragment() {
         // 버튼 리스너 설정
         setupButtonListeners()
         
+        // 티커 잔고 정보 업데이트
+        updateTickerBalance()
+        
         // 입출금 내역 로드
-        loadWalletHistory()
+        loadWalletHistoryForTransactions()
     }
     
     override fun onResume() {
@@ -141,15 +146,7 @@ class TickerTransactionFragment : Fragment() {
                 else -> R.color.token_usd
             }
             binding.currencyIconBackground.backgroundTintList = requireContext().getColorStateList(colorResId)
-            
-            // 잔액 설정 (ticker_holdings 사용)
-            val formatter = NumberFormat.getNumberInstance(Locale.US)
-            formatter.minimumFractionDigits = 2
-            formatter.maximumFractionDigits = 2
-            binding.tickerHoldings.text = "${formatter.format(amount)} ${code}"
-            
-            // USD 환산 가치 설정 (equivalent_amount 사용)
-            binding.equivalentAmount.text = "≈ $${formatter.format(usdEquivalent)}"
+
         }
     }
     
@@ -221,7 +218,7 @@ class TickerTransactionFragment : Fragment() {
                     .addToBackStack(null)
                     .commit()
             } catch (e: Exception) {
-                android.util.Log.e("TickerTransaction", "출금 화면 이동 실패: ${e.message}", e)
+                android.util.Log.e("TickerTransactionFragment", "출금 화면 이동 실패: ${e.message}", e)
                 android.widget.Toast.makeText(
                     requireContext(),
                     "화면 전환 중 오류가 발생했습니다: ${e.message}",
@@ -336,29 +333,17 @@ class TickerTransactionFragment : Fragment() {
     }
 
     // 트랜잭션 데이터 로드 및 필터링
-    private fun loadWalletHistory() {
+    private fun loadWalletHistoryForTransactions() {
         viewLifecycleOwner.lifecycleScope.launch {
             val memberId = PreferenceUtil.getUserId()
-            if (memberId.isNullOrBlank() || tickerCode.isNullOrBlank()) return@launch
-            val history = walletHistoryRepository.getWalletHistory(memberId)
-            Log.d("TickerTransactionFragment", "API history size: ${history.size}")
-            history.forEach { Log.d("TickerTransactionFragment", "API symbol: ${it.symbol}") }
-            // 심볼별 잔고 계산 (입금-출금)
-            val symbolBalances = history.groupBy { it.symbol }
-                .mapValues { (_, txs) ->
-                    txs.sumOf { if (it.type == "deposit") it.amount else -it.amount }
-                }
-            symbolBalances.forEach { (symbol, balance) ->
-                Log.d("TickerTransactionFragment", "잔고 계산 결과: $symbol = $balance")
-            }
-            // 총 보유(잔고) UI에 표시
-            tickerCode?.let { code ->
-                val balance = symbolBalances[code] ?: 0.0
-                val formatter = NumberFormat.getNumberInstance(Locale.US)
-                formatter.minimumFractionDigits = 2
-                formatter.maximumFractionDigits = 2
-                binding.tickerHoldings.text = "${formatter.format(balance)} $code"
-            }
+            val currentTickerCode = tickerCode
+            if (memberId.isNullOrBlank() || currentTickerCode.isNullOrBlank()) return@launch
+            
+            // 특정 티커의 거래 내역만 가져오기
+            val history = walletHistoryRepository.getWalletHistory(memberId, currentTickerCode)
+            Log.d("TickerTransactionFragment", "거래내역: ${history.size}")
+            
+            // 거래 내역만 변환하여 표시
             allTransactions = history.mapNotNull { it.toTickerTransaction() }
             Log.d("TickerTransactionFragment", "allTransactions size: ${allTransactions.size}")
             updateTransactionList()
@@ -399,7 +384,7 @@ class TickerTransactionFragment : Fragment() {
                 id = txId,
                 tickerAmount = this.amount,
                 tickerSymbol = this.symbol,
-                usdAmount = this.amount, // 실제 환율 적용 필요시 수정
+                usdAmount = this.amount,
                 timestamp = ts,
                 timestampIso = this.timestamp,
                 status = "입금 완료",
@@ -409,7 +394,7 @@ class TickerTransactionFragment : Fragment() {
                 id = txId,
                 tickerAmount = this.amount,
                 tickerSymbol = this.symbol,
-                usdAmount = this.amount, // 실제 환율 적용 필요시 수정
+                usdAmount = this.amount,
                 timestamp = ts,
                 timestampIso = this.timestamp,
                 status = "출금 완료",
@@ -447,6 +432,73 @@ class TickerTransactionFragment : Fragment() {
             }
             fragment.arguments = args
             return fragment
+        }
+    }
+
+    /**
+     * 티커 잔고 정보 업데이트
+     */
+    private fun updateTickerBalance() {
+        lifecycleScope.launch {
+            try {
+                val memberId = PreferenceUtil.getUserId()
+                if (memberId.isNullOrBlank()) {
+                    android.util.Log.w("TickerTransactionFragment", "사용자 ID가 없습니다.")
+                    return@launch
+                }
+                
+                val portfolioRepository = com.stip.api.repository.PortfolioRepository()
+                val portfolioResponse = portfolioRepository.getPortfolioResponse(memberId)
+                
+                activity?.runOnUiThread {
+                    if (portfolioResponse != null) {
+                        // 현재 티커의 지갑 찾기
+                        val tickerWallet = portfolioResponse.wallets.find { it.symbol == tickerCode }
+                        
+                        if (tickerWallet != null) {
+                            val formatter = java.text.DecimalFormat("#,##0.00")
+                            
+                            // 보유 수량
+                            binding.tickerHoldings.text = "${formatter.format(tickerWallet.balance)} ${tickerCode}"
+                            
+                            // USD 환산 가치 (evalAmount 사용)
+                            if (tickerWallet.evalAmount > BigDecimal.ZERO) {
+                                binding.equivalentAmount.text = "≈ $${formatter.format(tickerWallet.evalAmount)}"
+                            } else {
+                                binding.equivalentAmount.text = "≈ $0.00"
+                            }
+                            
+                            // 전역 변수 업데이트
+                            amount = tickerWallet.balance.toDouble()
+                            usdEquivalent = tickerWallet.evalAmount.toDouble()
+                            
+                            android.util.Log.d("TickerTransactionFragment", "${tickerCode} 잔고 업데이트 완료: ${tickerWallet.balance} ${tickerCode} (≈ $${tickerWallet.evalAmount} USD)")
+                        } else {
+                            // 해당 티커 지갑이 없는 경우
+                            binding.tickerHoldings.text = "0.00 ${tickerCode}"
+                            binding.equivalentAmount.text = "≈ $0.00"
+                            amount = 0.0
+                            usdEquivalent = 0.0
+                            android.util.Log.w("TickerTransactionFragment", "${tickerCode} 지갑을 찾을 수 없습니다.")
+                        }
+                    } else {
+                        // API 응답이 null인 경우
+                        binding.tickerHoldings.text = "0.00 ${tickerCode}"
+                        binding.equivalentAmount.text = "≈ $0.00"
+                        amount = 0.0
+                        usdEquivalent = 0.0
+                        android.util.Log.w("TickerTransactionFragment", "포트폴리오 응답이 null입니다.")
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("TickerTransactionFragment", "${tickerCode} 잔고 업데이트 실패: ${e.message}", e)
+                activity?.runOnUiThread {
+                    binding.tickerHoldings.text = "0.00 ${tickerCode}"
+                    binding.equivalentAmount.text = "≈ $0.00"
+                    amount = 0.0
+                    usdEquivalent = 0.0
+                }
+            }
         }
     }
 }

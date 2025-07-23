@@ -96,7 +96,21 @@ class MainViewModel @Inject constructor(
             _memberInfo.value = info
             Log.d("MainViewModel", "캐시된 회원정보 불러옴")
         } else if (isAuthenticated) {
-            // 인증된 상태지만 캐시된 회원정보가 없는 경우, API에서 정보 가져오기
+            // 인증된 상태지만 캐시된 회원정보가 없는 경우, 토큰에서 userId 추출 시도
+            Log.d("MainViewModel", "토큰에서 userId 추출 시도")
+            
+            val token = com.stip.stip.signup.utils.PreferenceUtil.getToken()
+            if (token != null) {
+                // 토큰에서 userId 추출
+                val userId = com.stip.stip.signup.utils.PreferenceUtil.extractUserIdFromToken(token)
+                if (userId != null) {
+                    Log.d("MainViewModel", "토큰에서 userId 추출 성공: $userId")
+                } else {
+                    Log.w("MainViewModel", "토큰에서 userId 추출 실패")
+                }
+            }
+            
+            // API에서 정보 가져오기
             Log.d("MainViewModel", "API에서 회원정보 조회 시도")
             
             // 실제 API 연동 구현

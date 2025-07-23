@@ -151,15 +151,36 @@ class TickerWithdrawalConfirmFragmentCompat : BaseFragment<FragmentIpAssetTicker
         val actualAmount = amount + fee
         lifecycleScope.launch {
             try {
-                withdrawViewModel.withdrawCrypto(
-                    symbol = currencyCode,
-                    amount = actualAmount.toDouble(),
-                    address = address
-                )
+                // 티커로부터 marketPairId 동적으로 가져오기
+                val marketPairId = getMarketPairIdForTicker(currencyCode)
+                if (marketPairId != null) {
+                    withdrawViewModel.withdrawCrypto(
+                        marketPairId = marketPairId,
+                        amount = actualAmount.toDouble(),
+                        address = address
+                    )
+                } else {
+                    Log.e("WithdrawalConfirmCompat", "marketPairId를 찾을 수 없음: $currencyCode")
+                    Toast.makeText(requireContext(), "티커 정보를 찾을 수 없습니다: $currencyCode", Toast.LENGTH_SHORT).show()
+                }
             } catch (e: Exception) {
                 Log.e("WithdrawalConfirmCompat", "출금 요청 중 예외 발생", e)
                 Toast.makeText(requireContext(), "출금 요청 중 오류가 발생했습니다", Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+    
+    /**
+     * 티커로부터 marketPairId 가져오기
+     */
+    private suspend fun getMarketPairIdForTicker(ticker: String): String? {
+        return try {
+            val ipListingRepository = com.stip.stip.api.repository.IpListingRepository()
+            val marketPairId = ipListingRepository.getPairIdForTicker(ticker)
+            marketPairId
+        } catch (e: Exception) {
+            Log.e("WithdrawalConfirmCompat", "marketPairId 조회 실패: ${e.message}", e)
+            null
         }
     }
     

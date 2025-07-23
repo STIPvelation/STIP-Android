@@ -16,23 +16,22 @@ class OrderUIInitializer(
     // setupRadioGroupListener 메서드 수정
     fun setupRadioGroupListener(
         currentTicker: String?,
-        // updateInputModeUI 파라미터 제거됨
-        resetOrderInputsToZero: () -> Unit
+        resetOrderInputsToZero: () -> Unit,
+        updateInputHandlerUI: () -> Unit
     ) {
         binding.radioGroupOrderType.setOnCheckedChangeListener { _, _ ->
-            // updateUiForOrderType 호출 시 updateInputModeUI 인자 제거
-            updateUiForOrderType(currentTicker, resetOrderInputsToZero)
+            updateUiForOrderType(currentTicker, resetOrderInputsToZero, updateInputHandlerUI)
         }
         // 초기 상태 설정 시에도 updateInputModeUI 인자 제거
-        updateUiForOrderType(currentTicker, resetOrderInputsToZero)
+        updateUiForOrderType(currentTicker, resetOrderInputsToZero, updateInputHandlerUI)
     }
 
     // updateUiForOrderType 메서드 정의 예시 (OrderUIInitializer 내부에 필요)
     // 실제 구현은 기존 OrderContentViewFragment의 updateUiForOrderType 로직을 참고하여 작성해야 합니다.
     private fun updateUiForOrderType(
         currentTicker: String?,
-        // updateInputModeUI 파라미터 제거됨
-        resetOrderInputsToZero: () -> Unit
+        resetOrderInputsToZero: () -> Unit,
+        updateInputHandlerUI: () -> Unit
     ) {
         if (_binding == null) return // _binding 대신 binding 사용
         val selectedOrderTypeId = binding.radioGroupOrderType.checkedRadioButtonId
@@ -49,6 +48,7 @@ class OrderUIInitializer(
                 binding.labelLimitPrice.text = context.getString(R.string.label_price)
             }
             R.id.radio_market_order -> {
+                // 시장 주문 시 가격 필드 완전히 숨김
                 binding.rowLimitPrice.visibility = android.view.View.GONE
                 binding.rowTriggerPrice?.visibility = android.view.View.GONE
                 binding.rowQuantity.visibility = android.view.View.VISIBLE
@@ -72,10 +72,8 @@ class OrderUIInitializer(
                 // 라벨/단위 설정은 OrderInputHandler의 updateInputModeUI 가 담당하므로 여기서 중복 설정 불필요
             }
         }
-        // OrderInputHandler의 UI 업데이트 메서드 호출 (필요한 경우)
-        // 예: inputHandler.updateInputModeUI() // -> 이 클래스가 inputHandler 를 직접 알 수는 없음. 콜백 등으로 처리해야 함.
-        // 현재 구조에서는 RadioButton 변경 시 resetInputs() 만 호출하고,
-        // EditText 의 hint/unit 등은 inputHandler 내부 로직 + 필요 시 외부에서 inputHandler.updateInputModeUI() 호출로 관리
+        // OrderInputHandler의 UI 업데이트 메서드 호출
+        updateInputHandlerUI()
     }
 
     // --- 다른 OrderUIInitializer 메서드들 ---

@@ -11,6 +11,11 @@ import com.stip.ipasset.fragment.BaseFragment
 import com.stip.stip.MainActivity
 import com.stip.ipasset.usd.adapter.NumericKeypadAdapter
 import com.stip.ipasset.usd.manager.USDAssetManager
+import com.stip.api.repository.PortfolioRepository
+import com.stip.stip.signup.utils.PreferenceUtil
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import java.math.BigDecimal
 
 /**
  * USD 출금 입력 화면
@@ -32,28 +37,121 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
     
     // USD 자산 매니저
     private val assetManager = USDAssetManager.getInstance()
+    
+    // Market API 관련
+    private val marketRepository: com.stip.stip.api.repository.MarketRepository by lazy { 
+        com.stip.stip.api.repository.MarketRepository() 
+    }
 
     override fun onResume() {
         super.onResume()
         // 헤더 숨기기
         (activity as? MainActivity)?.setHeaderVisibility(false)
         
-        // 화면에 돌아올 때 데이터 새로고침
-        assetManager.refreshData()
-        // 출금가능 금액 다시 포맷팅
-        formatWithdrawableAmount()
+        // USD 잔고 정보 로드
+        loadUsdBalance()
+        
+        // Market API에서 수수료와 출금한도 가져오기
+        loadMarketInfo()
+        
         // 초기 입력값 리셋
         currentInput = "1"
         decimalMode = false
         decimalDigits = 0
         updateDisplay()
     }
+    
+    /**
+     * Market API에서 수수료와 출금한도 정보를 가져옴
+     */
+    private fun loadMarketInfo() {
+        lifecycleScope.launch {
+            try {
+                // USD 티커로부터 marketPairId 가져오기
+                val ipListingRepository = com.stip.stip.api.repository.IpListingRepository()
+                val marketPairId = ipListingRepository.getPairIdForTicker("USD")
+                
+                if (marketPairId != null) {
+                    android.util.Log.d("USDWithdrawal", "Market API 호출 시작: marketPairId=$marketPairId")
+                    
+                    // Market API 호출
+                    val marketResponse = marketRepository.getMarket(marketPairId)
+                    
+                    if (marketResponse != null) {
+                        // API에서 가져온 값으로 USDAssetManager 업데이트
+                        assetManager.setFee(marketResponse.fee)
+                        assetManager.setWithdrawalLimit(marketResponse.maxValue)
+                        
+                        android.util.Log.d("USDWithdrawal", "Market API 성공: fee=${marketResponse.fee}, maxValue=${marketResponse.maxValue}")
+                    } else {
+                        android.util.Log.w("USDWithdrawal", "Market API 응답이 null입니다.")
+                    }
+                } else {
+                    android.util.Log.w("USDWithdrawal", "USD marketPairId를 찾을 수 없DMA")
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("USDWithdrawal", "Market API 호출 실패: ${e.message}", e)
+            }
+        }
+    }
+
+    /**
+     * USD 잔고 정보 로드
+     */
+    private fun loadUsdBalance() {
+        lifecycleScope.launch {
+            try {
+                val memberId = PreferenceUtil.getUserId()
+                if (memberId.isNullOrBlank()) {
+                    android.util.Log.w("USDWithdrawalInputFragment", "사용자 ID가 없습니다.")
+                    return@launch
+                }
+                
+                val portfolioRepository = com.stip.api.repository.PortfolioRepository()
+                val portfolioResponse = portfolioRepository.getPortfolioResponse(memberId)
+                
+                activity?.runOnUiThread {
+                    if (portfolioResponse != null) {
+                        val formatter = java.text.DecimalFormat("#,##0.00")
+                        val usdBalance = portfolioResponse.usdBalance
+                        binding.textWithdrawable.text = "$${formatter.format(usdBalance)} USD"
+                        formatWithdrawableAmount(usdBalance)
+                        assetManager.setUsdBalance(usdBalance.toDouble())
+                    } else {
+                        binding.textWithdrawable.text = "$0.00 USD"
+                        formatWithdrawableAmount(java.math.BigDecimal.ZERO)
+                        android.util.Log.w("USDWithdrawalInputFragment", "포트폴리오 응답이 null입니다.")
+                    }
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("USDWithdrawalInputFragment", "USD 잔고 로드 실패: ${e.message}", e)
+                activity?.runOnUiThread {
+                    binding.textWithdrawable.text = "$0.00 USD"
+                    formatWithdrawableAmount(java.math.BigDecimal.ZERO)
+                }
+            }
+        }
+    }
+
+    /**
+     * 출금 가능 금액 포맷팅
+     */
+    private fun formatWithdrawableAmount(withdrawableAmount: java.math.BigDecimal) {
+        val formatter = java.text.DecimalFormat("#,##0.00")
+        val formattedAmount = formatter.format(withdrawableAmount)
+        
+        // 출금 가능 금액 텍스트 설정
+        binding.textWithdrawable.text = "$$formattedAmount USD"
+        
+        // 자산 매니저에 USD 잔액 설정
+        assetManager.setUsdBalance(withdrawableAmount.toDouble())
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 먼저 초기 데이터 포맷팅 시도
-        formatWithdrawableAmount()
+        // 먼저 초기 데이터 포맷팅 시도 (기본값 0으로 설정)
+        formatWithdrawableAmount(java.math.BigDecimal.ZERO)
         
         // 출금가능 금액, 출금 한도 관찰 설정
         observeAssetData()
@@ -273,7 +371,7 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
      */
     private fun setPercentageAmount(percentage: Double) {
         val withdrawableAmount = assetManager.withdrawableAmount.value ?: 10000.0
-        val fee = assetManager.fee.value ?: 1.0
+        val fee = assetManager.fee.value ?: 0.0
         
         // 출금 가능한 금액의 비율 계산 (수수료 고려)
         val maxAmount = withdrawableAmount - fee
@@ -298,7 +396,7 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
      */
     private fun setMaxAmount() {
         val withdrawableAmount = assetManager.withdrawableAmount.value ?: 10000.0
-        val fee = assetManager.fee.value ?: 1.0
+        val fee = assetManager.fee.value ?: 0.0
         
         // 최대 가능 금액 (수수료 제외)
         val maxAmount = withdrawableAmount - fee
@@ -360,7 +458,7 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
             }
             
             // 2. 최대 출금 가능 금액 체크
-            val fee = assetManager.fee.value ?: 1.0
+            val fee = assetManager.fee.value ?: 0.0
             val totalWithdrawable = assetManager.withdrawableAmount.value ?: 10000.0
             val maxAmount = totalWithdrawable - fee
             
@@ -422,7 +520,7 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
     private fun updateFeeAndTotal(amount: Double) {
         try {
             // 수수료 계산 (고정 1 USD로 가정)
-            val fee = assetManager.fee.value ?: 1.0
+            val fee = assetManager.fee.value ?: 0.0
             
             // 총 출금액 계산
             val total = amount + fee
@@ -453,7 +551,7 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
             }
             
             // 수수료 가져오기
-            val fee = assetManager.fee.value ?: 1.0
+            val fee = assetManager.fee.value ?: 0.0
             
             // 출금 가능 금액 확인
             val withdrawable = assetManager.withdrawableAmount.value ?: 10000.0
@@ -518,23 +616,5 @@ class USDWithdrawalInputFragment : BaseFragment<FragmentIpAssetUsdWithdrawalInpu
             val formattedFee = formatter.format(fee)
             binding.feeAmount.text = "$formattedFee USD"
         }
-    }
-    
-    /**
-     * 출금가능 금액을 소수점 2자리로 포맷팅 (초기값 설정용)
-     */
-    private fun formatWithdrawableAmount() {
-        // 명시적으로 USDAssetManager에 데이터 리프레시 요청
-        assetManager.refreshData()
-        
-        // 현재 값을 즉시 반영 (LiveData 업데이트 전에)
-        val formatter = java.text.DecimalFormat("#,##0.00")
-        
-        // 기본값을 사용하여 UI 초기화 - LiveData 변경 전에 표시되는 값
-        val withdrawableAmount = assetManager.withdrawableAmount.value ?: 10000.0
-        val formattedWithdrawable = formatter.format(withdrawableAmount)
-        binding.textWithdrawable.text = "$formattedWithdrawable USD"
-        
-        android.util.Log.d("USDWithdrawalInputFragment", "Initial withdrawable amount: $formattedWithdrawable USD")
     }
 }

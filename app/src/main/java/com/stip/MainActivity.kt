@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.stip.stip.iptransaction.fragment.IpProfitLossFragment
 import com.stip.stip.databinding.ActivityMainBinding
@@ -25,8 +26,11 @@ import com.stip.stip.ipinfo.fragment.IpTrendFragment
 import com.stip.stip.iptransaction.fragment.IpUnfilledFragment
 import com.stip.stip.more.fragment.MoreFragment
 import com.google.android.material.tabs.TabLayout
+import com.skydoves.sandwich.onSuccess
 
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import com.stip.stip.signup.login.LoginViewModel
 
 // 만약 HeaderUpdater 인터페이스를 정의했다면 유지, 아니라면 이 줄은 필요 없음
 // class MainActivity : AppCompatActivity(), MoreFragment.MoreFragmentListener {
@@ -39,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
     // MainViewModel 인스턴스 가져오기
     private val viewModel by viewModels<MainViewModel>()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     // Fragment 리스트 정의 (기존 코드 유지)
     private val ipInfoSubFragments: List<Fragment> by lazy {
@@ -125,6 +130,12 @@ class MainActivity : AppCompatActivity() {
 
         // 앱 실행 시 뉴스 미리 로딩
         com.stip.stip.ipinfo.NewsRepository.preloadNews()
+        
+        // 환율 초기화 (비동기로 실행)
+        lifecycleScope.launch {
+            com.stip.utils.ExchangeRateManager.initialize()
+        }
+        
         if (savedInstanceState == null) {
             handleBottomTabClick(0, force = true)
         }
@@ -397,10 +408,34 @@ class MainActivity : AppCompatActivity() {
         val confirmButton = dialogView.findViewById<TextView>(R.id.dialogLoginInformButtonConfirm)
         confirmButton.text = "로그인"
         confirmButton.setOnClickListener {
-            // PIN 번호 입력 화면으로 바로 이동
-            val intent = Intent(this, com.stip.stip.signup.login.LoginPinNumberActivity::class.java)
-            startActivity(intent)
-            dialog.dismiss()
+            val storedDi = com.stip.stip.signup.utils.PreferenceUtil.getString(com.stip.stip.signup.Constants.PREF_KEY_DI_VALUE, "")
+            if (storedDi.isNotBlank()) {
+                // DI가 있으면 회원 정보 조회
+                kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.Dispatchers.Main).launch {
+                    val memberInfoResponse = loginViewModel.getMemberInfo()
+                    var isMember = false
+                    memberInfoResponse.onSuccess {
+                        isMember = true
+                    }
+                    if (isMember) {
+                        // 회원가입이 완전히 끝난 회원 → PIN 로그인 화면 이동
+                        val intent = Intent(this@MainActivity, com.stip.stip.signup.login.LoginPinNumberActivity::class.java).apply {
+                            putExtra("di_value", storedDi)
+                        }
+                        startActivity(intent)
+                    } else {
+                        // 회원가입 미완료 → 회원가입 화면 이동
+                        val intent = Intent(this@MainActivity, com.stip.stip.signup.signup.SignUpActivity::class.java)
+                        startActivity(intent)
+                    }
+                    dialog.dismiss()
+                }
+            } else {
+                // DI가 없으면 회원가입 화면으로 이동
+                val intent = Intent(this@MainActivity, com.stip.stip.signup.signup.SignUpActivity::class.java)
+                startActivity(intent)
+                dialog.dismiss()
+            }
         }
         
         // 취소 버튼

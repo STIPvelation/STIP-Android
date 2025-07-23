@@ -265,7 +265,7 @@
                 android:layout_marginEnd="8dp"
                 android:text="@string/sns_linkedin"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/tv_value_sns_wechat"
+                app:layout_constraintEnd_toStartOf="@+id/tvValueSnsWechat"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

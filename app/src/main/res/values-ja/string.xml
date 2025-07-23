@@ -17,7 +17,6 @@
     <string name="common_label">会社名</string>
     <string name="common_usd_ticker">AAA/USD</string>
     <string name="common_percent_format">00.00%</string>
-    <string name="menu_price_alert_ja">価格アラート</string>
     <string name="menu_order">注文</string>
     <string name="menu_chart">チャート</string>
     <string name="menu_quotes">相場</string>

@@ -63,13 +63,13 @@ class IPHoldingsAdapter(private val context: Context) :
             purchaseAmountTextView.text = String.format("%,.0f", item.totalBuyAmount)
 
             // Set profit/loss
-            profitLossTextView.text = String.format("%+,.0f", item.profit)
-            val profitLossColor = if (item.profitRate >= 0)
+            profitLossTextView.text = String.format("%+,.0f", item.profit.toDouble())
+            val profitLossColor = if (item.profitRate.toDouble() >= 0)
                 Color.parseColor("#4CAF50") else Color.parseColor("#F44336")
             profitLossTextView.setTextColor(profitLossColor)
 
             // Set return rate
-            val returnRateText = String.format("%+.1f%%", item.profitRate)
+            val returnRateText = String.format("%+.1f%%", item.profitRate.toDouble())
             returnRateTextView.text = returnRateText
             returnRateTextView.setTextColor(profitLossColor)
         }

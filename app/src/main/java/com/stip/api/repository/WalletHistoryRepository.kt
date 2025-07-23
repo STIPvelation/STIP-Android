@@ -8,17 +8,26 @@ import kotlinx.coroutines.withContext
 
 class WalletHistoryRepository {
     private val walletHistoryService: WalletHistoryService by lazy {
-        RetrofitClient.createEngineService(WalletHistoryService::class.java)
+        RetrofitClient.createTapiService(WalletHistoryService::class.java)
     }
 
-    suspend fun getWalletHistory(memberId: String, page: Int = 1, limit: Int = 30): List<WalletHistoryRecord> = withContext(Dispatchers.IO) {
+    /**
+     * 지갑 거래 내역 조회
+     * @param userId 사용자 ID (필수)
+     * @param symbol 심볼 (필수)
+     * @param type 거래 종류 (옵션) - WITHDRAW(출금) / DEPOSIT(입금)
+     * @param status 거래 상태 (옵션) - REQUEST(진행 중) REJECTED(반환)
+     * @return 지갑 거래 내역 목록
+     */
+    suspend fun getWalletHistory(
+        userId: String, 
+        symbol: String, 
+        type: String? = null, 
+        status: String? = null
+    ): List<WalletHistoryRecord> = withContext(Dispatchers.IO) {
         try {
-            val response = walletHistoryService.getWalletHistory(memberId, page, limit)
-            if (response.success) {
-                response.data.record
-            } else {
-                emptyList()
-            }
+            val response = walletHistoryService.getWalletHistory(userId, symbol, type, status)
+            response
         } catch (e: Exception) {
             emptyList()
         }
